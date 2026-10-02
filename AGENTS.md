@@ -39,7 +39,7 @@ assets/js/commun/
   cadre-jeu.js                 monterJeu() : accueil du jeu, préparation, partie, fin
   editeur-contenu.js           Éditeur généré à partir du schéma de contenu du jeu
   contenu.js                   Schéma : valeurs par défaut, nettoyage, validation, import/export
-  participants.js              Liste des prénoms partagée entre les jeux
+  participants.js              Liste des prénoms partagée entre les jeux + une info par personne (passion, film…)
   roue.js · dialogues.js       Roue aléatoire (tirage équitable) et fenêtres de dialogue
   chrono.js                    Compte à rebours ; creerMinuteur() = chrono affiché + bips de fin
   paliers.js                   Chiffres 5 4 3 2 1 qui s'éteignent (logique + affichage)

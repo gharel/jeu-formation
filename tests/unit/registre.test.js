@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { readFileSync, existsSync } from 'node:fs';
-import { JEUX, trouverJeu } from '../../assets/js/jeux.js';
+import { JEUX, trouverJeu, libelleCourt } from '../../assets/js/jeux.js';
 
 // Vitest est lancé depuis la racine du projet
 const racine = `${process.cwd()}/`;
@@ -32,6 +32,12 @@ describe('liste des jeux', () => {
   it('retrouve un jeu par son slug', () => {
     expect(trouverJeu('motus').titre).toBe('Motus numérique');
     expect(trouverJeu('inconnu')).toBeNull();
+  });
+
+  it('donne des libellés courts pour la roue des jeux', () => {
+    expect(libelleCourt(trouverJeu('juste-chiffre'))).toBe('🎯 Juste Chiffre');
+    expect(libelleCourt(trouverJeu('debout-assis'))).toBe('🧍 Debout ou assis');
+    for (const jeu of JEUX) expect(libelleCourt(jeu).length).toBeLessThanOrEqual(18);
   });
 
   describe.each(JEUX)('$titre', (jeu) => {

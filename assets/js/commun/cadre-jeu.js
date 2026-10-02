@@ -18,7 +18,7 @@ import { creerTirage } from './roue.js';
 import { creerScores } from './scores.js';
 import { sons, sonActif, basculerSon } from './sons.js';
 import { el, remplir, annoncer, ecouterClavier, basculerPleinEcran, focaliser } from './ui.js';
-import { choisirPrenoms, confirmer, designerAvecRoue } from './dialogues.js';
+import { choisirPrenoms, confirmer, designerAvecRoue, modifierInfo } from './dialogues.js';
 import {
   nettoyerContenu,
   validerContenu,
@@ -39,6 +39,7 @@ export function monterJeu(config) {
   const cleContenu = `${slug}:contenu`;
 
   let participants = listeParticipants.charger();
+  let infos = listeParticipants.chargerInfos();
   const tirage = creerTirage(participants, {
     equitable: lire('roue-equitable', true) !== false,
     hasard,
@@ -103,6 +104,9 @@ export function monterJeu(config) {
     f: () => basculerPleinEcran(),
   });
 
+  const decrire = (prenom) =>
+    listeParticipants.decrireInfo(listeParticipants.infoDe(infos, prenom));
+
   async function designer(titre) {
     if (participants.length < 2) return participants[0] ?? null;
     const prenom = await designerAvecRoue({
@@ -111,9 +115,13 @@ export function monterJeu(config) {
       hasard,
       titre,
       surEquitable: (v) => ecrire('roue-equitable', v),
+      decrire: (p) => {
+        const info = listeParticipants.infoDe(infos, p);
+        return info ? `${listeParticipants.themeDe(info.theme).icone} ${decrire(p)}` : '';
+      },
     });
     if (prenom) {
-      annoncer(`C’est au tour de ${prenom}`);
+      annoncer(`C’est au tour de ${prenom}. ${decrire(prenom)}`);
       ecouteDesignation?.(prenom);
     }
     return prenom;
@@ -122,8 +130,31 @@ export function monterJeu(config) {
   function changerParticipants(nouveaux) {
     participants = nouveaux;
     listeParticipants.enregistrer(participants);
+    changerInfos(listeParticipants.garderInfos(infos, participants));
     tirage.mettreAJour(participants);
     mettreAJourDesigner();
+  }
+
+  function changerInfos(nouvelles) {
+    infos = nouvelles;
+    listeParticipants.enregistrerInfos(infos);
+  }
+
+  /** Petite étiquette « 🍰 tiramisu » à côté d'un prénom (rien s'il n'y a pas d'info). */
+  function etiquetteInfo(prenom, classe) {
+    const info = listeParticipants.infoDe(infos, prenom);
+    if (!info) return null;
+    return el(
+      'span',
+      { class: classe, title: decrire(prenom) },
+      el('span', { 'aria-hidden': 'true' }, `${listeParticipants.themeDe(info.theme).icone} `),
+      el(
+        'span',
+        { class: 'visuellement-cache' },
+        `${listeParticipants.themeDe(info.theme).libelle} : `,
+      ),
+      info.texte,
+    );
   }
 
   function arreterPartie() {
@@ -176,7 +207,7 @@ export function monterJeu(config) {
           if (
             await confirmer({
               titre: 'Effacer la liste ?',
-              message: 'Tous les prénoms seront retirés.',
+              message: 'Tous les prénoms (et leurs infos) seront retirés.',
               oui: 'Effacer',
             })
           ) {
@@ -196,7 +227,29 @@ export function monterJeu(config) {
           el(
             'li',
             { class: 'puce' },
-            el('span', {}, prenom),
+            el('span', { class: 'puce__prenom' }, prenom),
+            etiquetteInfo(prenom, 'puce__info'),
+            el(
+              'button',
+              {
+                type: 'button',
+                class: 'puce__retirer puce__modifier',
+                'aria-label': listeParticipants.infoDe(infos, prenom)
+                  ? `Modifier l’info sur ${prenom}`
+                  : `Ajouter une info sur ${prenom}`,
+                title: 'Une info sur cette personne (passion, film, dessert…)',
+                onclick: async () => {
+                  const reponse = await modifierInfo({
+                    prenom,
+                    info: listeParticipants.infoDe(infos, prenom),
+                    themes: listeParticipants.THEMES,
+                  });
+                  if (reponse) changerInfos(listeParticipants.definirInfo(infos, prenom, reponse));
+                  dessiner();
+                },
+              },
+              '✎',
+            ),
             el(
               'button',
               {
@@ -221,6 +274,23 @@ export function monterJeu(config) {
       boutonEffacer.hidden = participants.length === 0;
     }
 
+    const theme = el(
+      'select',
+      { id: 'nouveau-theme', class: 'champ__controle ajout-prenom__theme' },
+      listeParticipants.THEMES.map((t) =>
+        el('option', { value: t.valeur }, `${t.icone} ${t.libelle}`),
+      ),
+    );
+    const info = el('input', {
+      id: 'nouvelle-info',
+      type: 'text',
+      class: 'champ__controle',
+      autocomplete: 'off',
+      maxlength: listeParticipants.LONGUEUR_INFO,
+      placeholder: 'Ex. : la guitare, le tiramisu…',
+      'aria-describedby': 'aide-info',
+    });
+
     const formulaire = el(
       'form',
       {
@@ -229,7 +299,26 @@ export function monterJeu(config) {
           e.preventDefault();
           if (!champ.value.trim()) return;
           changerParticipants(listeParticipants.ajouter(participants, champ.value));
+          // L'info ne s'applique que si un seul prénom est saisi
+          const saisis = champ.value
+            .split(/[,;\n]/)
+            .map(listeParticipants.normaliserPrenom)
+            .filter(Boolean);
+          if (saisis.length === 1 && info.value.trim()) {
+            const cible = participants.find(
+              (p) => p.toLocaleLowerCase('fr') === saisis[0].toLocaleLowerCase('fr'),
+            );
+            if (cible) {
+              changerInfos(
+                listeParticipants.definirInfo(infos, cible, {
+                  theme: theme.value,
+                  texte: info.value,
+                }),
+              );
+            }
+          }
           champ.value = '';
+          info.value = '';
           dessiner();
           champ.focus();
         },
@@ -245,6 +334,28 @@ export function monterJeu(config) {
         'p',
         { id: 'aide-prenoms', class: 'champ__aide' },
         'Plusieurs à la fois ? Séparez-les par des virgules. La liste sert pour tous les jeux.',
+      ),
+      el(
+        'p',
+        { class: 'champ__libelle ajout-prenom__info-titre', id: 'titre-info' },
+        'Une info sur la personne (facultatif)',
+      ),
+      el(
+        'div',
+        {
+          class: 'champ__ligne ajout-prenom__info',
+          role: 'group',
+          'aria-labelledby': 'titre-info',
+        },
+        el('label', { for: 'nouveau-theme', class: 'visuellement-cache' }, 'Thème de l’info'),
+        theme,
+        el('label', { for: 'nouvelle-info', class: 'visuellement-cache' }, 'Info'),
+        info,
+      ),
+      el(
+        'p',
+        { id: 'aide-info', class: 'champ__aide' },
+        'Sa passion, son film ou son dessert préféré… La roue l’affiche quand elle désigne la personne. Modifiable avec ✎. Rien ne sort de ce navigateur.',
       ),
     );
     dessiner();
@@ -640,6 +751,7 @@ export function monterJeu(config) {
                   MEDAILLES[e.rang - 1],
                 ),
                 el('span', { class: 'podium__prenom' }, e.prenom),
+                etiquetteInfo(e.prenom, 'podium__info'),
                 el('span', { class: 'podium__points' }, `${e.points} pt${e.points > 1 ? 's' : ''}`),
               ),
             ),

@@ -12,9 +12,9 @@ async function taper(page, lettre) {
   await page.getByLabel('Lettre proposée').pressSequentially(lettre);
 }
 
-test('Lettre à lettre : lettres, batterie, mot entier et points', async ({ page }) => {
+test('Batterie faible : lettres, batterie, mot entier et points', async ({ page }) => {
   const erreurs = surveillerErreurs(page);
-  await ouvrirJeu(page, 'lettre-a-lettre', { prenoms: ['Ana', 'Bob'] });
+  await ouvrirJeu(page, 'batterie-faible', { prenoms: ['Ana', 'Bob'] });
   await page.getByRole('button', { name: /Préparer le contenu/ }).click();
   await page.getByLabel('Crans de batterie (mauvaises lettres permises)').fill('3');
   await page.getByRole('button', { name: 'Enregistrer' }).click();
@@ -60,10 +60,26 @@ test('Lettre à lettre : lettres, batterie, mot entier et points', async ({ page
   expect(erreurs).toEqual([]);
 });
 
+test('le contenu préparé sous l’ancien nom du jeu est récupéré', async ({ page }) => {
+  await page.addInitScript(() => {
+    if (localStorage.getItem('skazy-jeux:batterie-faible:contenu') === null) {
+      localStorage.setItem(
+        'skazy-jeux:lettre-a-lettre:contenu',
+        JSON.stringify({ reglages: { crans: 5 }, elements: [{ mot: 'Souris', theme: '' }] }),
+      );
+    }
+  });
+  await ouvrirJeu(page, 'batterie-faible');
+  await expect(page.locator('#cadre').getByText('1 mot prêt')).toBeVisible();
+  await lancerPartie(page);
+  await expect(page.locator('.lettres__case')).toHaveCount(6);
+  await expect(page.getByRole('meter')).toHaveAttribute('aria-valuenow', '5');
+});
+
 test('R et F tapées comme lettres ne déclenchent ni la roue ni le plein écran', async ({
   page,
 }) => {
-  await ouvrirJeu(page, 'lettre-a-lettre', { prenoms: ['Ana', 'Bob'] });
+  await ouvrirJeu(page, 'batterie-faible', { prenoms: ['Ana', 'Bob'] });
   await lancerPartie(page);
   await taper(page, 'r');
   await expect(page.getByRole('dialog')).toHaveCount(0);

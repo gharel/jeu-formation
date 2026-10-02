@@ -1,6 +1,7 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
 import { el, remplir, animer, focaliser } from '../../assets/js/commun/ui.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
+import { lire, ecrire } from '../../assets/js/commun/stockage.js';
 import { schema, exemple } from './exemple.js';
 import {
   decouper,
@@ -318,8 +319,13 @@ function demarrer(ctx) {
   afficherMot();
 }
 
+// Le jeu s'appelait « lettre-a-lettre » : on récupère un contenu déjà préparé sous l'ancien nom.
+if (lire('batterie-faible:contenu') === null && lire('lettre-a-lettre:contenu') !== null) {
+  ecrire('batterie-faible:contenu', lire('lettre-a-lettre:contenu'));
+}
+
 monterJeu({
-  slug: 'lettre-a-lettre',
+  slug: 'batterie-faible',
   schema,
   exemple,
   regles: [

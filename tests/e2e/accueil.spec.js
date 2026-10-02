@@ -24,6 +24,84 @@ test('l’accueil présente un jeu par carte, avec un lien qui fonctionne', asyn
   expect(erreurs).toEqual([]);
 });
 
+test('le bouton « Un jeu au hasard » tire un jeu avec la roue et l’ouvre', async ({ page }) => {
+  const erreurs = surveillerErreurs(page);
+  await page.goto('/?graine=4');
+  await page.getByRole('button', { name: 'Un jeu au hasard' }).click();
+  const dialogue = page.getByRole('dialog', { name: 'Quel jeu pour réveiller la salle ?' });
+  await dialogue.getByRole('button', { name: 'Lancer la roue' }).click();
+  const resultat = dialogue.locator('.roue-resultat');
+  await expect(resultat).not.toBeEmpty();
+  const texte = await resultat.textContent();
+  const jeu = JEUX.find((j) => texte.includes(j.titre));
+  expect(jeu, `jeu tiré : ${texte}`).toBeTruthy();
+  // L'accroche du jeu s'affiche sous son titre
+  await expect(dialogue.locator('.roue-detail')).toContainText(jeu.accroche.slice(0, 12));
+  await verifierAccessibilite(page);
+  await dialogue.getByRole('button', { name: `Jouer à ${jeu.titre} →` }).click();
+  await expect(page).toHaveURL(new RegExp(`/jeux/${jeu.slug}/$`));
+  await expect(page.getByRole('heading', { level: 1, name: jeu.titre })).toBeVisible();
+  expect(erreurs).toEqual([]);
+});
+
+test('une info par participant, affichée par la roue et partagée entre les jeux', async ({
+  page,
+}) => {
+  const erreurs = surveillerErreurs(page);
+  await page.goto(`/jeux/${JEUX[0].slug}/?graine=2`);
+  // Prénom + info
+  await page.getByLabel('Ajouter un prénom').fill('Marie');
+  await page.getByLabel('Thème de l’info').selectOption('dessert');
+  await page.getByLabel('Info', { exact: true }).fill('le tiramisu');
+  await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
+  // Plusieurs prénoms à la fois : l'info n'est pas recopiée
+  await page.getByLabel('Ajouter un prénom').fill('Paul, Léa');
+  await page.getByLabel('Info', { exact: true }).fill('ignorée');
+  await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
+  const puces = page.getByRole('list', { name: 'Participants' });
+  await expect(puces.getByRole('listitem').filter({ hasText: 'Marie' })).toContainText(
+    'le tiramisu',
+  );
+  await expect(puces).not.toContainText('ignorée');
+  await verifierAccessibilite(page);
+
+  // Ajouter une info à Paul avec ✎
+  await page.getByRole('button', { name: 'Ajouter une info sur Paul' }).click();
+  const dialogue = page.getByRole('dialog', { name: 'Une info sur Paul' });
+  await dialogue.getByLabel('Thème').selectOption('film');
+  await dialogue.getByLabel('Réponse').fill('Le Grand Bleu');
+  await dialogue.getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(puces.getByRole('listitem').filter({ hasText: 'Paul' })).toContainText(
+    'Le Grand Bleu',
+  );
+
+  // La roue montre l'info de la personne tirée
+  await page.getByRole('button', { name: /Désigner quelqu’un/ }).click();
+  const roue = page.getByRole('dialog', { name: /Désigner/ });
+  for (let i = 0; i < 3; i++) {
+    await roue.getByRole('button', { name: /Lancer la roue|Relancer/ }).click();
+    await expect(roue.locator('.roue-resultat')).not.toBeEmpty();
+    const prenom = await roue.locator('.roue-resultat').textContent();
+    if (prenom === 'Marie') {
+      await expect(roue.locator('.roue-detail')).toContainText('Dessert préféré');
+      await expect(roue.locator('.roue-detail')).toContainText('le tiramisu');
+    }
+    if (prenom === 'Léa') await expect(roue.locator('.roue-detail')).toBeEmpty();
+  }
+  await roue.getByRole('button', { name: 'Fermer' }).click();
+
+  // Partagé avec un autre jeu, retiré avec la personne
+  await page.goto(`/jeux/${JEUX[1].slug}/`);
+  await expect(puces.getByRole('listitem').filter({ hasText: 'Marie' })).toContainText(
+    'le tiramisu',
+  );
+  await page.getByRole('button', { name: 'Retirer Marie' }).click();
+  await page.getByLabel('Ajouter un prénom').fill('Marie');
+  await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
+  await expect(puces).not.toContainText('tiramisu');
+  expect(erreurs).toEqual([]);
+});
+
 test('l’accueil est accessible', async ({ page }) => {
   await page.goto('/');
   await expect(page.locator('.carte-jeu')).toHaveCount(JEUX.length);

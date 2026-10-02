@@ -1,7 +1,7 @@
 /**
  * Fenêtres de dialogue communes : choisir un ou plusieurs prénoms, confirmer, roue des prénoms.
  */
-import { el } from './ui.js';
+import { el, remplir } from './ui.js';
 import { creerRoue, couleursRoue } from './roue.js';
 import { sons } from './sons.js';
 
@@ -163,15 +163,22 @@ export function choisirPrenoms({
 }
 
 /**
- * Roue des prénoms. `tirage` vient de creerTirage (il garde la mémoire des personnes déjà passées).
- * Résout avec le prénom choisi, ou null si on ferme sans tirer.
+ * Roue générique. `libelles` : textes des segments ; `tirage` vient de creerTirage.
+ * `resultatDe(index)` : texte affiché en grand, `detailDe(index)` : ligne en dessous (facultative),
+ * `libelleValider(index)` : texte du bouton qui ferme la fenêtre.
+ * Avec `surEquitable`, une case « tirage équitable » est proposée.
+ * Résout avec l'index tiré, ou null si on ferme sans valider.
  */
-export function designerAvecRoue({
-  prenoms,
+export function tirerAvecRoue({
+  titre,
+  libelles,
   tirage,
   hasard,
-  titre = 'Désigner quelqu’un',
-  surEquitable,
+  resultatDe = (i) => libelles[i],
+  detailDe = () => '',
+  libelleValider = () => 'C’est parti !',
+  surEquitable = null,
+  optionsRoue = {},
 }) {
   return ouvrirDialogue({
     titre,
@@ -179,8 +186,9 @@ export function designerAvecRoue({
     construire({ corps, pied, fermer }) {
       let choisi = null;
       let enCours = false;
-      const roue = creerRoue(prenoms, couleursRoue(prenoms.length), { hasard });
+      const roue = creerRoue(libelles, couleursRoue(libelles.length), { hasard, ...optionsRoue });
       const resultat = el('p', { class: 'roue-resultat', 'aria-live': 'polite' });
+      const detail = el('p', { class: 'roue-detail' });
       const lancer = el(
         'button',
         { type: 'button', class: 'bouton bouton--principal bouton--grand', autofocus: true },
@@ -189,27 +197,21 @@ export function designerAvecRoue({
       const valider = el(
         'button',
         { type: 'button', class: 'bouton', disabled: true, onclick: () => fermer(choisi) },
-        'C’est parti !',
+        libelleValider(0),
       );
-      const equitable = el('input', {
-        type: 'checkbox',
-        id: 'roue-equitable',
-        checked: tirage.equitable,
-        onchange: () => {
-          tirage.equitable = equitable.checked;
-          surEquitable?.(equitable.checked);
-        },
-      });
       lancer.addEventListener('click', async () => {
         if (enCours) return;
         enCours = true;
         lancer.disabled = true;
         valider.disabled = true;
-        resultat.textContent = '';
+        remplir(resultat);
+        remplir(detail);
         const index = tirage.tirer();
         await roue.tourner(index);
-        choisi = prenoms[index];
-        resultat.textContent = choisi;
+        choisi = index;
+        remplir(resultat, resultatDe(index));
+        remplir(detail, detailDe(index));
+        remplir(valider, libelleValider(index));
         sons.ding();
         enCours = false;
         lancer.disabled = false;
@@ -217,21 +219,125 @@ export function designerAvecRoue({
         valider.disabled = false;
         valider.focus();
       });
-      corps.append(
-        roue.element,
-        resultat,
-        el(
-          'p',
-          { class: 'case-a-cocher' },
-          equitable,
+      corps.append(roue.element, resultat, detail);
+      if (surEquitable) {
+        const equitable = el('input', {
+          type: 'checkbox',
+          id: 'roue-equitable',
+          checked: tirage.equitable,
+          onchange: () => {
+            tirage.equitable = equitable.checked;
+            surEquitable(equitable.checked);
+          },
+        });
+        corps.append(
           el(
-            'label',
-            { for: 'roue-equitable' },
-            'Tirage équitable : chacun passe une fois avant de revenir',
+            'p',
+            { class: 'case-a-cocher' },
+            equitable,
+            el(
+              'label',
+              { for: 'roue-equitable' },
+              'Tirage équitable : chacun passe une fois avant de revenir',
+            ),
           ),
+        );
+      }
+      pied.append(lancer, valider);
+    },
+  });
+}
+
+/**
+ * Roue des prénoms. `tirage` vient de creerTirage (il garde la mémoire des personnes déjà passées).
+ * `decrire(prenom)` donne l'info affichée sous le prénom tiré (« Dessert préféré : … »).
+ * Résout avec le prénom choisi, ou null si on ferme sans tirer.
+ */
+export async function designerAvecRoue({
+  prenoms,
+  tirage,
+  hasard,
+  titre = 'Désigner quelqu’un',
+  surEquitable = () => {},
+  decrire = () => '',
+}) {
+  const index = await tirerAvecRoue({
+    titre,
+    libelles: prenoms,
+    tirage,
+    hasard,
+    detailDe: (i) => decrire(prenoms[i]),
+    surEquitable,
+  });
+  return index === null ? null : prenoms[index];
+}
+
+/**
+ * Modifier l'info d'un participant. Résout avec { theme, texte } (texte vide = retirer l'info),
+ * ou null si on annule.
+ */
+export function modifierInfo({ prenom, info, themes }) {
+  return ouvrirDialogue({
+    titre: `Une info sur ${prenom}`,
+    construire({ corps, pied, fermer }) {
+      const theme = el(
+        'select',
+        { id: 'info-theme', class: 'champ__controle' },
+        themes.map((t) => el('option', { value: t.valeur }, `${t.icone} ${t.libelle}`)),
+      );
+      theme.value = info?.theme ?? themes[0].valeur;
+      const texte = el('input', {
+        id: 'info-texte',
+        type: 'text',
+        class: 'champ__controle',
+        autocomplete: 'off',
+        maxlength: 60,
+        value: info?.texte ?? '',
+        placeholder: 'Ex. : le tiramisu',
+      });
+      const formulaire = el(
+        'form',
+        {
+          id: 'formulaire-info',
+          onsubmit: (e) => {
+            e.preventDefault();
+            fermer({ theme: theme.value, texte: texte.value });
+          },
+        },
+        el(
+          'div',
+          { class: 'champ' },
+          el('label', { for: 'info-theme', class: 'champ__libelle' }, 'Thème'),
+          theme,
+        ),
+        el(
+          'div',
+          { class: 'champ' },
+          el('label', { for: 'info-texte', class: 'champ__libelle' }, 'Réponse'),
+          texte,
         ),
       );
-      pied.append(lancer, valider);
+      corps.append(formulaire);
+      remplir(
+        pied,
+        info
+          ? el(
+              'button',
+              {
+                type: 'button',
+                class: 'bouton bouton--discret',
+                onclick: () => fermer({ theme: theme.value, texte: '' }),
+              },
+              'Retirer l’info',
+            )
+          : null,
+        el(
+          'button',
+          { type: 'submit', form: 'formulaire-info', class: 'bouton bouton--principal' },
+          'Enregistrer',
+        ),
+      );
+      setTimeout(() => texte.focus(), 0);
     },
   });
 }

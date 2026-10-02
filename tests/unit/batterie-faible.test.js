@@ -7,11 +7,11 @@ import {
   proposerMot,
   estDecouvert,
   batterieVide,
-} from '../../jeux/lettre-a-lettre/logique.js';
-import { schema, exemple } from '../../jeux/lettre-a-lettre/exemple.js';
+} from '../../jeux/batterie-faible/logique.js';
+import { schema, exemple } from '../../jeux/batterie-faible/exemple.js';
 import { nettoyerContenu, validerContenu } from '../../assets/js/commun/contenu.js';
 
-describe('Lettre à lettre', () => {
+describe('Batterie faible', () => {
   it('découpe le mot : lettres à deviner, le reste visible', () => {
     expect(decouper(' Clé  USB ')).toEqual([
       { lettre: 'C', affichage: 'C' },

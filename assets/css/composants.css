@@ -41,6 +41,10 @@
   color: rgb(255 255 255 / 85%);
 }
 
+.heros__actions {
+  margin: 1.75rem 0 0;
+}
+
 /* Points colorés décoratifs, comme sur formation.skazy.nc */
 .points-deco {
   position: absolute;
@@ -319,6 +323,48 @@
 .puce__retirer:hover {
   color: var(--blanc);
   background: var(--erreur);
+}
+
+.puce__modifier:hover {
+  color: var(--blanc);
+  background: var(--bleu-numerique);
+}
+
+.puce__info {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--texte-doux);
+}
+
+.puce__info::before {
+  content: '·';
+  margin-right: 0.3rem;
+}
+
+.ajout-prenom__info-titre {
+  margin: 0.9rem 0 0.3rem;
+}
+
+.ajout-prenom__theme {
+  flex: none;
+  width: auto;
+  max-width: 14rem;
+}
+
+.roue-detail {
+  min-height: 1.5em;
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  text-align: center;
+  color: var(--texte-doux);
+}
+
+.podium__info {
+  max-width: 100%;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--texte-doux);
 }
 
 .etat {

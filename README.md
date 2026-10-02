@@ -1,6 +1,7 @@
 # Mini-jeux Skazy Formation
 
 Des mini-jeux à projeter pour réveiller une séance de formation numérique.
+Le bouton « Un jeu au hasard » de l'accueil fait tourner une roue pour choisir le jeu.
 L'animateur prépare le contenu, les participants jouent à l'oral, l'animateur valide.
 Chaque jeu dure de 5 à 15 minutes.
 
@@ -17,11 +18,11 @@ Chaque jeu dure de 5 à 15 minutes.
 | 🔍 Zoom mystère      | Capture très zoomée qui se dévoile, 5 4 3 2 1, Stop                 | Captures collées (Ctrl+V) ou importées |
 | ⚡ Duel buzzer       | Deux joueurs, touches A et L, le plus rapide répond                 | Questions + réponses                   |
 | 🔺 Pyramide          | Deviner un mot avec 1, 2 ou 3 mots d'indice : 3, 2 ou 1 point       | Mots + 3 indices d'un mot              |
-| 🔋 Lettre à lettre   | Proposer des lettres ; chaque erreur vide la batterie               | Mots ou courtes expressions            |
+| 🔋 Batterie faible   | Proposer des lettres ; chaque erreur vide la batterie               | Mots ou courtes expressions            |
 
 Sur l'écran d'accueil de chaque jeu, on peut :
 
-- **saisir les prénoms** (liste partagée entre tous les jeux) ;
+- **saisir les prénoms** (liste partagée entre tous les jeux), avec une info facultative sur chaque personne : sa passion, son film ou son dessert préféré… La roue l'affiche quand elle désigne quelqu'un ;
 - **faire tourner la roue** pour désigner quelqu'un, avec la touche `R` ou le bouton « Désigner » ;
 - **préparer le contenu**, avec les réponses masquées pour pouvoir le faire écran projeté. Un contenu d'exemple permet de jouer tout de suite. Le contenu s'exporte et s'importe en JSON pour le réutiliser ou le partager.
 

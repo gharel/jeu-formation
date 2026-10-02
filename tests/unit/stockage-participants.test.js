@@ -7,6 +7,16 @@ import {
   charger,
   enregistrer,
   NOMBRE_MAX,
+  THEMES,
+  LONGUEUR_INFO,
+  themeDe,
+  normaliserInfo,
+  definirInfo,
+  infoDe,
+  decrireInfo,
+  garderInfos,
+  chargerInfos,
+  enregistrerInfos,
 } from '../../assets/js/commun/participants.js';
 
 beforeEach(() => localStorage.clear());
@@ -54,6 +64,39 @@ describe('participants', () => {
 
   it('retire un prénom sans tenir compte des majuscules', () => {
     expect(retirer(['Marie', 'Paul'], 'marie')).toEqual(['Paul']);
+  });
+
+  it('retient une info par personne, sans tenir compte des majuscules', () => {
+    let infos = definirInfo({}, 'Marie', { theme: 'dessert', texte: '  le   tiramisu ' });
+    expect(infoDe(infos, 'marie')).toEqual({ theme: 'dessert', texte: 'le tiramisu' });
+    expect(decrireInfo(infoDe(infos, 'MARIE'))).toBe('Dessert préféré : le tiramisu');
+    // Thème inconnu : « Autre » ; texte vide : l'info est retirée
+    infos = definirInfo(infos, 'Paul', { theme: 'pirate', texte: 'Les échecs' });
+    expect(infoDe(infos, 'Paul').theme).toBe('autre');
+    infos = definirInfo(infos, 'Marie', { theme: 'dessert', texte: '   ' });
+    expect(infoDe(infos, 'Marie')).toBeNull();
+    expect(decrireInfo(null)).toBe('');
+    expect(normaliserInfo({ texte: 'x'.repeat(100) }).texte).toHaveLength(LONGUEUR_INFO);
+  });
+
+  it('oublie les infos des personnes retirées', () => {
+    const infos = definirInfo(definirInfo({}, 'Ana', { texte: 'A' }), 'Bob', { texte: 'B' });
+    expect(Object.keys(garderInfos(infos, ['Bob']))).toEqual(['bob']);
+  });
+
+  it('enregistre et recharge les infos, en ignorant les données abîmées', () => {
+    enregistrerInfos(definirInfo({}, 'Léa', { theme: 'film', texte: 'Amélie' }));
+    expect(chargerInfos()).toEqual({ léa: { theme: 'film', texte: 'Amélie' } });
+    localStorage.setItem('skazy-jeux:infos-participants', '["pas", "un objet"]');
+    expect(chargerInfos()).toEqual({});
+    localStorage.setItem('skazy-jeux:infos-participants', '{"zoé": {"texte": ""}, "max": 3}');
+    expect(chargerInfos()).toEqual({});
+  });
+
+  it('propose des thèmes avec une icône', () => {
+    expect(THEMES.map((t) => t.valeur)).toContain('dessert');
+    expect(THEMES.every((t) => t.libelle && t.icone)).toBe(true);
+    expect(themeDe('inconnu').valeur).toBe('autre');
   });
 
   it('enregistre et recharge la liste partagée', () => {

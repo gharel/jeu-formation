@@ -1,5 +1,5 @@
 /**
- * Règles de Lettre à lettre : on propose des lettres pour découvrir un mot caché.
+ * Règles de Batterie faible : on propose des lettres pour découvrir un mot caché.
  * Chaque mauvaise lettre vide un cran de la batterie ; batterie à plat = mot révélé.
  */
 

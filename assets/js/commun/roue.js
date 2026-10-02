@@ -107,7 +107,11 @@ function tronquer(texte, max) {
  * Dessine une roue SVG. `couleurs` : liste de couples [fond, texte].
  * Renvoie { element, tourner(index) => Promise<index> }.
  */
-export function creerRoue(libelles, couleurs, { hasard = Math.random } = {}) {
+export function creerRoue(
+  libelles,
+  couleurs,
+  { hasard = Math.random, longueurMax: longueurImposee, taillePolice: policeImposee } = {},
+) {
   const conteneur = document.createElement('div');
   conteneur.className = 'roue';
   const svg = document.createElementNS(SVG, 'svg');
@@ -119,8 +123,8 @@ export function creerRoue(libelles, couleurs, { hasard = Math.random } = {}) {
   disque.classList.add('roue__disque');
   const nombre = Math.max(libelles.length, 1);
   const taille = 360 / nombre;
-  const longueurMax = nombre > 12 ? 9 : nombre > 8 ? 11 : 14;
-  const taillePolice = nombre > 12 ? 7 : nombre > 8 ? 8.5 : 10;
+  const longueurMax = longueurImposee ?? (nombre > 12 ? 9 : nombre > 8 ? 11 : 14);
+  const taillePolice = policeImposee ?? (nombre > 12 ? 7 : nombre > 8 ? 8.5 : 10);
 
   libelles.forEach((libelle, i) => {
     const [fond, encre] = couleurs[i % couleurs.length];

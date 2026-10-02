@@ -1,8 +1,12 @@
 /**
- * Page d'accueil : une carte par jeu, générée à partir de la liste des jeux.
+ * Page d'accueil : une carte par jeu, générée à partir de la liste des jeux,
+ * et un bouton qui tire un jeu au hasard avec la roue.
  */
-import { JEUX } from './jeux.js';
+import { JEUX, libelleCourt } from './jeux.js';
 import { el, remplir } from './commun/ui.js';
+import { hasardDePage } from './commun/hasard.js';
+import { creerTirage } from './commun/roue.js';
+import { tirerAvecRoue } from './commun/dialogues.js';
 
 function carteJeu(jeu) {
   return el(
@@ -34,3 +38,24 @@ function carteJeu(jeu) {
 }
 
 remplir(document.getElementById('grille-jeux'), JEUX.map(carteJeu));
+
+const bouton = document.getElementById('jeu-hasard');
+const hasard = hasardDePage();
+const tirage = creerTirage(
+  JEUX.map((j) => j.slug),
+  { equitable: true, hasard },
+);
+bouton.hidden = false;
+bouton.addEventListener('click', async () => {
+  const index = await tirerAvecRoue({
+    titre: 'Quel jeu pour réveiller la salle ?',
+    libelles: JEUX.map(libelleCourt),
+    tirage,
+    hasard,
+    resultatDe: (i) => `${JEUX[i].icone} ${JEUX[i].titre}`,
+    detailDe: (i) => JEUX[i].accroche,
+    libelleValider: (i) => `Jouer à ${JEUX[i].titre} →`,
+    optionsRoue: { longueurMax: 18, taillePolice: 7 },
+  });
+  if (index !== null) window.location.href = `jeux/${JEUX[index].slug}/`;
+});

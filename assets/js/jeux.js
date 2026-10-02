@@ -86,11 +86,11 @@ export const JEUX = [
     preparation: 'Des mots et 3 indices d’un mot',
   },
   {
-    slug: 'lettre-a-lettre',
-    titre: 'Lettre à lettre',
+    slug: 'batterie-faible',
+    titre: 'Batterie faible',
     icone: '🔋',
     couleur: 'beige',
-    accroche: 'Proposez des lettres pour découvrir le mot… avant que la batterie soit à plat !',
+    accroche: 'Chaque mauvaise lettre vide la batterie. Trouvez le mot avant qu’elle lâche !',
     duree: '5 à 10 min',
     preparation: 'Des mots ou courtes expressions',
   },
@@ -98,6 +98,12 @@ export const JEUX = [
 
 export function trouverJeu(slug) {
   return JEUX.find((jeu) => jeu.slug === slug) ?? null;
+}
+
+/** Libellé court pour un segment de roue : « 🎯 Juste Chiffre ». */
+export function libelleCourt(jeu) {
+  const court = jeu.titre.replace(/^(Le|La|Les) /, '').replace(/\s*\?$/, '');
+  return `${jeu.icone} ${court}`;
 }
 
 /** { slug: titre } pour les messages d'import. */

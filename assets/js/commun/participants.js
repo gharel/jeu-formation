@@ -1,12 +1,27 @@
 /**
- * Liste des prénoms partagée par tous les jeux.
+ * Liste des prénoms partagée par tous les jeux, et une info facultative par personne
+ * (sa passion, son film préféré, son dessert…) pour briser la glace.
  * Les fonctions de manipulation sont pures ; charger/enregistrer passent par stockage.js.
  */
 import { lire, ecrire } from './stockage.js';
 
 const CLE = 'participants';
+const CLE_INFOS = 'infos-participants';
 export const LONGUEUR_MAX = 30;
 export const NOMBRE_MAX = 60;
+export const LONGUEUR_INFO = 60;
+
+export const THEMES = [
+  { valeur: 'passion', libelle: 'Passion', icone: '❤️' },
+  { valeur: 'loisir', libelle: 'Loisir', icone: '🎯' },
+  { valeur: 'film', libelle: 'Film préféré', icone: '🎬' },
+  { valeur: 'musique', libelle: 'Musique préférée', icone: '🎵' },
+  { valeur: 'dessert', libelle: 'Dessert préféré', icone: '🍰' },
+  { valeur: 'plat', libelle: 'Plat préféré', icone: '🍽️' },
+  { valeur: 'voyage', libelle: 'Destination de rêve', icone: '✈️' },
+  { valeur: 'animal', libelle: 'Animal préféré', icone: '🐾' },
+  { valeur: 'autre', libelle: 'Autre', icone: '✨' },
+];
 
 /** Nettoie un prénom saisi : espaces superflus retirés, longueur limitée. */
 export function normaliserPrenom(texte) {
@@ -45,4 +60,59 @@ export function charger() {
 
 export function enregistrer(liste) {
   return ecrire(CLE, liste);
+}
+
+// ---------- Infos sur les participants ----------
+
+export function themeDe(valeur) {
+  return THEMES.find((t) => t.valeur === valeur) ?? THEMES[THEMES.length - 1];
+}
+
+/** Info nettoyée { theme, texte }, ou null si le texte est vide. */
+export function normaliserInfo(info) {
+  const texte = String(info?.texte ?? '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, LONGUEUR_INFO);
+  if (!texte) return null;
+  return { theme: themeDe(info.theme).valeur, texte };
+}
+
+/** Renvoie de nouvelles infos où celle de `prenom` est remplacée (ou retirée si vide). */
+export function definirInfo(infos, prenom, info) {
+  const copie = { ...infos };
+  const propre = normaliserInfo(info);
+  if (propre) copie[cleComparaison(prenom)] = propre;
+  else delete copie[cleComparaison(prenom)];
+  return copie;
+}
+
+export function infoDe(infos, prenom) {
+  return infos[cleComparaison(prenom)] ?? null;
+}
+
+/** « Dessert préféré : le tiramisu » */
+export function decrireInfo(info) {
+  return info ? `${themeDe(info.theme).libelle} : ${info.texte}` : '';
+}
+
+/** Ne garde que les infos des personnes encore dans la liste. */
+export function garderInfos(infos, liste) {
+  const gardes = new Set(liste.map(cleComparaison));
+  return Object.fromEntries(Object.entries(infos).filter(([cle]) => gardes.has(cle)));
+}
+
+export function chargerInfos() {
+  const brut = lire(CLE_INFOS, {});
+  if (!brut || typeof brut !== 'object' || Array.isArray(brut)) return {};
+  const infos = {};
+  for (const [cle, info] of Object.entries(brut)) {
+    const propre = normaliserInfo(info);
+    if (propre) infos[cleComparaison(normaliserPrenom(cle))] = propre;
+  }
+  return infos;
+}
+
+export function enregistrerInfos(infos) {
+  return ecrire(CLE_INFOS, infos);
 }
