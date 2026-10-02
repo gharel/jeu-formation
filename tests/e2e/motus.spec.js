@@ -37,7 +37,7 @@ test('une partie complète de Motus avec le contenu d’exemple', async ({ page 
   await expect(pointsDe(page, 'Ana')).toHaveText('1');
 
   // Mot 2 : 6 échecs, le mot est révélé
-  await page.getByRole('button', { name: 'Mot suivant →' }).click();
+  await page.getByRole('button', { name: 'Mot suivant' }).click();
   await expect(page.locator('#cadre').getByText('Mot 2 sur 5 · 5 lettres')).toBeVisible();
   for (let i = 0; i < 6; i++) await proposer(page, 'PAPAS');
   await expect(page.locator('#cadre').getByText('Pas trouvé cette fois…')).toBeVisible();
@@ -49,7 +49,7 @@ test('une partie complète de Motus avec le contenu d’exemple', async ({ page 
     [4, 'RESEAU'],
     [5, 'NAVIGATEUR'],
   ]) {
-    await page.getByRole('button', { name: 'Mot suivant →' }).click();
+    await page.getByRole('button', { name: 'Mot suivant' }).click();
     await expect(page.locator('#cadre').getByText(`Mot ${numero} sur 5`)).toBeVisible();
     await proposer(page, mot);
     await expect(page.locator('#cadre').getByText('Trouvé !')).toBeVisible();

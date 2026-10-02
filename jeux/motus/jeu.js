@@ -1,5 +1,5 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, animer, focaliser } from '../../assets/js/commun/ui.js';
+import { el, remplir, icone, animer, focaliser } from '../../assets/js/commun/ui.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { schema, exemple } from './exemple.js';
 import {
@@ -84,7 +84,7 @@ function demarrer(ctx) {
 
   function dessinerTour() {
     tour.hidden = !auTourDe;
-    remplir(tour, el('span', { 'aria-hidden': 'true' }, '🎤'), `Au tour de ${auTourDe}`);
+    remplir(tour, icone('microphone'), `Au tour de ${auTourDe}`);
   }
 
   function motCourant() {
@@ -179,7 +179,7 @@ function demarrer(ctx) {
                       saisie.focus();
                     },
                   },
-                  '⌫',
+                  icone('delete-left'),
                 ),
               ]
             : null,
@@ -234,12 +234,12 @@ function demarrer(ctx) {
           preparerMot();
         },
       },
-      dernier ? 'Voir le classement' : 'Mot suivant →',
+      dernier ? 'Voir le classement' : ['Mot suivant', icone('arrow-right')],
     );
     const titre = el(
       'p',
       { class: 'motus-resultat__titre' },
-      trouve ? '🎉 Trouvé !' : 'Pas trouvé cette fois…',
+      trouve ? [icone('face-grin-stars'), 'Trouvé !'] : 'Pas trouvé cette fois…',
     );
     remplir(
       resultat,

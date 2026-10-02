@@ -3,7 +3,7 @@
  * et un bouton qui tire un jeu au hasard avec la roue.
  */
 import { JEUX, libelleCourt } from './jeux.js';
-import { el, remplir } from './commun/ui.js';
+import { el, remplir, icone } from './commun/ui.js';
 import { hasardDePage } from './commun/hasard.js';
 import { creerTirage } from './commun/roue.js';
 import { tirerAvecRoue } from './commun/dialogues.js';
@@ -18,8 +18,8 @@ function carteJeu(jeu) {
       el(
         'div',
         { class: 'carte-jeu__entete' },
-        el('span', { class: 'carte-jeu__icone', 'aria-hidden': 'true' }, jeu.icone),
-        el('span', { class: 'carte-jeu__duree' }, `⏱ ${jeu.duree}`),
+        el('span', { class: 'carte-jeu__icone' }, icone(jeu.icone)),
+        el('span', { class: 'carte-jeu__duree' }, icone('clock', { style: 'regular' }), jeu.duree),
       ),
       el(
         'div',
@@ -31,7 +31,12 @@ function carteJeu(jeu) {
           { class: 'carte-jeu__preparation' },
           `À préparer : ${jeu.preparation.toLowerCase()}`,
         ),
-        el('p', { class: 'carte-jeu__jouer', 'aria-hidden': 'true' }, 'Jouer →'),
+        el(
+          'p',
+          { class: 'carte-jeu__jouer', 'aria-hidden': 'true' },
+          'Jouer',
+          icone('arrow-right', { classe: 'icone--apres' }),
+        ),
       ),
     ),
   );
@@ -52,10 +57,10 @@ bouton.addEventListener('click', async () => {
     libelles: JEUX.map(libelleCourt),
     tirage,
     hasard,
-    resultatDe: (i) => `${JEUX[i].icone} ${JEUX[i].titre}`,
+    resultatDe: (i) => [icone(JEUX[i].icone), JEUX[i].titre],
     detailDe: (i) => JEUX[i].accroche,
-    libelleValider: (i) => `Jouer à ${JEUX[i].titre} →`,
-    optionsRoue: { longueurMax: 18, taillePolice: 7 },
+    libelleValider: (i) => [`Jouer à ${JEUX[i].titre}`, icone('arrow-right')],
+    optionsRoue: { longueurMax: 16, taillePolice: 7.5 },
   });
   if (index !== null) window.location.href = `jeux/${JEUX[index].slug}/`;
 });

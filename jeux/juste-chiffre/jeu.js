@@ -1,12 +1,12 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, animer, focaliser } from '../../assets/js/commun/ui.js';
+import { el, remplir, icone, animer, focaliser } from '../../assets/js/commun/ui.js';
 import { creerMinuteur } from '../../assets/js/commun/chrono.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { lireNombre, formaterNombre } from '../../assets/js/commun/nombres.js';
 import { schema, exemple } from './exemple.js';
 import { MESSAGES, comparer, fourchette, decrireFourchette, suivant } from './logique.js';
 
-const FLECHES = { plus: '⬆', moins: '⬇', juste: '🎯' };
+const FLECHES = { plus: 'arrow-up', moins: 'arrow-down', juste: 'bullseye' };
 
 function demarrer(ctx) {
   const { duree, tourDeRole } = ctx.reglages;
@@ -79,10 +79,14 @@ function demarrer(ctx) {
         onclick: () => {
           if (minuteur.enCours) minuteur.pause();
           else minuteur.demarrer();
-          pause.textContent = minuteur.enCours ? '⏸ Pause' : '▶ Reprendre';
+          remplir(
+            pause,
+            ...(minuteur.enCours ? [icone('pause'), 'Pause'] : [icone('play'), 'Reprendre']),
+          );
         },
       },
-      '⏸ Pause',
+      icone('pause'),
+      'Pause',
     );
     const devoiler = el(
       'button',
@@ -100,7 +104,7 @@ function demarrer(ctx) {
     rafraichirJoueur = () => {
       const joueur = joueurCourant();
       tour.hidden = !joueur;
-      remplir(tour, el('span', { 'aria-hidden': 'true' }, '🎤'), `Au tour de ${joueur}`);
+      remplir(tour, icone('microphone'), `Au tour de ${joueur}`);
       etiquette.textContent = joueur ? `Proposition de ${joueur}` : 'Proposition';
     };
     rafraichirJoueur();
@@ -116,7 +120,7 @@ function demarrer(ctx) {
               { class: `juste__entree juste__entree--${h.resultat}` },
               el('span', { class: 'juste__valeur' }, formaterNombre(h.valeur)),
               h.joueur ? el('span', { class: 'juste__joueur' }, h.joueur) : null,
-              el('span', { class: 'juste__sens' }, `${FLECHES[h.resultat]} ${h.resultat}`),
+              el('span', { class: 'juste__sens' }, icone(FLECHES[h.resultat]), h.resultat),
             ),
           ),
       );
@@ -145,9 +149,9 @@ function demarrer(ctx) {
         'p',
         { class: 'juste__resultat' },
         trouve
-          ? `🎉 Trouvé${gagnant ? ` par ${gagnant}` : ''} !`
+          ? [icone('face-grin-stars'), `Trouvé${gagnant ? ` par ${gagnant}` : ''} !`]
           : raison === 'temps'
-            ? '⏰ Temps écoulé !'
+            ? [icone('hourglass-end'), 'Temps écoulé !']
             : 'Réponse',
       );
       const dernier = indexQuestion === questions.length - 1;
@@ -164,7 +168,7 @@ function demarrer(ctx) {
           'div',
           { class: 'actions-jeu' },
           gagnant
-            ? el('p', { class: 'juste__point' }, `✓ +1 point pour ${gagnant}`)
+            ? el('p', { class: 'juste__point' }, icone('check'), `+1 point pour ${gagnant}`)
             : trouve
               ? creerBoutonPoints(ctx, { titre: 'Qui a trouvé ?' })
               : null,
@@ -183,7 +187,7 @@ function demarrer(ctx) {
                 afficherQuestion();
               },
             },
-            dernier ? 'Voir le classement' : 'Question suivante →',
+            dernier ? 'Voir le classement' : ['Question suivante', icone('arrow-right')],
           ),
         ),
       );
@@ -207,8 +211,7 @@ function demarrer(ctx) {
       saisie.value = '';
       remplir(
         verdict,
-        el('span', { class: 'juste__fleche', 'aria-hidden': 'true' }, FLECHES[resultat]),
-        ' ',
+        el('span', { class: 'juste__fleche' }, icone(FLECHES[resultat])),
         MESSAGES[resultat],
       );
       verdict.className = `juste__verdict juste__verdict--${resultat}`;

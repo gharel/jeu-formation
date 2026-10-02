@@ -1,5 +1,5 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, animer, focaliser } from '../../assets/js/commun/ui.js';
+import { el, remplir, icone, animer, focaliser } from '../../assets/js/commun/ui.js';
 import { creerMancheAPaliers } from '../../assets/js/commun/manche-paliers.js';
 import {
   adresseImage,
@@ -52,7 +52,9 @@ async function demarrer(ctx) {
         const titre = el(
           'p',
           { class: 'zoom__verdict' },
-          trouve ? '🎉 Bien vu !' : '⏰ Personne n’a trouvé…',
+          trouve
+            ? [icone('face-grin-stars'), 'Bien vu !']
+            : [icone('hourglass-end'), 'Personne n’a trouvé…'],
         );
         remplir(
           resultat,
@@ -67,7 +69,8 @@ async function demarrer(ctx) {
             ? el(
                 'p',
                 { class: 'zoom__gain' },
-                `✓ +${points} point${points > 1 ? 's' : ''} pour ${prenom}`,
+                icone('check'),
+                `+${points} point${points > 1 ? 's' : ''} pour ${prenom}`,
               )
             : null,
           el(
@@ -87,7 +90,7 @@ async function demarrer(ctx) {
                   afficherImage();
                 },
               },
-              dernier ? 'Voir le classement' : 'Image suivante →',
+              dernier ? 'Voir le classement' : ['Image suivante', icone('arrow-right')],
             ),
           ),
         );

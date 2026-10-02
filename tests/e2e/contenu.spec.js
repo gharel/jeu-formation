@@ -11,7 +11,7 @@ test('le contenu s’exporte en JSON puis se réimporte', async ({ page }, testI
 
   const [telechargement] = await Promise.all([
     page.waitForEvent('download'),
-    page.getByRole('button', { name: '⬇ Exporter' }).click(),
+    page.getByRole('button', { name: 'Exporter' }).click(),
   ]);
   expect(telechargement.suggestedFilename()).toMatch(/^skazy-motus-\d{4}-\d{2}-\d{2}\.json$/);
   const chemin = testInfo.outputPath('export.json');
@@ -59,8 +59,8 @@ test('le contenu d’exemple revient en un clic', async ({ page }) => {
   await ouvrirJeu(page, 'motus');
   await page.getByRole('button', { name: /Préparer le contenu/ }).click();
   await page.getByLabel('Mot à deviner').first().fill('octet');
-  await page.getByRole('button', { name: '↺ Contenu d’exemple' }).click();
+  await page.getByRole('button', { name: 'Contenu d’exemple' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Remplacer' }).click();
-  await page.getByRole('button', { name: '👁 Afficher les réponses' }).click();
+  await page.getByRole('button', { name: 'Afficher les réponses' }).click();
   await expect(page.getByLabel('Mot à deviner').first()).toHaveValue('CLAVIER');
 });

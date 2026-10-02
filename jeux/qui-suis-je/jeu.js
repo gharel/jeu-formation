@@ -1,5 +1,5 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, animer, focaliser } from '../../assets/js/commun/ui.js';
+import { el, remplir, icone, animer, focaliser } from '../../assets/js/commun/ui.js';
 import { creerMancheAPaliers } from '../../assets/js/commun/manche-paliers.js';
 import { elementsDeListe } from '../../assets/js/commun/contenu.js';
 import { schema, exemple } from './exemple.js';
@@ -47,7 +47,9 @@ function demarrer(ctx) {
         const titre = el(
           'p',
           { class: 'qsj__verdict' },
-          trouve ? '🎉 Bien joué !' : '⏰ Personne n’a trouvé…',
+          trouve
+            ? [icone('face-grin-stars'), 'Bien joué !']
+            : [icone('hourglass-end'), 'Personne n’a trouvé…'],
         );
         remplir(
           resultat,
@@ -62,7 +64,8 @@ function demarrer(ctx) {
             ? el(
                 'p',
                 { class: 'qsj__gain' },
-                `✓ +${points} point${points > 1 ? 's' : ''} pour ${prenom}`,
+                icone('check'),
+                `+${points} point${points > 1 ? 's' : ''} pour ${prenom}`,
               )
             : null,
           el(
@@ -82,7 +85,7 @@ function demarrer(ctx) {
                   afficherMystere();
                 },
               },
-              dernier ? 'Voir le classement' : 'Mystère suivant →',
+              dernier ? 'Voir le classement' : ['Mystère suivant', icone('arrow-right')],
             ),
           ),
         );

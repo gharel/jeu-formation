@@ -1,5 +1,5 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, animer, focaliser } from '../../assets/js/commun/ui.js';
+import { el, remplir, icone, animer, focaliser } from '../../assets/js/commun/ui.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { elementsDeListe } from '../../assets/js/commun/contenu.js';
 import { schema, exemple } from './exemple.js';
@@ -136,7 +136,7 @@ function demarrer(ctx) {
                 },
                 el('span', { class: 'ordre__lettre', 'aria-hidden': 'true' }, carte.lettre),
                 el('span', { class: 'ordre__texte' }, carte.texte),
-                verrou ? el('span', { class: 'ordre__coche', 'aria-hidden': 'true' }, '✓') : null,
+                verrou ? el('span', { class: 'ordre__coche' }, icone('check')) : null,
               )
             : el('span', { class: 'ordre__vide' }, '…');
           return el(
@@ -176,12 +176,12 @@ function demarrer(ctx) {
       saisie.focus();
     }
 
-    function conclure(texte, boutons) {
+    function conclure(texte, boutons, nomIcone) {
       terminee = true;
       formulaire.hidden = true;
       dessiner();
       const dernier = index === procedures.length - 1;
-      const titreFin = el('p', { class: 'ordre__fin' }, texte);
+      const titreFin = el('p', { class: 'ordre__fin' }, icone(nomIcone), texte);
       remplir(
         actions,
         boutons,
@@ -199,7 +199,7 @@ function demarrer(ctx) {
               afficherProcedure();
             },
           },
-          dernier ? 'Voir le classement' : 'Procédure suivante →',
+          dernier ? 'Voir le classement' : ['Procédure suivante', icone('arrow-right')],
         ),
       );
       remplir(message, titreFin);
@@ -212,15 +212,16 @@ function demarrer(ctx) {
       const points = pointsPourEssai(essai, essaisMax);
       ctx.sons.succes();
       conclure(
-        `🎉 Bravo ! Trouvé en ${essai} essai${essai > 1 ? 's' : ''}.`,
+        `Bravo ! Trouvé en ${essai} essai${essai > 1 ? 's' : ''}.`,
         creerBoutonPoints(ctx, { points, titre: 'Qui a trouvé le bon ordre ?', multiple: true }),
+        'face-grin-stars',
       );
     }
 
     function echouer() {
       for (const carte of cartes) emplacements[carte.etape] = carte;
       for (let i = 0; i < emplacements.length; i++) verrouilles.add(i);
-      conclure('Voici le bon ordre !', null);
+      conclure('Voici le bon ordre !', null, 'list-ol');
     }
 
     formulaire.addEventListener('submit', (e) => {

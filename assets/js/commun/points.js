@@ -2,7 +2,7 @@
  * Bouton « Attribuer le point » : ouvre la liste des prénoms et ajoute les points choisis.
  * Sans participants, renvoie null (on joue sans classement).
  */
-import { el, remplir } from './ui.js';
+import { el, remplir, icone } from './ui.js';
 
 export function creerBoutonPoints(
   ctx,
@@ -13,7 +13,7 @@ export function creerBoutonPoints(
   const bouton = el(
     'button',
     { type: 'button', class: 'bouton bouton--principal bouton--grand' },
-    el('span', { 'aria-hidden': 'true' }, '🏆 '),
+    icone('trophy'),
     `Attribuer ${libelle}`,
   );
   bouton.addEventListener('click', async () => {
@@ -21,7 +21,7 @@ export function creerBoutonPoints(
     if (!choisis.length) return;
     for (const prenom of choisis) ctx.scores.ajouter(prenom, points);
     bouton.disabled = true;
-    remplir(bouton, `✓ +${libelle} pour ${choisis.join(', ')}`);
+    remplir(bouton, icone('check'), `+${libelle} pour ${choisis.join(', ')}`);
     ctx.annoncer(`${libelle} pour ${choisis.join(', ')}`);
     ctx.sons.succes();
     bouton.dispatchEvent(new CustomEvent('points-attribues', { bubbles: true, detail: choisis }));

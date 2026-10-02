@@ -4,3 +4,4 @@ test-results/
 coverage/
 package-lock.json
 assets/img/*.svg
+assets/vendor/

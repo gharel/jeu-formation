@@ -68,6 +68,27 @@ img {
   display: none !important;
 }
 
+/* Icônes Font Awesome : un petit espace avant le texte qui suit */
+.icone {
+  margin-inline-end: 0.4em;
+}
+
+.bouton .icone,
+.bouton-bandeau .icone,
+.bouton-icone .icone,
+.puce__retirer .icone {
+  margin-inline-end: 0;
+}
+
+/* Icône placée après le texte (flèche « suivant ») */
+.icone--apres {
+  margin-inline: 0.4em 0;
+}
+
+.bouton .icone--apres {
+  margin-inline: 0;
+}
+
 .visuellement-cache {
   position: absolute !important;
   width: 1px;
@@ -142,6 +163,9 @@ img {
 }
 
 .bouton-bandeau {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
   font: inherit;
   font-size: 0.95rem;
   font-weight: 700;

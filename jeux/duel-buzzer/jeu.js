@@ -1,5 +1,12 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, animer, focaliser, ecouterClavier } from '../../assets/js/commun/ui.js';
+import {
+  el,
+  remplir,
+  icone,
+  animer,
+  focaliser,
+  ecouterClavier,
+} from '../../assets/js/commun/ui.js';
 import { schema, exemple } from './exemple.js';
 import { creerDuel, autre, tirerDuellistes, TOUCHES } from './logique.js';
 
@@ -69,7 +76,8 @@ function demarrer(ctx) {
               ctx.sons.ding();
             },
           },
-          '🎲 Tirer au sort',
+          icone('dice'),
+          'Tirer au sort',
         ),
       );
     }
@@ -155,7 +163,7 @@ function demarrer(ctx) {
           class: `bouton bouton--grand ${classe}`,
           onclick: () => {
             action();
-            // Le focus revient au plateau : A, L, Entrée et ⌫ restent actifs
+            // Le focus revient au plateau : A, L, Entrée et Retour arrière restent actifs
             plateau.focus();
           },
         },
@@ -213,9 +221,11 @@ function demarrer(ctx) {
         actionEntree = () => valider(true);
         remplir(
           actions,
-          bouton('✓ Bonne (Entrée)', 'bouton--succes', () => valider(true)),
-          bouton('✗ Mauvaise (⌫)', 'bouton--danger', () => valider(false)),
-          bouton('👁 Voir la réponse', 'bouton--discret', montrerReponse),
+          bouton([icone('check'), 'Bonne (Entrée)'], 'bouton--succes', () => valider(true)),
+          bouton([icone('xmark'), 'Mauvaise (Retour arrière)'], 'bouton--danger', () =>
+            valider(false),
+          ),
+          bouton([icone('eye'), 'Voir la réponse'], 'bouton--discret', montrerReponse),
         );
       } else {
         dessinerFin();
@@ -227,7 +237,7 @@ function demarrer(ctx) {
       const derniere = indexQuestion >= questions.length - 1;
       if (duel.vainqueur) {
         const gagnant = noms[duel.vainqueur];
-        remplir(statut, `🏆 ${gagnant} gagne le duel !`);
+        remplir(statut, icone('trophy'), `${gagnant} gagne le duel !`);
         cotes[duel.vainqueur].bloc.classList.add('duel__joueur--vainqueur');
         actionEntree = null;
         remplir(

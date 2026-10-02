@@ -32,16 +32,16 @@ test('Zoom mystère : l’image se dézoome, Stop fige, la bonne réponse marque
   expect(await echelle(page)).toBeCloseTo(10, 0);
   await verifierAccessibilite(page);
 
-  await page.getByRole('button', { name: '▶ Démarrer' }).click();
+  await page.getByRole('button', { name: 'Démarrer' }).click();
   await expect(page.getByRole('list', { name: 'Points en jeu : 4' })).toBeVisible({
     timeout: 4000,
   });
   await page.getByRole('button', { name: /Stop/ }).click();
   await expect.poll(() => echelle(page)).toBeLessThan(10);
 
-  await page.getByRole('button', { name: '✓ Bonne réponse' }).click();
+  await page.getByRole('button', { name: 'Bonne réponse' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Ana' }).click();
-  await expect(page.locator('#cadre').getByText('✓ +4 points pour Ana')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('+4 points pour Ana')).toBeVisible();
   await expect(pointsDe(page, 'Ana')).toHaveText('4');
   await expect(page.locator('.reponse-revelee')).toContainText('Le bouton Enregistrer');
   await expect.poll(() => echelle(page)).toBeCloseTo(1, 1);

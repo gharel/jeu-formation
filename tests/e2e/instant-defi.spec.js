@@ -17,7 +17,7 @@ async function preparerDeuxDefis(page) {
       .last()
       .click();
   }
-  await page.getByRole('button', { name: '👁 Afficher les réponses' }).click();
+  await page.getByRole('button', { name: 'Afficher les réponses' }).click();
   await defis.nth(0).getByLabel('Début du défi').selectOption('perso');
   await defis.nth(0).getByLabel('Votre début (si « Autre »)').fill('3 secondes pour trouver…');
   await defis.nth(0).getByLabel('Fin du défi').fill('la corbeille');
@@ -60,7 +60,7 @@ test('une partie d’Instant défi : roue, chrono, points', async ({ page }) => 
   await expect(pointsDe(page, 'Bob')).toHaveText('0');
 
   // Deuxième défi au clavier : Espace lance la roue, puis le chrono, puis l'arrête
-  await page.getByRole('button', { name: 'Défi suivant →' }).click();
+  await page.getByRole('button', { name: 'Défi suivant' }).click();
   await expect(page.locator('#cadre').getByText('1 défi dans la roue')).toBeVisible();
   await page.keyboard.press('Space');
   await expect(enonce).not.toHaveText(texte);

@@ -1,5 +1,5 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, animer, focaliser } from '../../assets/js/commun/ui.js';
+import { el, remplir, icone, animer, focaliser } from '../../assets/js/commun/ui.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { lire, ecrire } from '../../assets/js/commun/stockage.js';
 import { schema, exemple } from './exemple.js';
@@ -39,7 +39,11 @@ function creerBatterie(crans) {
         'aria-label',
         `Batterie : ${restants} cran${restants > 1 ? 's' : ''} sur ${crans}`,
       );
-      remplir(libelle, restants ? `🔋 Batterie : ${restants} / ${crans}` : '🪫 Batterie à plat');
+      remplir(
+        libelle,
+        icone(restants ? 'battery-half' : 'battery-empty'),
+        restants ? `Batterie : ${restants} / ${crans}` : 'Batterie à plat',
+      );
     },
   };
 }
@@ -65,7 +69,7 @@ function demarrer(ctx) {
     const tour = el('p', { class: 'au-tour-de', hidden: true });
     rafraichirTour = () => {
       tour.hidden = !auTourDe || fini;
-      remplir(tour, el('span', { 'aria-hidden': 'true' }, '🎤'), `Au tour de ${auTourDe}`);
+      remplir(tour, icone('microphone'), `Au tour de ${auTourDe}`);
     };
     rafraichirTour();
 
@@ -228,7 +232,9 @@ function demarrer(ctx) {
       const titre = el(
         'p',
         { class: 'lettres__verdict' },
-        trouve ? '🎉 Mot découvert !' : '🪫 Batterie à plat !',
+        trouve
+          ? [icone('face-grin-stars'), 'Mot découvert !']
+          : [icone('battery-empty'), 'Batterie à plat !'],
       );
       remplir(
         resultat,
@@ -257,7 +263,7 @@ function demarrer(ctx) {
                 afficherMot();
               },
             },
-            dernier ? 'Voir le classement' : 'Mot suivant →',
+            dernier ? 'Voir le classement' : ['Mot suivant', icone('arrow-right')],
           ),
         ),
       );

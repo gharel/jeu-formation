@@ -1,5 +1,12 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, animer, focaliser, ecouterClavier } from '../../assets/js/commun/ui.js';
+import {
+  el,
+  remplir,
+  icone,
+  animer,
+  focaliser,
+  ecouterClavier,
+} from '../../assets/js/commun/ui.js';
 import { elementsDeListe } from '../../assets/js/commun/contenu.js';
 import { schema, exemple } from './exemple.js';
 import { NOMBRE_INDICES, pointsPourIndice, nombreDeLettres } from './logique.js';
@@ -89,7 +96,8 @@ function demarrer(ctx) {
       const trouve = el(
         'button',
         { type: 'button', class: 'bouton bouton--succes bouton--grand', onclick: () => trouver() },
-        `✓ Trouvé ! (${pluriel(points, 'point')})`,
+        icone('check'),
+        `Trouvé ! (${pluriel(points, 'point')})`,
       );
       const suivant =
         affiches < indices.length
@@ -149,13 +157,20 @@ function demarrer(ctx) {
       const titre = el(
         'p',
         { class: 'pyramide__verdict' },
-        trouve ? `🎉 Trouvé${prenom ? ` par ${prenom}` : ''} !` : 'Personne n’a trouvé…',
+        trouve
+          ? [icone('face-grin-stars'), `Trouvé${prenom ? ` par ${prenom}` : ''} !`]
+          : [icone('hourglass-end'), 'Personne n’a trouvé…'],
       );
       remplir(
         resultat,
         titre,
         prenom
-          ? el('p', { class: 'pyramide__gain' }, `✓ +${pluriel(points, 'point')} pour ${prenom}`)
+          ? el(
+              'p',
+              { class: 'pyramide__gain' },
+              icone('check'),
+              `+${pluriel(points, 'point')} pour ${prenom}`,
+            )
           : null,
       );
       const suite = () => {
@@ -172,7 +187,7 @@ function demarrer(ctx) {
         el(
           'button',
           { type: 'button', class: 'bouton bouton--sombre bouton--grand', onclick: suite },
-          dernier ? 'Voir le classement' : 'Mot suivant →',
+          dernier ? 'Voir le classement' : ['Mot suivant', icone('arrow-right')],
         ),
       );
       animer(resultat, 'apparition');

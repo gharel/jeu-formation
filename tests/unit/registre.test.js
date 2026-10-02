@@ -35,9 +35,9 @@ describe('liste des jeux', () => {
   });
 
   it('donne des libellés courts pour la roue des jeux', () => {
-    expect(libelleCourt(trouverJeu('juste-chiffre'))).toBe('🎯 Juste Chiffre');
-    expect(libelleCourt(trouverJeu('debout-assis'))).toBe('🧍 Debout ou assis');
-    for (const jeu of JEUX) expect(libelleCourt(jeu).length).toBeLessThanOrEqual(18);
+    expect(libelleCourt(trouverJeu('juste-chiffre'))).toBe('Juste Chiffre');
+    expect(libelleCourt(trouverJeu('debout-assis'))).toBe('Debout ou assis');
+    for (const jeu of JEUX) expect(libelleCourt(jeu).length).toBeLessThanOrEqual(16);
   });
 
   describe.each(JEUX)('$titre', (jeu) => {

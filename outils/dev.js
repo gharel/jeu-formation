@@ -49,7 +49,7 @@ function ouvrir(adresse) {
 
 if (!(await portLibre(PORT))) {
   console.error(
-    `\n✖ Le port ${PORT} est déjà utilisé.\n` +
+    `\nErreur : le port ${PORT} est déjà utilisé.\n` +
       `  • Le site tourne peut-être déjà dans un autre terminal : ouvrez ${ADRESSE}\n` +
       '  • Sinon, arrêtez l’autre serveur (Ctrl+C dans son terminal),\n' +
       '    ou choisissez un autre port :\n' +
@@ -68,8 +68,8 @@ serveur.on('exit', (code) => process.exit(code ?? 0));
 for (const signal of ['SIGINT', 'SIGTERM']) process.on(signal, () => serveur.kill(signal));
 
 if (await attendreServeur()) {
-  console.log(`\n✔ Mini-jeux Skazy Formation : ${ADRESSE}   (Ctrl+C pour arrêter)\n`);
+  console.log(`\nPrêt : mini-jeux Skazy Formation sur ${ADRESSE}   (Ctrl+C pour arrêter)\n`);
   if (ouvrirNavigateur) ouvrir(ADRESSE);
 } else {
-  console.error(`\n✖ Le serveur ne répond pas sur ${ADRESSE}.\n`);
+  console.error(`\nErreur : le serveur ne répond pas sur ${ADRESSE}.\n`);
 }

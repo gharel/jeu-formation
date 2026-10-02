@@ -12,15 +12,15 @@ export const NOMBRE_MAX = 60;
 export const LONGUEUR_INFO = 60;
 
 export const THEMES = [
-  { valeur: 'passion', libelle: 'Passion', icone: '❤️' },
-  { valeur: 'loisir', libelle: 'Loisir', icone: '🎯' },
-  { valeur: 'film', libelle: 'Film préféré', icone: '🎬' },
-  { valeur: 'musique', libelle: 'Musique préférée', icone: '🎵' },
-  { valeur: 'dessert', libelle: 'Dessert préféré', icone: '🍰' },
-  { valeur: 'plat', libelle: 'Plat préféré', icone: '🍽️' },
-  { valeur: 'voyage', libelle: 'Destination de rêve', icone: '✈️' },
-  { valeur: 'animal', libelle: 'Animal préféré', icone: '🐾' },
-  { valeur: 'autre', libelle: 'Autre', icone: '✨' },
+  { valeur: 'passion', libelle: 'Passion', icone: 'heart' },
+  { valeur: 'loisir', libelle: 'Loisir', icone: 'puzzle-piece' },
+  { valeur: 'film', libelle: 'Film préféré', icone: 'film' },
+  { valeur: 'musique', libelle: 'Musique préférée', icone: 'music' },
+  { valeur: 'dessert', libelle: 'Dessert préféré', icone: 'ice-cream' },
+  { valeur: 'plat', libelle: 'Plat préféré', icone: 'utensils' },
+  { valeur: 'voyage', libelle: 'Destination de rêve', icone: 'plane' },
+  { valeur: 'animal', libelle: 'Animal préféré', icone: 'paw' },
+  { valeur: 'autre', libelle: 'Autre', icone: 'star' },
 ];
 
 /** Nettoie un prénom saisi : espaces superflus retirés, longueur limitée. */

@@ -3,7 +3,7 @@
  * l'animateur appuie sur Stop quand quelqu'un répond, puis valide ou reprend.
  * Espace : Démarrer → Stop → Reprendre.
  */
-import { el, remplir, ecouterClavier } from './ui.js';
+import { el, remplir, icone, ecouterClavier } from './ui.js';
 import { creerPaliers, creerAffichagePaliers } from './paliers.js';
 
 /**
@@ -28,24 +28,25 @@ export function creerMancheAPaliers({ ctx, dureePalier, nombre = 5, surValeur, s
     surFin: () => finir({ trouve: false }),
   });
 
-  function bouton(texte, classe, action) {
+  function bouton(nomIcone, texte, classe, action) {
     return el(
       'button',
       { type: 'button', class: `bouton bouton--grand ${classe}`, onclick: action },
+      icone(nomIcone),
       texte,
     );
   }
 
   function dessiner() {
     if (etat === 'attente') {
-      remplir(actions, bouton('▶ Démarrer', 'bouton--principal', demarrer));
+      remplir(actions, bouton('play', 'Démarrer', 'bouton--principal', demarrer));
     } else if (etat === 'enCours') {
-      remplir(actions, bouton('✋ Stop ! Quelqu’un répond', 'bouton--sombre', stop));
+      remplir(actions, bouton('hand', 'Stop ! Quelqu’un répond', 'bouton--sombre', stop));
     } else if (etat === 'pause') {
       remplir(
         actions,
-        bouton('✓ Bonne réponse', 'bouton--succes', bonne),
-        bouton('✗ Mauvaise réponse, on reprend', 'bouton--danger', reprendre),
+        bouton('check', 'Bonne réponse', 'bouton--succes', bonne),
+        bouton('xmark', 'Mauvaise réponse, on reprend', 'bouton--danger', reprendre),
       );
     } else {
       remplir(actions);

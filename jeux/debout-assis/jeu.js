@@ -1,16 +1,23 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, animer, focaliser, ecouterClavier } from '../../assets/js/commun/ui.js';
+import {
+  el,
+  remplir,
+  icone,
+  animer,
+  focaliser,
+  ecouterClavier,
+} from '../../assets/js/commun/ui.js';
 import { creerMinuteur } from '../../assets/js/commun/chrono.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { schema, exemple } from './exemple.js';
 import { consigne, appliquerEliminations, gagnant } from './logique.js';
 
 function tuileGeste(c, sens) {
-  const { geste, icone } = c[sens];
+  const { geste, icone: nomIcone } = c[sens];
   return el(
     'div',
     { class: `debout__tuile debout__tuile--${sens}` },
-    el('span', { class: 'debout__icone', 'aria-hidden': 'true' }, icone),
+    el('span', { class: 'debout__icone' }, icone(nomIcone)),
     el('span', { class: 'debout__geste' }, geste),
     el('span', { class: 'debout__sens' }, `= ${sens.toUpperCase()}`),
   );
@@ -54,7 +61,7 @@ function demarrer(ctx) {
       el(
         'div',
         { class: 'panneau debout' },
-        el('p', { class: 'debout__grande-icone', 'aria-hidden': 'true' }, c.vrai.icone),
+        el('p', { class: 'debout__grande-icone' }, icone(c.vrai.icone)),
         titre,
         el('div', { class: 'debout__tuiles' }, tuileGeste(c, 'vrai'), tuileGeste(c, 'faux')),
         survie
@@ -121,7 +128,9 @@ function demarrer(ctx) {
         el(
           'p',
           { class: 'debout__bonne' },
-          `Les bonnes réponses : ${c[sens].icone} ${c[sens].geste.toLowerCase()}`,
+          'Les bonnes réponses : ',
+          icone(c[sens].icone),
+          c[sens].geste.toLowerCase(),
         ),
         a.explication ? el('p', { class: 'debout__explication' }, a.explication) : null,
       );
@@ -140,7 +149,7 @@ function demarrer(ctx) {
           class: 'bouton bouton--sombre bouton--grand',
           onclick: () => passerALaSuite(),
         },
-        dernier ? 'Voir le classement' : 'Affirmation suivante →',
+        dernier ? 'Voir le classement' : ['Affirmation suivante', icone('arrow-right')],
       );
       actionPrincipale = () => passerALaSuite();
 
@@ -194,7 +203,8 @@ function demarrer(ctx) {
                 ? el(
                     'p',
                     { class: 'debout__info debout__info--gagnant' },
-                    `🏆 ${champion} est le dernier en jeu !`,
+                    icone('trophy'),
+                    `${champion} est le dernier en jeu !`,
                   )
                 : null,
               blocEnJeu(),

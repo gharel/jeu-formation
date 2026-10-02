@@ -2,7 +2,15 @@ import js from '@eslint/js';
 import globals from 'globals';
 
 export default [
-  { ignores: ['node_modules/', 'playwright-report/', 'test-results/', 'coverage/'] },
+  {
+    ignores: [
+      'node_modules/',
+      'playwright-report/',
+      'test-results/',
+      'coverage/',
+      'assets/vendor/',
+    ],
+  },
   js.configs.recommended,
   {
     files: ['assets/**/*.js', 'jeux/**/*.js'],

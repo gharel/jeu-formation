@@ -1,5 +1,12 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, focaliser, ecouterClavier, animer } from '../../assets/js/commun/ui.js';
+import {
+  el,
+  remplir,
+  icone,
+  focaliser,
+  ecouterClavier,
+  animer,
+} from '../../assets/js/commun/ui.js';
 import { creerRoue, couleursRoue } from '../../assets/js/commun/roue.js';
 import { creerMinuteur } from '../../assets/js/commun/chrono.js';
 import { entierEntre } from '../../assets/js/commun/hasard.js';
@@ -23,7 +30,7 @@ function demarrer(ctx) {
 
   function dessinerTour(etiquette) {
     etiquette.hidden = !auTourDe;
-    remplir(etiquette, el('span', { 'aria-hidden': 'true' }, '🎤'), `Au tour de ${auTourDe}`);
+    remplir(etiquette, icone('microphone'), `Au tour de ${auTourDe}`);
   }
 
   function afficherRoue() {
@@ -102,8 +109,8 @@ function demarrer(ctx) {
           ? el(
               'button',
               { type: 'button', class: 'bouton bouton--grand', onclick: () => ctx.designer() },
-              el('span', { 'aria-hidden': 'true' }, '🎡'),
-              ' Désigner un joueur',
+              icone('arrows-spin'),
+              'Désigner un joueur',
             )
           : null,
         depart,
@@ -121,7 +128,8 @@ function demarrer(ctx) {
           class: 'bouton bouton--succes bouton--grand',
           onclick: () => finir(true),
         },
-        '✓ Réussi, on arrête le chrono',
+        icone('check'),
+        'Réussi, on arrête le chrono',
       );
       remplir(actions, stop);
       actionPrincipale = () => finir(true);
@@ -133,8 +141,16 @@ function demarrer(ctx) {
       minuteur.element.classList.add('chrono--compact');
       actionPrincipale = null;
       if (reussi) ctx.sons.succes();
-      const message = reussi ? '🎉 Défi réussi !' : '⏰ Temps écoulé !';
-      remplir(issue, el('p', { class: 'defi__message' }, message));
+      const message = reussi ? 'Défi réussi !' : 'Temps écoulé !';
+      remplir(
+        issue,
+        el(
+          'p',
+          { class: 'defi__message' },
+          icone(reussi ? 'face-grin-stars' : 'hourglass-end'),
+          message,
+        ),
+      );
       animer(issue, 'apparition');
       const dernier = restants.length === 0;
       const suivant = el(
@@ -145,7 +161,7 @@ function demarrer(ctx) {
           onclick: () =>
             dernier ? ctx.terminer({ message: 'Tous les défis ont été joués.' }) : afficherRoue(),
         },
-        dernier ? 'Voir le classement' : 'Défi suivant →',
+        dernier ? 'Voir le classement' : ['Défi suivant', icone('arrow-right')],
       );
       remplir(
         actions,

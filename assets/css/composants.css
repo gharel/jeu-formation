@@ -652,8 +652,12 @@
   border-color: var(--bleu-nuit);
 }
 
-.puce-prenom[aria-pressed='true']::before {
-  content: '✓ ';
+.puce-prenom__coche {
+  display: none;
+}
+
+.puce-prenom[aria-pressed='true'] .puce-prenom__coche {
+  display: inline-block;
 }
 
 /* ---------- Écran de jeu ---------- */
@@ -933,6 +937,15 @@
 
 .podium__medaille {
   font-size: 2.6rem;
+  color: var(--bleu-nuit);
+}
+
+.podium__marche--2 .podium__medaille {
+  color: var(--gris);
+}
+
+.podium__marche--3 .podium__medaille {
+  color: var(--orange);
 }
 
 .podium__prenom {

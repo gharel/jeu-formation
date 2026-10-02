@@ -51,8 +51,8 @@ test('Duel buzzer : faux départ refusé, buzz, main adverse, victoire', async (
   await expect(page.locator('#cadre').getByText('Bob répond !')).toBeVisible();
   await page.keyboard.press('Backspace');
   await expect(page.locator('#cadre').getByText('Raté ! Ana peut répondre')).toBeVisible();
-  await page.getByRole('button', { name: '✓ Bonne (Entrée)' }).click();
-  await expect(page.locator('#cadre').getByText('🏆 Ana gagne le duel !')).toBeVisible();
+  await page.getByRole('button', { name: 'Bonne (Entrée)' }).click();
+  await expect(page.locator('#cadre').getByText('Ana gagne le duel !')).toBeVisible();
   await expect(pointsDe(page, 'Ana')).toHaveText('2');
 
   // Nouveau duel, puis fin
@@ -60,7 +60,7 @@ test('Duel buzzer : faux départ refusé, buzz, main adverse, victoire', async (
   await expect(
     page.locator('#cadre').getByText('8 questions · 2 points pour gagner'),
   ).toBeVisible();
-  await page.getByRole('button', { name: '🎲 Tirer au sort' }).click();
+  await page.getByRole('button', { name: 'Tirer au sort' }).click();
   await page.getByRole('button', { name: 'Commencer le duel' }).click();
   await page.getByRole('button', { name: 'Afficher la question (Entrée)' }).click();
   await page.getByRole('button', { name: 'Personne ne sait' }).click();

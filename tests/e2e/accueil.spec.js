@@ -38,7 +38,7 @@ test('le bouton « Un jeu au hasard » tire un jeu avec la roue et l’ouvre', a
   // L'accroche du jeu s'affiche sous son titre
   await expect(dialogue.locator('.roue-detail')).toContainText(jeu.accroche.slice(0, 12));
   await verifierAccessibilite(page);
-  await dialogue.getByRole('button', { name: `Jouer à ${jeu.titre} →` }).click();
+  await dialogue.getByRole('button', { name: `Jouer à ${jeu.titre}` }).click();
   await expect(page).toHaveURL(new RegExp(`/jeux/${jeu.slug}/$`));
   await expect(page.getByRole('heading', { level: 1, name: jeu.titre })).toBeVisible();
   expect(erreurs).toEqual([]);
@@ -65,7 +65,7 @@ test('une info par participant, affichée par la roue et partagée entre les jeu
   await expect(puces).not.toContainText('ignorée');
   await verifierAccessibilite(page);
 
-  // Ajouter une info à Paul avec ✎
+  // Ajouter une info à Paul avec le crayon
   await page.getByRole('button', { name: 'Ajouter une info sur Paul' }).click();
   const dialogue = page.getByRole('dialog', { name: 'Une info sur Paul' });
   await dialogue.getByLabel('Thème').selectOption('film');

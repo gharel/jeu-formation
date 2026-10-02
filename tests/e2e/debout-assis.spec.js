@@ -29,7 +29,7 @@ test('Debout ou assis : affirmation, compte à rebours, réponse et points', asy
 
   // Le compte à rebours de 3 s révèle la réponse tout seul
   await expect(page.locator('.debout__verdict')).toHaveText('VRAI', { timeout: 6000 });
-  await expect(page.locator('#cadre').getByText('Les bonnes réponses : 🧍 debout')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Les bonnes réponses : debout')).toBeVisible();
 
   // « Tout le monde / personne » coche tous les prénoms
   await page.getByRole('button', { name: /Attribuer/ }).click();
@@ -39,7 +39,7 @@ test('Debout ou assis : affirmation, compte à rebours, réponse et points', asy
     await expect(pointsDe(page, prenom)).toHaveText('1');
 
   // Révéler avant la fin du chrono
-  await page.getByRole('button', { name: 'Affirmation suivante →' }).click();
+  await page.getByRole('button', { name: 'Affirmation suivante' }).click();
   await page.getByRole('button', { name: 'Révéler la réponse' }).click();
   await expect(page.locator('.debout__verdict')).toHaveText('FAUX');
   expect(erreurs).toEqual([]);
@@ -61,13 +61,13 @@ test('mode survie : les éliminés sortent, le dernier en jeu gagne', async ({ p
   await page.getByRole('dialog').getByRole('button', { name: 'Valider' }).click();
   await expect(page.locator('#cadre').getByText('personne n’est éliminé')).toBeVisible();
 
-  await page.getByRole('button', { name: 'Affirmation suivante →' }).click();
+  await page.getByRole('button', { name: 'Affirmation suivante' }).click();
   await page.getByRole('button', { name: 'Révéler la réponse' }).click();
   await page.getByRole('button', { name: 'Éliminer ceux qui se sont trompés' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Ana' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Bob' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Valider' }).click();
-  await expect(page.locator('#cadre').getByText('🏆 Chloé est le dernier en jeu !')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Chloé est le dernier en jeu !')).toBeVisible();
   await page.getByRole('button', { name: 'Voir le classement' }).click();
 
   await expect(page.locator('#cadre').getByText('Chloé est le dernier en jeu !')).toBeVisible();

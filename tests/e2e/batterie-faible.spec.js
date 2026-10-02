@@ -41,19 +41,19 @@ test('Batterie faible : lettres, batterie, mot entier et points', async ({ page 
   // Le mot entier, d'un coup
   await page.getByLabel('Quelqu’un pense avoir trouvé le mot entier ?').fill('clavier');
   await page.getByRole('button', { name: 'Proposer' }).click();
-  await expect(cadre.getByText('🎉 Mot découvert !')).toBeVisible();
+  await expect(cadre.getByText('Mot découvert !')).toBeVisible();
   await attribuerPoints(page, 'Ana');
   await expect(pointsDe(page, 'Ana')).toHaveText('1');
 
   // Mot 2 : PIÈCE JOINTE, l'accent se joue avec E
-  await page.getByRole('button', { name: 'Mot suivant →' }).click();
+  await page.getByRole('button', { name: 'Mot suivant' }).click();
   await taper(page, 'e');
   await expect(page.locator('.lettres__case--trouvee')).toHaveCount(3);
   await expect(page.locator('.lettres__mot')).toContainText('È');
 
   // Trois mauvaises lettres : batterie à plat, le mot est révélé
   for (const l of ['k', 'w', 'x']) await taper(page, l);
-  await expect(cadre.getByText('🪫 Batterie à plat !')).toBeVisible();
+  await expect(cadre.getByText('Batterie à plat !')).toBeVisible();
   await expect(page.locator('.reponse-revelee')).toContainText('PIÈCE JOINTE');
   await expect(page.getByRole('button', { name: /Attribuer/ })).toHaveCount(0);
   await expect(page.locator('.lettres__case--manquante').first()).toBeVisible();

@@ -1,7 +1,7 @@
 /**
  * Fenêtres de dialogue communes : choisir un ou plusieurs prénoms, confirmer, roue des prénoms.
  */
-import { el, remplir } from './ui.js';
+import { el, remplir, icone } from './ui.js';
 import { creerRoue, couleursRoue } from './roue.js';
 import { sons } from './sons.js';
 
@@ -30,7 +30,7 @@ export function ouvrirDialogue({ titre, classe = '', construire, valeurAnnulatio
             'aria-label': 'Fermer',
             onclick: () => dialog.close(),
           },
-          '✕',
+          icone('xmark'),
         ),
       ),
       corps,
@@ -115,6 +115,7 @@ export function choisirPrenoms({
                   }
                 },
               },
+              icone('users'),
               'Tout le monde / personne',
             ),
           ),
@@ -137,6 +138,7 @@ export function choisirPrenoms({
               bouton.setAttribute('aria-pressed', String(choisis.has(prenom)));
             },
           },
+          multiple ? icone('check', { classe: 'puce-prenom__coche' }) : null,
           prenom,
         );
         grille.append(bouton);
@@ -283,7 +285,7 @@ export function modifierInfo({ prenom, info, themes }) {
       const theme = el(
         'select',
         { id: 'info-theme', class: 'champ__controle' },
-        themes.map((t) => el('option', { value: t.valeur }, `${t.icone} ${t.libelle}`)),
+        themes.map((t) => el('option', { value: t.valeur }, t.libelle)),
       );
       theme.value = info?.theme ?? themes[0].valeur;
       const texte = el('input', {

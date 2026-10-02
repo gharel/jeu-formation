@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "dev": "node outils/dev.js",
+    "vendor:fontawesome": "node outils/copier-fontawesome.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -26,6 +27,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
     "@eslint/js": "^10.0.1",
+    "@fortawesome/fontawesome-free": "^7.3.1",
     "@playwright/test": "^1.63.0",
     "eslint": "^10.11.0",
     "fake-indexeddb": "^6.2.5",

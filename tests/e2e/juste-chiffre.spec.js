@@ -36,11 +36,11 @@ test('Le Juste Chiffre : plus, moins, juste, avec tour de rôle', async ({ page 
   // Ana trouve : le point lui revient automatiquement
   await proposer(page, '1989');
   await expect(page.locator('#cadre').getByText('Trouvé par Ana !')).toBeVisible();
-  await expect(page.locator('#cadre').getByText('✓ +1 point pour Ana')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('+1 point pour Ana')).toBeVisible();
   await expect(pointsDe(page, 'Ana')).toHaveText('1');
 
   // Question 2 : on révèle sans trouver
-  await page.getByRole('button', { name: 'Question suivante →' }).click();
+  await page.getByRole('button', { name: 'Question suivante' }).click();
   await expect(page.locator('#cadre').getByText('Question 2 sur 5')).toBeVisible();
   await page.getByRole('button', { name: 'Révéler la réponse' }).click();
   await expect(page.locator('.reponse-revelee')).toContainText('1992');
@@ -57,11 +57,11 @@ test('le minuteur réglé par l’animateur révèle la réponse à zéro', asyn
   await expect(page.locator('.chrono__temps')).toHaveText(/0:0[45]/);
 
   // Pause : le temps se fige
-  await page.getByRole('button', { name: '⏸ Pause' }).click();
+  await page.getByRole('button', { name: 'Pause' }).click();
   const fige = await page.locator('.chrono__temps').textContent();
   await page.waitForTimeout(1500);
   await expect(page.locator('.chrono__temps')).toHaveText(fige);
-  await page.getByRole('button', { name: '▶ Reprendre' }).click();
+  await page.getByRole('button', { name: 'Reprendre' }).click();
 
   await expect(page.locator('#cadre').getByText('Temps écoulé !')).toBeVisible({ timeout: 8000 });
   await expect(page.locator('.reponse-revelee')).toContainText('1989');
@@ -72,7 +72,7 @@ test('une marge de 10 % accepte une réponse proche', async ({ page }) => {
   await lancerPartie(page);
   for (let i = 1; i <= 3; i++) {
     await page.getByRole('button', { name: 'Révéler la réponse' }).click();
-    await page.getByRole('button', { name: 'Question suivante →' }).click();
+    await page.getByRole('button', { name: 'Question suivante' }).click();
   }
   await expect(page.locator('#cadre').getByText('Question 4 sur 5')).toBeVisible();
   await proposer(page, '2 000 000');

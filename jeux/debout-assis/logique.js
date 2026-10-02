@@ -5,13 +5,13 @@
 export const CONSIGNES = {
   debout: {
     depart: 'Tout le monde debout !',
-    vrai: { geste: 'Debout', icone: '🧍' },
-    faux: { geste: 'Assis', icone: '🪑' },
+    vrai: { geste: 'Debout', icone: 'person' },
+    faux: { geste: 'Assis', icone: 'chair' },
   },
   main: {
     depart: 'Préparez vos mains !',
-    vrai: { geste: 'Main levée', icone: '✋' },
-    faux: { geste: 'Main baissée', icone: '👇' },
+    vrai: { geste: 'Main levée', icone: 'hand' },
+    faux: { geste: 'Main baissée', icone: 'hand-point-down' },
   },
 };
 

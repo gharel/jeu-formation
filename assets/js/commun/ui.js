@@ -40,6 +40,18 @@ export function el(balise, attributs = {}, ...enfants) {
   return noeud;
 }
 
+/**
+ * Icône Font Awesome décorative (cachée aux lecteurs d'écran) :
+ * icone('dice') → <i class="fa-solid fa-dice icone" aria-hidden="true"></i>.
+ * Le texte qui l'accompagne doit suffire à comprendre le bouton ou le message.
+ */
+export function icone(nom, { style = 'solid', classe = '' } = {}) {
+  return el('i', {
+    class: `fa-${style} fa-${nom} icone${classe ? ` ${classe}` : ''}`,
+    'aria-hidden': 'true',
+  });
+}
+
 /** Remplace tout le contenu d'un nœud. */
 export function remplir(noeud, ...enfants) {
   noeud.replaceChildren();

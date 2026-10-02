@@ -2,7 +2,7 @@
  * Éditeur générique du contenu d'un jeu, construit à partir de son schéma (voir contenu.js).
  * Les réponses (champs « secret ») sont masquées par défaut : l'écran est peut-être projeté.
  */
-import { el, remplir } from './ui.js';
+import { el, remplir, icone } from './ui.js';
 import { elementVide } from './contenu.js';
 import { lireNombre, formaterNombre } from './nombres.js';
 import { enregistrerImage, lireFichierImage, imageDuCollage, adresseImage } from './images.js';
@@ -193,7 +193,7 @@ function construireListe(champ, lire, ecrire, avecAide) {
               dessiner(Math.max(0, i - 1));
             },
           },
-          '✕',
+          icone('xmark'),
         ),
       );
     });
@@ -379,10 +379,15 @@ export function creerEditeur({ schema, contenu }) {
       onclick: () => {
         const masque = racine.classList.toggle('editeur--masque');
         boutonMasque.setAttribute('aria-pressed', String(!masque));
-        boutonMasque.textContent = masque ? '👁 Afficher les réponses' : '🙈 Masquer les réponses';
+        remplir(
+          boutonMasque,
+          icone(masque ? 'eye' : 'eye-slash'),
+          masque ? 'Afficher les réponses' : 'Masquer les réponses',
+        );
       },
     },
-    '👁 Afficher les réponses',
+    icone('eye'),
+    'Afficher les réponses',
   );
 
   const reglages = (schema.reglages ?? []).length
@@ -428,7 +433,7 @@ export function creerEditeur({ schema, contenu }) {
                 disabled: i === 0,
                 onclick: () => deplacer(i, -1),
               },
-              '↑',
+              icone('arrow-up'),
             ),
             el(
               'button',
@@ -439,7 +444,7 @@ export function creerEditeur({ schema, contenu }) {
                 disabled: i === brouillon.elements.length - 1,
                 onclick: () => deplacer(i, 1),
               },
-              '↓',
+              icone('arrow-down'),
             ),
             el(
               'button',
@@ -452,7 +457,7 @@ export function creerEditeur({ schema, contenu }) {
                   dessinerElements(Math.min(i, brouillon.elements.length - 1));
                 },
               },
-              '✕',
+              icone('xmark'),
             ),
           );
       return el(

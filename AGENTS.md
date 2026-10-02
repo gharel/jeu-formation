@@ -25,6 +25,7 @@ Un site statique de mini-jeux **projetés au vidéoprojecteur** pour casser la m
 | `npm run test:e2e`                 | Tests Playwright de bout en bout + accessibilité axe (**avant chaque push**)        |
 | `npm test`                         | Tests unitaires Vitest seuls                                                        |
 | `npm run format`                   | Formate tout le code avec Prettier                                                  |
+| `npm run vendor:fontawesome`       | Recopie Font Awesome Free dans `assets/vendor/fontawesome/` (après une mise à jour) |
 
 Les pages ne s'ouvrent pas en double-cliquant sur le fichier (`file://`), car les ES modules exigent un serveur. Utiliser `npm run dev`.
 
@@ -58,6 +59,7 @@ jeux/<slug>/
   exemple.js                   Schéma du contenu + contenu d'exemple prêt à jouer
   jeu.css                      Styles propres au jeu
 jeux/zoom-mystere/exemples/    Illustrations SVG du contenu d'exemple de Zoom mystère
+assets/vendor/fontawesome/     Font Awesome Free (CSS + polices woff2 + licence), copié par npm run vendor:fontawesome
 outils/dev.js                  Lance serve sur le port 4173 (refuse un port occupé) et ouvre le navigateur
 tests/unit/                    Vitest (jsdom) : logique des jeux et modules communs
 tests/e2e/                     Playwright : parcours complets, accessibilité, aucune erreur console
@@ -77,6 +79,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
 - **Raccourcis clavier.** On passe par `ecouterClavier()` : il ignore les touches pendant la saisie et quand un dialogue est ouvert. Il faut retirer l'écoute dans la fonction de nettoyage renvoyée par `demarrer()`. Touches réservées : `R` (roue) et `F` (plein écran).
 - **Minuteries.** Tout `setInterval`, chrono ou palier lancé par un jeu est arrêté dans la fonction de nettoyage, sinon il continue après « Quitter la partie ».
 - **Accessibilité.** Le contraste respecte WCAG AA, tout se fait au clavier, les messages importants passent par `role="alert"` ou `ctx.annoncer()`, et les animations sont coupées si l'utilisateur a demandé à réduire les animations (`prefers-reduced-motion`).
+- **Pas d'emoji** dans l'interface : uniquement des icônes Font Awesome Free (style solid ou regular) via `icone('nom')` de `ui.js`, décoratives (`aria-hidden`) : le texte du bouton ou du message doit suffire. `tests/unit/icones.test.js` refuse tout emoji et toute icône inexistante. Une `<option>` ne peut pas contenir d'icône : texte seul.
 - **Format** : Prettier (guillemets simples, 100 colonnes). Lint : ESLint `recommended` + `eqeqeq`, `prefer-const`.
 
 ## Charte graphique
@@ -149,6 +152,7 @@ Si un test échoue, on corrige la cause. Si le test lui-même est faux, on le co
 ## À ne pas faire
 
 - Ajouter un framework, un bundler ou une dépendance chargée à l'exécution sans accord explicite.
+- Utiliser des emojis dans l’interface (icônes Font Awesome à la place).
 - Charger une ressource externe (CDN, Google Fonts, analytics) : le site doit fonctionner hors ligne en salle de formation.
 - Envoyer des données à l'extérieur : prénoms et contenus restent dans le navigateur.
 - Modifier le logo ou introduire des couleurs hors charte.

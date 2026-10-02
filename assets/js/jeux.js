@@ -1,12 +1,12 @@
 /**
  * Liste des mini-jeux. L'accueil affiche une carte par jeu, et chaque jeu
- * a sa page dans jeux/<slug>/index.html.
+ * a sa page dans jeux/<slug>/index.html. `icone` : nom d'une icône Font Awesome (style solid).
  */
 export const JEUX = [
   {
     slug: 'motus',
     titre: 'Motus numérique',
-    icone: '🔤',
+    icone: 'spell-check',
     couleur: 'vert',
     accroche:
       'Devinez 5 mots du numérique en 6 essais. Les lettres se colorent à chaque proposition.',
@@ -16,7 +16,7 @@ export const JEUX = [
   {
     slug: 'instant-defi',
     titre: 'Instant défi',
-    icone: '⏱️',
+    icone: 'stopwatch',
     couleur: 'orange',
     accroche: 'La roue tire un défi éclair : « 30 secondes pour trouver… ». Top chrono !',
     duree: '5 à 15 min',
@@ -25,7 +25,7 @@ export const JEUX = [
   {
     slug: 'juste-chiffre',
     titre: 'Le Juste Chiffre',
-    icone: '🎯',
+    icone: 'bullseye',
     couleur: 'bleu',
     accroche: 'Estimez un chiffre du numérique. Le jeu répond « c’est plus » ou « c’est moins ».',
     duree: '5 à 10 min',
@@ -34,7 +34,7 @@ export const JEUX = [
   {
     slug: 'debout-assis',
     titre: 'Debout ou assis ?',
-    icone: '🧍',
+    icone: 'person',
     couleur: 'jaune',
     accroche: 'Vrai ? Tout le monde debout. Faux ? On s’assoit. Le jeu qui fait bouger !',
     duree: '5 min',
@@ -43,7 +43,7 @@ export const JEUX = [
   {
     slug: 'bon-ordre',
     titre: 'Le Bon Ordre',
-    icone: '🔢',
+    icone: 'list-ol',
     couleur: 'rose',
     accroche: 'Les étapes d’une procédure sont mélangées. Le groupe dicte le bon ordre.',
     duree: '5 à 10 min',
@@ -52,7 +52,7 @@ export const JEUX = [
   {
     slug: 'qui-suis-je',
     titre: 'Qui suis-je ?',
-    icone: '❓',
+    icone: 'circle-question',
     couleur: 'violet',
     accroche: 'Des indices de plus en plus faciles, des points qui fondent : 5, 4, 3, 2, 1…',
     duree: '5 à 10 min',
@@ -61,7 +61,7 @@ export const JEUX = [
   {
     slug: 'zoom-mystere',
     titre: 'Zoom mystère',
-    icone: '🔍',
+    icone: 'magnifying-glass-plus',
     couleur: 'bleu-numerique',
     accroche: 'Une capture d’écran très zoomée se dévoile peu à peu. Qui la reconnaît ?',
     duree: '5 à 10 min',
@@ -70,7 +70,7 @@ export const JEUX = [
   {
     slug: 'duel-buzzer',
     titre: 'Duel buzzer',
-    icone: '⚡',
+    icone: 'bolt',
     couleur: 'rouge',
     accroche: 'Deux participants, deux touches du clavier. Le plus rapide répond !',
     duree: '5 à 10 min',
@@ -79,7 +79,7 @@ export const JEUX = [
   {
     slug: 'pyramide',
     titre: 'Pyramide',
-    icone: '🔺',
+    icone: 'cubes-stacked',
     couleur: 'ciel',
     accroche: 'Devinez un mot avec 1, 2 ou 3 mots d’indice. Trouvé au premier : 3 points !',
     duree: '5 à 10 min',
@@ -88,7 +88,7 @@ export const JEUX = [
   {
     slug: 'batterie-faible',
     titre: 'Batterie faible',
-    icone: '🔋',
+    icone: 'battery-quarter',
     couleur: 'beige',
     accroche: 'Chaque mauvaise lettre vide la batterie. Trouvez le mot avant qu’elle lâche !',
     duree: '5 à 10 min',
@@ -100,10 +100,9 @@ export function trouverJeu(slug) {
   return JEUX.find((jeu) => jeu.slug === slug) ?? null;
 }
 
-/** Libellé court pour un segment de roue : « 🎯 Juste Chiffre ». */
+/** Libellé court pour un segment de roue : « Juste Chiffre ». */
 export function libelleCourt(jeu) {
-  const court = jeu.titre.replace(/^(Le|La|Les) /, '').replace(/\s*\?$/, '');
-  return `${jeu.icone} ${court}`;
+  return jeu.titre.replace(/^(Le|La|Les) /, '').replace(/\s*\?$/, '');
 }
 
 /** { slug: titre } pour les messages d'import. */

@@ -27,18 +27,18 @@ test('Pyramide : 3, 2 ou 1 point selon le nombre d’indices', async ({ page }) 
   await page.getByRole('button', { name: /Trouvé ! \(2 points\)/ }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Bob' }).click();
   await expect(cadre.getByText('Trouvé par Bob !')).toBeVisible();
-  await expect(cadre.getByText('✓ +2 points pour Bob')).toBeVisible();
+  await expect(cadre.getByText('+2 points pour Bob')).toBeVisible();
   await expect(pointsDe(page, 'Bob')).toHaveText('2');
   await expect(page.getByRole('list', { name: 'Indices' })).toContainText('Clic');
 
   // Mot 2 : trouvé dès le premier indice, 3 points
-  await page.getByRole('button', { name: 'Mot suivant →' }).click();
+  await page.getByRole('button', { name: 'Mot suivant' }).click();
   await page.getByRole('button', { name: /Trouvé ! \(3 points\)/ }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Ana' }).click();
   await expect(pointsDe(page, 'Ana')).toHaveText('3');
 
   // Mot 3 : personne ne trouve après le 3e indice
-  await page.getByRole('button', { name: 'Mot suivant →' }).click();
+  await page.getByRole('button', { name: 'Mot suivant' }).click();
   await page.getByRole('button', { name: 'Indice suivant (Espace)' }).click();
   await page.getByRole('button', { name: 'Indice suivant (Espace)' }).click();
   await expect(page.getByRole('button', { name: /Trouvé ! \(1 point\)/ })).toBeVisible();

@@ -17,7 +17,15 @@ import { hasardDePage } from './hasard.js';
 import { creerTirage } from './roue.js';
 import { creerScores } from './scores.js';
 import { sons, sonActif, basculerSon } from './sons.js';
-import { el, remplir, annoncer, ecouterClavier, basculerPleinEcran, focaliser } from './ui.js';
+import {
+  el,
+  remplir,
+  icone,
+  annoncer,
+  ecouterClavier,
+  basculerPleinEcran,
+  focaliser,
+} from './ui.js';
 import { choisirPrenoms, confirmer, designerAvecRoue, modifierInfo } from './dialogues.js';
 import {
   nettoyerContenu,
@@ -28,8 +36,6 @@ import {
   lireImport,
 } from './contenu.js';
 import { creerEditeur } from './editeur-contenu.js';
-
-const MEDAILLES = ['🥇', '🥈', '🥉'];
 
 export function monterJeu(config) {
   const { slug, schema, exemple, regles = [], demarrer } = config;
@@ -61,8 +67,8 @@ export function monterJeu(config) {
       title: 'Désigner quelqu’un avec la roue (touche R)',
       onclick: () => designer(),
     },
-    el('span', { 'aria-hidden': 'true' }, '🎡'),
-    ' Désigner',
+    icone('arrows-spin'),
+    'Désigner',
   );
   const boutonSon = el('button', {
     type: 'button',
@@ -77,7 +83,7 @@ export function monterJeu(config) {
   });
   function dessinerBoutonSon(actif) {
     boutonSon.setAttribute('aria-pressed', String(actif));
-    remplir(boutonSon, el('span', { 'aria-hidden': 'true' }, actif ? '🔊' : '🔇'), ' Son');
+    remplir(boutonSon, icone(actif ? 'volume-high' : 'volume-xmark'), 'Son');
   }
   dessinerBoutonSon(sonActif());
   const boutonPleinEcran = el(
@@ -89,8 +95,8 @@ export function monterJeu(config) {
       title: 'Plein écran (touche F)',
       onclick: () => basculerPleinEcran(),
     },
-    el('span', { 'aria-hidden': 'true' }, '⛶'),
-    ' Plein écran',
+    icone('expand'),
+    'Plein écran',
   );
   document.getElementById('actions')?.append(boutonDesigner, boutonSon, boutonPleinEcran);
 
@@ -117,7 +123,7 @@ export function monterJeu(config) {
       surEquitable: (v) => ecrire('roue-equitable', v),
       decrire: (p) => {
         const info = listeParticipants.infoDe(infos, p);
-        return info ? `${listeParticipants.themeDe(info.theme).icone} ${decrire(p)}` : '';
+        return info ? [icone(listeParticipants.themeDe(info.theme).icone), decrire(p)] : '';
       },
     });
     if (prenom) {
@@ -140,14 +146,14 @@ export function monterJeu(config) {
     listeParticipants.enregistrerInfos(infos);
   }
 
-  /** Petite étiquette « 🍰 tiramisu » à côté d'un prénom (rien s'il n'y a pas d'info). */
+  /** Petite étiquette « (icône) tiramisu » à côté d'un prénom (rien s'il n'y a pas d'info). */
   function etiquetteInfo(prenom, classe) {
     const info = listeParticipants.infoDe(infos, prenom);
     if (!info) return null;
     return el(
       'span',
       { class: classe, title: decrire(prenom) },
-      el('span', { 'aria-hidden': 'true' }, `${listeParticipants.themeDe(info.theme).icone} `),
+      icone(listeParticipants.themeDe(info.theme).icone),
       el(
         'span',
         { class: 'visuellement-cache' },
@@ -195,8 +201,8 @@ export function monterJeu(config) {
     const boutonRoue = el(
       'button',
       { type: 'button', class: 'bouton', onclick: () => designer() },
-      el('span', { 'aria-hidden': 'true' }, '🎡'),
-      ' Désigner quelqu’un',
+      icone('arrows-spin'),
+      'Désigner quelqu’un',
     );
     const boutonEffacer = el(
       'button',
@@ -248,7 +254,7 @@ export function monterJeu(config) {
                   dessiner();
                 },
               },
-              '✎',
+              icone('pen'),
             ),
             el(
               'button',
@@ -262,7 +268,7 @@ export function monterJeu(config) {
                   champ.focus();
                 },
               },
-              '✕',
+              icone('xmark'),
             ),
           ),
         ),
@@ -277,9 +283,7 @@ export function monterJeu(config) {
     const theme = el(
       'select',
       { id: 'nouveau-theme', class: 'champ__controle ajout-prenom__theme' },
-      listeParticipants.THEMES.map((t) =>
-        el('option', { value: t.valeur }, `${t.icone} ${t.libelle}`),
-      ),
+      listeParticipants.THEMES.map((t) => el('option', { value: t.valeur }, t.libelle)),
     );
     const info = el('input', {
       id: 'nouvelle-info',
@@ -355,7 +359,7 @@ export function monterJeu(config) {
       el(
         'p',
         { id: 'aide-info', class: 'champ__aide' },
-        'Sa passion, son film ou son dessert préféré… La roue l’affiche quand elle désigne la personne. Modifiable avec ✎. Rien ne sort de ce navigateur.',
+        'Sa passion, son film ou son dessert préféré… La roue l’affiche quand elle désigne la personne. Modifiable avec le crayon. Rien ne sort de ce navigateur.',
       ),
     );
     dessiner();
@@ -371,16 +375,11 @@ export function monterJeu(config) {
 
   function blocContenu(erreurs) {
     const etat = erreurs.length
-      ? el(
-          'p',
-          { class: 'etat etat--ko' },
-          el('span', { 'aria-hidden': 'true' }, '⚠️ '),
-          'Contenu incomplet',
-        )
+      ? el('p', { class: 'etat etat--ko' }, icone('triangle-exclamation'), 'Contenu incomplet')
       : el(
           'p',
           { class: 'etat etat--ok' },
-          el('span', { 'aria-hidden': 'true' }, '✅ '),
+          icone('circle-check'),
           resumerContenu(schema, contenu),
           estExemple() ? el('span', { class: 'etiquette' }, 'contenu d’exemple') : null,
         );
@@ -406,8 +405,8 @@ export function monterJeu(config) {
       el(
         'button',
         { type: 'button', class: 'bouton', onclick: () => afficherPreparation() },
-        el('span', { 'aria-hidden': 'true' }, '✏️'),
-        ' Préparer le contenu',
+        icone('pen-to-square'),
+        'Préparer le contenu',
       ),
     );
   }
@@ -425,14 +424,14 @@ export function monterJeu(config) {
         onclick: () => lancerPartie(),
       },
       'Lancer la partie',
-      el('span', { 'aria-hidden': 'true' }, ' ▶'),
+      icone('play'),
     );
     afficherEcran(
       'ecran-accueil',
       el(
         'div',
         { class: 'intro carte' },
-        el('p', { class: 'intro__icone', 'aria-hidden': 'true' }, jeu.icone),
+        el('p', { class: 'intro__icone' }, icone(jeu.icone)),
         el(
           'div',
           {},
@@ -443,7 +442,12 @@ export function monterJeu(config) {
             { class: 'regles' },
             regles.map((r) => el('li', {}, r)),
           ),
-          el('p', { class: 'intro__duree' }, `⏱ Durée : ${jeu.duree}`),
+          el(
+            'p',
+            { class: 'intro__duree' },
+            icone('clock', { style: 'regular' }),
+            `Durée : ${jeu.duree}`,
+          ),
         ),
         el(
           'div',
@@ -535,9 +539,15 @@ export function monterJeu(config) {
             );
           },
         },
-        '⬇ Exporter',
+        icone('download'),
+        'Exporter',
       ),
-      el('label', { for: 'fichier-import', class: 'bouton bouton--discret' }, '⬆ Importer…'),
+      el(
+        'label',
+        { for: 'fichier-import', class: 'bouton bouton--discret' },
+        icone('upload'),
+        'Importer…',
+      ),
       entreeImport,
       el(
         'button',
@@ -560,7 +570,8 @@ export function monterJeu(config) {
             }
           },
         },
-        '↺ Contenu d’exemple',
+        icone('rotate-left'),
+        'Contenu d’exemple',
       ),
     );
 
@@ -699,7 +710,8 @@ export function monterJeu(config) {
               }
             },
           },
-          '← Quitter la partie',
+          icone('arrow-left'),
+          'Quitter la partie',
         ),
         participants.length ? tableau : null,
       ),
@@ -732,7 +744,7 @@ export function monterJeu(config) {
   function afficherFin(scores, { message = '' } = {}) {
     arreterPartie();
     sons.succes();
-    const titre = el('h2', { class: 'fin__titre' }, '🎉 Partie terminée !');
+    const titre = el('h2', { class: 'fin__titre' }, icone('trophy'), 'Partie terminée !');
     const classement = scores.classement();
     const aDesPoints = classement.some((e) => e.points > 0);
     const podium = aDesPoints
@@ -745,11 +757,7 @@ export function monterJeu(config) {
               el(
                 'li',
                 { class: `podium__marche podium__marche--${e.rang}` },
-                el(
-                  'span',
-                  { class: 'podium__medaille', 'aria-hidden': 'true' },
-                  MEDAILLES[e.rang - 1],
-                ),
+                el('span', { class: 'podium__medaille' }, icone('medal')),
                 el('span', { class: 'podium__prenom' }, e.prenom),
                 etiquetteInfo(e.prenom, 'podium__info'),
                 el('span', { class: 'podium__points' }, `${e.points} pt${e.points > 1 ? 's' : ''}`),
