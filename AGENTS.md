@@ -127,7 +127,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
    - `fix(roue): évite de tirer deux fois la même personne`
    - `test:`, `docs:`, `refactor:`, `style:`, `chore:`
    - Un commit = un changement cohérent.
-5. **Push** seulement si `git remote -v` montre un dépôt distant et si les tests e2e viennent de passer. Il n'y a pas de dépôt distant pour l'instant : on commite en local.
+5. **Push** sur `main` seulement si les tests e2e viennent de passer. Le dépôt distant est https://github.com/gharel/jeu-formation. Chaque push sur `main` lance [.github/workflows/publier.yml](.github/workflows/publier.yml) : GitHub relance `npm run check` et `npm run test:e2e`, puis **publie le site** sur https://gharel.github.io/jeu-formation/ si tout passe. Un push sur `main` est donc une mise en ligne : vérifiez ensuite que l'action GitHub est verte.
 
 Les hooks git le vérifient automatiquement (`simple-git-hooks`, installés par `npm install`) :
 

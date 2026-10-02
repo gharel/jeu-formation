@@ -31,8 +31,18 @@ Les icônes viennent de Font Awesome Free, hébergé dans le projet (fonctionne 
 
 ## Utiliser les jeux
 
-Le site est 100 % statique : il suffit de copier le dossier sur n'importe quel hébergement web (sous-dossier accepté).
+En ligne : **https://gharel.github.io/jeu-formation/**
+
+Le site est 100 % statique : il suffit de copier `index.html`, `assets/` et `jeux/` sur n'importe quel hébergement web (sous-dossier accepté).
 Il fonctionne hors ligne une fois chargé : aucune ressource externe.
+
+### Déploiement sur GitHub Pages
+
+Chaque push sur `main` lance l'action [Vérifier puis publier sur GitHub Pages](.github/workflows/publier.yml) :
+GitHub relance tous les tests (lint, format, HTML, unitaires, e2e et accessibilité), puis publie `index.html`, `assets/` et `jeux/` si tout passe.
+On peut aussi la relancer à la main depuis l'onglet **Actions** du dépôt (« Run workflow »).
+
+Réglage à faire une seule fois : **Settings → Pages → Build and deployment → Source : GitHub Actions**.
 
 En local :
 

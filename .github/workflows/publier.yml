@@ -1,0 +1,66 @@
+# À chaque push sur main : on relance tous les tests, puis on publie le site sur GitHub Pages.
+# Le site n'est publié que si les tests passent. Seuls index.html, assets/ et jeux/ sont publiés.
+name: Vérifier puis publier sur GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  verifier:
+    name: Tests (check + e2e)
+    runs-on: ubuntu-latest
+    env:
+      # Les hooks git ne servent qu'en local
+      SKIP_INSTALL_SIMPLE_GIT_HOOKS: '1'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          cache: npm
+      - name: Installer les outils
+        run: npm ci
+      - name: Installer Chromium pour Playwright
+        run: npx playwright install --with-deps chromium
+      - name: Lint, format, HTML et tests unitaires
+        run: npm run check
+      - name: Tests de bout en bout et accessibilité
+        run: npm run test:e2e
+      - name: Garder le rapport Playwright en cas d'échec
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: rapport-playwright
+          path: playwright-report/
+          retention-days: 7
+
+  publier:
+    name: Publication sur GitHub Pages
+    needs: verifier
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploiement.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v7
+      - name: Préparer le site (fichiers statiques uniquement)
+        run: |
+          mkdir _site
+          cp -r index.html assets jeux _site/
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: _site
+      - id: deploiement
+        uses: actions/deploy-pages@v5
