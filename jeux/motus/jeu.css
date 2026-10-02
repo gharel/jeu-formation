@@ -1,0 +1,180 @@
+.motus-entete {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.motus-entete .au-tour-de {
+  margin: 0;
+}
+
+.motus-jeu {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: start;
+  justify-content: center;
+}
+
+.motus-grille {
+  --taille: min(4.2rem, 7vh, calc((100vw - 34rem) / var(--colonnes, 8)));
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+  background: var(--bleu-nuit);
+  border-radius: var(--rayon);
+}
+
+.motus-ligne {
+  display: grid;
+  grid-template-columns: repeat(var(--colonnes, 8), var(--taille));
+  gap: 6px;
+}
+
+.motus-case {
+  display: grid;
+  place-items: center;
+  width: var(--taille);
+  height: var(--taille);
+  min-width: 2.4rem;
+  min-height: 2.4rem;
+  font-size: calc(var(--taille) * 0.55);
+  font-weight: 900;
+  color: var(--blanc);
+  background: #1d2150;
+  border-radius: 8px;
+  text-transform: uppercase;
+}
+
+.motus-ligne--active .motus-case {
+  background: #2a2f6b;
+  box-shadow: inset 0 0 0 2px rgb(255 255 255 / 35%);
+}
+
+.motus-case--indice {
+  color: rgb(255 255 255 / 45%);
+}
+
+.motus-case--bien {
+  color: var(--bleu-nuit);
+  background: var(--vert);
+}
+
+.motus-case--mal {
+  color: var(--bleu-nuit);
+  background: radial-gradient(circle closest-side, var(--jaune) 94%, #1d2150 96%);
+}
+
+.motus-case--absent {
+  color: var(--blanc);
+  background: #1d2150;
+}
+
+.motus-case--revele {
+  animation: retourner 0.45s ease both;
+  animation-delay: calc(var(--i) * 0.12s);
+}
+
+@keyframes retourner {
+  from {
+    transform: rotateX(90deg);
+  }
+  to {
+    transform: rotateX(0);
+  }
+}
+
+.motus-droite {
+  text-align: left;
+}
+
+.motus-saisie {
+  font-size: 1.6rem;
+  font-weight: 900;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+.motus-message {
+  min-height: 1.6em;
+  margin: 0.5rem 0;
+  font-weight: 800;
+  color: var(--erreur);
+}
+
+.motus-clavier {
+  display: grid;
+  gap: 6px;
+}
+
+.motus-rangee {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.motus-touche {
+  flex: 1;
+  max-width: 3rem;
+  min-height: 3rem;
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--bleu-nuit);
+  background: var(--fond);
+  border: 1px solid var(--bord);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.motus-touche:hover {
+  background: var(--accent-clair);
+}
+
+.motus-touche--large {
+  max-width: 5rem;
+  flex: 1.6;
+}
+
+.motus-touche--bien {
+  background: var(--vert);
+  border-color: var(--vert);
+}
+
+.motus-touche--mal {
+  background: var(--jaune);
+  border-color: var(--jaune);
+}
+
+.motus-touche--absent {
+  color: var(--blanc);
+  background: #4a4e72;
+  border-color: #4a4e72;
+}
+
+.motus-resultat {
+  text-align: center;
+}
+
+.motus-resultat .reponse-revelee {
+  margin-top: 0;
+}
+
+.motus-resultat__titre {
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 900;
+  color: var(--bleu-nuit);
+}
+
+@media (max-width: 900px) {
+  .motus-jeu {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+  .motus-grille {
+    --taille: min(3.4rem, calc((100vw - 4rem) / var(--colonnes, 8)));
+  }
+}

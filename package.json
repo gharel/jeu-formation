@@ -1,0 +1,40 @@
+{
+  "name": "jeux-skazy-formation",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Mini-jeux projetés pour animer les séances de formation Skazy Formation",
+  "type": "module",
+  "scripts": {
+    "dev": "serve -l 4173 .",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "validate:html": "html-validate index.html \"jeux/**/*.html\"",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "check": "npm run lint && npm run format:check && npm run validate:html && npm run test",
+    "prepare": "simple-git-hooks"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "npm run check",
+    "pre-push": "npm run test:e2e"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
+    "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.63.0",
+    "eslint": "^10.11.0",
+    "fake-indexeddb": "^6.2.5",
+    "globals": "^17.13.0",
+    "html-validate": "^11.16.1",
+    "jsdom": "^29.1.1",
+    "prettier": "^3.9.9",
+    "serve": "^14.2.6",
+    "simple-git-hooks": "^2.14.0",
+    "vitest": "^5.0.3"
+  }
+}

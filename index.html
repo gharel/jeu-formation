@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Mini-jeux · Skazy Formation</title>
+    <meta
+      name="description"
+      content="Des mini-jeux à projeter pour réveiller une séance de formation numérique : vous préparez, ils jouent."
+    />
+    <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="assets/css/charte.css" />
+    <link rel="stylesheet" href="assets/css/base.css" />
+    <link rel="stylesheet" href="assets/css/composants.css" />
+    <script type="module" src="assets/js/accueil.js"></script>
+  </head>
+  <body data-couleur="vert">
+    <a class="lien-evitement" href="#contenu">Aller aux jeux</a>
+    <header class="heros">
+      <div class="points-deco" aria-hidden="true">
+        <span></span><span></span><span></span><span></span><span></span>
+      </div>
+      <div class="heros__contenu">
+        <img
+          class="heros__logo"
+          src="assets/img/logo-skazy-formation-blanc.svg"
+          alt="Skazy Formation"
+          width="200"
+          height="66"
+        />
+        <h1>Les mini-jeux qui <em>réveillent</em> vos formations&nbsp;!</h1>
+        <p class="heros__accroche">
+          Des jeux à projeter pour casser la routine devant l’écran. Vous préparez le contenu, les
+          participants jouent à l’oral, vous validez.
+        </p>
+      </div>
+    </header>
+
+    <main id="contenu" class="cadre" tabindex="-1">
+      <h2>Comment ça marche&nbsp;?</h2>
+      <ol class="etapes">
+        <li>
+          <p><strong>Préparez le contenu</strong> Mots, questions ou défis, avant la séance.</p>
+        </li>
+        <li>
+          <p><strong>Saisissez les prénoms</strong> La roue désigne qui répond.</p>
+        </li>
+        <li>
+          <p><strong>Projetez et jouez</strong> 5 à 10 minutes pour relancer l’attention.</p>
+        </li>
+      </ol>
+
+      <h2>Choisissez un jeu</h2>
+      <ul class="grille-jeux" id="grille-jeux">
+        <li>
+          <noscript>Les mini-jeux ont besoin de JavaScript pour fonctionner.</noscript>
+        </li>
+      </ul>
+    </main>
+
+    <footer class="pied">
+      <p>
+        Skazy Formation · <a href="https://formation.skazy.nc/">formation.skazy.nc</a> · Le contenu
+        préparé reste enregistré dans ce navigateur.
+      </p>
+    </footer>
+  </body>
+</html>

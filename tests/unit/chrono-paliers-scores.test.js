@@ -1,0 +1,101 @@
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { creerChrono, formaterDuree } from '../../assets/js/commun/chrono.js';
+import { valeurPalier, creerPaliers } from '../../assets/js/commun/paliers.js';
+import { creerScores, classer } from '../../assets/js/commun/scores.js';
+
+beforeEach(() => vi.useFakeTimers());
+afterEach(() => vi.useRealTimers());
+
+describe('chrono', () => {
+  it('décompte et appelle surFin une seule fois', () => {
+    const surFin = vi.fn();
+    const chrono = creerChrono({ duree: 3, surFin });
+    chrono.demarrer();
+    vi.advanceTimersByTime(1500);
+    expect(chrono.restant()).toBe(1500);
+    vi.advanceTimersByTime(2000);
+    expect(surFin).toHaveBeenCalledTimes(1);
+    expect(chrono.restant()).toBe(0);
+    expect(chrono.enCours).toBe(false);
+  });
+
+  it('se met en pause et reprend', () => {
+    const chrono = creerChrono({ duree: 10 });
+    chrono.demarrer();
+    vi.advanceTimersByTime(4000);
+    chrono.pause();
+    vi.advanceTimersByTime(5000);
+    expect(chrono.restant()).toBe(6000);
+    chrono.demarrer();
+    vi.advanceTimersByTime(1000);
+    expect(chrono.restant()).toBe(5000);
+    expect(chrono.ecoule()).toBe(5000);
+  });
+
+  it('formate le temps restant', () => {
+    expect(formaterDuree(30000)).toBe('0:30');
+    expect(formaterDuree(65000)).toBe('1:05');
+    expect(formaterDuree(400)).toBe('0:01');
+    expect(formaterDuree(0)).toBe('0:00');
+  });
+});
+
+describe('paliers 5 4 3 2 1', () => {
+  it('perd un point par palier écoulé', () => {
+    expect(valeurPalier(0, 6000)).toBe(5);
+    expect(valeurPalier(5999, 6000)).toBe(5);
+    expect(valeurPalier(6000, 6000)).toBe(4);
+    expect(valeurPalier(29999, 6000)).toBe(1);
+    expect(valeurPalier(30000, 6000)).toBe(0);
+  });
+
+  it('prévient à chaque chiffre perdu, se fige au stop', () => {
+    const valeurs = [];
+    const surFin = vi.fn();
+    const paliers = creerPaliers({
+      dureePalier: 2,
+      surChangement: (v) => valeurs.push(v),
+      surFin,
+    });
+    paliers.demarrer();
+    vi.advanceTimersByTime(2100);
+    expect(paliers.valeur).toBe(4);
+    paliers.pause();
+    vi.advanceTimersByTime(10000);
+    expect(paliers.valeur).toBe(4);
+    paliers.reprendre();
+    vi.advanceTimersByTime(8000);
+    expect(valeurs).toEqual([4, 3, 2, 1, 0]);
+    expect(surFin).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('scores', () => {
+  it('classe avec les ex æquo au même rang', () => {
+    expect(
+      classer([
+        { prenom: 'A', points: 2 },
+        { prenom: 'B', points: 5 },
+        { prenom: 'C', points: 2 },
+        { prenom: 'D', points: 0 },
+      ]),
+    ).toEqual([
+      { prenom: 'B', points: 5, rang: 1 },
+      { prenom: 'A', points: 2, rang: 2 },
+      { prenom: 'C', points: 2, rang: 2 },
+      { prenom: 'D', points: 0, rang: 4 },
+    ]);
+  });
+
+  it('ajoute des points et prévient des changements', () => {
+    const surChangement = vi.fn();
+    const scores = creerScores(['Ana', 'Bob'], { surChangement });
+    scores.ajouter('Bob', 3);
+    scores.ajouter('Ana');
+    expect(scores.valeur('Bob')).toBe(3);
+    expect(scores.classement()[0].prenom).toBe('Bob');
+    expect(surChangement).toHaveBeenCalledTimes(2);
+    scores.reinitialiser();
+    expect(scores.valeur('Bob')).toBe(0);
+  });
+});
