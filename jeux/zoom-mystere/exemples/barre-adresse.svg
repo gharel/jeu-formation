@@ -1,0 +1,31 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 700' width='1200' height='700'>
+<rect width='1200' height='700' fill='#ffffff'/>
+<rect width='1200' height='54' fill='#dfe3e8'/>
+<rect x='14' y='10' width='250' height='44' rx='10' fill='#ffffff'/>
+<circle cx='40' cy='32' r='9' fill='#00aea0'/>
+<text x='60' y='38' font-family='Segoe UI, Arial, sans-serif' font-size='17' fill='#333'>Formation numérique</text>
+<text x='238' y='38' font-family='Segoe UI, Arial, sans-serif' font-size='18' fill='#777'>×</text>
+<text x='282' y='40' font-family='Segoe UI, Arial, sans-serif' font-size='26' fill='#555'>+</text>
+<rect y='54' width='1200' height='62' fill='#ffffff'/>
+<path d='M28 85 l14 -12 v24 z' fill='#666'/>
+<path d='M84 85 l-14 -12 v24 z' fill='#bbb'/>
+<circle cx='122' cy='85' r='11' fill='none' stroke='#666' stroke-width='3.5'/>
+<path d='M128 72 l8 2 -3 8 z' fill='#666'/>
+<rect x='156' y='64' width='900' height='42' rx='21' fill='#f1f3f4'/>
+<rect x='178' y='84' width='18' height='14' rx='3' fill='#555'/>
+<path d='M181 84 v-5 a6 6 0 0 1 12 0 v5' fill='none' stroke='#555' stroke-width='3'/>
+<text x='210' y='92' font-family='Segoe UI, Arial, sans-serif' font-size='19' fill='#555'>https://</text><text x='280' y='92' font-family='Segoe UI, Arial, sans-serif' font-size='19' fill='#111'>www.exemple.nc/formations/bureautique</text>
+<circle cx='1090' cy='85' r='4' fill='#666'/><circle cx='1110' cy='85' r='4' fill='#666'/><circle cx='1130' cy='85' r='4' fill='#666'/>
+<rect y='116' width='1200' height='2' fill='#dfe3e8'/>
+<rect x='0' y='118' width='1200' height='110' fill='#0e1027'/>
+<text x='60' y='186' font-family='Segoe UI, Arial, sans-serif' font-size='40' font-weight='700' fill='#fff'>Nos formations</text>
+<rect x='60' y='270' width='520' height='26' rx='6' fill='#e4e7eb'/>
+<rect x='60' y='314' width='460' height='18' rx='6' fill='#eef0f2'/>
+<rect x='60' y='346' width='490' height='18' rx='6' fill='#eef0f2'/>
+<rect x='60' y='378' width='400' height='18' rx='6' fill='#eef0f2'/>
+<rect x='60' y='430' width='200' height='54' rx='27' fill='#00aea0'/>
+<text x='108' y='465' font-family='Segoe UI, Arial, sans-serif' font-size='21' font-weight='700' fill='#0e1027'>S’inscrire</text>
+<rect x='660' y='270' width='480' height='300' rx='16' fill='#cef4f1'/>
+<circle cx='900' cy='400' r='70' fill='#00aea0'/>
+<rect x='60' y='620' width='1080' height='2' fill='#eef0f2'/>
+</svg>

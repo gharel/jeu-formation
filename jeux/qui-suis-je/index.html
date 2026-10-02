@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Qui suis-je ? · Mini-jeux Skazy Formation</title>
+    <meta
+      name="description"
+      content="Des indices de plus en plus faciles et des points qui fondent : 5, 4, 3, 2, 1. Un jeu à projeter pour animer une formation."
+    />
+    <link rel="icon" href="../../assets/img/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="../../assets/css/charte.css" />
+    <link rel="stylesheet" href="../../assets/css/base.css" />
+    <link rel="stylesheet" href="../../assets/css/composants.css" />
+    <link rel="stylesheet" href="jeu.css" />
+    <script type="module" src="jeu.js"></script>
+  </head>
+  <body data-jeu="qui-suis-je" data-couleur="violet">
+    <a class="lien-evitement" href="#cadre">Aller au jeu</a>
+    <header class="bandeau">
+      <a class="bandeau__logo" href="../../">
+        <img
+          src="../../assets/img/logo-skazy-formation-blanc.svg"
+          alt="Skazy Formation : retour aux mini-jeux"
+          width="133"
+          height="44"
+        />
+      </a>
+      <h1 class="bandeau__titre">Qui suis-je ?</h1>
+      <div class="bandeau__actions" id="actions"></div>
+    </header>
+    <main id="cadre" class="cadre" tabindex="-1">
+      <noscript>Ce jeu a besoin de JavaScript pour fonctionner.</noscript>
+    </main>
+    <div id="annonces" class="visuellement-cache" aria-live="polite"></div>
+  </body>
+</html>

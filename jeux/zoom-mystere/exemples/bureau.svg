@@ -1,0 +1,17 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 700' width='1200' height='700'>
+<defs><linearGradient id='fond' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#0e1027'/><stop offset='1' stop-color='#374aa5'/></linearGradient></defs>
+<rect width='1200' height='700' fill='url(#fond)'/>
+<circle cx='900' cy='300' r='160' fill='#00aea0' opacity='0.25'/>
+<circle cx='1040' cy='180' r='60' fill='#ff86a5' opacity='0.3'/>
+<g transform='translate(30 24)'><path d='M22 22 h46 l-5 64 h-36 z' fill='#dfe7ef' stroke='#9fb3c8' stroke-width='3'/><rect x='16' y='14' width='58' height='10' rx='4' fill='#c8d6e5'/><path d='M36 34 v42 M45 34 v42 M54 34 v42' stroke='#9fb3c8' stroke-width='3'/><text x='45' y='118' text-anchor='middle' font-family='Segoe UI, Arial, sans-serif' font-size='17' fill='#fff'>Corbeille</text></g>
+<g transform='translate(30 164)'><path d='M8 24 h28 l8 10 h40 v50 h-76 z' fill='#f7ca45'/><rect x='8' y='38' width='76' height='46' rx='4' fill='#ffd96a'/><text x='45' y='118' text-anchor='middle' font-family='Segoe UI, Arial, sans-serif' font-size='17' fill='#fff'>Documents</text></g>
+<g transform='translate(30 304)'><path d='M8 24 h28 l8 10 h40 v50 h-76 z' fill='#f7ca45'/><rect x='8' y='38' width='76' height='46' rx='4' fill='#ffd96a'/><text x='45' y='118' text-anchor='middle' font-family='Segoe UI, Arial, sans-serif' font-size='17' fill='#fff'>Photos</text></g>
+<g transform='translate(30 444)'><path d='M20 10 h38 l18 18 v62 h-56 z' fill='#ffffff'/><path d='M58 10 v18 h18' fill='#dfe3e8'/><rect x='28' y='42' width='38' height='5' fill='#374aa5'/><rect x='28' y='54' width='38' height='5' fill='#9aa5d6'/><rect x='28' y='66' width='28' height='5' fill='#9aa5d6'/><text x='45' y='118' text-anchor='middle' font-family='Segoe UI, Arial, sans-serif' font-size='17' fill='#fff'>Rapport.docx</text></g>
+<g transform='translate(160 24)'><rect x='10' y='18' width='72' height='60' rx='6' fill='#ffffff'/><path d='M16 70 l20 -24 16 16 10 -10 16 18 z' fill='#00aea0'/><circle cx='62' cy='34' r='7' fill='#f7ca45'/><text x='45' y='118' text-anchor='middle' font-family='Segoe UI, Arial, sans-serif' font-size='17' fill='#fff'>Vacances.jpg</text></g>
+<rect y='640' width='1200' height='60' fill='#1b1e26' opacity='0.92'/>
+<rect x='520' y='652' width='36' height='36' rx='6' fill='#009bca'/><rect x='526' y='658' width='11' height='11' fill='#fff'/><rect x='539' y='658' width='11' height='11' fill='#fff'/><rect x='526' y='671' width='11' height='11' fill='#fff'/><rect x='539' y='671' width='11' height='11' fill='#fff'/>
+<rect x='572' y='652' width='36' height='36' rx='6' fill='#f7ca45'/>
+<rect x='624' y='652' width='36' height='36' rx='18' fill='#00aea0'/>
+<text x='1150' y='668' text-anchor='end' font-family='Segoe UI, Arial, sans-serif' font-size='16' fill='#fff'>10:30</text>
+<text x='1150' y='688' text-anchor='end' font-family='Segoe UI, Arial, sans-serif' font-size='13' fill='#cfd3dc'>03/10/2026</text>
+</svg>

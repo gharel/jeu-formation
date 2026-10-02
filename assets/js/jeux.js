@@ -49,6 +49,24 @@ export const JEUX = [
     duree: '5 à 10 min',
     preparation: 'Des procédures étape par étape',
   },
+  {
+    slug: 'qui-suis-je',
+    titre: 'Qui suis-je ?',
+    icone: '❓',
+    couleur: 'violet',
+    accroche: 'Des indices de plus en plus faciles, des points qui fondent : 5, 4, 3, 2, 1…',
+    duree: '5 à 10 min',
+    preparation: 'Des mystères et leurs indices',
+  },
+  {
+    slug: 'zoom-mystere',
+    titre: 'Zoom mystère',
+    icone: '🔍',
+    couleur: 'bleu-numerique',
+    accroche: 'Une capture d’écran très zoomée se dévoile peu à peu. Qui la reconnaît ?',
+    duree: '5 à 10 min',
+    preparation: 'Vos captures d’écran',
+  },
 ];
 
 export function trouverJeu(slug) {

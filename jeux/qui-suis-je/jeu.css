@@ -1,0 +1,59 @@
+.qsj__question {
+  margin: 0 0 0.75rem;
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+.qsj__indices {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 52rem;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+  counter-reset: indice;
+}
+
+.qsj__indice {
+  counter-increment: indice;
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  padding: 0.55rem 1rem;
+  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+  font-weight: 700;
+  text-align: left;
+  background: var(--fond);
+  border-radius: 12px;
+}
+
+.qsj__indice::before {
+  content: counter(indice);
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 1.8rem;
+  height: 1.8rem;
+  font-size: 0.9em;
+  font-weight: 900;
+  color: var(--sur-accent);
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.qsj__indice--dernier {
+  background: var(--accent-clair);
+}
+
+.qsj__verdict {
+  margin: 1.25rem 0 0.25rem;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 900;
+  color: var(--bleu-nuit);
+}
+
+.qsj__gain {
+  margin: 0.75rem 0 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--succes);
+}

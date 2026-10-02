@@ -724,6 +724,11 @@
   color: var(--texte-doux);
 }
 
+/* Manche terminée : on retire les aides devenues inutiles pour laisser la place au résultat */
+.manche-finie .raccourci {
+  display: none;
+}
+
 /* ---------- Chrono ---------- */
 
 .chrono {
