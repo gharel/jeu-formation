@@ -1,0 +1,109 @@
+.debout__grande-icone {
+  margin: 0;
+  font-size: clamp(3.5rem, 8vw, 6rem);
+  line-height: 1;
+}
+
+.debout__depart {
+  font-size: clamp(2.2rem, 5vw, 3.8rem);
+}
+
+.debout__affirmation {
+  max-width: 32ch;
+  margin: 0 auto 1.25rem;
+}
+
+.debout__tuiles {
+  display: flex;
+  justify-content: center;
+  gap: clamp(0.75rem, 3vw, 2rem);
+  margin: 0.5rem 0 0;
+}
+
+.debout__tuile {
+  display: grid;
+  justify-items: center;
+  min-width: min(40vw, 15rem);
+  padding: 0.8rem 1.5rem;
+  border: 3px solid var(--bord);
+  border-radius: var(--rayon);
+  background: var(--fond);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.debout__icone {
+  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  line-height: 1.1;
+}
+
+.debout__geste {
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-weight: 900;
+  color: var(--bleu-nuit);
+}
+
+.debout__sens {
+  font-weight: 800;
+  color: var(--texte-doux);
+}
+
+.debout__tuile--bonne {
+  border-color: var(--succes);
+  background: var(--vert-clair);
+  transform: scale(1.06);
+}
+
+.debout__tuile--mauvaise {
+  opacity: 0.35;
+}
+
+.debout__verdict {
+  display: inline-block;
+  margin: 0.75rem 0 0.25rem;
+  padding: 0.05em 0.7em;
+  font-size: clamp(2rem, 4.5vw, 3.4rem);
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  border-radius: var(--rayon);
+  color: var(--blanc);
+}
+
+.debout__verdict--vrai {
+  background: var(--succes);
+}
+
+.debout__verdict--faux {
+  background: var(--erreur);
+}
+
+.debout__bonne {
+  margin-bottom: 0.25rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.debout__explication {
+  max-width: 50rem;
+  margin: 0 auto 0.5rem;
+}
+
+.debout__en-jeu {
+  margin: 0.75rem 0 0;
+}
+
+.debout__info {
+  margin: 0.75rem 0 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--bleu-nuit);
+}
+
+.debout__info--gagnant {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+}
+
+.debout__regle {
+  margin-top: 1rem;
+}

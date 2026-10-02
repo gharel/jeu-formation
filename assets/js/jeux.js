@@ -31,6 +31,24 @@ export const JEUX = [
     duree: '5 à 10 min',
     preparation: 'Des questions à réponse chiffrée',
   },
+  {
+    slug: 'debout-assis',
+    titre: 'Debout ou assis ?',
+    icone: '🧍',
+    couleur: 'jaune',
+    accroche: 'Vrai ? Tout le monde debout. Faux ? On s’assoit. Le jeu qui fait bouger !',
+    duree: '5 min',
+    preparation: 'Des affirmations vraies ou fausses',
+  },
+  {
+    slug: 'bon-ordre',
+    titre: 'Le Bon Ordre',
+    icone: '🔢',
+    couleur: 'rose',
+    accroche: 'Les étapes d’une procédure sont mélangées. Le groupe dicte le bon ordre.',
+    duree: '5 à 10 min',
+    preparation: 'Des procédures étape par étape',
+  },
 ];
 
 export function trouverJeu(slug) {

@@ -29,10 +29,13 @@ export async function lancerPartie(page) {
   await expect(page.getByRole('button', { name: /Quitter la partie/ })).toBeVisible();
 }
 
-/** Clique « Attribuer … » puis le prénom dans la fenêtre. */
+/** Clique « Attribuer … » puis le prénom dans la fenêtre (et « Valider » si le choix est multiple). */
 export async function attribuerPoints(page, prenom) {
   await page.getByRole('button', { name: /Attribuer/ }).click();
-  await page.getByRole('dialog').getByRole('button', { name: prenom, exact: true }).click();
+  const dialogue = page.getByRole('dialog');
+  await dialogue.getByRole('button', { name: prenom, exact: true }).click();
+  const valider = dialogue.getByRole('button', { name: 'Valider' });
+  if (await valider.isVisible().catch(() => false)) await valider.click();
   await expect(page.getByRole('button', { name: new RegExp(`pour ${prenom}`) })).toBeDisabled();
 }
 

@@ -94,6 +94,32 @@ export function choisirPrenoms({
       if (message) corps.append(el('p', { class: 'dialogue__message' }, message));
       const choisis = new Set(preselection);
       const grille = el('div', { class: 'grille-prenoms' });
+      if (multiple) {
+        corps.append(
+          el(
+            'p',
+            { class: 'dialogue__outils' },
+            el(
+              'button',
+              {
+                type: 'button',
+                class: 'bouton bouton--discret',
+                onclick: () => {
+                  const tous = choisis.size < prenoms.length;
+                  for (const p of prenoms) {
+                    if (tous) choisis.add(p);
+                    else choisis.delete(p);
+                  }
+                  for (const b of grille.children) {
+                    b.setAttribute('aria-pressed', String(tous));
+                  }
+                },
+              },
+              'Tout le monde / personne',
+            ),
+          ),
+        );
+      }
       for (const prenom of prenoms) {
         const bouton = el(
           'button',

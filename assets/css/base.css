@@ -490,6 +490,11 @@ textarea.champ__controle {
   font-size: 1.15rem;
 }
 
+.dialogue__outils {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .dialogue__pied {
   display: flex;
   flex-wrap: wrap;
