@@ -18,7 +18,7 @@ test('Le Juste Chiffre : plus, moins, juste, avec tour de rôle', async ({ page 
   await ouvrirJeu(page, 'juste-chiffre', { prenoms: ['Ana', 'Bob'] });
   await lancerPartie(page);
 
-  await expect(page.getByText('Question 1 sur 5')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Question 1 sur 5')).toBeVisible();
   await expect(page.locator('.chrono__temps')).toHaveText(/0:(30|29)/);
   await expect(page.getByLabel('Proposition de Ana')).toBeFocused();
 
@@ -35,13 +35,13 @@ test('Le Juste Chiffre : plus, moins, juste, avec tour de rôle', async ({ page 
 
   // Ana trouve : le point lui revient automatiquement
   await proposer(page, '1989');
-  await expect(page.getByText('Trouvé par Ana !')).toBeVisible();
-  await expect(page.getByText('✓ +1 point pour Ana')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Trouvé par Ana !')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('✓ +1 point pour Ana')).toBeVisible();
   await expect(pointsDe(page, 'Ana')).toHaveText('1');
 
   // Question 2 : on révèle sans trouver
   await page.getByRole('button', { name: 'Question suivante →' }).click();
-  await expect(page.getByText('Question 2 sur 5')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Question 2 sur 5')).toBeVisible();
   await page.getByRole('button', { name: 'Révéler la réponse' }).click();
   await expect(page.locator('.reponse-revelee')).toContainText('1992');
   await expect(pointsDe(page, 'Bob')).toHaveText('0');
@@ -63,7 +63,7 @@ test('le minuteur réglé par l’animateur révèle la réponse à zéro', asyn
   await expect(page.locator('.chrono__temps')).toHaveText(fige);
   await page.getByRole('button', { name: '▶ Reprendre' }).click();
 
-  await expect(page.getByText('Temps écoulé !')).toBeVisible({ timeout: 8000 });
+  await expect(page.locator('#cadre').getByText('Temps écoulé !')).toBeVisible({ timeout: 8000 });
   await expect(page.locator('.reponse-revelee')).toContainText('1989');
 });
 
@@ -74,8 +74,8 @@ test('une marge de 10 % accepte une réponse proche', async ({ page }) => {
     await page.getByRole('button', { name: 'Révéler la réponse' }).click();
     await page.getByRole('button', { name: 'Question suivante →' }).click();
   }
-  await expect(page.getByText('Question 4 sur 5')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Question 4 sur 5')).toBeVisible();
   await proposer(page, '2 000 000');
-  await expect(page.getByText(/Trouvé/)).toBeVisible();
+  await expect(page.locator('#cadre').getByText(/Trouvé/)).toBeVisible();
   await expect(page.getByRole('button', { name: /Attribuer/ })).toHaveCount(0);
 });

@@ -36,7 +36,7 @@ test('Qui suis-je : les points fondent, Stop fige, la bonne réponse marque', as
 
   await page.getByRole('button', { name: '✓ Bonne réponse' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Bob' }).click();
-  await expect(page.getByText('✓ +4 points pour Bob')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('✓ +4 points pour Bob')).toBeVisible();
   await expect(pointsDe(page, 'Bob')).toHaveText('4');
   await expect(page.locator('.reponse-revelee')).toContainText('La souris');
   await expect(indices).toHaveCount(5);
@@ -51,8 +51,10 @@ test('sans réponse, la manche se termine à zéro', async ({ page }) => {
   // Mauvaise réponse : on reprend
   await page.keyboard.press('Space');
   await page.getByRole('button', { name: /Mauvaise réponse/ }).click();
-  await expect(page.getByText('Personne n’a trouvé…')).toBeVisible({ timeout: 12000 });
+  await expect(page.locator('#cadre').getByText('Personne n’a trouvé…')).toBeVisible({
+    timeout: 12000,
+  });
   await expect(page.getByRole('list', { name: 'Points en jeu : 0' })).toBeVisible();
   await page.getByRole('button', { name: 'Mystère suivant →' }).click();
-  await expect(page.getByText('Mystère 2 sur 5')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Mystère 2 sur 5')).toBeVisible();
 });

@@ -27,7 +27,7 @@ test('Zoom mystère : l’image se dézoome, Stop fige, la bonne réponse marque
   await page.getByRole('button', { name: 'Enregistrer' }).click();
   await lancerPartie(page);
 
-  await expect(page.getByText('Image 1 sur 4')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Image 1 sur 4')).toBeVisible();
   await expect(page.locator('.zoom__image')).toHaveJSProperty('complete', true);
   expect(await echelle(page)).toBeCloseTo(10, 0);
   await verifierAccessibilite(page);
@@ -41,7 +41,7 @@ test('Zoom mystère : l’image se dézoome, Stop fige, la bonne réponse marque
 
   await page.getByRole('button', { name: '✓ Bonne réponse' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Ana' }).click();
-  await expect(page.getByText('✓ +4 points pour Ana')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('✓ +4 points pour Ana')).toBeVisible();
   await expect(pointsDe(page, 'Ana')).toHaveText('4');
   await expect(page.locator('.reponse-revelee')).toContainText('Le bouton Enregistrer');
   await expect.poll(() => echelle(page)).toBeCloseTo(1, 1);
@@ -90,7 +90,7 @@ test('l’animateur importe ou colle une capture, la retrouve après rechargemen
   await deuxieme.getByLabel('Réponse attendue').fill('Une capture collée');
 
   await page.getByRole('button', { name: 'Enregistrer' }).click();
-  await expect(page.getByText('2 images prêtes')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('2 images prêtes')).toBeVisible();
 
   await page.reload();
   await lancerPartie(page);

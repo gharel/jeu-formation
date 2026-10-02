@@ -36,7 +36,9 @@ test.describe('chaque jeu', () => {
       const erreurs = surveillerErreurs(page);
       await page.goto(`/jeux/${jeu.slug}/`);
       await expect(page.getByRole('heading', { name: 'Comment on joue ?' })).toBeVisible();
-      await expect(page.getByText('contenu d’exemple', { exact: true })).toBeVisible();
+      await expect(
+        page.locator('#cadre').getByText('contenu d’exemple', { exact: true }),
+      ).toBeVisible();
       await expect(page.getByRole('button', { name: /Lancer la partie/ })).toBeEnabled();
       await verifierAccessibilite(page);
 

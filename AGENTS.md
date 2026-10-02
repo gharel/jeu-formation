@@ -106,13 +106,14 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
   - aucune erreur dans la console (`surveillerErreurs`) ;
   - accessibilité sans violation grave ou critique (`verifierAccessibilite`).
 - `accueil.spec.js` vérifie automatiquement, pour chaque jeu de `jeux.js` : le lien, l'écran d'accueil, la liste de prénoms partagée, l'éditeur masqué et l'accessibilité.
+- **Dans les tests e2e, cherchez les textes dans `#cadre`** : `page.locator('#cadre').getByText(…)`. La zone `#annonces` (lecteurs d'écran) répète certains messages, et `page.getByText` trouverait alors deux éléments selon le timing (test instable).
 
 ## Procédure obligatoire avant commit et push
 
 À suivre **à chaque fois**, sans exception :
 
 1. `npm run check` : il doit passer sans aucune erreur (lint, format, HTML, tests unitaires). En cas d'échec de format, lancer `npm run format`.
-2. `npm run test:e2e` : il doit passer entièrement.
+2. `npm run test:e2e` : il doit passer entièrement. Vérifiez le **code de sortie** de la commande de test elle-même. N'enchaînez jamais `… | grep … && git commit` : `grep` réussit même quand des tests échouent.
 3. **Si l'interface a changé** : lancer `npm run dev`, ouvrir la page et jouer au moins une manche, en 1280×720 et en 1920×1080, au clavier et à la souris. Un test vert ne prouve pas que c'est beau ni lisible au vidéoprojecteur.
 4. **Commit** au format Conventional Commits, avec une description en français :
    - `feat(motus): ajoute le clavier affiché`

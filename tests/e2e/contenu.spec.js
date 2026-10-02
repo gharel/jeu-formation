@@ -23,10 +23,12 @@ test('le contenu s’exporte en JSON puis se réimporte', async ({ page }, testI
   // On modifie, puis on réimporte : l'éditeur retrouve le contenu exporté
   await premierMot.fill('modem');
   await page.locator('#fichier-import').setInputFiles(chemin);
-  await expect(page.getByText('Fichier importé. Vérifiez puis enregistrez.')).toBeVisible();
+  await expect(
+    page.locator('#cadre').getByText('Fichier importé. Vérifiez puis enregistrez.'),
+  ).toBeVisible();
   await expect(page.getByLabel('Mot à deviner').first()).toHaveValue('octet');
   await page.getByRole('button', { name: 'Enregistrer' }).click();
-  await expect(page.getByText('5 mots prêts')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('5 mots prêts')).toBeVisible();
   expect(erreurs).toEqual([]);
 });
 

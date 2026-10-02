@@ -24,7 +24,7 @@ async function preparerDeuxDefis(page) {
   await defis.nth(1).getByLabel('Début du défi').selectOption('trouver30');
   await defis.nth(1).getByLabel('Fin du défi').fill('… le menu Fichier');
   await page.getByRole('button', { name: 'Enregistrer' }).click();
-  await expect(page.getByText('2 défis prêts')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('2 défis prêts')).toBeVisible();
 }
 
 test('une partie d’Instant défi : roue, chrono, points', async ({ page }) => {
@@ -33,7 +33,7 @@ test('une partie d’Instant défi : roue, chrono, points', async ({ page }) => 
   await preparerDeuxDefis(page);
   await lancerPartie(page);
 
-  await expect(page.getByText('2 défis dans la roue')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('2 défis dans la roue')).toBeVisible();
   await verifierAccessibilite(page);
   await page.getByRole('button', { name: 'Lancer la roue' }).click();
 
@@ -43,10 +43,10 @@ test('une partie d’Instant défi : roue, chrono, points', async ({ page }) => 
   const texte = await enonce.textContent();
   await page.getByRole('button', { name: 'Top départ !' }).click();
   if (texte.startsWith('3 secondes')) {
-    await expect(page.getByText('Temps écoulé !')).toBeVisible({ timeout: 6000 });
+    await expect(page.locator('#cadre').getByText('Temps écoulé !')).toBeVisible({ timeout: 6000 });
   } else {
     await page.getByRole('button', { name: /Réussi/ }).click();
-    await expect(page.getByText('Défi réussi !')).toBeVisible();
+    await expect(page.locator('#cadre').getByText('Défi réussi !')).toBeVisible();
   }
 
   // Plusieurs personnes ont réussi
@@ -61,7 +61,7 @@ test('une partie d’Instant défi : roue, chrono, points', async ({ page }) => 
 
   // Deuxième défi au clavier : Espace lance la roue, puis le chrono, puis l'arrête
   await page.getByRole('button', { name: 'Défi suivant →' }).click();
-  await expect(page.getByText('1 défi dans la roue')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('1 défi dans la roue')).toBeVisible();
   await page.keyboard.press('Space');
   await expect(enonce).not.toHaveText(texte);
   await page.getByRole('button', { name: 'Top départ !' }).click();

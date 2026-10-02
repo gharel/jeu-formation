@@ -20,7 +20,7 @@ test('Le Bon Ordre : un essai raté puis réussi, points dégressifs', async ({ 
   const erreurs = surveillerErreurs(page);
   await ouvrirJeu(page, 'bon-ordre', { prenoms: ['Ana', 'Bob'] });
   await lancerPartie(page);
-  await expect(page.getByText('Procédure 1 sur 4 · Essai 1 sur 3')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Procédure 1 sur 4 · Essai 1 sur 3')).toBeVisible();
   await expect(page.getByRole('heading', { name: exemple.elements[0].titre })).toBeVisible();
 
   // Erreurs de saisie
@@ -31,8 +31,8 @@ test('Le Bon Ordre : un essai raté puis réussi, points dégressifs', async ({ 
   await dicter(page, 'A B C D E');
   await verifierAccessibilite(page);
   await page.getByRole('button', { name: 'Vérifier' }).click();
-  await expect(page.getByText(/bien placées? sur 5/)).toBeVisible();
-  await expect(page.getByText('Essai 2 sur 3')).toBeVisible();
+  await expect(page.locator('#cadre').getByText(/bien placées? sur 5/)).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Essai 2 sur 3')).toBeVisible();
 
   // On clique les cartes restantes dans le bon ordre
   const pioche = page.getByRole('list', { name: 'Étapes mélangées' });
@@ -41,7 +41,7 @@ test('Le Bon Ordre : un essai raté puis réussi, points dégressifs', async ({ 
     if (await carte.isEnabled()) await carte.click();
   }
   await page.getByRole('button', { name: 'Vérifier' }).click();
-  await expect(page.getByText('Bravo ! Trouvé en 2 essais.')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Bravo ! Trouvé en 2 essais.')).toBeVisible();
   await expect(page.getByRole('button', { name: 'Attribuer 2 points' })).toBeVisible();
   await attribuerPoints(page, 'Ana');
   await expect(pointsDe(page, 'Ana')).toHaveText('2');
@@ -57,7 +57,7 @@ test('après le dernier essai, le bon ordre est révélé', async ({ page }) => 
   await lancerPartie(page);
   await dicter(page, 'ABCDE');
   await page.getByRole('button', { name: 'Vérifier' }).click();
-  await expect(page.getByText('Voici le bon ordre !')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Voici le bon ordre !')).toBeVisible();
   const poses = page.getByRole('list', { name: 'Ordre proposé' }).getByRole('listitem');
   for (let i = 0; i < ETAPES.length; i++) await expect(poses.nth(i)).toContainText(ETAPES[i]);
   await expect(page.getByRole('button', { name: /Attribuer/ })).toHaveCount(0);
