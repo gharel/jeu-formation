@@ -67,6 +67,15 @@ export const JEUX = [
     duree: '5 à 10 min',
     preparation: 'Vos captures d’écran',
   },
+  {
+    slug: 'duel-buzzer',
+    titre: 'Duel buzzer',
+    icone: '⚡',
+    couleur: 'rouge',
+    accroche: 'Deux participants, deux touches du clavier. Le plus rapide répond !',
+    duree: '5 à 10 min',
+    preparation: 'Des questions et leurs réponses',
+  },
 ];
 
 export function trouverJeu(slug) {

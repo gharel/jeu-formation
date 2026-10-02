@@ -168,7 +168,10 @@ function demarrer(ctx) {
         return;
       }
       essai += 1;
-      message.textContent = `${justes} étape${justes > 1 ? 's' : ''} bien placée${justes > 1 ? 's' : ''} sur ${emplacements.length}. Les autres reviennent dans la pioche : essai ${essai} !`;
+      remplir(
+        message,
+        `${justes} étape${justes > 1 ? 's' : ''} bien placée${justes > 1 ? 's' : ''} sur ${emplacements.length}. Les autres reviennent dans la pioche : essai ${essai} !`,
+      );
       dessiner();
       saisie.focus();
     }

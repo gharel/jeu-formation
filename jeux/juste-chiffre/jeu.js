@@ -135,7 +135,7 @@ function demarrer(ctx) {
       commandes.hidden = true;
       verdict.hidden = true;
       tour.hidden = true;
-      erreur.textContent = '';
+      remplir(erreur, '');
       const trouve = raison === 'juste';
       const gagnant = trouve ? historique.at(-1)?.joueur : null;
       if (gagnant) ctx.scores.ajouter(gagnant, 1);
@@ -197,11 +197,11 @@ function demarrer(ctx) {
       e.preventDefault();
       const valeur = lireNombre(saisie.value);
       if (valeur === null) {
-        erreur.textContent = 'Tapez un nombre (exemple : 1 500 ou 2,5).';
+        remplir(erreur, 'Tapez un nombre (exemple : 1 500 ou 2,5).');
         animer(saisie, 'secousse');
         return;
       }
-      erreur.textContent = '';
+      remplir(erreur, '');
       const resultat = comparer(q.reponse, valeur, q.marge ?? 0);
       historique.push({ valeur, resultat, joueur: joueurCourant() });
       saisie.value = '';

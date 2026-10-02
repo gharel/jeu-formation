@@ -15,6 +15,7 @@ Chaque jeu dure de 5 à 15 minutes.
 | 🔢 Le Bon Ordre      | Remettre dans l'ordre les étapes d'une procédure, 3 essais          | Procédures de 3 à 7 étapes             |
 | ❓ Qui suis-je ?     | Indices progressifs, points qui fondent 5 4 3 2 1, Stop             | Mystères + 3 à 5 indices               |
 | 🔍 Zoom mystère      | Capture très zoomée qui se dévoile, 5 4 3 2 1, Stop                 | Captures collées (Ctrl+V) ou importées |
+| ⚡ Duel buzzer       | Deux joueurs, touches A et L, le plus rapide répond                 | Questions + réponses                   |
 
 Sur l'écran d'accueil de chaque jeu, on peut :
 
