@@ -13,6 +13,24 @@ export const JEUX = [
     duree: '10 min',
     preparation: '5 mots à deviner',
   },
+  {
+    slug: 'instant-defi',
+    titre: 'Instant défi',
+    icone: '⏱️',
+    couleur: 'orange',
+    accroche: 'La roue tire un défi éclair : « 30 secondes pour trouver… ». Top chrono !',
+    duree: '5 à 15 min',
+    preparation: 'Les fins de vos défis',
+  },
+  {
+    slug: 'juste-chiffre',
+    titre: 'Le Juste Chiffre',
+    icone: '🎯',
+    couleur: 'bleu',
+    accroche: 'Estimez un chiffre du numérique. Le jeu répond « c’est plus » ou « c’est moins ».',
+    duree: '5 à 10 min',
+    preparation: 'Des questions à réponse chiffrée',
+  },
 ];
 
 export function trouverJeu(slug) {

@@ -766,6 +766,20 @@
   background: var(--erreur);
 }
 
+/* Chrono terminé : plus petit pour laisser la place au résultat */
+.chrono--compact {
+  margin-top: 0.75rem;
+}
+
+.chrono--compact .chrono__temps {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  animation: none;
+}
+
+.chrono--compact .chrono__barre {
+  display: none;
+}
+
 @keyframes battement {
   to {
     transform: scale(1.06);

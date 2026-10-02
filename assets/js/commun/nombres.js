@@ -31,9 +31,10 @@ export function lireNombre(texte) {
   return Number(s);
 }
 
-const FORMAT = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 6 });
+// 'min2' : pas d'espace dans les nombres à 4 chiffres (1989, 1500), comme en français courant
+const FORMAT = new Intl.NumberFormat('fr-FR', { maximumFractionDigits: 6, useGrouping: 'min2' });
 
-/** Affiche un nombre avec les espaces des milliers : 1 000 000 ; 2,5. */
+/** Affiche un nombre avec les espaces des milliers à partir de 10 000 : 1989 ; 1 000 000 ; 2,5. */
 export function formaterNombre(n) {
   return FORMAT.format(n);
 }

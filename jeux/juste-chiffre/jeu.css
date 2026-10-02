@@ -1,0 +1,144 @@
+.juste__question {
+  max-width: 34ch;
+  margin: 0 auto 0.25rem;
+  font-size: clamp(1.6rem, 3vw, 2.5rem);
+}
+
+.juste__unite {
+  margin: 0 0 1rem;
+  font-weight: 700;
+  color: var(--texte-doux);
+}
+
+.juste__colonnes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr);
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: start;
+  margin-top: 1rem;
+  text-align: left;
+}
+
+.juste__gauche .chrono {
+  margin-top: 0;
+  text-align: center;
+}
+
+.juste__gauche .groupe-boutons {
+  margin: 0.75rem 0;
+}
+
+.juste__droite .au-tour-de {
+  margin-bottom: 0.75rem;
+}
+
+.juste__saisie {
+  font-size: 2rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.juste__erreur {
+  min-height: 1.4em;
+  margin: 0.4rem 0 0;
+  font-weight: 800;
+  color: var(--erreur);
+}
+
+.juste__verdict {
+  min-height: 1.2em;
+  margin: 0.25rem 0 0;
+  font-size: clamp(2.4rem, 5.5vw, 4.4rem);
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--bleu-nuit);
+}
+
+.juste__verdict--plus .juste__fleche,
+.juste__verdict--moins .juste__fleche {
+  display: inline-block;
+  color: var(--bleu-numerique);
+}
+
+.juste__verdict--juste {
+  color: var(--succes);
+}
+
+.juste__fourchette {
+  margin: 0.5rem 0 0.25rem;
+  font-size: 1.3rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--bleu-nuit);
+}
+
+.juste__compteur {
+  margin: 0 0 0.5rem;
+  font-size: 0.95rem;
+  text-align: center;
+  color: var(--texte-doux);
+}
+
+.juste__historique {
+  display: grid;
+  gap: 0.35rem;
+  max-height: 11.5rem;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.juste__entree {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.35rem 0.8rem;
+  font-size: 1.05rem;
+  border-radius: 10px;
+  background: var(--fond);
+}
+
+.juste__valeur {
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+}
+
+.juste__joueur {
+  font-weight: 700;
+  color: var(--texte-doux);
+}
+
+.juste__sens {
+  font-weight: 800;
+}
+
+.juste__entree--juste {
+  background: var(--accent-clair);
+}
+
+.juste__resultat {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 900;
+  color: var(--bleu-nuit);
+  text-align: center;
+}
+
+.juste__fin .reponse-revelee {
+  text-align: center;
+}
+
+.juste__point {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--succes);
+}
+
+@media (max-width: 860px) {
+  .juste__colonnes {
+    grid-template-columns: 1fr;
+  }
+}

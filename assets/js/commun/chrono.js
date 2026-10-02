@@ -57,6 +57,42 @@ export function formaterDuree(ms) {
   return `${Math.floor(secondes / 60)}:${String(secondes % 60).padStart(2, '0')}`;
 }
 
+/**
+ * Minuteur prêt à afficher : chrono + affichage + bip à chacune des 5 dernières secondes.
+ * `sons` vient de ctx.sons. Renvoie { element, demarrer, pause, arreter, restant, enCours }.
+ */
+export function creerMinuteur({ duree, sons, surFin }) {
+  const affichage = creerAffichageChrono(duree);
+  let derniereSeconde = null;
+  const chrono = creerChrono({
+    duree,
+    surTic(restantMs) {
+      affichage.afficher(restantMs);
+      const seconde = Math.ceil(restantMs / 1000);
+      if (restantMs > 0 && seconde <= 5 && seconde !== derniereSeconde) {
+        derniereSeconde = seconde;
+        sons?.tic();
+      }
+    },
+    surFin() {
+      affichage.afficher(0);
+      sons?.fin();
+      surFin?.();
+    },
+  });
+  affichage.afficher(duree * 1000);
+  return {
+    element: affichage.element,
+    demarrer: () => chrono.demarrer(),
+    pause: () => chrono.pause(),
+    arreter: () => chrono.arreter(),
+    restant: () => chrono.restant(),
+    get enCours() {
+      return chrono.enCours;
+    },
+  };
+}
+
 /** Affichage d'un chrono : grand temps + barre qui se vide. Rouge pendant les 5 dernières secondes. */
 export function creerAffichageChrono(duree) {
   const temps = document.createElement('span');

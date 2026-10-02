@@ -1,0 +1,33 @@
+.defi-roue {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: clamp(1rem, 4vw, 3rem);
+  align-items: center;
+}
+
+.defi-roue__roue .roue {
+  width: min(100%, 460px, 62vh);
+}
+
+.defi-roue__texte .bouton {
+  margin-top: 1rem;
+}
+
+.defi__enonce {
+  max-width: 28ch;
+  margin: 0.5rem auto 0;
+  font-size: clamp(2rem, 4.2vw, 3.4rem);
+}
+
+.defi__message {
+  margin: 1rem 0 0;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 900;
+  color: var(--bleu-nuit);
+}
+
+@media (max-width: 800px) {
+  .defi-roue {
+    grid-template-columns: 1fr;
+  }
+}

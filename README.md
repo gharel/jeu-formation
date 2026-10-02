@@ -6,9 +6,11 @@ Chaque jeu dure de 5 à 15 minutes.
 
 ## Les jeux
 
-| Jeu                | Principe                                     | À préparer             |
-| ------------------ | -------------------------------------------- | ---------------------- |
-| 🔤 Motus numérique | Deviner 5 mots en 6 essais, lettres colorées | 5 mots (+ définitions) |
+| Jeu                 | Principe                                                            | À préparer                   |
+| ------------------- | ------------------------------------------------------------------- | ---------------------------- |
+| 🔤 Motus numérique  | Deviner 5 mots en 6 essais, lettres colorées                        | 5 mots (+ définitions)       |
+| ⏱️ Instant défi     | La roue tire un défi éclair (« 30 secondes pour trouver… »), chrono | Les fins des défis           |
+| 🎯 Le Juste Chiffre | « C'est plus ! », « C'est moins ! », minuteur réglable (30 s)       | Questions à réponse chiffrée |
 
 Sur l'écran d'accueil de chaque jeu, on peut :
 

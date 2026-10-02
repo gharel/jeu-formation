@@ -170,5 +170,8 @@ describe('nombres', () => {
   it('affiche les milliers à la française', () => {
     expect(formaterNombre(1234567).replace(/\s/g, ' ')).toBe('1 234 567');
     expect(formaterNombre(2.5)).toBe('2,5');
+    // pas d'espace dans les nombres à 4 chiffres (années, petites quantités)
+    expect(formaterNombre(1989)).toBe('1989');
+    expect(formaterNombre(10000).replace(/\s/g, ' ')).toBe('10 000');
   });
 });
