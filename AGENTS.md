@@ -41,7 +41,9 @@ assets/js/commun/
   contenu.js                   Schéma : valeurs par défaut, nettoyage, validation, import/export
   participants.js              Liste des prénoms partagée entre les jeux
   roue.js · dialogues.js       Roue aléatoire (tirage équitable) et fenêtres de dialogue
-  chrono.js · paliers.js       Compte à rebours ; chiffres 5 4 3 2 1 qui s'éteignent
+  chrono.js                    Compte à rebours ; creerMinuteur() = chrono affiché + bips de fin
+  paliers.js                   Chiffres 5 4 3 2 1 qui s'éteignent (logique + affichage)
+  manche-paliers.js            Manche Démarrer / Stop / Bonne / Reprendre (Qui suis-je ?, Zoom mystère)
   scores.js · points.js        Points de la partie ; bouton « Attribuer le point »
   stockage.js · images.js      Seuls accès à localStorage et à IndexedDB
   hasard.js · nombres.js       Hasard reproductible (?graine=) ; nombres au format français
@@ -52,8 +54,12 @@ jeux/<slug>/
   logique.js                   Règles du jeu, en fonctions pures, sans accès à la page
   exemple.js                   Schéma du contenu + contenu d'exemple prêt à jouer
   jeu.css                      Styles propres au jeu
+jeux/zoom-mystere/exemples/    Illustrations SVG du contenu d'exemple de Zoom mystère
 tests/unit/                    Vitest (jsdom) : logique des jeux et modules communs
 tests/e2e/                     Playwright : parcours complets, accessibilité, aucune erreur console
+  outils.js                    ouvrirJeu, lancerPartie, attribuerPoints, pointsDe, verifierAccessibilite…
+  accueil.spec.js              Pour chaque jeu de jeux.js : lien, accueil, prénoms, éditeur masqué, axe
+  contenu.spec.js              Export / import JSON, contenu d'exemple
 ```
 
 ## Conventions de code

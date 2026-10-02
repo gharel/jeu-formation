@@ -175,6 +175,11 @@ img {
   outline: none;
 }
 
+/* En partie, on profite de toute la largeur du vidéoprojecteur */
+.cadre:has(> .ecran-jeu) {
+  max-width: 1680px;
+}
+
 .pied {
   padding: 1.25rem;
   text-align: center;

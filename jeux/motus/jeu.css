@@ -20,7 +20,7 @@
 }
 
 .motus-grille {
-  --taille: min(4.2rem, 7vh, calc((100vw - 34rem) / var(--colonnes, 8)));
+  --taille: min(5.5rem, 7.5vh, calc((100vw - 36rem) / var(--colonnes, 8)));
   display: grid;
   gap: 6px;
   padding: 10px;
