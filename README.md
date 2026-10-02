@@ -40,7 +40,9 @@ npm install
 npm run dev
 ```
 
-Puis ouvrir http://localhost:4173.
+Le navigateur s'ouvre sur http://localhost:4173 (Ctrl+C dans le terminal pour arrêter).
+Si le port 4173 est déjà pris, un message l'indique : le site tourne sans doute déjà dans un autre terminal.
+Pour ne pas ouvrir le navigateur : `npm run dev -- --sans-navigateur`.
 
 ## Développer
 

@@ -15,17 +15,20 @@ Un site statique de mini-jeux **projetés au vidéoprojecteur** pour casser la m
 
 ## Commandes
 
-| Commande                          | Rôle                                                                         |
-| --------------------------------- | ---------------------------------------------------------------------------- |
-| `npm install`                     | Installe les outils de développement **et les hooks git** (script `prepare`) |
-| `npx playwright install chromium` | Installe le navigateur des tests e2e (une seule fois)                        |
-| `npm run dev`                     | Serveur local sur http://localhost:4173                                      |
-| `npm run check`                   | Lint + format + validation HTML + tests unitaires (**avant chaque commit**)  |
-| `npm run test:e2e`                | Tests Playwright de bout en bout + accessibilité axe (**avant chaque push**) |
-| `npm test`                        | Tests unitaires Vitest seuls                                                 |
-| `npm run format`                  | Formate tout le code avec Prettier                                           |
+| Commande                           | Rôle                                                                                |
+| ---------------------------------- | ----------------------------------------------------------------------------------- |
+| `npm install`                      | Installe les outils de développement **et les hooks git** (script `prepare`)        |
+| `npx playwright install chromium`  | Installe le navigateur des tests e2e (une seule fois)                               |
+| `npm run dev`                      | Serveur local sur http://localhost:4173 + ouverture du navigateur (`outils/dev.js`) |
+| `npm run dev -- --sans-navigateur` | Même chose sans ouvrir le navigateur (agents, tests manuels)                        |
+| `npm run check`                    | Lint + format + validation HTML + tests unitaires (**avant chaque commit**)         |
+| `npm run test:e2e`                 | Tests Playwright de bout en bout + accessibilité axe (**avant chaque push**)        |
+| `npm test`                         | Tests unitaires Vitest seuls                                                        |
+| `npm run format`                   | Formate tout le code avec Prettier                                                  |
 
 Les pages ne s'ouvrent pas en double-cliquant sur le fichier (`file://`), car les ES modules exigent un serveur. Utiliser `npm run dev`.
+
+**Agents : arrêtez toujours le serveur que vous lancez en arrière-plan**, et vérifiez qu'aucun processus `serve` ne reste. Sinon le port 4173 reste pris et le `npm run dev` de l'utilisateur échoue. `npm run dev` refuse de démarrer si le port est occupé, plutôt que de partir sur un port au hasard.
 
 ## Structure
 
@@ -55,6 +58,7 @@ jeux/<slug>/
   exemple.js                   Schéma du contenu + contenu d'exemple prêt à jouer
   jeu.css                      Styles propres au jeu
 jeux/zoom-mystere/exemples/    Illustrations SVG du contenu d'exemple de Zoom mystère
+outils/dev.js                  Lance serve sur le port 4173 (refuse un port occupé) et ouvre le navigateur
 tests/unit/                    Vitest (jsdom) : logique des jeux et modules communs
 tests/e2e/                     Playwright : parcours complets, accessibilité, aucune erreur console
   outils.js                    ouvrirJeu, lancerPartie, attribuerPoints, pointsDe, verifierAccessibilite…

@@ -5,7 +5,7 @@
   "description": "Mini-jeux projetés pour animer les séances de formation Skazy Formation",
   "type": "module",
   "scripts": {
-    "dev": "serve -l 4173 .",
+    "dev": "node outils/dev.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
