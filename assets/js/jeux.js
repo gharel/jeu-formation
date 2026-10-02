@@ -76,6 +76,24 @@ export const JEUX = [
     duree: '5 à 10 min',
     preparation: 'Des questions et leurs réponses',
   },
+  {
+    slug: 'pyramide',
+    titre: 'Pyramide',
+    icone: '🔺',
+    couleur: 'ciel',
+    accroche: 'Devinez un mot avec 1, 2 ou 3 mots d’indice. Trouvé au premier : 3 points !',
+    duree: '5 à 10 min',
+    preparation: 'Des mots et 3 indices d’un mot',
+  },
+  {
+    slug: 'lettre-a-lettre',
+    titre: 'Lettre à lettre',
+    icone: '🔋',
+    couleur: 'beige',
+    accroche: 'Proposez des lettres pour découvrir le mot… avant que la batterie soit à plat !',
+    duree: '5 à 10 min',
+    preparation: 'Des mots ou courtes expressions',
+  },
 ];
 
 export function trouverJeu(slug) {

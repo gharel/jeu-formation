@@ -15,7 +15,7 @@ export function normaliserMot(texte) {
     .replace(/æ/g, 'ae')
     .replace(/Æ/g, 'AE')
     .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
+    .replace(/[\u0300-\u036f]/g, '')
     .toUpperCase()
     .replace(/[^A-Z]/g, '');
 }

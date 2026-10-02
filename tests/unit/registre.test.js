@@ -4,7 +4,18 @@ import { JEUX, trouverJeu } from '../../assets/js/jeux.js';
 
 // Vitest est lancé depuis la racine du projet
 const racine = `${process.cwd()}/`;
-const COULEURS = ['vert', 'orange', 'bleu', 'jaune', 'violet', 'rose', 'bleu-numerique', 'rouge'];
+const COULEURS = [
+  'vert',
+  'orange',
+  'bleu',
+  'jaune',
+  'violet',
+  'rose',
+  'bleu-numerique',
+  'rouge',
+  'ciel',
+  'beige',
+];
 
 describe('liste des jeux', () => {
   it('a des slugs uniques', () => {

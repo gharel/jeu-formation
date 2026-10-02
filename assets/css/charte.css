@@ -46,7 +46,10 @@
   --violet-clair: #f1e3ff;
   --rouge: #ca2f00;
   --rouge-clair: #ffe1d6;
+  --ciel: #91d0e6;
+  --ciel-clair: #e0f7ff;
   --beige: #f3e6ce;
+  --beige-clair: #faf5eb;
 
   /* Neutres */
   --texte: #212529;
@@ -113,4 +116,14 @@
   --accent: var(--rouge);
   --accent-clair: var(--rouge-clair);
   --sur-accent: var(--blanc);
+}
+[data-couleur='ciel'] {
+  --accent: var(--ciel);
+  --accent-clair: var(--ciel-clair);
+  --sur-accent: var(--bleu-nuit);
+}
+[data-couleur='beige'] {
+  --accent: var(--beige);
+  --accent-clair: var(--beige-clair);
+  --sur-accent: var(--bleu-nuit);
 }

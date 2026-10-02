@@ -187,7 +187,7 @@ function construireListe(champ, lire, ecrire, avecAide) {
             type: 'button',
             class: 'bouton-icone',
             'aria-label': `Retirer ${(champ.nomItem ?? 'ligne').toLowerCase()} ${i + 1}`,
-            disabled: valeurs.length <= 1,
+            disabled: valeurs.length <= Math.max(1, champ.min ?? 1),
             onclick: () => {
               ecrire(lire().filter((_, j) => j !== i));
               dessiner(Math.max(0, i - 1));

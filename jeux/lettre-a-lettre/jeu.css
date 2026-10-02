@@ -1,0 +1,223 @@
+.lettres__entete {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem 1rem;
+}
+
+.lettres__entete .panneau__surtitre,
+.lettres__entete .au-tour-de {
+  margin: 0;
+}
+
+.lettres__theme {
+  margin: 0;
+  padding: 0.25rem 0.9rem;
+  font-weight: 800;
+  color: var(--bleu-nuit);
+  background: var(--accent);
+  border-radius: var(--rayon-pilule);
+}
+
+.lettres__mot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 1.5rem 0;
+}
+
+.lettres__case {
+  display: grid;
+  place-items: center;
+  width: clamp(2.4rem, 4.2vw, 4rem);
+  height: clamp(3rem, 5vw, 4.6rem);
+  font-size: clamp(1.6rem, 3.2vw, 2.8rem);
+  font-weight: 900;
+  color: var(--bleu-nuit);
+  background: var(--fond);
+  border-bottom: 6px solid var(--bleu-nuit);
+  border-radius: 8px 8px 0 0;
+}
+
+.lettres__case--trouvee {
+  background: var(--accent);
+  animation: apparaitre 0.35s ease-out;
+}
+
+.lettres__case--manquante {
+  color: var(--erreur);
+  background: #fde4e2;
+}
+
+.lettres__espace {
+  width: clamp(1rem, 2vw, 2rem);
+}
+
+.lettres__signe {
+  display: grid;
+  place-items: end center;
+  min-width: 1rem;
+  font-size: clamp(1.6rem, 3vw, 2.6rem);
+  font-weight: 900;
+}
+
+.lettres__colonnes {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: start;
+  text-align: left;
+}
+
+/* Batterie : un cran par erreur permise */
+.batterie {
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+}
+
+.batterie__corps {
+  display: flex;
+  align-items: center;
+}
+
+.batterie__segments {
+  display: flex;
+  gap: 4px;
+  padding: 6px;
+  border: 5px solid var(--bleu-nuit);
+  border-radius: 12px;
+}
+
+.batterie__cran {
+  width: clamp(1rem, 2vw, 1.7rem);
+  height: clamp(2.6rem, 5vw, 3.8rem);
+  background: var(--fond);
+  border-radius: 4px;
+  transition: background-color 0.3s ease;
+}
+
+.batterie__cran--pleine {
+  background: var(--succes);
+}
+
+.batterie__cran--moyenne {
+  background: var(--jaune);
+}
+
+.batterie__cran--faible {
+  background: var(--erreur);
+}
+
+.batterie__borne {
+  width: 9px;
+  height: 1.6rem;
+  background: var(--bleu-nuit);
+  border-radius: 0 4px 4px 0;
+}
+
+.batterie__libelle {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--bleu-nuit);
+}
+
+.lettres__ratees {
+  min-height: 1.4em;
+  margin: 0.75rem 0 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-align: center;
+  color: var(--texte-doux);
+}
+
+.lettres__message {
+  min-height: 1.4em;
+  margin: 0.5rem 0 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  text-align: center;
+  color: var(--bleu-nuit);
+}
+
+.lettres__saisie {
+  max-width: 6rem;
+  font-size: 1.8rem;
+  font-weight: 900;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.lettres__clavier {
+  display: grid;
+  gap: 6px;
+  margin-top: 0.75rem;
+}
+
+.lettres__rangee {
+  display: flex;
+  gap: 6px;
+}
+
+.lettres__touche {
+  flex: 1;
+  max-width: 3rem;
+  min-height: 2.9rem;
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--bleu-nuit);
+  background: var(--accent-clair);
+  border: 2px solid var(--accent);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.lettres__touche:hover:not(:disabled) {
+  background: var(--accent);
+}
+
+.lettres__touche--bonne {
+  color: var(--blanc);
+  background: var(--succes);
+  border-color: var(--succes);
+}
+
+.lettres__touche--mauvaise {
+  color: var(--blanc);
+  background: #4a4e72;
+  border-color: #4a4e72;
+}
+
+.lettres__touche:disabled {
+  cursor: default;
+}
+
+.lettres__formulaire-mot {
+  margin-top: 1rem;
+}
+
+.lettres__resultat {
+  text-align: center;
+}
+
+.lettres__resultat .reponse-revelee {
+  margin-top: 0;
+}
+
+.lettres__verdict {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  font-weight: 900;
+  color: var(--bleu-nuit);
+}
+
+@media (max-width: 860px) {
+  .lettres__colonnes {
+    grid-template-columns: 1fr;
+  }
+}

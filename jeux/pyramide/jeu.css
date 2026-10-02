@@ -1,0 +1,119 @@
+.pyramide__mot {
+  margin: 0.25rem 0 1.25rem;
+}
+
+.pyramide__cases {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.pyramide__case {
+  display: grid;
+  place-items: center;
+  width: clamp(2rem, 3.4vw, 3rem);
+  height: clamp(2.4rem, 4vw, 3.4rem);
+  font-size: clamp(1.3rem, 2.4vw, 2rem);
+  font-weight: 900;
+  color: var(--bleu-nuit);
+  border-bottom: 5px solid var(--bleu-nuit);
+}
+
+.pyramide__case--revelee {
+  background: var(--accent-clair);
+  border-radius: 8px 8px 0 0;
+}
+
+.pyramide__separateur {
+  display: grid;
+  place-items: end center;
+  width: 1.2rem;
+  font-size: 1.6rem;
+  font-weight: 900;
+}
+
+.pyramide__nombre {
+  margin: 0.5rem 0 0;
+  font-weight: 800;
+  color: var(--texte-doux);
+}
+
+/* Trois étages : le 1er indice au sommet (étroit), le 3e à la base (large) */
+.pyramide__etages {
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+}
+
+.pyramide__etage {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  min-height: clamp(4rem, 9vh, 5.5rem);
+  padding: 0.5rem 1.25rem;
+  background: var(--fond);
+  border: 3px dashed var(--bord);
+  border-radius: var(--rayon);
+}
+
+.pyramide__etage--1 {
+  width: min(100%, 26rem);
+}
+
+.pyramide__etage--2 {
+  width: min(100%, 38rem);
+}
+
+.pyramide__etage--3 {
+  width: min(100%, 50rem);
+}
+
+.pyramide__etage--visible {
+  background: var(--accent);
+  border: 3px solid var(--bleu-nuit);
+}
+
+.pyramide__etage--courant {
+  box-shadow: 0 0 0 5px var(--accent-clair);
+  transform: scale(1.03);
+}
+
+.pyramide__points {
+  flex: none;
+  padding: 0.15rem 0.7rem;
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--blanc);
+  background: var(--bleu-nuit);
+  border-radius: var(--rayon-pilule);
+}
+
+.pyramide__indice {
+  font-size: clamp(1.6rem, 3.4vw, 2.8rem);
+  font-weight: 900;
+  color: var(--bleu-nuit);
+}
+
+.pyramide__etage:not(.pyramide__etage--visible) .pyramide__indice::before {
+  content: '?';
+  color: var(--gris);
+}
+
+.pyramide__verdict {
+  margin: 1rem 0 0;
+  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  font-weight: 900;
+  color: var(--bleu-nuit);
+}
+
+.pyramide__gain {
+  margin: 0.4rem 0 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--succes);
+}
