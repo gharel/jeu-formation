@@ -1,6 +1,19 @@
 import { defineConfig, devices } from '@playwright/test';
+import { EMPREINTE, CLE_ACCES } from './assets/js/commun/acces.js';
 
-const PORT = 4173;
+// PORT_E2E=4199 npm run test:e2e : pour tester un worktree quand npm run dev occupe déjà 4173
+const PORT = Number(process.env.PORT_E2E) || 4173;
+
+// Les pages s'ouvrent déverrouillées, comme après la saisie du mot de passe (voir acces.spec.js)
+const deverrouille = {
+  cookies: [],
+  origins: [
+    {
+      origin: `http://localhost:${PORT}`,
+      localStorage: [{ name: `skazy-jeux:${CLE_ACCES}`, value: JSON.stringify(EMPREINTE) }],
+    },
+  ],
+};
 
 export default defineConfig({
   testDir: 'tests/e2e',
@@ -10,6 +23,7 @@ export default defineConfig({
   reporter: [['list'], ['html', { open: 'never' }]],
   use: {
     baseURL: `http://localhost:${PORT}`,
+    storageState: deverrouille,
     reducedMotion: 'reduce',
     trace: 'retain-on-failure',
   },

@@ -26,6 +26,9 @@ Un site statique de mini-jeux **projetés au vidéoprojecteur** pour casser la m
 | `npm test`                         | Tests unitaires Vitest seuls                                                        |
 | `npm run format`                   | Formate tout le code avec Prettier                                                  |
 | `npm run vendor:fontawesome`       | Recopie Font Awesome Free dans `assets/vendor/fontawesome/` (après une mise à jour) |
+| `npm run mot-de-passe`             | Calcule l'empreinte d'un nouveau mot de passe d'accès (à recopier dans `acces.js`)  |
+
+Si `npm run dev` tourne déjà ailleurs (autre dossier, worktree), `npm run test:e2e` testerait ce serveur-là : lancez alors `PORT_E2E=4199 npm run test:e2e` (idem pour `git push`, dont le hook lance les e2e).
 
 Les pages ne s'ouvrent pas en double-cliquant sur le fichier (`file://`), car les ES modules exigent un serveur. Utiliser `npm run dev`.
 
@@ -49,6 +52,7 @@ assets/js/commun/
   paliers.js                   Chiffres 5 4 3 2 1 qui s'éteignent (logique + affichage)
   manche-paliers.js            Manche Démarrer / Stop / Bonne / Reprendre (Qui suis-je ?, Zoom mystère)
   scores.js · points.js        Points de la partie ; bouton « Attribuer le point »
+  acces.js                     Mot de passe d'accès : empreinte PBKDF2 seule, écran de saisie, Verrouiller
   stockage.js · images.js      Seuls accès à localStorage et à IndexedDB
   hasard.js · nombres.js       Hasard reproductible (?graine=) ; nombres au format français
   sons.js                      Habillage sonore par jeu (Web Audio : notes, bruit filtré, fanfares)
@@ -62,6 +66,7 @@ jeux/<slug>/
 jeux/zoom-mystere/exemples/    Illustrations SVG du contenu d'exemple de Zoom mystère
 assets/vendor/fontawesome/     Font Awesome Free (CSS + polices woff2 + licence), copié par npm run vendor:fontawesome
 outils/dev.js                  Lance serve sur le port 4173 (refuse un port occupé) et ouvre le navigateur
+outils/empreinte-mot-de-passe.js  Saisie masquée d'un nouveau mot de passe → sel + empreinte pour acces.js
 tests/unit/                    Vitest (jsdom) : logique des jeux et modules communs
 tests/e2e/                     Playwright : parcours complets, accessibilité, aucune erreur console
   outils.js                    ouvrirJeu, lancerPartie, attribuerPoints, pointsDe, verifierAccessibilite…
@@ -75,6 +80,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
 - **Pas de dépendance à l'exécution.** `package.json` ne contient que des outils de développement. Pas de CDN, pas de framework. La police est hébergée dans `assets/fonts/`.
 - **La logique est séparée de l'affichage.** Les règles vont dans `logique.js`, en fonctions pures testées unitairement. `jeu.js` ne fait que construire la page et réagir aux clics.
 - **Sécurité.** Tout texte saisi ou importé passe par `el()` ou `textContent`, jamais par `innerHTML`. Un JSON importé passe par `nettoyerContenu()`, qui ne garde que les clés et les types prévus par le schéma.
+- **Mot de passe d'accès.** Il n'est jamais écrit en clair : ni dans le code, ni dans les tests, ni dans un message de commit. Seule son empreinte est dans `acces.js`. Les tests e2e ouvrent les pages déverrouillées (`storageState` dans `playwright.config.js`) ; `acces.spec.js` teste l'écran sans le mot de passe.
 - **Stockage.** On passe toujours par `stockage.js` (localStorage, clés préfixées par `skazy-jeux:`) ou `images.js` (IndexedDB), jamais d'appel direct. Les erreurs de stockage ne doivent jamais faire planter un jeu.
 - **Hasard.** On utilise `ctx.hasard` (ou `hasardDePage()`), pas `Math.random()` directement, pour que `?graine=N` rende les tests reproductibles.
 - **Raccourcis clavier.** On passe par `ecouterClavier()` : il ignore les touches pendant la saisie et quand un dialogue est ouvert. Il faut retirer l'écoute dans la fonction de nettoyage renvoyée par `demarrer()`. Touches réservées : `R` (roue) et `F` (plein écran).

@@ -37,6 +37,10 @@ import {
   lireImport,
 } from './contenu.js';
 import { creerEditeur } from './editeur-contenu.js';
+import { exigerAcces } from './acces.js';
+
+// Chaque jeu importe ce module : aucun jeu ne démarre avant le mot de passe.
+await exigerAcces();
 
 export function monterJeu(config) {
   const { slug, schema, exemple, regles = [], demarrer } = config;

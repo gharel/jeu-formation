@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "node outils/dev.js",
     "vendor:fontawesome": "node outils/copier-fontawesome.js",
+    "mot-de-passe": "node outils/empreinte-mot-de-passe.js",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

@@ -1168,3 +1168,70 @@
     flex-wrap: wrap;
   }
 }
+
+/* ---------- Écran de mot de passe (acces.js) ---------- */
+.porte-acces {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  overflow-y: auto;
+  background: var(--bleu-nuit);
+  color: var(--blanc);
+}
+
+.porte-acces__carte {
+  width: min(100%, 30rem);
+  text-align: center;
+}
+
+.porte-acces__logo {
+  display: block;
+  width: 200px;
+  height: auto;
+  margin: 0 auto 2rem;
+}
+
+.porte-acces__titre {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  margin: 0 0 0.5rem;
+  font-size: clamp(2rem, 4vw, 2.8rem);
+  font-weight: 900;
+  color: var(--blanc);
+}
+
+.porte-acces__titre .icone {
+  color: var(--vert);
+}
+
+.porte-acces__formulaire {
+  margin-top: 1.75rem;
+  text-align: left;
+}
+
+.porte-acces__formulaire .champ__libelle {
+  color: var(--blanc);
+}
+
+.porte-acces__ligne {
+  display: flex;
+  gap: 0.6rem;
+  margin-top: 0.4rem;
+}
+
+.porte-acces__ligne .champ__controle {
+  flex: 1;
+  min-width: 0;
+}
+
+.porte-acces__erreur {
+  min-height: 1.5em;
+  margin: 0.75rem 0 0;
+  color: var(--rose);
+  font-weight: 700;
+}

@@ -7,6 +7,9 @@ import { el, remplir, icone } from './commun/ui.js';
 import { hasardDePage } from './commun/hasard.js';
 import { creerTirage } from './commun/roue.js';
 import { tirerAvecRoue } from './commun/dialogues.js';
+import { exigerAcces, verrouiller } from './commun/acces.js';
+
+await exigerAcces();
 
 function carteJeu(jeu) {
   return el(
@@ -64,3 +67,23 @@ bouton.addEventListener('click', async () => {
   });
   if (index !== null) window.location.href = `jeux/${JEUX[index].slug}/`;
 });
+
+document.querySelector('.pied')?.append(
+  el(
+    'p',
+    {},
+    el(
+      'button',
+      {
+        type: 'button',
+        class: 'bouton bouton--discret',
+        onclick: () => {
+          verrouiller();
+          window.location.reload();
+        },
+      },
+      icone('lock'),
+      'Verrouiller l’accès sur cet ordinateur',
+    ),
+  ),
+);
