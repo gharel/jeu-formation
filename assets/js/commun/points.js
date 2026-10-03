@@ -23,7 +23,7 @@ export function creerBoutonPoints(
     bouton.disabled = true;
     remplir(bouton, icone('check'), `+${libelle} pour ${choisis.join(', ')}`);
     ctx.annoncer(`${libelle} pour ${choisis.join(', ')}`);
-    ctx.sons.succes();
+    ctx.sons.ding();
     bouton.dispatchEvent(new CustomEvent('points-attribues', { bubbles: true, detail: choisis }));
   });
   return bouton;

@@ -188,7 +188,11 @@ export function tirerAvecRoue({
     construire({ corps, pied, fermer }) {
       let choisi = null;
       let enCours = false;
-      const roue = creerRoue(libelles, couleursRoue(libelles.length), { hasard, ...optionsRoue });
+      const roue = creerRoue(libelles, couleursRoue(libelles.length), {
+        hasard,
+        surPassage: sons.roueClic,
+        ...optionsRoue,
+      });
       const resultat = el('p', { class: 'roue-resultat', 'aria-live': 'polite' });
       const detail = el('p', { class: 'roue-detail' });
       const lancer = el(

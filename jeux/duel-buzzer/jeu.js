@@ -239,6 +239,7 @@ function demarrer(ctx) {
         const gagnant = noms[duel.vainqueur];
         remplir(statut, icone('trophy'), `${gagnant} gagne le duel !`);
         cotes[duel.vainqueur].bloc.classList.add('duel__joueur--vainqueur');
+        ctx.sons.duel.victoire();
         actionEntree = null;
         remplir(
           actions,
@@ -280,7 +281,7 @@ function demarrer(ctx) {
 
     function buzz(cote) {
       if (!duel.buzzer(cote)) return;
-      ctx.sons.buzz();
+      ctx.sons.duel.buzz(cote);
       dessiner();
       animer(cotes[cote].bloc, 'duel__joueur--buzz');
     }
@@ -290,10 +291,11 @@ function demarrer(ctx) {
       const issue = duel.valider(bonne);
       if (issue === null) return;
       if (issue === 'point') {
-        ctx.sons.succes();
+        // La victoire a sa propre fanfare (dessinerFin)
+        if (!duel.vainqueur) ctx.sons.duel.bonne();
         if (ctx.participants.includes(noms[cote])) ctx.scores.ajouter(noms[cote], 1);
       } else {
-        ctx.sons.erreur();
+        ctx.sons.duel.mauvaise();
       }
       dessiner();
       if (issue === 'main-adverse') remplir(statut, `Raté ! ${noms[autre(cote)]} peut répondre`);

@@ -259,8 +259,10 @@ function demarrer(ctx) {
     );
     resultat.hidden = false;
     animer(resultat, 'apparition');
-    if (trouve) ctx.sons.succes();
-    else ctx.sons.erreur();
+    // Fanfare ou « boum » une fois toutes les lettres révélées
+    const apresLettres = { debut: secret.length * 0.12 + 0.1 };
+    if (trouve) ctx.sons.motus.trouve(apresLettres);
+    else ctx.sons.motus.perdu(apresLettres);
     ctx.annoncer(trouve ? `Trouvé ! Le mot était ${secret}` : `Le mot était ${secret}`);
     focaliser(titre);
   }
@@ -280,6 +282,8 @@ function demarrer(ctx) {
     }
     const evaluation = evaluer(secret, mot);
     essais.push({ mot, evaluation });
+    // Une note par lettre, au rythme de l’animation qui retourne les cases
+    ctx.sons.motus.lettres(evaluation);
     dessinerClavier();
     if (estTrouve(evaluation)) {
       terminerMot(true);
@@ -289,7 +293,6 @@ function demarrer(ctx) {
       terminerMot(false);
       return;
     }
-    ctx.sons.tic();
     saisie.value = secret[0];
     dessinerGrille({ revelerDerniere: true });
     ctx.annoncer(grille.children[essais.length - 1].getAttribute('aria-label'));

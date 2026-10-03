@@ -105,12 +105,18 @@ function tronquer(texte, max) {
 
 /**
  * Dessine une roue SVG. `couleurs` : liste de couples [fond, texte].
+ * `surPassage()` est appelé chaque fois qu'un segment passe sous le pointeur (cliquetis).
  * Renvoie { element, tourner(index) => Promise<index> }.
  */
 export function creerRoue(
   libelles,
   couleurs,
-  { hasard = Math.random, longueurMax: longueurImposee, taillePolice: policeImposee } = {},
+  {
+    hasard = Math.random,
+    longueurMax: longueurImposee,
+    taillePolice: policeImposee,
+    surPassage = null,
+  } = {},
 ) {
   const conteneur = document.createElement('div');
   conteneur.className = 'roue';
@@ -209,6 +215,22 @@ export function creerRoue(
         });
         disque.addEventListener('transitionend', terminer, { once: true });
         setTimeout(terminer, 4400);
+        // Cliquetis : on suit l'angle réel pendant l'animation
+        if (surPassage) {
+          let dernier = null;
+          const suivre = () => {
+            if (fini) return;
+            const matrice = new DOMMatrixReadOnly(getComputedStyle(disque).transform);
+            const segment = segmentSousPointeur(
+              (Math.atan2(matrice.b, matrice.a) * 180) / Math.PI,
+              nombre,
+            );
+            if (dernier !== null && segment !== dernier) surPassage();
+            dernier = segment;
+            requestAnimationFrame(suivre);
+          };
+          requestAnimationFrame(suivre);
+        }
       });
     },
   };

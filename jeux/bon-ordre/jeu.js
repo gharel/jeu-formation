@@ -88,7 +88,7 @@ function demarrer(ctx) {
       const libre = emplacements.findIndex((e, i) => e === null && !verrouilles.has(i));
       if (libre === -1 || estPlacee(carte)) return;
       emplacements[libre] = carte;
-      ctx.sons.tic();
+      ctx.sons.ordre.carte();
       dessiner();
     }
 
@@ -153,6 +153,8 @@ function demarrer(ctx) {
     function verifierOrdre() {
       const resultats = verifier(emplacements);
       const justes = resultats.filter(Boolean).length;
+      // Une note par étape bien placée, puis fanfare ou « eh-eh »
+      ctx.sons.ordre.verification(justes, emplacements.length);
       resultats.forEach((juste, i) => {
         if (juste) verrouilles.add(i);
         else emplacements[i] = null;
@@ -161,7 +163,6 @@ function demarrer(ctx) {
         reussir();
         return;
       }
-      ctx.sons.erreur();
       animer(ordre, 'secousse');
       if (essai >= essaisMax) {
         echouer();
@@ -210,7 +211,6 @@ function demarrer(ctx) {
 
     function reussir() {
       const points = pointsPourEssai(essai, essaisMax);
-      ctx.sons.succes();
       conclure(
         `Bravo ! Trouvé en ${essai} essai${essai > 1 ? 's' : ''}.`,
         creerBoutonPoints(ctx, { points, titre: 'Qui a trouvé le bon ordre ?', multiple: true }),

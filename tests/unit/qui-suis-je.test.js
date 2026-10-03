@@ -3,6 +3,7 @@ import { indicesVisibles } from '../../jeux/qui-suis-je/logique.js';
 import { schema, exemple } from '../../jeux/qui-suis-je/exemple.js';
 import { nettoyerContenu, validerContenu } from '../../assets/js/commun/contenu.js';
 import { creerMancheAPaliers } from '../../assets/js/commun/manche-paliers.js';
+import { sons } from '../../assets/js/commun/sons.js';
 
 describe('Qui suis-je ?', () => {
   it('ajoute un indice à chaque chiffre perdu', () => {
@@ -24,7 +25,7 @@ describe('manche à paliers', () => {
   function ctxFactice(prenomChoisi) {
     return {
       participants: prenomChoisi ? ['Ana', 'Bob'] : [],
-      sons: { tic() {}, buzz() {}, erreur() {}, succes() {} },
+      sons, // vrais sons : sans AudioContext (jsdom), ils ne jouent rien
       annoncer() {},
       scores: { ajouter: vi.fn() },
       choisirPrenoms: vi.fn(async () => [prenomChoisi]),

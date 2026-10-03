@@ -208,10 +208,10 @@ function demarrer(ctx) {
       }
       etat = coup.etat;
       if (coup.resultat === 'bonne') {
-        ctx.sons.tic();
+        ctx.sons.batterie.lettre(coup.occurrences);
         remplir(message, `Oui ! ${coup.occurrences} « ${coup.lettre} »`);
       } else {
-        ctx.sons.erreur();
+        ctx.sons.batterie.cran();
         remplir(message, `Pas de « ${coup.lettre} » : un cran de batterie en moins.`);
         animer(batterie.element, 'secousse');
       }
@@ -227,7 +227,8 @@ function demarrer(ctx) {
       remplir(message);
       dessinerMot(!trouve);
       dessinerEtat();
-      if (trouve) ctx.sons.succes();
+      if (trouve) ctx.sons.fanfare(3);
+      else ctx.sons.batterie.aPlat();
       const dernier = index === mots.length - 1;
       const titre = el(
         'p',
@@ -289,7 +290,7 @@ function demarrer(ctx) {
         conclure(true);
         return;
       }
-      ctx.sons.erreur();
+      ctx.sons.batterie.cran();
       remplir(message, 'Ce n’est pas le bon mot : un cran de batterie en moins.');
       animer(batterie.element, 'secousse');
       dessinerEtat();

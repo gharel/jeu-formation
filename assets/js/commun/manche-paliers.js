@@ -14,6 +14,7 @@ export function creerMancheAPaliers({ ctx, dureePalier, nombre = 5, surValeur, s
   const affichage = creerAffichagePaliers(nombre);
   const actions = el('div', { class: 'actions-jeu' });
   let etat = 'attente';
+  let derniereSeconde = 0;
 
   const paliers = creerPaliers({
     nombre,
@@ -21,11 +22,20 @@ export function creerMancheAPaliers({ ctx, dureePalier, nombre = 5, surValeur, s
     surChangement(valeur) {
       affichage.afficher(valeur);
       if (valeur > 0) {
-        ctx.sons.tic();
+        ctx.sons.paliers.chiffre(valeur);
         surValeur(valeur);
       }
     },
-    surFin: () => finir({ trouve: false }),
+    // Tic-tac discret à chaque seconde qui passe
+    surTic(ecouleMs) {
+      const seconde = Math.floor(ecouleMs / 1000);
+      if (seconde > 0 && seconde !== derniereSeconde) ctx.sons.paliers.tictac(seconde % 2 === 0);
+      derniereSeconde = seconde;
+    },
+    surFin: () => {
+      ctx.sons.fin();
+      finir({ trouve: false });
+    },
   });
 
   function bouton(nomIcone, texte, classe, action) {
@@ -65,14 +75,14 @@ export function creerMancheAPaliers({ ctx, dureePalier, nombre = 5, surValeur, s
   function stop() {
     paliers.pause();
     etat = 'pause';
-    ctx.sons.buzz();
+    ctx.sons.paliers.stop();
     ctx.annoncer(`Stop ! ${paliers.valeur} points en jeu.`);
     dessiner();
   }
 
   function reprendre() {
     etat = 'enCours';
-    ctx.sons.erreur();
+    ctx.sons.paliers.mauvaise();
     paliers.reprendre();
     dessiner();
   }
@@ -89,7 +99,7 @@ export function creerMancheAPaliers({ ctx, dureePalier, nombre = 5, surValeur, s
       prenom = choisi;
       ctx.scores.ajouter(prenom, points);
     }
-    ctx.sons.succes();
+    ctx.sons.paliers.bonne(points);
     finir({ trouve: true, prenom, points });
   }
 

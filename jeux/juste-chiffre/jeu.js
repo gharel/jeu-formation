@@ -218,11 +218,12 @@ function demarrer(ctx) {
       animer(verdict, 'apparition');
       dessinerHistorique();
       if (resultat === 'juste') {
-        ctx.sons.succes();
+        ctx.sons.juste.juste();
         reveler('juste');
         return;
       }
-      ctx.sons.tic();
+      if (resultat === 'plus') ctx.sons.juste.plus();
+      else ctx.sons.juste.moins();
       if (avecTour) {
         indexJoueur = suivant(ctx.participants, indexJoueur);
         rafraichirJoueur();

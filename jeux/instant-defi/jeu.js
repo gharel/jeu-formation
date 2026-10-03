@@ -39,7 +39,7 @@ function demarrer(ctx) {
     const roue = creerRoue(
       restants.map((d) => `Défi ${d.numero}`),
       couleursRoue(restants.length),
-      { hasard: ctx.hasard },
+      { hasard: ctx.hasard, surPassage: ctx.sons.roueClic },
     );
     const titre = el('h3', { class: 'panneau__texte' }, 'Quel sera le prochain défi ?');
     const bouton = el(

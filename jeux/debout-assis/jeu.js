@@ -106,7 +106,8 @@ function demarrer(ctx) {
       minuteur.element.hidden = true;
       const vrai = a.reponse === 'vrai';
       const sens = vrai ? 'vrai' : 'faux';
-      ctx.sons.ding();
+      if (vrai) ctx.sons.verite.vrai();
+      else ctx.sons.verite.faux();
       for (const tuile of tuiles.children) {
         tuile.classList.toggle(
           'debout__tuile--bonne',

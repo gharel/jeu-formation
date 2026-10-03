@@ -26,7 +26,7 @@ Sur l'écran d'accueil de chaque jeu, on peut :
 - **faire tourner la roue** pour désigner quelqu'un, avec la touche `R` ou le bouton « Désigner » ;
 - **préparer le contenu**, avec les réponses masquées pour pouvoir le faire écran projeté. Un contenu d'exemple permet de jouer tout de suite. Le contenu s'exporte et s'importe en JSON pour le réutiliser ou le partager.
 
-La touche `F` passe en plein écran. Le son se coupe depuis le bandeau.
+La touche `F` passe en plein écran. Chaque jeu a son habillage sonore façon jeu télévisé : notes des lettres de Motus, cloche des étages de Pyramide, gong du « Stop », buzzers du duel, cliquetis de la roue, fanfares et applaudissements. Ce sont des sons originaux générés par le navigateur, sans fichier ni droits d'auteur. Le bouton Son du bandeau les coupe.
 Les icônes viennent de Font Awesome Free, hébergé dans le projet (fonctionne hors ligne).
 
 ## Utiliser les jeux

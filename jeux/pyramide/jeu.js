@@ -122,7 +122,7 @@ function demarrer(ctx) {
     function indiceSuivant() {
       if (fini || affiches >= indices.length) return;
       affiches += 1;
-      ctx.sons.tic();
+      ctx.sons.pyramide.etage(affiches);
       dessinerEtages();
       dessinerActions();
       animer(etages.children[affiches - 1], 'apparition');
@@ -141,7 +141,7 @@ function demarrer(ctx) {
         prenom = choisi;
         ctx.scores.ajouter(prenom, points);
       }
-      ctx.sons.succes();
+      ctx.sons.pyramide.trouve(points);
       conclure(prenom, points);
     }
 
@@ -149,7 +149,7 @@ function demarrer(ctx) {
       const trouve = points > 0;
       fini = true;
       actionEspace = null;
-      if (!trouve) ctx.sons.erreur();
+      if (!trouve) ctx.sons.pyramide.perdu();
       affiches = indices.length;
       dessinerEtages();
       dessinerLongueur(true);
@@ -202,6 +202,7 @@ function demarrer(ctx) {
     dessinerLongueur(false);
     dessinerEtages();
     dessinerActions();
+    ctx.sons.pyramide.etage(1);
     actions.querySelector('.bouton--principal')?.focus();
   }
 

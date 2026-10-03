@@ -51,7 +51,8 @@ assets/js/commun/
   scores.js · points.js        Points de la partie ; bouton « Attribuer le point »
   stockage.js · images.js      Seuls accès à localStorage et à IndexedDB
   hasard.js · nombres.js       Hasard reproductible (?graine=) ; nombres au format français
-  sons.js · ui.js              Bips Web Audio ; el(), raccourcis clavier, typographie
+  sons.js                      Habillage sonore par jeu (Web Audio : notes, bruit filtré, fanfares)
+  ui.js                        el(), icone(), raccourcis clavier, typographie
 jeux/<slug>/
   index.html                   Page du jeu (même gabarit pour tous)
   jeu.js                       Affichage et déroulé : appelle monterJeu({ slug, schema, exemple, regles, demarrer })
@@ -79,6 +80,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
 - **Raccourcis clavier.** On passe par `ecouterClavier()` : il ignore les touches pendant la saisie et quand un dialogue est ouvert. Il faut retirer l'écoute dans la fonction de nettoyage renvoyée par `demarrer()`. Touches réservées : `R` (roue) et `F` (plein écran).
 - **Minuteries.** Tout `setInterval`, chrono ou palier lancé par un jeu est arrêté dans la fonction de nettoyage, sinon il continue après « Quitter la partie ».
 - **Accessibilité.** Le contraste respecte WCAG AA, tout se fait au clavier, les messages importants passent par `role="alert"` ou `ctx.annoncer()`, et les animations sont coupées si l'utilisateur a demandé à réduire les animations (`prefers-reduced-motion`).
+- **Sons** : tous générés par `sons.js` (Web Audio), sans fichier audio. Chaque jeu a son espace (`sons.motus`, `sons.pyramide`, `sons.duel`…). On **évoque** l'ambiance des jeux télévisés, on ne reproduit jamais leurs jingles (droits d'auteur). Le bouton Son coupe tout : passer par `audio()` de `sons.js`, qui respecte ce choix.
 - **Pas d'emoji** dans l'interface : uniquement des icônes Font Awesome Free (style solid ou regular) via `icone('nom')` de `ui.js`, décoratives (`aria-hidden`) : le texte du bouton ou du message doit suffire. `tests/unit/icones.test.js` refuse tout emoji et toute icône inexistante. Une `<option>` ne peut pas contenir d'icône : texte seul.
 - **Format** : Prettier (guillemets simples, 100 colonnes). Lint : ESLint `recommended` + `eqeqeq`, `prefer-const`.
 

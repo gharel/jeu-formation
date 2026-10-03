@@ -743,7 +743,8 @@ export function monterJeu(config) {
   // ---------- Fin ----------
   function afficherFin(scores, { message = '' } = {}) {
     arreterPartie();
-    sons.succes();
+    sons.fanfare(3);
+    sons.applaudissements();
     const titre = el('h2', { class: 'fin__titre' }, icone('trophy'), 'Partie terminée !');
     const classement = scores.classement();
     const aDesPoints = classement.some((e) => e.points > 0);
