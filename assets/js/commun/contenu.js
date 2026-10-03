@@ -6,7 +6,8 @@
  *   reglages: [{ cle, libelle, type: 'nombre' | 'case' | 'choix', defaut, min, max, unite, options }],
  *   elements: {
  *     libelle: 'Mot', pluriel: 'mots', feminin: false, min: 5, max: 5,
- *     champs: [{ cle, libelle, type, requis, secret, min, max, longueurMax, options, suggestions, aide }],
+ *     champs: [{ cle, libelle, type, requis, secret, min, max, longueurMax, options, suggestions, aide,
+ *                exemple }],   // exemple = placeholder (tableau possible pour une liste : une par ligne)
  *     valider(element) => message | null,
  *   },
  * }
@@ -48,6 +49,22 @@ export function reglagesParDefaut(schema) {
 
 export function elementVide(schema) {
   return Object.fromEntries(schema.elements.champs.map((c) => [c.cle, valeurParDefaut(c)]));
+}
+
+/** Même réglages, mais liste vidée : juste le nombre minimal d'éléments vides, à remplir. */
+export function contenuVide(schema, contenu = {}) {
+  const reglages = { ...reglagesParDefaut(schema), ...(contenu.reglages ?? {}) };
+  const elements = Array.from({ length: schema.elements.min ?? 1 }, () => elementVide(schema));
+  return { reglages, elements };
+}
+
+/**
+ * Texte d'exemple (placeholder) d'un champ. Pour une liste, `exemple` peut être un tableau :
+ * une suggestion par ligne (rien au-delà).
+ */
+export function exempleDuChamp(champ, ligne = 0) {
+  if (Array.isArray(champ.exemple)) return champ.exemple[ligne] ?? null;
+  return champ.exemple ?? null;
 }
 
 function entre0et1(n) {

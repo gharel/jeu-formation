@@ -35,6 +35,7 @@ export const schema = {
         article: 'un',
         secret: true,
         longueurMax: 40,
+        exemple: ['Ex. : rongeur', 'Ex. : molette', 'Ex. : clic'],
         aide: 'Trouvé au 1er indice : 3 points, au 2e : 2 points, au 3e : 1 point.',
       },
     ],

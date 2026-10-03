@@ -60,6 +60,7 @@ export const schema = {
         cle: 'anecdote',
         libelle: 'Anecdote ou source (facultatif)',
         type: 'texte-long',
+        exemple: 'Ex. : Le 3 décembre 1992, un ingénieur envoie « Merry Christmas ».',
         aide: 'Affichée quand la réponse est révélée.',
       },
     ],

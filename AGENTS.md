@@ -42,7 +42,7 @@ assets/js/jeux.js              Liste des jeux (slug, titre, icône, couleur, acc
 assets/js/commun/
   cadre-jeu.js                 monterJeu() : accueil du jeu, préparation, partie, fin
   editeur-contenu.js           Éditeur généré à partir du schéma de contenu du jeu
-  contenu.js                   Schéma : valeurs par défaut, nettoyage, validation, import/export
+  contenu.js                   Schéma : valeurs par défaut, liste vide, nettoyage, validation, import/export
   participants.js              Liste des prénoms partagée entre les jeux + une info par personne (passion, film…)
   roue.js · dialogues.js       Roue aléatoire (tirage équitable) et fenêtres de dialogue
   chrono.js                    Compte à rebours ; creerMinuteur() = chrono affiché + bips de fin
@@ -99,7 +99,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
 1. Ajouter l'entrée dans `assets/js/jeux.js`, avec une couleur de `charte.css` pas encore utilisée.
 2. Copier `jeux/motus/index.html` dans `jeux/<slug>/index.html`, puis adapter `<title>`, la description, `data-jeu`, `data-couleur` et le `<h1>` (le test `registre.test.js` vérifie leur cohérence).
 3. Écrire `logique.js` et ses tests unitaires **d'abord**.
-4. Écrire `exemple.js` : le schéma du contenu (voir l'en-tête de `contenu.js`) et un contenu d'exemple valide.
+4. Écrire `exemple.js` : le schéma du contenu (voir l'en-tête de `contenu.js`) et un contenu d'exemple valide. Chaque champ à saisir a un `exemple` affiché en placeholder (un tableau pour une liste : une suggestion par ligne), jamais une valeur pré-remplie ; `contenu-vide.test.js` le vérifie.
 5. Écrire `jeu.js` : `monterJeu({ slug, schema, exemple, regles, demarrer })`. `demarrer(ctx)` reçoit :
    - `zone`, `elements`, `reglages`, `participants`, `scores`, `hasard`, `sons` ;
    - `choisirPrenoms()`, `designer()`, `quandDesigne()`, `annoncer()`, `confirmer()`, `terminer()`.

@@ -21,6 +21,7 @@ export const schema = {
         cle: 'definition',
         libelle: 'Définition (facultatif)',
         type: 'texte',
+        exemple: 'Ex. : Le périphérique qui sert à saisir du texte.',
         aide: 'Affichée quand le mot est révélé.',
       },
     ],

@@ -53,6 +53,7 @@ export const schema = {
         cle: 'explication',
         libelle: 'Explication (facultatif)',
         type: 'texte-long',
+        exemple: 'Ex. : Avec les bons logiciels, on peut annoter ou modifier un PDF.',
         aide: 'Affichée avec la réponse.',
       },
     ],

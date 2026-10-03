@@ -31,6 +31,7 @@ import {
   nettoyerContenu,
   validerContenu,
   resumerContenu,
+  contenuVide,
   compacterContenu,
   preparerExport,
   lireImport,
@@ -403,10 +404,27 @@ export function monterJeu(config) {
           : 'Votre contenu est enregistré dans ce navigateur. Exportez-le pour le garder ou le partager.',
       ),
       el(
-        'button',
-        { type: 'button', class: 'bouton', onclick: () => afficherPreparation() },
-        icone('pen-to-square'),
-        'Préparer le contenu',
+        'div',
+        { class: 'groupe-boutons' },
+        el(
+          'button',
+          { type: 'button', class: 'bouton', onclick: () => afficherPreparation() },
+          icone('pen-to-square'),
+          'Préparer le contenu',
+        ),
+        estExemple()
+          ? el(
+              'button',
+              {
+                type: 'button',
+                class: 'bouton bouton--discret',
+                onclick: () =>
+                  afficherPreparation(contenuVide(schema, contenu), MESSAGE_LISTE_VIDE),
+              },
+              icone('eraser'),
+              'Partir d’une liste vide',
+            )
+          : null,
       ),
     );
   }
@@ -464,6 +482,9 @@ export function monterJeu(config) {
   }
 
   // ---------- Préparation du contenu ----------
+  const MESSAGE_LISTE_VIDE =
+    'Liste vidée. Les textes grisés ne sont que des exemples : saisissez votre contenu par-dessus, puis enregistrez.';
+
   function telecharger(nom, texte) {
     const lien = el('a', {
       href: URL.createObjectURL(new Blob([texte], { type: 'application/json' })),
@@ -572,6 +593,27 @@ export function monterJeu(config) {
         },
         icone('rotate-left'),
         'Contenu d’exemple',
+      ),
+      el(
+        'button',
+        {
+          type: 'button',
+          class: 'bouton bouton--discret',
+          onclick: async () => {
+            if (
+              await confirmer({
+                titre: 'Vider la liste ?',
+                message:
+                  'Vous repartez d’une liste vide pour saisir votre propre contenu. Les réglages sont conservés, et rien n’est perdu tant que vous n’enregistrez pas.',
+                oui: 'Vider',
+              })
+            ) {
+              remplacerEditeur(contenuVide(schema, editeurCourant.valeur()), MESSAGE_LISTE_VIDE);
+            }
+          },
+        },
+        icone('eraser'),
+        'Vider la liste',
       ),
     );
 

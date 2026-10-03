@@ -24,7 +24,7 @@ Sur l'écran d'accueil de chaque jeu, on peut :
 
 - **saisir les prénoms** (liste partagée entre tous les jeux), avec une info facultative sur chaque personne : sa passion, son film ou son dessert préféré… La roue l'affiche quand elle désigne quelqu'un ;
 - **faire tourner la roue** pour désigner quelqu'un, avec la touche `R` ou le bouton « Désigner » ;
-- **préparer le contenu**, avec les réponses masquées pour pouvoir le faire écran projeté. Un contenu d'exemple permet de jouer tout de suite. Le contenu s'exporte et s'importe en JSON pour le réutiliser ou le partager.
+- **préparer le contenu**, avec les réponses masquées pour pouvoir le faire écran projeté. Un contenu d'exemple permet de jouer tout de suite ; « Partir d'une liste vide » (ou « Vider la liste ») le remplace par des champs vides, où les exemples restent affichés en grisé, sans rien à effacer. Le contenu s'exporte et s'importe en JSON pour le réutiliser ou le partager.
 
 La touche `F` passe en plein écran. Chaque jeu a son habillage sonore façon jeu télévisé : notes des lettres de Motus, cloche des étages de Pyramide, gong du « Stop », buzzers du duel, cliquetis de la roue, fanfares et applaudissements. Ce sont des sons originaux générés par le navigateur, sans fichier ni droits d'auteur. Le bouton Son du bandeau les coupe.
 Les icônes viennent de Font Awesome Free, hébergé dans le projet (fonctionne hors ligne).

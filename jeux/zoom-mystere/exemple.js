@@ -49,6 +49,7 @@ export const schema = {
         cle: 'explication',
         libelle: 'Explication (facultatif)',
         type: 'texte-long',
+        exemple: 'Ex. : Il regroupe Ouvrir, Enregistrer et Imprimer.',
         aide: 'Affichée avec la réponse.',
       },
     ],

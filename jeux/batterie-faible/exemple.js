@@ -39,6 +39,7 @@ export const schema = {
         cle: 'definition',
         libelle: 'Explication affichée à la fin (facultatif)',
         type: 'texte-long',
+        exemple: 'Ex. : Le fichier envoyé avec un e-mail.',
       },
     ],
     valider: (element) => validerMot(element.mot),

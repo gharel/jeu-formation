@@ -3,7 +3,7 @@
  * Les réponses (champs « secret ») sont masquées par défaut : l'écran est peut-être projeté.
  */
 import { el, remplir, icone } from './ui.js';
-import { elementVide } from './contenu.js';
+import { elementVide, exempleDuChamp } from './contenu.js';
 import { lireNombre, formaterNombre } from './nombres.js';
 import { enregistrerImage, lireFichierImage, imageDuCollage, adresseImage } from './images.js';
 
@@ -165,7 +165,7 @@ function construireListe(champ, lire, ecrire, avecAide) {
         maxlength: champ.longueurMax ?? 200,
         autocomplete: 'off',
         value: texte,
-        placeholder: champ.exemple ?? null,
+        placeholder: exempleDuChamp(champ, i),
         oninput: (e) => {
           const copie = [...lire()];
           copie[i] = e.target.value;

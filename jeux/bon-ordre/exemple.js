@@ -37,6 +37,13 @@ export const schema = {
         nomItem: 'Étape',
         article: 'une',
         longueurMax: 120,
+        exemple: [
+          'Ex. : Cliquer sur « Nouveau message »',
+          'Ex. : Saisir l’adresse du destinataire',
+          'Ex. : Écrire l’objet et le message',
+          'Ex. : Joindre le fichier avec le trombone',
+          'Ex. : Cliquer sur « Envoyer »',
+        ],
         aide: `De ${ETAPES_MIN} à ${ETAPES_MAX} étapes. Le jeu les mélangera.`,
       },
     ],
