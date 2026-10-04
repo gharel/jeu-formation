@@ -544,6 +544,35 @@
           "definition": "Depuis 2021, le nom de l’entreprise qui possède Facebook, Instagram et WhatsApp."
         }
       ]
+    },
+    "coffre-fort": {
+      "elements": [
+        {
+          "enigme": "On m’envoie à une personne que l’on connaît pour l’ajouter à ses contacts sur Facebook. Elle peut me confirmer ou me supprimer. Qui suis-je ?",
+          "reponse": "La demande d’ami / Demande d’amitié / Invitation / Invitation d’ami",
+          "indice": "Mon nom contient le mot « ami »."
+        },
+        {
+          "enigme": "Mon premier est le contraire d’« anti ». Mon second sert à coudre. Mon tout porte votre photo et votre nom sur Facebook. Qui suis-je ?",
+          "reponse": "Le profil",
+          "indice": "Mon premier est aussi le diminutif de « professionnel »."
+        },
+        {
+          "enigme": "Mon premier pend au bout d’une ligne de pêche. Mon second se pratique à la piscine. Mon tout est une arnaque qui vous pousse à donner vos codes sur un faux site. Qui suis-je ?",
+          "reponse": "L’hameçonnage / Phishing",
+          "indice": "Mon premier s’écrit avec un h au début et une cédille."
+        },
+        {
+          "enigme": "Mon nom est un mot anglais qui veut dire « bobine », comme celle des anciens films. Sur Facebook, je suis une courte vidéo filmée en hauteur, et je ne disparais pas au bout de 24 heures. Qui suis-je ?",
+          "reponse": "Le reel",
+          "indice": "Je ressemble beaucoup aux vidéos de TikTok."
+        },
+        {
+          "enigme": "Dernière serrure : un code à quatre chiffres, l’année où Facebook a racheté Instagram.",
+          "reponse": "2012 / deux mille douze",
+          "indice": "C’est l’année des Jeux olympiques de Londres."
+        }
+      ]
     }
   }
 }

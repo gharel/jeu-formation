@@ -374,4 +374,34 @@ export const sons = {
       sons.applaudissements(2.5);
     },
   },
+
+  // ---------- Le Coffre-fort : serrures, alarme ----------
+  coffre: {
+    /** Une serrure s'ouvre : deux cliquetis métalliques et une note claire. */
+    serrure() {
+      bruit({ duree: 0.03, volume: 0.15, filtre: 4000, type: 'highpass' });
+      bruit({ debut: 0.09, duree: 0.03, volume: 0.15, filtre: 3000, type: 'highpass' });
+      note(N.mi6, { debut: 0.12, duree: 0.3, forme: 'triangle', volume: 0.08 });
+    },
+    /** Mauvaise réponse : la serrure résiste, « clonk ». */
+    erreur() {
+      note(110, { duree: 0.35, forme: 'square', volume: 0.12 });
+      bruit({ duree: 0.12, volume: 0.15, filtre: 250, type: 'lowpass' });
+    },
+    /** Un indice : une petite clochette. */
+    indice: () => cloche(N.mi6, { volume: 0.08, duree: 0.5 }),
+    /** La porte du coffre s'ouvre : un grondement qui monte, puis la fanfare. */
+    ouvert() {
+      note(65, { duree: 1.2, vers: 98, forme: 'sawtooth', volume: 0.12 });
+      bruit({ duree: 1, volume: 0.1, filtre: 200, type: 'lowpass' });
+      fanfare(3, { debut: 0.9 });
+    },
+    /** Temps écoulé : une alarme à deux tons. */
+    alarme() {
+      for (let i = 0; i < 4; i++) {
+        note(880, { debut: i * 0.3, duree: 0.15, forme: 'square', volume: 0.08 });
+        note(660, { debut: i * 0.3 + 0.15, duree: 0.15, forme: 'square', volume: 0.08 });
+      }
+    },
+  },
 };

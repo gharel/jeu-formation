@@ -162,6 +162,14 @@ describe('sons', () => {
     expect(journal.bruits).toBeGreaterThanOrEqual(2);
   });
 
+  it('Le Coffre-fort : la serrure cliquette, le coffre s’ouvre en fanfare', () => {
+    sons.coffre.serrure();
+    expect(journal.bruits).toBe(2);
+    journal.notes = [];
+    sons.coffre.ouvert();
+    expect(journal.notes.length).toBeGreaterThan(5);
+  });
+
   it('roue et applaudissements utilisent du bruit filtré', () => {
     sons.roueClic();
     expect(journal.bruits).toBe(1);
@@ -211,6 +219,9 @@ describe('sons', () => {
       () => sons.bingo.revele(),
       () => sons.bingo.ligne(),
       () => sons.bingo.bingo(),
+      () => sons.coffre.erreur(),
+      () => sons.coffre.indice(),
+      () => sons.coffre.alarme(),
     ];
     for (const appel of appels) expect(appel).not.toThrow();
     expect(journal.notes.length).toBeGreaterThan(40);

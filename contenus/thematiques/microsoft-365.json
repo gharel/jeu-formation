@@ -542,6 +542,35 @@
           "definition": "Une combinaison de touches, comme Ctrl + C, pour agir plus vite qu’avec la souris."
         }
       ]
+    },
+    "coffre-fort": {
+      "elements": [
+        {
+          "enigme": "Mon premier est la 24e lettre de l’alphabet. Mon second se trouve dans la salière. Mon tout range vos chiffres dans des cellules. Qui suis-je ?",
+          "reponse": "Excel / Microsoft Excel",
+          "indice": "Mon premier se prononce « iks », et mon tout est une application de Microsoft 365."
+        },
+        {
+          "enigme": "On clique encore sur mon image pour enregistrer un document, alors que plus personne ne m’utilise depuis longtemps. Qui suis-je ?",
+          "reponse": "La disquette",
+          "indice": "Carrée et en plastique, je rangeais vos fichiers bien avant les clés USB."
+        },
+        {
+          "enigme": "Pendant vos congés, je réponds à votre place à chaque courriel reçu, pour annoncer la date de votre retour. Qui suis-je ?",
+          "reponse": "La réponse automatique / Le message d’absence / Le gestionnaire d’absence / Le répondeur",
+          "indice": "On m’active dans Outlook avant de partir : ensuite, je réponds sans que vous ayez à lever le petit doigt."
+        },
+        {
+          "enigme": "Le code de cette serrure : le résultat que donne Excel pour la formule =2+3*4.",
+          "reponse": "14 / quatorze",
+          "indice": "Comme en mathématiques, Excel fait les multiplications avant les additions."
+        },
+        {
+          "enigme": "Dernière serrure : grâce à moi, Word écrit la même lettre à cent personnes et place tout seul le bon nom et la bonne adresse sur chacune, à partir d’une liste. Qui suis-je ?",
+          "reponse": "Le publipostage / Le mailing / La fusion et publipostage",
+          "indice": "Mon nom évoque la poste et les envois en grand nombre."
+        }
+      ]
     }
   }
 }

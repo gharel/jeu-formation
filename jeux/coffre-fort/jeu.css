@@ -1,0 +1,294 @@
+/* ---------- Avant le compte à rebours ---------- */
+
+.coffre-intro > .illustration {
+  --taille: clamp(5.5rem, min(11vw, 18vh), 8.5rem);
+  margin: 0 auto 0.75rem;
+}
+
+.coffre-intro__regles {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 42rem;
+  margin: 0 auto 1rem;
+  padding: 0;
+  list-style: none;
+  text-align: left;
+  font-weight: 700;
+}
+
+.coffre-intro__regles .icone {
+  width: 1.4em;
+  color: var(--accent);
+}
+
+.coffre-intro__record {
+  display: inline-block;
+  margin: 0;
+  padding: 0.3rem 1rem;
+  font-weight: 800;
+  color: var(--bleu-nuit);
+  background: var(--jaune-clair);
+  border-radius: var(--rayon-pilule);
+}
+
+/* ---------- Le coffre : la porte et le chrono à gauche, l'énigme à droite ---------- */
+
+.coffre {
+  display: grid;
+  grid-template-columns: minmax(14rem, 0.8fr) minmax(0, 1.6fr);
+  gap: clamp(1rem, 3vw, 2.5rem);
+  align-items: center;
+  text-align: left;
+}
+
+.coffre__gauche {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  text-align: center;
+}
+
+/* Le coffre dessiné et, dessous, une serrure par énigme */
+.coffre__porte {
+  display: grid;
+  justify-items: center;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.coffre__porte .illustration {
+  --taille: clamp(7rem, min(15vw, 26vh), 12rem);
+}
+
+.coffre__serrures {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.coffre__serrure {
+  display: grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  font-size: 1.15rem;
+  color: var(--sur-accent);
+  background: var(--accent);
+  border-radius: 50%;
+}
+
+.coffre__serrure .icone {
+  margin: 0;
+}
+
+.coffre__serrure--courante {
+  color: var(--bleu-nuit);
+  background: var(--jaune);
+  animation: battement 0.8s ease-in-out infinite alternate;
+}
+
+.coffre__serrure--ouverte {
+  color: var(--blanc);
+  background: var(--succes);
+}
+
+.coffre .chrono {
+  width: 100%;
+  margin-top: 0.75rem;
+}
+
+.coffre .chrono__temps {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+/* « −30 s » qui s'envole près du chrono */
+.coffre__ecart {
+  position: absolute;
+  right: 0;
+  bottom: 2.5rem;
+  margin: 0;
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--erreur);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.coffre__ecart--bonus {
+  color: var(--succes);
+}
+
+.coffre__ecart--visible {
+  animation: envoler 1.4s ease-out;
+}
+
+@keyframes envoler {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  20% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-40px);
+  }
+}
+
+.coffre__enigme {
+  margin: 0 0 1rem;
+  font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.coffre__formulaire .champ__ligne {
+  max-width: 36rem;
+}
+
+.coffre__saisie {
+  font-size: 1.35rem;
+  font-weight: 800;
+}
+
+.coffre__message {
+  min-height: 2.5rem;
+  margin-top: 0.75rem;
+}
+
+.coffre__verdict {
+  margin: 0;
+  font-weight: 800;
+}
+
+.coffre__verdict--erreur {
+  color: var(--erreur);
+}
+
+.coffre__verdict--ok {
+  color: var(--succes);
+}
+
+.coffre__accepter {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.coffre__indice {
+  margin: 0.75rem 0 0;
+  padding: 0.6rem 0.9rem;
+  font-weight: 700;
+  color: var(--bleu-nuit);
+  background: var(--jaune-clair);
+  border-radius: 10px;
+}
+
+.coffre__outils {
+  margin-top: 1rem;
+}
+
+/* ---------- Bilan ---------- */
+
+.coffre__titre-bilan {
+  margin: 0;
+  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-weight: 900;
+  line-height: 1.1;
+  color: var(--succes);
+}
+
+.coffre__titre-bilan--rate {
+  color: var(--erreur);
+}
+
+.coffre__detail-bilan {
+  margin: 0.5rem 0 0;
+  font-size: 1.15em;
+  font-weight: 700;
+  color: var(--bleu-nuit);
+}
+
+.coffre__record {
+  display: inline-block;
+  margin: 0.75rem 0 0;
+  padding: 0.3rem 1rem;
+  font-weight: 900;
+  color: var(--bleu-nuit);
+  background: var(--jaune);
+  border-radius: var(--rayon-pilule);
+}
+
+.coffre__solutions {
+  margin: 1rem 0 0;
+}
+
+.coffre__solutions ul {
+  margin: 0;
+  padding-left: 1.2rem;
+  font-weight: 800;
+}
+
+.coffre__zone-enigme .actions-jeu {
+  justify-content: flex-start;
+}
+
+@media (max-width: 860px) {
+  .coffre {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Illustration : un coffre-fort à molette ---------- */
+
+.coffre-ill__battant {
+  fill: var(--accent);
+  stroke: rgb(255 255 255 / 22%);
+  stroke-width: 3;
+}
+
+.coffre-ill__graduation {
+  stroke: var(--blanc);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.coffre-ill__molette {
+  transform-origin: 96px 86px;
+}
+
+.coffre-ill--molette .coffre-ill__molette {
+  animation: coffre-molette 0.6s ease-in-out;
+}
+
+@keyframes coffre-molette {
+  40% {
+    transform: rotate(-70deg);
+  }
+  80% {
+    transform: rotate(20deg);
+  }
+}
+
+/* La porte pivote sur ses gonds et dévoile le trésor */
+.coffre-ill__porte {
+  transform-origin: 26px 87px;
+  transition: transform 0.7s ease;
+}
+
+.illustration--ouvert .coffre-ill__porte {
+  transform: scaleX(0.14);
+}
+
+.coffre-ill__tresor {
+  opacity: 0;
+  transition: opacity 0.4s ease 0.3s;
+}
+
+.illustration--ouvert .coffre-ill__tresor {
+  opacity: 1;
+}

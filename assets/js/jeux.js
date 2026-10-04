@@ -125,6 +125,16 @@ export const JEUX = [
     duree: '10 à 15 min',
     preparation: 'Des mots, avec ou sans définition',
   },
+  {
+    slug: 'coffre-fort',
+    titre: 'Le Coffre-fort',
+    icone: 'vault',
+    couleur: 'ardoise',
+    accroche:
+      'Des serrures, un compte à rebours : résolvez les énigmes ensemble pour ouvrir le coffre. Une erreur coûte du temps !',
+    duree: '10 à 15 min',
+    preparation: 'Des énigmes et leur réponse',
+  },
 ];
 
 export function trouverJeu(slug) {

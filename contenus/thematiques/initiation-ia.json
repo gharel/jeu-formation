@@ -543,6 +543,35 @@
           "definition": "Les quelques termes qu’on tape pour chercher sur Internet ; à une IA, on écrit plutôt des phrases entières."
         }
       ]
+    },
+    "coffre-fort": {
+      "elements": [
+        {
+          "enigme": "Mon premier est un cadeau. Mon second vient de voir le jour. Mon tout, au pluriel, est la matière première dont une IA a besoin pour apprendre.",
+          "reponse": "Les données / Data / Données d’entraînement",
+          "indice": "Quand elles parlent de vous, on les dit personnelles."
+        },
+        {
+          "enigme": "Avant de vous laisser entrer, je vous demande de cocher « Je ne suis pas un robot » ou de cliquer sur toutes les images de feux tricolores. Qui suis-je ?",
+          "reponse": "Le captcha / reCAPTCHA",
+          "indice": "Mon nom est un sigle anglais qui commence par « cap », et dont le T veut dire Turing."
+        },
+        {
+          "enigme": "HAL 9000 est l’un des ordinateurs les plus célèbres du cinéma. Remplacez chaque lettre de HAL par la suivante dans l’alphabet : vous obtenez le nom d’une grande entreprise de l’informatique. Laquelle ?",
+          "reponse": "IBM",
+          "indice": "H devient I : il ne reste que deux lettres à trouver !"
+        },
+        {
+          "enigme": "Mon premier est une voiture, en plus court. Mon second met fin à une partie d’échecs. Mon tout imite les gestes d’un être vivant grâce à un mécanisme : on en fabriquait bien avant les ordinateurs.",
+          "reponse": "L’automate",
+          "indice": "Au XVIIIe siècle, Jacques de Vaucanson en a construit un qui jouait de la flûte."
+        },
+        {
+          "enigme": "Dernière serrure : un code à quatre chiffres, l’année où le prix Nobel de physique a récompensé deux pionniers des réseaux de neurones, John Hopfield et Geoffrey Hinton.",
+          "reponse": "2024 / deux mille vingt-quatre",
+          "indice": "C’est l’année des Jeux olympiques de Paris."
+        }
+      ]
     }
   }
 }

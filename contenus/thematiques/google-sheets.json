@@ -535,6 +535,35 @@
           "definition": "Une remarque attachée à une case, à laquelle les autres peuvent répondre."
         }
       ]
+    },
+    "coffre-fort": {
+      "elements": [
+        {
+          "enigme": "Je suis une petite sieste, mais aussi la fonction qui additionne toute une colonne de nombres. Qui suis-je ?",
+          "reponse": "SOMME / La fonction SOMME / SUM",
+          "indice": "On m’utilise pour calculer un total. Mon nom compte cinq lettres."
+        },
+        {
+          "enigme": "Mon premier est un morceau de gâteau. Mon second se compte en années. Mon tout permet d’inviter d’autres personnes à travailler sur la même feuille. Qui suis-je ?",
+          "reponse": "Partage / Partager / Bouton Partager",
+          "indice": "Mon tout est aussi le nom d’un bouton, en haut à droite de l’écran."
+        },
+        {
+          "enigme": "Dans la colonne A, on a tapé 4 en A1, 9 en A2 et 2 en A3. Le code de cette serrure est le résultat de =MAX(A1:A3)*MIN(A1:A3).",
+          "reponse": "18 / dix-huit",
+          "indice": "MAX garde la plus grande valeur, MIN la plus petite, et l’étoile veut dire « multiplié par »."
+        },
+        {
+          "enigme": "Je suis une fonction aux parenthèses toujours vides. J’affiche la date et l’heure de l’instant présent, et je me mets à jour dès que la feuille change. Qui suis-je ?",
+          "reponse": "MAINTENANT / La fonction MAINTENANT / NOW",
+          "indice": "Mon nom est un mot de tous les jours : le contraire de « plus tard »."
+        },
+        {
+          "enigme": "Dernière serrure : la fonction COLONNE donne le numéro d’une colonne. Par exemple, =COLONNE(C1) renvoie 3. Le code est le résultat de =COLONNE(AD1).",
+          "reponse": "30 / trente",
+          "indice": "La colonne Z est la 26e. Juste après, on repart avec deux lettres : AA, AB, AC…"
+        }
+      ]
     }
   }
 }

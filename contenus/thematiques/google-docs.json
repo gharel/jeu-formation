@@ -529,6 +529,35 @@
           "definition": "Il agrandit ou réduit l’affichage à l’écran, sans changer la taille du texte imprimé."
         }
       ]
+    },
+    "coffre-fort": {
+      "elements": [
+        {
+          "enigme": "Je suis le menu où l’on trouve Télécharger, Imprimer et l’historique des versions. Quel menu suis-je ?",
+          "reponse": "Fichier / Menu Fichier",
+          "indice": "Je suis le tout premier menu, en haut à gauche."
+        },
+        {
+          "enigme": "Mon premier est la France ou le Japon. Mon second ne fait jamais de bêtises. Mon tout est l’orientation d’une page plus large que haute.",
+          "reponse": "Paysage / Orientation paysage / Mode paysage",
+          "indice": "Mon contraire s’appelle Portrait."
+        },
+        {
+          "enigme": "Mon premier sert à demander de quelle façon. Mon second, c’est garder le silence. Mon tout s’affiche dans la marge pour donner son avis sans toucher au texte.",
+          "reponse": "Commentaire",
+          "indice": "On l’ajoute avec Ctrl + Alt + M."
+        },
+        {
+          "enigme": "Le mot de passe se cache dans les lettres de quatre raccourcis, dans cet ordre : copier (Ctrl + …), tout sélectionner (Ctrl + …), rechercher (Ctrl + …), puis centrer le texte (Ctrl + Maj + …).",
+          "reponse": "Café",
+          "indice": "Quatre lettres : de quoi faire une bonne pause !"
+        },
+        {
+          "enigme": "Dernière serrure : un code à deux chiffres. Le premier termine le raccourci de la liste à puces (Ctrl + Maj + …), le second celui de la liste numérotée.",
+          "reponse": "87 / quatre-vingt-sept",
+          "indice": "Testez Ctrl + Maj + un chiffre dans un document : ce sont deux chiffres qui se suivent."
+        }
+      ]
     }
   }
 }
