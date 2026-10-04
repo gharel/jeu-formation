@@ -85,11 +85,9 @@ export function monterJeu(config) {
       type: 'button',
       class: 'bouton-bandeau',
       title: 'Revoir les prénoms, les infos et le plan de salle',
-      onclick: async () => {
-        await ouvrirGroupe(groupe);
-        // Le focus revient au jeu (pas au bouton) : Entrée et Espace gardent leur sens en partie
-        cadre.focus({ preventScroll: true });
-      },
+      // À la fermeture, le focus revient au jeu (pas au bouton) : Entrée et Espace gardent leur
+      // sens en partie
+      onclick: () => ouvrirGroupe(groupe, { focusApres: cadre }),
     },
     icone('users'),
     'Groupe',

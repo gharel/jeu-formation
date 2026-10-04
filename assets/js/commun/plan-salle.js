@@ -547,8 +547,9 @@ export function creerPlanSalle(groupe, { modifiable = false, hasard = Math.rando
 }
 
 /** Fenêtre « Le groupe » : le plan, puis chaque prénom avec son info et sa place. */
-export function ouvrirGroupe(groupe) {
+export function ouvrirGroupe(groupe, { focusApres = null } = {}) {
   return ouvrirDialogue({
+    focusApres,
     titre: 'Le groupe',
     classe: 'dialogue--groupe',
     construire({ corps, pied, fermer, dialog }) {

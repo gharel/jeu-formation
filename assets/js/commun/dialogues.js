@@ -8,8 +8,16 @@ import { sons } from './sons.js';
 /**
  * Ouvre un <dialog> modal. `construire({ corps, pied, fermer })` remplit le contenu.
  * Renvoie une promesse résolue avec la valeur passée à fermer() (ou `valeurAnnulation`).
+ * `focusApres` : élément qui reçoit le focus dès la fermeture, à la place du bouton qui a ouvert
+ * la fenêtre (en partie, Entrée sur ce bouton rouvrirait la fenêtre au lieu de jouer).
  */
-export function ouvrirDialogue({ titre, classe = '', construire, valeurAnnulation = null }) {
+export function ouvrirDialogue({
+  titre,
+  classe = '',
+  construire,
+  valeurAnnulation = null,
+  focusApres = null,
+}) {
   return new Promise((resoudre) => {
     let valeur = valeurAnnulation;
     const idTitre = `dialogue-${Math.random().toString(36).slice(2, 8)}`;
@@ -28,7 +36,7 @@ export function ouvrirDialogue({ titre, classe = '', construire, valeurAnnulatio
             type: 'button',
             class: 'bouton-icone',
             'aria-label': 'Fermer',
-            onclick: () => dialog.close(),
+            onclick: () => fermer(valeurAnnulation),
           },
           icone('xmark'),
         ),
@@ -36,12 +44,16 @@ export function ouvrirDialogue({ titre, classe = '', construire, valeurAnnulatio
       corps,
       pied,
     );
+    const rendreFocus = () => focusApres?.focus({ preventScroll: true });
     const fermer = (v) => {
       valeur = v;
       dialog.close();
+      // Tout de suite : l'événement « close » n'arrive qu'un peu plus tard
+      rendreFocus();
     };
     dialog.addEventListener('close', () => {
       dialog.remove();
+      rendreFocus();
       resoudre(valeur);
     });
     construire({ corps, pied, fermer, dialog });
