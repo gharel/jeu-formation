@@ -404,4 +404,27 @@ export const sons = {
       }
     },
   },
+
+  // ---------- Top 5 : le tableau des réponses ----------
+  top: {
+    /** Une réponse trouvée : plus elle rapporte de points (1 à 5), plus la cloche est aiguë. */
+    trouvee(points) {
+      const notes = [N.do5, N.re5, N.mi5, N.sol5, N.la5];
+      const f = notes[Math.min(5, Math.max(1, points)) - 1];
+      cloche(f, { volume: 0.16 });
+      note(f * 2, { debut: 0.08, duree: 0.2, forme: 'triangle', volume: 0.06 });
+    },
+    /** Pas dans le top 5 : un buzzer grave. */
+    erreur() {
+      note(147, { duree: 0.5, forme: 'sawtooth', volume: 0.12 });
+      note(139, { duree: 0.5, forme: 'square', volume: 0.07 });
+    },
+    /** Une réponse restante se dévoile à la fin de la manche. */
+    devoile: () => note(N.sol4, { duree: 0.1, forme: 'triangle', volume: 0.1 }),
+    /** Les 5 réponses trouvées. */
+    complet() {
+      fanfare(3);
+      sons.applaudissements(2);
+    },
+  },
 };

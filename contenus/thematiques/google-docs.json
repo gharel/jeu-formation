@@ -558,6 +558,70 @@
           "indice": "Testez Ctrl + Maj + un chiffre dans un document : ce sont deux chiffres qui se suivent."
         }
       ]
+    },
+    "top-5": {
+      "elements": [
+        {
+          "question": "Citez une chose que Google Docs fait tout seul, sans qu’on le lui demande.",
+          "reponses": [
+            "Enregistrer / Enregistrement / Enregistrement automatique / Sauvegarde",
+            "Souligner les fautes / Corriger les fautes / Correction / Orthographe / Fautes",
+            "Une majuscule en début de phrase / Majuscule / Mettre une majuscule",
+            "Transformer une adresse web en lien / Créer un lien / Lien",
+            "Créer une liste / Liste / Liste à puces / Liste numérotée"
+          ]
+        },
+        {
+          "question": "Citez un format dans lequel on peut télécharger un document Google Docs.",
+          "reponses": [
+            "PDF",
+            "Word / Microsoft Word / .docx",
+            "Texte brut / .txt / Texte",
+            "OpenDocument / .odt / LibreOffice",
+            "Page web / HTML"
+          ]
+        },
+        {
+          "question": "Citez une action possible sur un commentaire.",
+          "reponses": [
+            "Répondre / Répondre au commentaire",
+            "Résoudre / Marquer comme résolu / Résolu / Cocher",
+            "Supprimer / Effacer",
+            "Modifier / Corriger",
+            "Mentionner quelqu’un / Mentionner / Mention / Arobase"
+          ]
+        },
+        {
+          "question": "Citez une information qu’on place souvent dans un en-tête ou un pied de page.",
+          "reponses": [
+            "Numéro de page / Numérotation / Pagination",
+            "Date / Date du jour",
+            "Titre du document / Titre",
+            "Nom de l’auteur / Auteur / Nom",
+            "Logo / Logo de l’entreprise"
+          ]
+        },
+        {
+          "question": "Citez une chose à faire pour qu’un long document soit facile à lire.",
+          "reponses": [
+            "Des titres / Mettre des titres / Styles de titre",
+            "Une table des matières / Sommaire",
+            "Des paragraphes courts / Paragraphes / Aérer le texte",
+            "Des listes à puces / Listes / Puces",
+            "Des numéros de page / Numéroter les pages / Numérotation"
+          ]
+        },
+        {
+          "question": "Citez quelque chose qu’on trouve dans le menu Outils.",
+          "reponses": [
+            "Orthographe et grammaire / Orthographe / Grammaire / Correcteur",
+            "Nombre de mots / Compter les mots / Compteur de mots",
+            "Saisie vocale / Dictée vocale / Dictée",
+            "Traduire le document / Traduction / Traduire",
+            "Préférences / Paramètres"
+          ]
+        }
+      ]
     }
   }
 }

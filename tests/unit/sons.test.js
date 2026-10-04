@@ -162,6 +162,14 @@ describe('sons', () => {
     expect(journal.bruits).toBeGreaterThanOrEqual(2);
   });
 
+  it('Top 5 : la cloche est plus aiguë pour une réponse qui rapporte plus', () => {
+    sons.top.trouvee(1);
+    const un = journal.notes[0].frequence;
+    journal.notes = [];
+    sons.top.trouvee(5);
+    expect(journal.notes[0].frequence).toBeGreaterThan(un);
+  });
+
   it('Le Coffre-fort : la serrure cliquette, le coffre s’ouvre en fanfare', () => {
     sons.coffre.serrure();
     expect(journal.bruits).toBe(2);
@@ -222,6 +230,9 @@ describe('sons', () => {
       () => sons.coffre.erreur(),
       () => sons.coffre.indice(),
       () => sons.coffre.alarme(),
+      () => sons.top.erreur(),
+      () => sons.top.devoile(),
+      () => sons.top.complet(),
     ];
     for (const appel of appels) expect(appel).not.toThrow();
     expect(journal.notes.length).toBeGreaterThan(40);

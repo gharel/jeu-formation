@@ -572,6 +572,70 @@
           "indice": "C’est l’année des Jeux olympiques de Paris."
         }
       ]
+    },
+    "top-5": {
+      "elements": [
+        {
+          "question": "Citez un assistant d’IA avec lequel on peut discuter par écrit.",
+          "reponses": [
+            "ChatGPT / GPT / OpenAI",
+            "Gemini / Google Gemini / Google / Bard",
+            "Copilot / Microsoft Copilot / Microsoft / Bing Chat",
+            "Le Chat / Mistral / Mistral AI / Le Chat de Mistral",
+            "Claude / Anthropic"
+          ]
+        },
+        {
+          "question": "Citez une tâche que l’on confie souvent à un assistant d’IA.",
+          "reponses": [
+            "Rédiger un texte / Rédiger / Écrire / Écrire un mail / Mail / E-mail / Lettre",
+            "Chercher des informations / Chercher / Recherche / Information / Info / Question",
+            "Résumer / Résumé / Faire un résumé / Résumer un texte / Synthèse / Synthétiser",
+            "Traduire / Traduction / Traduire un texte",
+            "Corriger les fautes / Corriger / Correction / Orthographe / Relire / Relecture"
+          ]
+        },
+        {
+          "question": "Citez un appareil auquel on peut donner un ordre à voix haute.",
+          "reponses": [
+            "Le smartphone / Téléphone / Téléphone portable / Portable / Mobile / iPhone",
+            "L’enceinte connectée / Enceinte / Alexa / Google Home / Enceinte intelligente",
+            "La voiture / Voiture connectée / Auto / GPS / Automobile",
+            "La télévision / Télé / TV / Téléviseur / Télécommande / Smart TV",
+            "L’ordinateur / Ordinateur portable / Ordi / PC / Mac"
+          ]
+        },
+        {
+          "question": "Citez un conseil pour bien rédiger sa demande à une IA.",
+          "reponses": [
+            "Être précis / Précis / Précision / Préciser / Être clair / Clair",
+            "Donner du contexte / Contexte / Expliquer le contexte / Situation",
+            "Préciser le format / Format / Format attendu / Donner le format / Forme",
+            "Donner un rôle / Rôle / Jouer un rôle / Attribuer un rôle",
+            "Préciser le but / But / Objectif / Préciser l’objectif / Donner l’objectif"
+          ]
+        },
+        {
+          "question": "Citez un jeu dans lequel une IA a déjà battu des champions humains.",
+          "reponses": [
+            "Les échecs / Jeu d’échecs",
+            "Le go / Jeu de go",
+            "Les jeux vidéo / StarCraft / Dota",
+            "Le poker",
+            "Othello / Reversi"
+          ]
+        },
+        {
+          "question": "Citez un risque lié à l’utilisation de l’IA.",
+          "reponses": [
+            "Les fausses informations / Fausses infos / Erreurs / Hallucinations / Fake news",
+            "La perte d’emplois / Chômage / Emploi / Remplacer les humains / Remplacement",
+            "Les hypertrucages / Deepfakes / Fausses vidéos / Fausses images / Trucages",
+            "Les données personnelles / Données / Vie privée / Confidentialité",
+            "Les arnaques / Escroqueries / Fraude / Voix imitée / Usurpation d’identité"
+          ]
+        }
+      ]
     }
   }
 }

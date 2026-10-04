@@ -571,6 +571,70 @@
           "indice": "Mon nom évoque la poste et les envois en grand nombre."
         }
       ]
+    },
+    "top-5": {
+      "elements": [
+        {
+          "question": "Citez une application de Microsoft 365.",
+          "reponses": [
+            "Word / Microsoft Word",
+            "Excel / Microsoft Excel",
+            "PowerPoint / Microsoft PowerPoint",
+            "Outlook / Microsoft Outlook",
+            "Teams / Microsoft Teams"
+          ]
+        },
+        {
+          "question": "Citez une mise en forme que l’on peut appliquer à du texte dans Word.",
+          "reponses": [
+            "Gras / Mettre en gras",
+            "Italique / Mettre en italique",
+            "Souligné / Soulignement / Souligner",
+            "Couleur / Couleur de police / Couleur du texte",
+            "Taille / Taille de police / Taille des caractères"
+          ]
+        },
+        {
+          "question": "Citez une fonction d’Excel.",
+          "reponses": [
+            "SOMME / Somme automatique",
+            "MOYENNE",
+            "SI",
+            "MAX / Maximum",
+            "MIN / Minimum"
+          ]
+        },
+        {
+          "question": "Citez un dossier de la messagerie Outlook.",
+          "reponses": [
+            "Boîte de réception / Réception / Courrier entrant",
+            "Éléments envoyés / Envoyés / Messages envoyés",
+            "Brouillons",
+            "Éléments supprimés / Supprimés / Corbeille / Messages supprimés",
+            "Courrier indésirable / Indésirables / Spam"
+          ]
+        },
+        {
+          "question": "Citez une chose que l’on peut faire pendant une réunion Teams.",
+          "reponses": [
+            "Couper son micro / Couper le micro / Micro / Muet / Sourdine",
+            "Allumer sa caméra / Activer la caméra / Caméra / Couper sa caméra / Vidéo",
+            "Partager son écran / Partager l’écran / Partage d’écran",
+            "Lever la main / Main levée",
+            "Écrire dans la conversation / Conversation / Chat / Envoyer un message"
+          ]
+        },
+        {
+          "question": "Citez un raccourci clavier avec la touche Ctrl.",
+          "reponses": [
+            "Ctrl + C / Copier",
+            "Ctrl + V / Coller",
+            "Ctrl + Z / Annuler",
+            "Ctrl + X / Couper",
+            "Ctrl + S / Enregistrer"
+          ]
+        }
+      ]
     }
   }
 }

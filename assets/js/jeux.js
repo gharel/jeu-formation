@@ -135,6 +135,16 @@ export const JEUX = [
     duree: '10 à 15 min',
     preparation: 'Des énigmes et leur réponse',
   },
+  {
+    slug: 'top-5',
+    titre: 'Top 5',
+    icone: 'ranking-star',
+    couleur: 'prune',
+    accroche:
+      '« Citez un réseau social » : trouvez les 5 réponses cachées, de la plus attendue à la moins attendue. Trois erreurs, et c’est fini !',
+    duree: '10 à 15 min',
+    preparation: 'Des questions et leurs 5 réponses',
+  },
 ];
 
 export function trouverJeu(slug) {

@@ -564,6 +564,70 @@
           "indice": "La colonne Z est la 26e. Juste après, on repart avec deux lettres : AA, AB, AC…"
         }
       ]
+    },
+    "top-5": {
+      "elements": [
+        {
+          "question": "Citez un tableur, sur ordinateur ou en ligne.",
+          "reponses": [
+            "Microsoft Excel / Excel",
+            "Google Sheets / Sheets",
+            "LibreOffice Calc / LibreOffice / Calc",
+            "Numbers / Apple Numbers",
+            "OpenOffice Calc / OpenOffice"
+          ]
+        },
+        {
+          "question": "Citez un titre de colonne qu’on trouve dans une liste de contacts.",
+          "reponses": [
+            "Nom / Nom de famille",
+            "Prénom",
+            "Téléphone / Numéro de téléphone / Numéro / Portable / Mobile",
+            "Adresse e-mail / E-mail / Mail / Adresse mail / Courriel / Adresse électronique",
+            "Adresse / Adresse postale / Ville / Code postal"
+          ]
+        },
+        {
+          "question": "Citez un type de graphique.",
+          "reponses": [
+            "Camembert / Secteurs / Graphique à secteurs / Circulaire / Diagramme circulaire",
+            "Histogramme / Colonnes / Graphique à colonnes / Bâtons / Diagramme en bâtons",
+            "Courbe / Graphique en courbes / Ligne / Linéaire / Graphique linéaire",
+            "Barres / Graphique à barres / Barres horizontales",
+            "Nuage de points / Nuage / Points"
+          ]
+        },
+        {
+          "question": "Citez une mise en forme qu’on donne souvent à la ligne des titres d’un tableau.",
+          "reponses": [
+            "Gras / En gras / Mettre en gras",
+            "Couleur de fond / Couleur de remplissage / Remplissage / Fond / Couleur",
+            "Centrer / Centré / Au centre",
+            "Texte plus grand / Agrandir / Taille / Plus grand / Plus gros",
+            "Bordure / Encadrer / Cadre / Encadré"
+          ]
+        },
+        {
+          "question": "Citez une erreur fréquente quand on tape une formule.",
+          "reponses": [
+            "Oublier le signe égal / Le signe égal / Égal / Oubli du signe égal",
+            "Oublier une parenthèse / Parenthèse / Fermer la parenthèse",
+            "Mal écrire le nom de la fonction / Faute de frappe / Faute / Faute d’orthographe",
+            "Se tromper de cellule / Mauvaise cellule / Mauvaise case / Mauvaise plage",
+            "Une virgule au lieu d’un point-virgule / Virgule / Point-virgule"
+          ]
+        },
+        {
+          "question": "Citez une commande qui apparaît quand on fait un clic droit sur un onglet, en bas de l’écran.",
+          "reponses": [
+            "Renommer / Changer le nom / Renommer la feuille",
+            "Supprimer / Effacer / Supprimer la feuille",
+            "Dupliquer / Copier / Faire une copie / Dupliquer la feuille",
+            "Changer la couleur / Modifier la couleur / Couleur / Colorer",
+            "Masquer / Cacher / Masquer la feuille"
+          ]
+        }
+      ]
     }
   }
 }

@@ -573,6 +573,70 @@
           "indice": "C’est l’année des Jeux olympiques de Londres."
         }
       ]
+    },
+    "top-5": {
+      "elements": [
+        {
+          "question": "Citez une information demandée pour créer un compte Facebook.",
+          "reponses": [
+            "Le nom et le prénom / Nom / Prénom / Nom de famille",
+            "L’adresse e-mail / E-mail / Mail / Courriel / Numéro de téléphone / Téléphone",
+            "Le mot de passe",
+            "La date de naissance / Date d’anniversaire / Anniversaire / Âge",
+            "Le genre / Sexe"
+          ]
+        },
+        {
+          "question": "Citez quelqu’un que l’on accepte volontiers comme ami sur Facebook.",
+          "reponses": [
+            "Un membre de sa famille / Famille / Parent / Enfant / Frère / Sœur / Cousin",
+            "Un ami / Amie / Copain / Copine / Ami proche",
+            "Un collègue / Collègue de travail",
+            "Un voisin / Voisine",
+            "Un ancien camarade de classe / Camarade / Ancien camarade / Ami d’école"
+          ]
+        },
+        {
+          "question": "Citez une raison de recevoir une notification Facebook.",
+          "reponses": [
+            "Un J’aime / Like / Une réaction / Réagir",
+            "Un commentaire / Commenter / Une réponse",
+            "Une demande d’ami / Demande d’amitié / Invitation / Demande acceptée",
+            "Un anniversaire / Anniversaire d’un ami",
+            "Une identification / Identifier / Une mention / Mentionner / Tag"
+          ]
+        },
+        {
+          "question": "Citez une bonne nouvelle qu’on annonce souvent sur Facebook.",
+          "reponses": [
+            "Une naissance / Un bébé / L’arrivée d’un bébé / Naissance d’un enfant",
+            "Un mariage / Se marier / Noces",
+            "Un nouveau travail / Nouvel emploi / Travail / Emploi / Nouveau poste",
+            "Un examen réussi / Diplôme / Permis de conduire / Bac / Baccalauréat",
+            "Un déménagement / Nouvelle maison / Nouveau logement / Déménager"
+          ]
+        },
+        {
+          "question": "Citez une règle qu’on trouve souvent dans un groupe Facebook.",
+          "reponses": [
+            "Rester poli / Respect / Politesse / Pas d’insultes / Pas de harcèlement",
+            "Pas de publicité / Pas de pub / Pas de spam / Pas de vente",
+            "Rester dans le sujet / Pas de hors-sujet",
+            "Respecter la vie privée / Vie privée / Confidentialité / Discrétion",
+            "Pas de fausses informations / Pas de fake news / Vérifier ses sources"
+          ]
+        },
+        {
+          "question": "Citez un bon réflexe face à un message suspect sur Messenger.",
+          "reponses": [
+            "Ne pas cliquer sur le lien / Ne pas cliquer / Ne cliquez pas",
+            "Ne pas répondre / Ignorer / Supprimer le message / Supprimer",
+            "Signaler ou bloquer / Signaler / Bloquer",
+            "Ne donner ni code ni argent / Ne pas donner ses codes / Ne pas envoyer d’argent",
+            "Appeler la personne / Vérifier auprès de la personne / Téléphoner"
+          ]
+        }
+      ]
     }
   }
 }
