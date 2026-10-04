@@ -180,3 +180,70 @@ test('les contenus se consultent au doigt sur téléphone, sans défilement hori
   const largeur = await page.evaluate(() => document.documentElement.scrollWidth);
   expect(largeur).toBeLessThanOrEqual(390);
 });
+
+/** Contenu enregistré d'un jeu, lu dans le stockage de la page. */
+const contenuEnregistre = (page, slug) =>
+  page.evaluate((cle) => JSON.parse(localStorage.getItem(cle)), `skazy-jeux:${slug}:contenu`);
+
+test('on modifie les questions d’un jeu sur place, depuis la consultation', async ({ page }) => {
+  const erreurs = surveillerErreurs(page);
+  await ouvrirContenus(page);
+  await page.getByRole('button', { name: 'Charger Google Sheets' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Charger' }).click();
+  const motus = apercuDe(page, 'motus');
+  await expect(motus.locator('summary .etiquette')).toHaveText('Google Sheets');
+  await motus.locator('summary').click();
+  const premierMot = (await contenuEnregistre(page, 'motus')).elements[0].mot;
+
+  // Modifier ouvre l'éditeur du jeu dans la consultation
+  await motus.getByRole('button', { name: 'Modifier le contenu de Motus numérique' }).click();
+  await expect(
+    motus.getByRole('heading', { name: 'Modifier le contenu de Motus numérique' }),
+  ).toBeFocused();
+  await expect(motus.getByLabel('Mot à deviner').first()).toHaveValue(premierMot);
+  await verifierAccessibilite(page);
+
+  // Annuler une modification demande confirmation, et rien n'est changé
+  await motus.getByLabel('Mot à deviner').first().fill('ECRAN');
+  await motus.getByRole('button', { name: 'Annuler' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Abandonner' }).click();
+  await expect(motus.locator('.apercu-element').first()).toContainText(premierMot);
+  expect((await contenuEnregistre(page, 'motus')).elements[0].mot).toBe(premierMot);
+
+  // Enregistrer : l'aperçu suit, le jeu aussi, et la thématique n'est plus affichée
+  await motus.getByRole('button', { name: 'Modifier le contenu de Motus numérique' }).click();
+  await motus.getByLabel('Mot à deviner').first().fill('ECRAN');
+  await motus.getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(
+    motus.getByRole('button', { name: 'Modifier le contenu de Motus numérique' }),
+  ).toBeFocused();
+  await expect(motus.locator('.apercu-element').first()).toContainText('ECRAN');
+  await expect(motus.locator('summary .etiquette')).toHaveCount(0);
+  expect((await contenuEnregistre(page, 'motus')).elements[0].mot).toBe('ECRAN');
+
+  // Les images d'exemple de Zoom mystère s'affichent dans l'éditeur et gardent leur chemin
+  const zoom = apercuDe(page, 'zoom-mystere');
+  await zoom.locator('summary').click();
+  await zoom.getByRole('button', { name: 'Modifier le contenu de Zoom mystère' }).click();
+  const apercu = zoom.locator('img.champ-image__apercu').first();
+  await expect(apercu).toBeVisible();
+  await expect.poll(() => apercu.evaluate((img) => img.naturalWidth)).toBeGreaterThan(0);
+  await zoom.getByRole('button', { name: 'Enregistrer' }).click();
+  await expect(
+    zoom.getByRole('button', { name: 'Modifier le contenu de Zoom mystère' }),
+  ).toBeVisible();
+  expect((await contenuEnregistre(page, 'zoom-mystere')).elements[0].image.src).toBe(
+    'exemples/barre-outils.svg',
+  );
+  expect(erreurs).toEqual([]);
+});
+
+test('les thématiques et les exemples se consultent sans être modifiés', async ({ page }) => {
+  await ouvrirContenus(page);
+  await page.getByLabel('Afficher', { exact: true }).selectOption('facebook');
+  await apercuDe(page, 'motus').locator('summary').click();
+  await expect(apercuDe(page, 'motus').getByRole('button', { name: /Modifier/ })).toHaveCount(0);
+  await expect(
+    apercuDe(page, 'motus').getByRole('link', { name: 'Ouvrir Motus numérique' }),
+  ).toBeVisible();
+});

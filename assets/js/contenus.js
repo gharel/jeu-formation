@@ -2,8 +2,9 @@
  * Page « Les contenus » : les questions de tous les jeux au même endroit.
  * - Charger une thématique prête à jouer (contenus/thematiques/*.json) dans tous les jeux.
  * - Exporter tous les contenus en un seul fichier JSON (jeu de données), ou en importer un.
- * - Consulter le contenu de chaque jeu, ou celui d'une thématique avant de la charger. Les
- *   réponses sont masquées : l'écran est peut-être déjà projeté.
+ * - Consulter le contenu de chaque jeu, et le modifier sur place (même éditeur que dans le jeu),
+ *   ou celui d'une thématique avant de la charger. Les réponses sont masquées : l'écran est
+ *   peut-être déjà projeté.
  */
 import { exigerAcces } from './commun/acces.js';
 import { JEUX } from './jeux.js';
@@ -15,7 +16,9 @@ import {
   validerContenu,
   resumerContenu,
   champsAffiches,
+  compacterContenu,
 } from './commun/contenu.js';
+import { creerEditeur } from './commun/editeur-contenu.js';
 import {
   preparerJeuDeDonnees,
   lireJeuDeDonnees,
@@ -523,8 +526,156 @@ function elementAffiche(slug, schema, element, index) {
   );
 }
 
-/** Un jeu de la consultation : `contenu` null si le jeu n'est pas dans la thématique. */
-function jeuAffiche(slug, contenu, etiquette) {
+// ---------- Modification sur place (contenus actuels) ----------
+
+/** Éditeurs ouverts : détruits avant chaque nouveau dessin de la consultation. */
+const editeursOuverts = new Set();
+
+/**
+ * Images d'exemple (« exemples/clavier.svg ») : leur chemin part du dossier du jeu. Ici, l'éditeur
+ * a besoin de l'adresse complète ; on la raccourcit de nouveau à l'enregistrement.
+ */
+function changerAdressesImages(slug, contenu, changer) {
+  const { schema } = definitions[slug];
+  const champsImage = schema.elements.champs.filter((c) => c.type === 'image');
+  if (!champsImage.length) return contenu;
+  return {
+    ...contenu,
+    elements: contenu.elements.map((element) => {
+      const copie = { ...element };
+      for (const { cle } of champsImage) {
+        const src = copie[cle]?.src;
+        if (typeof src === 'string') copie[cle] = { ...copie[cle], src: changer(src) };
+      }
+      return copie;
+    }),
+  };
+}
+
+const dossierDuJeu = (slug) => new URL(`jeux/${slug}/`, RACINE).href;
+
+function adressesCompletes(slug, contenu) {
+  return changerAdressesImages(slug, contenu, (src) =>
+    /^[a-z]+:/i.test(src) ? src : new URL(src, dossierDuJeu(slug)).href,
+  );
+}
+
+function adressesRelatives(slug, contenu) {
+  const dossier = dossierDuJeu(slug);
+  return changerAdressesImages(slug, contenu, (src) =>
+    src.startsWith(dossier) ? src.slice(dossier.length) : src,
+  );
+}
+
+/** Remplace l'aperçu d'un jeu par son éditeur (le même que dans le jeu), avec Enregistrer. */
+function ouvrirEdition(slug, corps) {
+  const { jeu, schema, transfert } = definitions[slug];
+  let enregistre = contenuActuel(slug).contenu;
+  const editeur = creerEditeur({ schema, contenu: adressesCompletes(slug, enregistre) });
+  editeursOuverts.add(editeur);
+  let reference = JSON.stringify(editeur.valeur());
+  const zoneErreurs = el('div', { class: 'messages', role: 'alert' });
+  const titre = el(
+    'h3',
+    { class: 'apercu-jeu__titre-edition', tabindex: '-1' },
+    `Modifier le contenu de ${jeu.titre}`,
+  );
+
+  async function fermer(message) {
+    editeur.detruire();
+    editeursOuverts.delete(editeur);
+    await dessinerConsultation();
+    listeJeux.querySelector(`[data-modifier="${slug}"]`)?.focus();
+    if (message) annoncer(message);
+  }
+
+  async function enregistrer() {
+    const brouillon = compacterContenu(schema, editeur.valeur());
+    const nouveau = nettoyerContenu(schema, adressesRelatives(slug, brouillon));
+    if (!ecrire(cleContenu(slug), nouveau)) {
+      remplir(
+        zoneErreurs,
+        el(
+          'p',
+          { class: 'message message--erreur' },
+          'Impossible d’enregistrer : le stockage du navigateur est plein ou bloqué.',
+        ),
+      );
+      return;
+    }
+    // Contenu retouché : ce n'est plus celui de la thématique chargée
+    if (JSON.stringify(nouveau) !== JSON.stringify(enregistre)) oublierSource(slug);
+    enregistre = nouveau;
+    reference = JSON.stringify(editeur.valeur());
+    await transfert.apresEnregistrement?.(nouveau);
+    const erreurs = validerContenu(schema, nouveau);
+    if (erreurs.length) {
+      remplir(
+        zoneErreurs,
+        el(
+          'div',
+          { class: 'message message--erreur' },
+          el('p', {}, 'Enregistré, mais il reste à compléter :'),
+          el(
+            'ul',
+            {},
+            erreurs.map((m) => el('li', {}, m)),
+          ),
+        ),
+      );
+      zoneErreurs.scrollIntoView?.({ block: 'center' });
+      return;
+    }
+    await fermer(`Contenu de ${jeu.titre} enregistré`);
+  }
+
+  async function annuler() {
+    const modifie = JSON.stringify(editeur.valeur()) !== reference;
+    if (
+      !modifie ||
+      (await confirmer({
+        titre: 'Abandonner les modifications ?',
+        message: 'Les changements non enregistrés seront perdus.',
+        oui: 'Abandonner',
+      }))
+    ) {
+      await fermer();
+    }
+  }
+
+  remplir(
+    corps,
+    el(
+      'div',
+      { class: 'apercu-jeu__edition' },
+      titre,
+      el(
+        'p',
+        { class: 'champ__aide' },
+        'Les réponses sont masquées : vous pouvez modifier le contenu même si l’écran est projeté. Il est enregistré dans ce navigateur, pour le jeu.',
+      ),
+      editeur.element,
+      zoneErreurs,
+      el(
+        'div',
+        { class: 'barre-actions' },
+        el('button', { type: 'button', class: 'bouton', onclick: annuler }, 'Annuler'),
+        el(
+          'button',
+          { type: 'button', class: 'bouton bouton--principal', onclick: enregistrer },
+          'Enregistrer',
+        ),
+      ),
+    ),
+  );
+  focaliser(titre);
+}
+
+/**
+ * Un jeu de la consultation : `contenu` null si le jeu n'est pas dans la thématique.
+ * `modifiable` : le contenu actuel du jeu, qu'on peut modifier sur place.
+ */
+function jeuAffiche(slug, contenu, etiquette, { modifiable = false } = {}) {
   const { jeu, schema } = definitions[slug];
   const erreurs = contenu ? validerContenu(schema, contenu) : [];
   let etat = 'Pas dans cette thématique : le jeu garde son contenu.';
@@ -564,19 +715,34 @@ function jeuAffiche(slug, contenu, etiquette) {
                 )
               : null,
             el(
+              'p',
+              { class: 'apercu-jeu__actions' },
+              modifiable
+                ? el(
+                    'button',
+                    {
+                      type: 'button',
+                      class: 'bouton bouton--principal',
+                      dataset: { modifier: slug },
+                      'aria-label': `Modifier le contenu de ${jeu.titre}`,
+                      onclick: (e) =>
+                        ouvrirEdition(slug, e.currentTarget.closest('.apercu-jeu__corps')),
+                    },
+                    icone('pen'),
+                    'Modifier',
+                  )
+                : null,
+              el(
+                'a',
+                { class: 'bouton bouton--discret', href: dossierDuJeu(slug) },
+                icone('play'),
+                `Ouvrir ${jeu.titre}`,
+              ),
+            ),
+            el(
               'ol',
               { class: 'apercu-jeu__elements' },
               contenu.elements.map((element, i) => elementAffiche(slug, schema, element, i)),
-            ),
-            el(
-              'p',
-              {},
-              el(
-                'a',
-                { class: 'bouton bouton--discret', href: new URL(`jeux/${slug}/`, RACINE).href },
-                icone('pen-to-square'),
-                `Préparer dans ${jeu.titre}`,
-              ),
             ),
           )
         : null,
@@ -595,7 +761,9 @@ async function dessinerConsultation() {
     const sources = lireSources();
     elements = SLUGS.map((slug) => {
       const { contenu, estExemple } = contenuActuel(slug);
-      return jeuAffiche(slug, contenu, estExemple ? 'contenu d’exemple' : (sources[slug] ?? null));
+      return jeuAffiche(slug, contenu, estExemple ? 'contenu d’exemple' : (sources[slug] ?? null), {
+        modifiable: true,
+      });
     });
   } else if (choix === AFFICHAGE_EXEMPLES) {
     elements = SLUGS.map((slug) => {
@@ -620,6 +788,9 @@ async function dessinerConsultation() {
       );
     });
   }
+  // Un éditeur encore ouvert disparaît avec l'ancien dessin
+  for (const editeur of editeursOuverts) editeur.detruire();
+  editeursOuverts.clear();
   remplir(listeJeux, elements);
   for (const details of listeJeux.querySelectorAll('details')) {
     if (ouverts.has(details.dataset.jeu)) details.open = true;
@@ -746,7 +917,7 @@ remplir(
       el(
         'p',
         { class: 'champ__aide' },
-        'Ouvrez un jeu pour lire ses questions. Les réponses sont floutées : vous pouvez consulter même si l’écran est projeté.',
+        'Ouvrez un jeu pour lire ses questions, puis « Modifier » pour les changer ici même (contenus actuels). Les réponses sont floutées : vous pouvez consulter même si l’écran est projeté.',
       ),
       consultation,
     ),

@@ -62,7 +62,7 @@ La page **Les contenus** (bouton sur l'accueil, ou « Charger une thématique »
 
 - **5 thématiques prêtes à jouer**, chargées en un clic dans les 14 jeux sans image (Zoom mystère garde ses captures) : **Initiation à l'IA**, **Google Docs**, **Google Sheets**, **Microsoft 365** et **Facebook**. Les réglages de l'animateur (durées, points…) sont conservés. « Revenir aux exemples » remet le contenu livré avec les jeux ;
 - **un jeu de données JSON** : « Exporter tous les contenus » écrit les questions des 15 jeux dans un seul fichier (avec un titre), « Importer un jeu de données… » le recharge. L'export d'un seul jeu s'importe aussi ici, et un jeu de données s'importe aussi dans un seul jeu (il en prend sa part) ;
-- **la consultation** des questions de chaque jeu, réponses floutées tant qu'on ne les affiche pas, et l'aperçu d'une thématique avant de la charger.
+- **la consultation** des questions de chaque jeu, réponses floutées tant qu'on ne les affiche pas, et l'aperçu d'une thématique avant de la charger. Le bouton **Modifier** ouvre sur place l'éditeur du jeu (le même que dans le jeu) pour changer ses questions sans quitter la page.
 
 Dans chaque jeu, une étiquette indique la thématique chargée (« Google Sheets ») ; elle disparaît dès que l'animateur retouche et enregistre le contenu. Les thématiques sont des fichiers JSON dans `contenus/thematiques/` : pour en ajouter une, voir [AGENTS.md](AGENTS.md).
 

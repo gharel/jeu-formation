@@ -40,7 +40,7 @@ Les pages ne s'ouvrent pas en double-cliquant sur le fichier (`file://`), car le
 ```
 index.html                     Accueil : une carte par jeu (générée depuis assets/js/jeux.js), liens « Le groupe » et « Les contenus »
 groupe/index.html              Page « Le groupe » : nom, prénoms, infos, plan de salle, fichier JSON (assets/js/groupe.js)
-contenus/index.html            Page « Les contenus » : thématiques, jeu de données JSON, consultation (assets/js/contenus.js)
+contenus/index.html            Page « Les contenus » : thématiques, jeu de données JSON, consultation et modification (assets/js/contenus.js)
 contenus/thematiques/*.json    Une thématique prête à jouer par fichier (jeu de données)
 assets/css/charte.css          Couleurs (et teintes ajoutées pour les jeux), police Georama, couleur de chaque jeu (data-couleur)
 assets/css/base.css            Mise en page, bandeau, boutons, formulaires, dialogues
