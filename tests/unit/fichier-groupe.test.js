@@ -42,6 +42,37 @@ describe('fichier du groupe : export', () => {
     });
   });
 
+  it('écrit les points de chacun, par jeu, et les relit', () => {
+    const groupe = { ...groupeExemple(), scores: { ana: { motus: 3, correction: -1 } } };
+    const export_ = preparerExportGroupe(groupe, maintenant);
+    expect(export_.groupe.participants[0]).toMatchObject({
+      prenom: 'Ana',
+      points: { motus: 3, correction: -1 },
+    });
+    expect(export_.groupe.participants[1].points).toBeUndefined();
+    expect(lireImportGroupe(fichier(export_)).scores).toEqual({
+      ana: { motus: 3, correction: -1 },
+    });
+  });
+
+  it('lit des points écrits à la main : un simple nombre devient une correction', () => {
+    const lu = lireImportGroupe(
+      fichier({
+        participants: [
+          { prenom: 'Ana', points: 12 },
+          { prenom: 'Bob', points: '4' },
+          { prenom: 'Chloé', points: { bingo: 2, 'n’importe quoi': 3 } },
+          { prenom: 'David', points: 'beaucoup' },
+        ],
+      }),
+    );
+    expect(lu.scores).toEqual({
+      ana: { correction: 12 },
+      bob: { correction: 4 },
+      chloé: { bingo: 2 },
+    });
+  });
+
   it('se relit à l’identique', () => {
     const export_ = preparerExportGroupe(groupeExemple(), maintenant);
     const lu = lireImportGroupe(fichier(export_));

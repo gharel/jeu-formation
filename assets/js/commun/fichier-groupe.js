@@ -1,6 +1,6 @@
 /**
  * Le groupe dans un fichier JSON, lisible et modifiable à la main : nom, prénoms, infos,
- * absences, disposition de la salle et places. Fonctions pures (export et lecture d'un import).
+ * absences, disposition de la salle, places et points. Fonctions pures (export et lecture d'un import).
  *
  * {
  *   format: 'skazy-jeux-groupe', version: 1, exporteLe: '…',
@@ -8,14 +8,16 @@
  *     nom: 'Google Sheets, mairie',
  *     salle: { disposition: 'u' | 'classe' | 'ilots' | 'cercle', nombreDePlaces: 12 | null, parIlot: 4 },
  *     participants: [
- *       { prenom: 'Ana', info: { theme: 'dessert', texte: 'le tiramisu' }, place: 1 },
+ *       { prenom: 'Ana', info: { theme: 'dessert', texte: 'le tiramisu' }, place: 1,
+ *         points: { motus: 3, pyramide: 2 } },             // points par jeu (scores du groupe)
  *       { prenom: 'Bob', absent: true },
  *       'Chloé',                                   // un prénom seul suffit
  *     ],
  *   },
  * }
  * `nombreDePlaces: null` : la salle suit la taille du groupe. `place` : numéro affiché sur le plan.
- * À l'import, l'info peut être un simple texte (thème « Autre »).
+ * À l'import, l'info peut être un simple texte (thème « Autre ») et les points un simple nombre
+ * (gardé comme une correction de l'animateur).
  */
 import { FORMAT, FORMAT_DONNEES } from './contenu.js';
 import {
@@ -28,13 +30,14 @@ import {
   NOMBRE_MAX,
 } from './participants.js';
 import { DISPOSITIONS, normaliserPlan, nombreDePlaces, placeDe } from './salle.js';
+import { CORRECTION, normaliserScores } from './scores-groupe.js';
 
 export const FORMAT_GROUPE = 'skazy-jeux-groupe';
 export const VERSION_GROUPE = 1;
 
 /** Fichier du groupe : `groupe` a les mêmes propriétés que creerGroupe() (nom, participants…). */
 export function preparerExportGroupe(groupe, maintenant = new Date()) {
-  const { nom, participants, infos, absents, plan } = groupe;
+  const { nom, participants, infos, absents, plan, scores = {} } = groupe;
   return {
     format: FORMAT_GROUPE,
     version: VERSION_GROUPE,
@@ -49,6 +52,8 @@ export function preparerExportGroupe(groupe, maintenant = new Date()) {
         const place = placeDe(plan, prenom);
         if (place) entree.place = Number(place.slice(1));
         if (estAbsent(absents, prenom)) entree.absent = true;
+        const points = scores[prenom.toLocaleLowerCase('fr')];
+        if (points) entree.points = { ...points };
         return entree;
       }),
     },
@@ -63,10 +68,10 @@ function numeroDePlace(valeur) {
 }
 
 /**
- * Lit un fichier de groupe. Renvoie { nom, participants, infos, absents, plan, avertissements }
- * prêt pour groupe.remplacer(). Les avertissements disent ce qui a été changé ou ignoré (homonyme
- * numéroté, place inexistante ou déjà prise…). Lève une erreur au message lisible si le fichier
- * ne convient pas.
+ * Lit un fichier de groupe. Renvoie { nom, participants, infos, absents, plan, scores,
+ * avertissements } prêt pour groupe.remplacer(). Les avertissements disent ce qui a été changé ou
+ * ignoré (homonyme numéroté, place inexistante ou déjà prise…). Lève une erreur au message
+ * lisible si le fichier ne convient pas.
  */
 export function lireImportGroupe(contenuFichier) {
   let donnees;
@@ -94,6 +99,7 @@ export function lireImportGroupe(contenuFichier) {
   let participants = [];
   let infos = {};
   const absents = [];
+  const points = {};
   const placesVoulues = [];
   for (const brut of source.participants) {
     const entree = typeof brut === 'string' ? { prenom: brut } : brut;
@@ -115,6 +121,11 @@ export function lireImportGroupe(contenuFichier) {
       typeof entree.info === 'string' ? { theme: 'autre', texte: entree.info } : entree.info;
     if (info) infos = definirInfo(infos, prenom, info);
     if (entree.absent === true) absents.push(prenom.toLocaleLowerCase('fr'));
+    if (typeof entree.points === 'number' || typeof entree.points === 'string') {
+      points[prenom] = { [CORRECTION]: entree.points };
+    } else if (entree.points && typeof entree.points === 'object') {
+      points[prenom] = entree.points;
+    }
     if (entree.place !== undefined && entree.place !== null && entree.place !== '') {
       placesVoulues.push({ prenom, place: entree.place });
     }
@@ -161,6 +172,7 @@ export function lireImportGroupe(contenuFichier) {
     infos,
     absents,
     plan,
+    scores: normaliserScores(points, participants),
     avertissements,
   };
 }

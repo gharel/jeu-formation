@@ -551,7 +551,11 @@ export function monterJeu(config) {
     // Les joueurs du moment : ceux choisis dans « Qui joue ? », présents aujourd'hui
     joueursEnJeu = joueurs();
     const tableau = el('ul', { class: 'tableau-points', 'aria-label': 'Points' });
-    const scores = creerScores(joueursEnJeu, { surChangement: dessinerPoints });
+    // Chaque point gagné part aussi dans le score du groupe, gardé d'un jeu à l'autre
+    const scores = creerScores(joueursEnJeu, {
+      surChangement: dessinerPoints,
+      surAjout: (prenom, n) => groupe.ajouterPoints(prenom, slug, n),
+    });
     function dessinerPoints() {
       const classement = scores.classement();
       const meilleur = classement[0]?.points ?? 0;
@@ -588,7 +592,8 @@ export function monterJeu(config) {
               if (
                 await confirmer({
                   titre: 'Quitter la partie ?',
-                  message: 'Les points de cette partie seront perdus.',
+                  message:
+                    'La partie s’arrête. Les points déjà gagnés restent dans les scores du groupe.',
                   oui: 'Quitter',
                 })
               ) {
@@ -680,8 +685,13 @@ export function monterJeu(config) {
       ),
       titre,
       message ? el('p', { class: 'fin__message' }, message) : null,
-      podium ?? el('p', { class: 'fin__message' }, 'Bravo à toutes et à tous !'),
-      liste,
+      // Podium et classement : côte à côte sur grand écran (tout tient en 1280 × 720)
+      el(
+        'div',
+        { class: `fin__resultats${podium && liste ? ' fin__resultats--deux' : ''}` },
+        podium ?? el('p', { class: 'fin__message' }, 'Bravo à toutes et à tous !'),
+        liste,
+      ),
       el(
         'div',
         { class: 'groupe-boutons groupe-boutons--centre' },
@@ -702,6 +712,18 @@ export function monterJeu(config) {
         ),
         el('a', { class: 'bouton', href: '../../' }, 'Tous les jeux'),
       ),
+      joueursEnJeu.length
+        ? el(
+            'p',
+            { class: 'fin__scores' },
+            el(
+              'a',
+              { href: '../../groupe/#scores' },
+              icone('ranking-star'),
+              'Voir les scores du groupe, tous jeux confondus',
+            ),
+          )
+        : null,
     );
     focaliser(titre);
   }

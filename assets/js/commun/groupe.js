@@ -1,11 +1,13 @@
 /**
- * Le groupe : son nom, les participants, une info par personne, les absences du jour et le plan
- * de salle, partagés par toutes les pages (accueil, page « Le groupe », jeux). Les données
- * passent par participants.js et salle.js ; le plan et les absences sont nettoyés dès que la
- * liste change (personne retirée : place libérée).
+ * Le groupe : son nom, les participants, une info par personne, les absences du jour, le plan
+ * de salle et le score de chacun, partagés par toutes les pages (accueil, page « Le groupe »,
+ * jeux). Les données passent par participants.js, salle.js et scores-groupe.js ; le plan, les
+ * absences et les scores sont nettoyés dès que la liste change (personne retirée : place
+ * libérée, points oubliés).
  */
 import * as listeParticipants from './participants.js';
 import * as salle from './salle.js';
+import * as scoresGroupe from './scores-groupe.js';
 import { el, icone } from './ui.js';
 
 export function creerGroupe() {
@@ -14,9 +16,15 @@ export function creerGroupe() {
   let infos = listeParticipants.chargerInfos();
   let absents = listeParticipants.chargerAbsents(participants);
   let plan = salle.charger(participants);
+  let scores = scoresGroupe.charger(participants);
   const ecouteurs = new Set();
   const prevenir = () => {
     for (const ecouteur of ecouteurs) ecouteur();
+  };
+  // Les points changent souvent pendant une partie : ils ont leurs propres écouteurs
+  const ecouteursScores = new Set();
+  const prevenirScores = () => {
+    for (const ecouteur of ecouteursScores) ecouteur();
   };
 
   return {
@@ -32,6 +40,10 @@ export function creerGroupe() {
     },
     get plan() {
       return plan;
+    },
+    /** Points de chacun, tous jeux confondus (voir scores-groupe.js). */
+    get scores() {
+      return scores;
     },
     /** Prénoms (en minuscules) des personnes absentes aujourd'hui. */
     get absents() {
@@ -58,11 +70,13 @@ export function creerGroupe() {
       infos = listeParticipants.garderInfos(nouveau.infos ?? {}, participants);
       absents = listeParticipants.garderAbsents(nouveau.absents ?? [], participants);
       plan = salle.nettoyerPlan(nouveau.plan, participants);
+      scores = scoresGroupe.normaliserScores(nouveau.scores ?? {}, participants);
       listeParticipants.enregistrerNom(nom);
       listeParticipants.enregistrer(participants);
       listeParticipants.enregistrerInfos(infos);
       listeParticipants.enregistrerAbsents(absents);
       salle.enregistrer(plan);
+      scoresGroupe.enregistrer(scores);
       prevenir();
     },
 
@@ -75,6 +89,8 @@ export function creerGroupe() {
       listeParticipants.enregistrerAbsents(absents);
       plan = salle.nettoyerPlan(plan, participants);
       salle.enregistrer(plan);
+      scores = scoresGroupe.charger(participants);
+      scoresGroupe.enregistrer(scores);
       prevenir();
     },
 
@@ -101,6 +117,39 @@ export function creerGroupe() {
       prevenir();
     },
 
+    // Les scores sont relus dans le stockage avant chaque changement : un jeu ouvert dans un
+    // autre onglet a pu en ajouter.
+
+    /** Points gagnés (ou perdus) dans un jeu : `source` est le slug du jeu. */
+    ajouterPoints(prenom, source, n) {
+      scores = scoresGroupe.ajouterPoints(scoresGroupe.charger(participants), prenom, source, n);
+      scoresGroupe.enregistrer(scores);
+      prevenirScores();
+    },
+
+    /** L'animateur corrige le total d'une personne. */
+    fixerTotal(prenom, total) {
+      scores = scoresGroupe.fixerTotal(scoresGroupe.charger(participants), prenom, total);
+      scoresGroupe.enregistrer(scores);
+      prevenirScores();
+    },
+
+    reinitialiserScores() {
+      scores = {};
+      scoresGroupe.enregistrer(scores);
+      prevenirScores();
+    },
+
+    /** Relit les scores (changés par une autre page) et prévient les écouteurs. */
+    rechargerScores() {
+      scores = scoresGroupe.charger(participants);
+      prevenirScores();
+    },
+
+    totalDe(prenom) {
+      return scoresGroupe.totalDe(scores, prenom);
+    },
+
     infoDe(prenom) {
       return listeParticipants.infoDe(infos, prenom);
     },
@@ -120,6 +169,12 @@ export function creerGroupe() {
     surChangement(ecouteur) {
       ecouteurs.add(ecouteur);
       return () => ecouteurs.delete(ecouteur);
+    },
+
+    /** Appelé quand les points changent (pas la liste) ; renvoie une fonction pour arrêter. */
+    surChangementScores(ecouteur) {
+      ecouteursScores.add(ecouteur);
+      return () => ecouteursScores.delete(ecouteur);
     },
   };
 }

@@ -39,7 +39,7 @@ Les pages ne s'ouvrent pas en double-cliquant sur le fichier (`file://`), car le
 
 ```
 index.html                     Accueil : une carte par jeu (générée depuis assets/js/jeux.js), liens « Le groupe » et « Les contenus »
-groupe/index.html              Page « Le groupe » : nom, prénoms, infos, plan de salle, fichier JSON (assets/js/groupe.js)
+groupe/index.html              Page « Le groupe » : nom, prénoms, infos, plan de salle, scores, fichier JSON (assets/js/groupe.js)
 contenus/index.html            Page « Les contenus » : thématiques, jeu de données JSON, consultation et modification (assets/js/contenus.js)
 contenus/thematiques/*.json    Une thématique prête à jouer par fichier (jeu de données)
 assets/css/charte.css          Couleurs (et teintes ajoutées pour les jeux), police Georama, couleur de chaque jeu (data-couleur)
@@ -65,6 +65,8 @@ assets/js/commun/
   paliers.js                   Chiffres 5 4 3 2 1 qui s'éteignent (logique + affichage)
   manche-paliers.js            Manche Démarrer / Stop / Bonne / Reprendre (Qui suis-je ?, Zoom mystère)
   scores.js · points.js        Points de la partie ; bouton « Attribuer le point »
+  scores-groupe.js             Scores du groupe, tous jeux confondus : détail par jeu, correction, classement (fonctions pures)
+  bloc-scores.js               Bloc « Scores » de la page Groupe : classement, − / + / total tapé, remise à zéro
   acces.js                     Mot de passe d'accès : empreinte PBKDF2 seule, écran de saisie, Verrouiller
   stockage.js · images.js      Seuls accès à localStorage et à IndexedDB
   hasard.js · nombres.js       Hasard reproductible (?graine=) ; nombres au format français
@@ -92,6 +94,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
   mobile.spec.js               Téléphone tactile : pas de plein écran, icônes centrées, buzzers au doigt, plan au doigt
   groupe.spec.js               Page Groupe : placement (toucher, glisser, ordre), îlots, fenêtre Groupe en partie, fichier JSON
   joueurs.spec.js              Qui joue ? : tout le groupe, au clic, au hasard ; absences ; retardataire ajouté depuis le jeu
+  scores.spec.js               Scores du groupe : points de deux jeux additionnés, autre onglet suivi, corrections, remise à zéro
 ```
 
 ## Conventions de code
@@ -101,7 +104,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
 - **La logique est séparée de l'affichage.** Les règles vont dans `logique.js`, en fonctions pures testées unitairement. `jeu.js` ne fait que construire la page et réagir aux clics.
 - **Sécurité.** Tout texte saisi ou importé passe par `el()` ou `textContent`, jamais par `innerHTML`. Un JSON importé passe par `nettoyerContenu()`, qui ne garde que les clés et les types prévus par le schéma.
 - **Mot de passe d'accès.** Il n'est jamais écrit en clair : ni dans le code, ni dans les tests, ni dans un message de commit. Seule son empreinte est dans `acces.js`. Les tests e2e ouvrent les pages déverrouillées (`storageState` dans `playwright.config.js`) ; `acces.spec.js` teste l'écran sans le mot de passe.
-- **Groupe.** Le nom, les prénoms, les infos, les absences et le plan passent par `groupe.js` (`creerGroupe()`), qui les garde cohérents avec la liste. Le prénom sert d'identifiant (unique, sans tenir compte des majuscules) : un homonyme reçoit un numéro (« Marie 2 ») par `ajouterPrenoms()`, qui dit aussi quel prénom a été retenu. Un fichier importé passe par `lireImportGroupe()` puis `groupe.remplacer()`. Un jeu ne voit que les joueurs choisis dans « Qui joue ? » (`ctx.participants`), parmi les présents ; jamais d'accès direct aux clés `participants`, `infos-participants`, `nom-groupe` ou `plan-salle`. Toute nouvelle page à publier doit être ajoutée à `.github/workflows/publier.yml` et à `validate:html`.
+- **Groupe.** Le nom, les prénoms, les infos, les absences, le plan et les scores passent par `groupe.js` (`creerGroupe()`), qui les garde cohérents avec la liste. Le prénom sert d'identifiant (unique, sans tenir compte des majuscules) : un homonyme reçoit un numéro (« Marie 2 ») par `ajouterPrenoms()`, qui dit aussi quel prénom a été retenu. Un fichier importé passe par `lireImportGroupe()` puis `groupe.remplacer()`. Un jeu ne voit que les joueurs choisis dans « Qui joue ? » (`ctx.participants`), parmi les présents ; jamais d'accès direct aux clés `participants`, `infos-participants`, `nom-groupe`, `plan-salle` ou `scores-groupe`. Un jeu donne ses points par `ctx.scores.ajouter()` : ils vont aussi dans les scores du groupe (`groupe.ajouterPoints()`, relus dans le stockage avant chaque écriture), gardés d'un jeu à l'autre. Toute nouvelle page à publier doit être ajoutée à `.github/workflows/publier.yml` et à `validate:html`.
 - **Contenus et thématiques.** Le contenu d'un jeu est rangé sous `cleContenu(slug)` ; un jeu de données (thématique ou import) passe par `lireJeuDeDonnees()` puis `contenuDepuisDonnees()` (nettoyage avec le schéma du jeu, réglages de l'animateur gardés). La source affichée (« Google Sheets ») est notée par `noterSource()` et oubliée dès que l'animateur enregistre un contenu modifié.
 - **Stockage.** On passe toujours par `stockage.js` (localStorage, clés préfixées par `skazy-jeux:`) ou `images.js` (IndexedDB), jamais d'appel direct. Les erreurs de stockage ne doivent jamais faire planter un jeu.
 - **Hasard.** On utilise `ctx.hasard` (ou `hasardDePage()`), pas `Math.random()` directement, pour que `?graine=N` rende les tests reproductibles.

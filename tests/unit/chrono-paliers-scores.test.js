@@ -141,4 +141,15 @@ describe('scores', () => {
     scores.reinitialiser();
     expect(scores.valeur('Bob')).toBe(0);
   });
+
+  it('envoie chaque point au score du groupe', () => {
+    const surAjout = vi.fn();
+    const scores = creerScores(['Ana'], { surAjout });
+    scores.ajouter('Ana', 2);
+    scores.ajouter('Ana', -1);
+    expect(surAjout.mock.calls).toEqual([
+      ['Ana', 2],
+      ['Ana', -1],
+    ]);
+  });
 });

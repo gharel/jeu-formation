@@ -34,6 +34,18 @@ export function ecrire(cle, valeur) {
   }
 }
 
+/**
+ * Prévient quand une autre page (un jeu ouvert dans un autre onglet) change cette clé.
+ * Renvoie une fonction pour arrêter d'écouter.
+ */
+export function ecouterStockage(cle, fonction) {
+  const ecouteur = (evenement) => {
+    if (evenement.key === PREFIXE + cle || evenement.key === null) fonction();
+  };
+  globalThis.addEventListener?.('storage', ecouteur);
+  return () => globalThis.removeEventListener?.('storage', ecouteur);
+}
+
 export function effacer(cle) {
   try {
     zone()?.removeItem(PREFIXE + cle);

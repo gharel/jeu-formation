@@ -948,6 +948,36 @@
   font-weight: 700;
 }
 
+@media (min-width: 900px) {
+  .fin__resultats--deux {
+    display: grid;
+    grid-template-columns: auto minmax(18rem, 28rem);
+    gap: 3rem;
+    align-items: center;
+    justify-content: center;
+    margin: 1.5rem 0;
+  }
+
+  .fin__resultats--deux .podium,
+  .fin__resultats--deux .classement {
+    margin: 0;
+  }
+}
+
+/* Lien vers les scores du groupe, sous les boutons de fin de partie */
+.fin__scores {
+  margin: 0.75rem 0 0;
+  font-weight: 700;
+  text-align: center;
+}
+
+.fin__scores a {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  color: var(--bleu-nuit);
+}
+
 .podium {
   display: flex;
   justify-content: center;
@@ -1437,6 +1467,123 @@
   .groupe-colonnes {
     grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
     align-items: start;
+  }
+}
+
+/* ---------- Scores du groupe (tous jeux confondus) ---------- */
+
+.bloc-scores h3 {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0;
+}
+
+.bloc-scores h3 .fa-solid {
+  color: var(--vert);
+}
+
+.bloc-scores__etat {
+  margin: 0.5rem 0 0;
+  font-weight: 700;
+}
+
+.scores-groupe {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 24rem), 1fr));
+  gap: 0.6rem 1.25rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.scores-groupe__ligne {
+  display: grid;
+  grid-template-columns: 2.2rem minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.55rem 0.75rem;
+  background: var(--fond);
+  border-radius: 10px;
+}
+
+.scores-groupe__ligne--tete {
+  background: var(--jaune-clair);
+}
+
+.scores-groupe__ligne--absente .scores-groupe__prenom {
+  color: var(--texte-doux);
+}
+
+.scores-groupe__rang {
+  font-size: 1.15rem;
+  font-weight: 900;
+  color: var(--bleu-nuit);
+  text-align: right;
+}
+
+.scores-groupe__qui {
+  display: grid;
+  min-width: 0;
+}
+
+.scores-groupe__prenom {
+  overflow-wrap: anywhere;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--bleu-nuit);
+}
+
+.scores-groupe__detail {
+  font-size: 0.85rem;
+  color: var(--texte-doux);
+}
+
+.scores-groupe__commandes {
+  display: flex;
+  gap: 0.3rem;
+  align-items: center;
+}
+
+.scores-groupe__bouton {
+  display: grid;
+  place-items: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  font: inherit;
+  color: var(--bleu-nuit);
+  background: var(--blanc);
+  border: 2px solid var(--bord);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.scores-groupe__bouton:hover {
+  border-color: var(--bleu-nuit);
+}
+
+.champ__controle.scores-groupe__total {
+  width: 4.5rem;
+  padding-inline: 0.4rem;
+  font-size: 1.2rem;
+  font-weight: 900;
+  text-align: center;
+}
+
+@media (max-width: 640px) {
+  .scores-groupe__ligne {
+    grid-template-columns: 1.6rem minmax(0, 1fr) auto;
+    gap: 0.5rem;
+    padding-inline: 0.6rem;
+  }
+
+  .scores-groupe__bouton {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .champ__controle.scores-groupe__total {
+    width: 3.4rem;
   }
 }
 

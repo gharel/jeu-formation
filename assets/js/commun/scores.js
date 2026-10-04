@@ -18,12 +18,17 @@ export function classer(entrees) {
   });
 }
 
-export function creerScores(participants = [], { surChangement } = {}) {
+/**
+ * `surAjout(prenom, n)` (facultatif) : chaque point gagné part aussi dans le score du groupe,
+ * gardé d'un jeu à l'autre (scores-groupe.js).
+ */
+export function creerScores(participants = [], { surChangement, surAjout } = {}) {
   const points = new Map(participants.map((p) => [p, 0]));
   return {
     ajouter(prenom, n = 1) {
       if (!points.has(prenom)) points.set(prenom, 0);
       points.set(prenom, points.get(prenom) + n);
+      surAjout?.(prenom, n);
       surChangement?.();
     },
     valeur(prenom) {

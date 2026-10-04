@@ -28,9 +28,10 @@ Chaque jeu dure de 5 à 15 minutes.
 La page **Le groupe** (bouton sur l'accueil) rassemble les participants :
 
 - leurs **prénoms**, avec une **info** facultative sur chacun : sa passion, son film ou son dessert préféré… Deux personnes du même prénom ? La deuxième reçoit un numéro (« Marie 2 »), qui la distingue partout : points, roue, plan, infos (on peut aussi écrire « Marie D. ») ;
-- un **plan de salle** pour retenir qui est assis où : en U, salle de classe, îlots ou réunion. Le plan prévoit autant de places que de participants (12 au plus), et l'on peut en saisir jusqu'à 30. On place chacun en touchant une place, en faisant glisser son prénom (souris ou doigt), ou d'un coup avec « Placer dans l'ordre » ou « Mélanger ».
+- un **plan de salle** pour retenir qui est assis où : en U, salle de classe, îlots ou réunion. Le plan prévoit autant de places que de participants (12 au plus), et l'on peut en saisir jusqu'à 30. On place chacun en touchant une place, en faisant glisser son prénom (souris ou doigt), ou d'un coup avec « Placer dans l'ordre » ou « Mélanger » ;
+- les **scores** : les points gagnés dans tous les jeux s'additionnent d'un jeu à l'autre (et d'un jour à l'autre), avec le classement du groupe et le détail par jeu (« Motus numérique : 3 · Pyramide : 2 »). On corrige un score avec − et + ou en tapant le total, et « Remettre les scores à zéro » repart de rien. Chaque jeu garde son propre tableau des points pendant la partie ; en fin de partie, un lien mène aux scores du groupe. Quitter une partie en cours ne retire pas les points déjà gagnés.
 
-Tout le groupe s'**exporte en un fichier JSON** (bouton « Exporter le groupe ») : son nom (facultatif, « Google Sheets, mairie »), les prénoms, les infos, les absences, la disposition de la salle et les places. « Importer un groupe… » le recharge, pour reprendre une formation sur plusieurs jours ou préparer le groupe à l'avance. Le fichier se lit et s'écrit à la main :
+Tout le groupe s'**exporte en un fichier JSON** (bouton « Exporter le groupe ») : son nom (facultatif, « Google Sheets, mairie »), les prénoms, les infos, les absences, la disposition de la salle, les places et les points. « Importer un groupe… » le recharge, pour reprendre une formation sur plusieurs jours ou préparer le groupe à l'avance. Le fichier se lit et s'écrit à la main :
 
 ```json
 {
@@ -40,7 +41,12 @@ Tout le groupe s'**exporte en un fichier JSON** (bouton « Exporter le groupe »
     "nom": "Google Sheets, mairie",
     "salle": { "disposition": "ilots", "nombreDePlaces": 8, "parIlot": 4 },
     "participants": [
-      { "prenom": "Ana", "info": { "theme": "dessert", "texte": "le tiramisu" }, "place": 1 },
+      {
+        "prenom": "Ana",
+        "info": { "theme": "dessert", "texte": "le tiramisu" },
+        "place": 1,
+        "points": { "motus": 3, "pyramide": 2 }
+      },
       { "prenom": "Bob", "absent": true },
       "Chloé"
     ]
@@ -48,7 +54,7 @@ Tout le groupe s'**exporte en un fichier JSON** (bouton « Exporter le groupe »
 }
 ```
 
-`disposition` : `u`, `classe`, `ilots` ou `cercle` (réunion). `nombreDePlaces: null` : la salle suit la taille du groupe. `place` : le numéro affiché sur le plan. `theme` de l'info : `passion`, `loisir`, `film`, `musique`, `dessert`, `plat`, `voyage`, `animal` ou `autre` (une info en simple texte prend le thème « Autre »). À l'import, ce qui ne peut pas s'appliquer (doublon, place inexistante ou déjà prise) est signalé.
+`disposition` : `u`, `classe`, `ilots` ou `cercle` (réunion). `nombreDePlaces: null` : la salle suit la taille du groupe. `place` : le numéro affiché sur le plan. `theme` de l'info : `passion`, `loisir`, `film`, `musique`, `dessert`, `plat`, `voyage`, `animal` ou `autre` (une info en simple texte prend le thème « Autre »). `points` : les points par jeu (le slug du jeu, `correction` pour une correction à la main), ou un simple nombre. À l'import, ce qui ne peut pas s'appliquer (doublon, place inexistante ou déjà prise) est signalé.
 
 Une personne absente un jour se marque d'un clic sur la page Groupe : elle reste dans le groupe et sur le plan, mais ne joue pas et la roue ne la tire pas. Pendant une partie, le bouton **Groupe** du bandeau réaffiche le plan, les prénoms et les infos, et la roue indique la place de la personne désignée.
 
