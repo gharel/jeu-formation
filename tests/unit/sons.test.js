@@ -207,6 +207,10 @@ describe('sons', () => {
       () => sons.memoire.retourner(),
       () => sons.memoire.paire(),
       () => sons.memoire.ratee(),
+      () => sons.bingo.tirage(),
+      () => sons.bingo.revele(),
+      () => sons.bingo.ligne(),
+      () => sons.bingo.bingo(),
     ];
     for (const appel of appels) expect(appel).not.toThrow();
     expect(journal.notes.length).toBeGreaterThan(40);

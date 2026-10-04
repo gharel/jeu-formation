@@ -445,6 +445,90 @@
           "explication": "Dans le menu Outils : la traduction arrive dans un nouveau document, et l’original reste intact."
         }
       ]
+    },
+    "bingo": {
+      "elements": [
+        {
+          "mot": "Commentaire",
+          "definition": "Une remarque ajoutée dans la marge, à côté du texte, sans le modifier."
+        },
+        {
+          "mot": "Suggestion",
+          "definition": "Une modification proposée, en couleur, qu’on peut accepter ou refuser d’un clic."
+        },
+        {
+          "mot": "Mention",
+          "definition": "Un nom précédé d’un @ : la personne visée est prévenue par e-mail."
+        },
+        {
+          "mot": "Historique des versions",
+          "definition": "Il garde chaque modification, avec son auteur et sa date, et permet de restaurer un état passé du document."
+        },
+        {
+          "mot": "Partager",
+          "definition": "Ouvrir l’accès au document à d’autres personnes, en choisissant leur rôle."
+        },
+        {
+          "mot": "Lecteur",
+          "definition": "Le rôle le plus limité : il permet de consulter le document, sans commenter ni modifier."
+        },
+        {
+          "mot": "Saisie vocale",
+          "definition": "Elle transforme ce que vous dites au micro en texte écrit."
+        },
+        {
+          "mot": "Télécharger",
+          "definition": "Récupérer le document sur son ordinateur, dans le format de son choix."
+        },
+        {
+          "mot": "PDF",
+          "definition": "Le format qui fige la mise en page : idéal pour envoyer un document terminé."
+        },
+        {
+          "mot": "Table des matières",
+          "definition": "Le sommaire cliquable d’un long document, souvent placé au début."
+        },
+        {
+          "mot": "En-tête",
+          "definition": "La zone en haut de chaque feuille, répétée d’une feuille à l’autre."
+        },
+        {
+          "mot": "Pied de page",
+          "definition": "La zone tout en bas de chaque feuille, où l’on met souvent la numérotation."
+        },
+        {
+          "mot": "Tableau",
+          "definition": "Des lignes et des colonnes pour ranger des informations."
+        },
+        {
+          "mot": "Lien",
+          "definition": "Un texte souvent bleu et souligné, qui mène vers un site web ou un autre document."
+        },
+        {
+          "mot": "Surlignage",
+          "definition": "Une couleur de fond posée derrière un mot, comme avec un feutre fluo."
+        },
+        {
+          "mot": "Exposant",
+          "definition": "Un texte plus petit et surélevé, comme le 2 de m²."
+        },
+        {
+          "mot": "Justifier",
+          "definition": "Aligner le texte à la fois sur le bord gauche et sur le bord droit."
+        },
+        {
+          "mot": "Paysage",
+          "definition": "L’orientation d’une feuille plus large que haute."
+        },
+        {
+          "mot": "Liste de contrôle",
+          "definition": "Des éléments précédés d’une case, qu’on coche une fois la tâche faite."
+        },
+        {
+          "mot": "Zoom",
+          "definition": "Il agrandit ou réduit l’affichage à l’écran, sans changer la taille du texte imprimé."
+        }
+      ]
     }
   }
 }

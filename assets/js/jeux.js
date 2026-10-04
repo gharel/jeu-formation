@@ -115,6 +115,16 @@ export const JEUX = [
     duree: '5 à 10 min',
     preparation: 'Des paires à associer',
   },
+  {
+    slug: 'bingo',
+    titre: 'Bingo',
+    icone: 'table-cells-large',
+    couleur: 'anis',
+    accroche:
+      'Chacun recopie des mots du thème dans sa grille. Le jeu les tire un par un : « Ligne ! », puis « Bingo ! »',
+    duree: '10 à 15 min',
+    preparation: 'Des mots, avec ou sans définition',
+  },
 ];
 
 export function trouverJeu(slug) {

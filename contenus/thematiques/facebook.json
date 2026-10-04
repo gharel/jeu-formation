@@ -460,6 +460,90 @@
           "explication": "Même s’il a volé votre mot de passe, un pirate ne peut pas entrer sans ce code, reçu par SMS ou dans une application."
         }
       ]
+    },
+    "bingo": {
+      "elements": [
+        {
+          "mot": "Profil",
+          "definition": "Ce que les autres voient en cliquant sur votre nom : votre photo, vos informations et vos publications."
+        },
+        {
+          "mot": "Page",
+          "definition": "L’espace d’un commerce, d’une association ou d’un artiste, que l’on suit sans devenir son ami."
+        },
+        {
+          "mot": "Groupe",
+          "definition": "Un espace d’échange entre membres autour d’un sujet commun : un quartier, une passion, l’entraide…"
+        },
+        {
+          "mot": "Administrateur",
+          "definition": "Il accepte les nouveaux membres, fixe les règles et peut retirer les publications hors sujet."
+        },
+        {
+          "mot": "Fil d’actualité",
+          "definition": "Ce qui s’affiche dès l’ouverture de Facebook : les dernières nouvelles de vos amis et de ce que vous suivez."
+        },
+        {
+          "mot": "Algorithme",
+          "definition": "Le programme qui décide dans quel ordre les publications s’affichent pour vous."
+        },
+        {
+          "mot": "Story",
+          "definition": "Une photo ou une courte vidéo en plein écran, qui s’efface au bout de 24 heures."
+        },
+        {
+          "mot": "Réaction",
+          "definition": "J’adore, Haha, Wouah, Triste… : ce qu’on choisit quand un simple J’aime ne suffit pas."
+        },
+        {
+          "mot": "Partage",
+          "definition": "Le geste qui republie chez soi la publication de quelqu’un d’autre, pour la montrer à ses amis."
+        },
+        {
+          "mot": "Hashtag",
+          "definition": "Un mot-clé précédé du signe #, comme #vacances, pour retrouver les publications sur un même sujet."
+        },
+        {
+          "mot": "Identification",
+          "definition": "Le nom d’une personne ajouté sur une photo, avec un lien vers son compte : elle en est prévenue."
+        },
+        {
+          "mot": "Sondage",
+          "definition": "Une question posée avec plusieurs réponses au choix : chacun clique sur la sienne."
+        },
+        {
+          "mot": "Notification",
+          "definition": "Une alerte qui vous prévient qu’il y a du nouveau sur Facebook, souvent avec une pastille rouge et un chiffre."
+        },
+        {
+          "mot": "Messenger",
+          "definition": "L’application de Facebook pour discuter par écrit, envoyer des photos et passer des appels."
+        },
+        {
+          "mot": "Marketplace",
+          "definition": "L’espace de Facebook où des particuliers achètent et vendent des objets d’occasion près de chez eux."
+        },
+        {
+          "mot": "Capture d’écran",
+          "definition": "Une photo de ce qui s’affiche sur votre téléphone ou votre ordinateur : un message privé peut ainsi circuler."
+        },
+        {
+          "mot": "Faux concours",
+          "definition": "Une publication qui fait miroiter un cadeau à gagner, mais qui sert surtout à récolter vos données."
+        },
+        {
+          "mot": "Signalement",
+          "definition": "Le moyen anonyme d’alerter Facebook d’une arnaque, d’un compte usurpé ou d’un contenu choquant."
+        },
+        {
+          "mot": "Déconnexion",
+          "definition": "Le geste à ne pas oublier avant de quitter un ordinateur partagé, à la médiathèque par exemple."
+        },
+        {
+          "mot": "Meta",
+          "definition": "Depuis 2021, le nom de l’entreprise qui possède Facebook, Instagram et WhatsApp."
+        }
+      ]
     }
   }
 }

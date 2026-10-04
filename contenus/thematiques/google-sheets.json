@@ -451,6 +451,90 @@
           "explication": "Seules les personnes que vous choisissez pourront y toucher : idéal pour mettre à l’abri les formules d’un tableau partagé."
         }
       ]
+    },
+    "bingo": {
+      "elements": [
+        {
+          "mot": "Cellule",
+          "definition": "Une case du tableau, désignée par une lettre et un numéro, comme D7."
+        },
+        {
+          "mot": "Colonne",
+          "definition": "Une file verticale de cases, repérée par une lettre tout en haut."
+        },
+        {
+          "mot": "Ligne",
+          "definition": "Une file horizontale de cases, repérée par un numéro sur la gauche."
+        },
+        {
+          "mot": "Onglet",
+          "definition": "La petite étiquette en bas de l’écran qui porte le nom d’une feuille."
+        },
+        {
+          "mot": "Plage",
+          "definition": "Un rectangle de cases voisines, noté avec deux-points, comme A1:C10."
+        },
+        {
+          "mot": "Formule",
+          "definition": "Un calcul tapé dans une case, qui commence toujours par le signe égal."
+        },
+        {
+          "mot": "Fonction",
+          "definition": "Un calcul tout prêt qu’on appelle par son nom, comme NB.SI ou RECHERCHEV."
+        },
+        {
+          "mot": "Référence",
+          "definition": "L’adresse qui indique à un calcul où chercher une valeur : elle peut être relative, absolue ou mixte."
+        },
+        {
+          "mot": "Filtre",
+          "definition": "Il cache les données qui ne répondent pas à un critère, sans rien effacer."
+        },
+        {
+          "mot": "Trier",
+          "definition": "Remettre les données dans l’ordre voulu : alphabétique, chronologique ou par montant."
+        },
+        {
+          "mot": "Figer",
+          "definition": "Garder les titres en haut de l’écran, même quand on descend tout en bas du tableau."
+        },
+        {
+          "mot": "Graphique",
+          "definition": "Un dessin qui rend des chiffres plus parlants, en barres, en secteurs ou en courbes."
+        },
+        {
+          "mot": "Légende",
+          "definition": "Dans un diagramme, la petite zone qui indique à quoi correspond chaque couleur."
+        },
+        {
+          "mot": "Série",
+          "definition": "Une suite logique, comme lundi, mardi, mercredi…, que le tableur sait continuer tout seul."
+        },
+        {
+          "mot": "Décimale",
+          "definition": "Un chiffre placé à droite de la virgule : deux boutons permettent d’en afficher plus ou moins."
+        },
+        {
+          "mot": "Bordure",
+          "definition": "Le trait qu’on ajoute autour d’une case ou d’un tableau pour bien le délimiter."
+        },
+        {
+          "mot": "Propriétaire",
+          "definition": "Le rôle de la personne à qui appartient le fichier, en général celle qui l’a créé."
+        },
+        {
+          "mot": "Modèle",
+          "definition": "Une feuille de calcul toute prête (budget, planning, facture…) pour ne pas partir de zéro."
+        },
+        {
+          "mot": "Tabulation",
+          "definition": "La touche qui valide la saisie et passe à la case de droite."
+        },
+        {
+          "mot": "Commentaire",
+          "definition": "Une remarque attachée à une case, à laquelle les autres peuvent répondre."
+        }
+      ]
     }
   }
 }

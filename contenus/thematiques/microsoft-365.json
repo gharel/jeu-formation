@@ -458,6 +458,90 @@
           "explication": "Dans l’Explorateur de fichiers, ce nuage signale un fichier OneDrive qui n’est pas sur l’ordinateur : il faut Internet pour l’ouvrir."
         }
       ]
+    },
+    "bingo": {
+      "elements": [
+        {
+          "mot": "Word",
+          "definition": "Le traitement de texte de Microsoft 365, pour écrire une lettre, un rapport ou un CV."
+        },
+        {
+          "mot": "Excel",
+          "definition": "Le tableur de Microsoft 365 : des lignes, des colonnes et des calculs faits à votre place."
+        },
+        {
+          "mot": "PowerPoint",
+          "definition": "L’application de Microsoft 365 qui sert à créer un diaporama et à le projeter devant un public."
+        },
+        {
+          "mot": "Outlook",
+          "definition": "L’application de Microsoft 365 qui réunit la messagerie, le calendrier et les contacts."
+        },
+        {
+          "mot": "Teams",
+          "definition": "L’application de Microsoft 365 pour discuter, s’appeler et se réunir en visio entre collègues."
+        },
+        {
+          "mot": "OneDrive",
+          "definition": "Le nuage de Microsoft 365 : vos fichiers y sont à l’abri et vous suivent sur tous vos appareils."
+        },
+        {
+          "mot": "Ruban",
+          "definition": "Tout en haut de la fenêtre, cette large barre range les boutons par onglets : Accueil, Insertion, Affichage…"
+        },
+        {
+          "mot": "Police",
+          "definition": "Le style des caractères d’un texte, comme Arial ou Times New Roman."
+        },
+        {
+          "mot": "Commentaire",
+          "definition": "Une remarque laissée en marge d’un document, sans toucher au texte, pour échanger avec ses collègues."
+        },
+        {
+          "mot": "Cellule",
+          "definition": "La case d’une feuille de calcul, repérée par une lettre et un chiffre, comme B4."
+        },
+        {
+          "mot": "Formule",
+          "definition": "Le calcul que l’on écrit dans le tableur, toujours précédé du signe égal."
+        },
+        {
+          "mot": "Filtre",
+          "definition": "Dans un tableau Excel, il cache les lignes qui ne correspondent pas au critère choisi."
+        },
+        {
+          "mot": "Diapositive",
+          "definition": "Chacune des pages d’une présentation, que l’on fait défiler pendant la projection."
+        },
+        {
+          "mot": "Transition",
+          "definition": "L’effet visuel qui accompagne le passage d’une page de la présentation à la suivante."
+        },
+        {
+          "mot": "Brouillon",
+          "definition": "Un courriel commencé mais pas encore envoyé, gardé de côté pour plus tard."
+        },
+        {
+          "mot": "Objet",
+          "definition": "Le titre d’un courriel : quelques mots qui annoncent de quoi il parle."
+        },
+        {
+          "mot": "Invitation",
+          "definition": "Le message envoyé depuis un calendrier pour convier des collègues à une réunion : ils peuvent l’accepter ou le refuser."
+        },
+        {
+          "mot": "Canal",
+          "definition": "Dans une équipe Teams, l’espace réservé à un sujet, où chaque membre peut publier et répondre."
+        },
+        {
+          "mot": "Coédition",
+          "definition": "Le fait de travailler à plusieurs sur le même document, au même moment."
+        },
+        {
+          "mot": "Raccourci",
+          "definition": "Une combinaison de touches, comme Ctrl + C, pour agir plus vite qu’avec la souris."
+        }
+      ]
     }
   }
 }

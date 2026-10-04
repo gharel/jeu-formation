@@ -459,6 +459,90 @@
           "explication": "C’est là, et non sur votre ordinateur, que tournent les chatbots : ces bâtiments consomment beaucoup d’électricité, et souvent beaucoup d’eau pour se refroidir."
         }
       ]
+    },
+    "bingo": {
+      "elements": [
+        {
+          "mot": "Algorithme",
+          "definition": "Une recette pour l’ordinateur : une série d’étapes à suivre, dans l’ordre, pour arriver à un résultat."
+        },
+        {
+          "mot": "Chatbot",
+          "definition": "On lui pose une question par écrit, dans une fenêtre de discussion, et il répond aussitôt."
+        },
+        {
+          "mot": "Prompt",
+          "definition": "En français, on parle de requête ou d’instruction : c’est le message que vous adressez à une IA."
+        },
+        {
+          "mot": "Hallucination",
+          "definition": "Une erreur typique des IA : une information inventée de toutes pièces, mais présentée comme une certitude."
+        },
+        {
+          "mot": "Biais",
+          "definition": "Une préférence injuste, héritée d’exemples mal équilibrés : une IA imagine, par exemple, un médecin toujours sous les traits d’un homme."
+        },
+        {
+          "mot": "Robot",
+          "definition": "Une machine programmée pour bouger et agir seule, comme le bras articulé d’une chaîne de montage."
+        },
+        {
+          "mot": "Assistant vocal",
+          "definition": "On lui parle pour poser une question ou donner un ordre, en commençant par « Dis Siri » ou « Alexa »."
+        },
+        {
+          "mot": "Reconnaissance faciale",
+          "definition": "Elle identifie une personne grâce aux traits de son visage, par exemple pour déverrouiller un téléphone."
+        },
+        {
+          "mot": "Traduction automatique",
+          "definition": "Passer d’une langue à l’autre en un clic, avec un outil comme DeepL."
+        },
+        {
+          "mot": "Voiture autonome",
+          "definition": "Un véhicule qui se conduit tout seul, sans personne au volant."
+        },
+        {
+          "mot": "Données personnelles",
+          "definition": "Nom, adresse, date de naissance, numéro de téléphone : tout ce qui permet de vous identifier."
+        },
+        {
+          "mot": "Consentement",
+          "definition": "L’accord qu’il faut demander à quelqu’un avant de publier sa photo ou d’imiter sa voix."
+        },
+        {
+          "mot": "Transparence",
+          "definition": "Le fait d’indiquer clairement qu’on s’est servi d’une IA pour créer un texte, une image ou une vidéo."
+        },
+        {
+          "mot": "Plagiat",
+          "definition": "Présenter comme le sien le travail d’un autre, par exemple en recopiant un texte sans citer son auteur."
+        },
+        {
+          "mot": "Brouillon",
+          "definition": "Une première version, à relire et à retravailler : c’est ainsi qu’il faut voir un texte écrit par une IA."
+        },
+        {
+          "mot": "Résumé",
+          "definition": "La version courte d’un long texte, qui n’en garde que l’essentiel."
+        },
+        {
+          "mot": "Probabilité",
+          "definition": "La chance qu’une chose arrive, d’une sur deux à une sur mille : une IA s’en sert pour choisir chaque mot de sa réponse."
+        },
+        {
+          "mot": "Asimov",
+          "definition": "L’écrivain de science-fiction qui a imaginé les trois lois de la robotique, dans les années 1940."
+        },
+        {
+          "mot": "Multimodal",
+          "definition": "Se dit d’une IA qui comprend à la fois le texte, les images et le son : on peut lui montrer une photo."
+        },
+        {
+          "mot": "Mot-clé",
+          "definition": "Les quelques termes qu’on tape pour chercher sur Internet ; à une IA, on écrit plutôt des phrases entières."
+        }
+      ]
     }
   }
 }

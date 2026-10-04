@@ -357,4 +357,21 @@ export const sons = {
       note(N.do4, { debut: 0.14, duree: 0.3, forme: 'triangle', volume: 0.12 });
     },
   },
+
+  // ---------- Bingo : les boules qui roulent ----------
+  bingo: {
+    /** Les boules roulent, puis une sort. */
+    tirage() {
+      for (let i = 0; i < 8; i++) {
+        bruit({ debut: i * 0.06, duree: 0.03, volume: 0.07, filtre: 1500 + i * 150 });
+      }
+      note(N.sol5, { debut: 0.5, duree: 0.12, forme: 'triangle', volume: 0.16 });
+    },
+    revele: () => cloche(N.la5, { volume: 0.14 }),
+    ligne: () => fanfare(2),
+    bingo() {
+      fanfare(3);
+      sons.applaudissements(2.5);
+    },
+  },
 };
