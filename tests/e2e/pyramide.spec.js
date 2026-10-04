@@ -127,8 +127,12 @@ test('on prépare une simple liste de mots, sans indices', async ({ page }) => {
   await page.getByRole('button', { name: /Préparer le contenu/ }).click();
   await page.getByRole('button', { name: 'Vider la liste' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Vider' }).click();
+  // La liste n'est vidée qu'à la fermeture de la fenêtre : on attend le message avant de saisir
+  await expect(page.locator('#cadre').getByText(/Liste vidée/)).toBeVisible();
+  const mot = page.getByLabel('Mot à faire deviner', { exact: true });
+  await expect(mot).toHaveCount(1);
   await expect(page.getByLabel(/Indice/)).toHaveCount(0);
-  await page.getByLabel('Mot à faire deviner', { exact: true }).fill('Écran');
+  await mot.fill('Écran');
   await page.getByLabel('Mots à faire deviner par binôme').fill('1');
   await page.getByRole('button', { name: 'Enregistrer' }).click();
   await expect(page.locator('#cadre').getByText('1 mot prêt')).toBeVisible();
