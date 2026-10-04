@@ -25,11 +25,11 @@ La page **Le groupe** (bouton sur l'accueil) rassemble les participants :
 - leurs **prénoms**, avec une **info** facultative sur chacun : sa passion, son film ou son dessert préféré… ;
 - un **plan de salle** pour retenir qui est assis où : en U, salle de classe, îlots ou réunion. Le plan prévoit autant de places que de participants (12 au plus), et l'on peut en saisir jusqu'à 30. On place chacun en touchant une place, en faisant glisser son prénom (souris ou doigt), ou d'un coup avec « Placer dans l'ordre » ou « Mélanger ».
 
-Pendant une partie, le bouton **Groupe** du bandeau réaffiche le plan, les prénoms et les infos, et la roue indique la place de la personne désignée.
+Une personne absente un jour se marque d'un clic sur la page Groupe : elle reste dans le groupe et sur le plan, mais ne joue pas et la roue ne la tire pas. Pendant une partie, le bouton **Groupe** du bandeau réaffiche le plan, les prénoms et les infos, et la roue indique la place de la personne désignée.
 
 Sur l'écran d'accueil de chaque jeu, on peut :
 
-- **saisir les prénoms** (liste partagée entre tous les jeux), avec une info facultative sur chaque personne : sa passion, son film ou son dessert préféré… La roue l'affiche quand elle désigne quelqu'un ;
+- **choisir qui joue** (bloc « Qui joue ? ») : tout le groupe (par défaut), au clic sur les prénoms, ou au hasard (un nombre de joueurs, en tirant d'abord ceux qui n'ont pas encore été tirés). Le choix n'est pas mémorisé : chaque jeu repart de « Tout le groupe ». Un retardataire s'ajoute au groupe sans quitter le jeu (« Ajouter quelqu'un ») ;
 - **faire tourner la roue** pour désigner quelqu'un, avec la touche `R` ou le bouton « Désigner » ;
 - **préparer le contenu**, avec les réponses masquées pour pouvoir le faire écran projeté. Un contenu d'exemple permet de jouer tout de suite ; « Partir d'une liste vide » (ou « Vider la liste ») le remplace par des champs vides, où les exemples restent affichés en grisé, sans rien à effacer. Le contenu s'exporte et s'importe en JSON pour le réutiliser ou le partager.
 

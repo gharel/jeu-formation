@@ -112,7 +112,7 @@ test('pendant une partie, le bouton Groupe rappelle les prénoms, les infos et l
 
   // La roue indique aussi la place de la personne désignée
   await ouvrirJeu(page, 'pyramide');
-  await expect(page.getByRole('list', { name: 'Participants' })).toContainText('Félix');
+  await expect(page.getByRole('list', { name: 'Joueurs' })).toContainText('Félix');
   await page.getByRole('heading', { name: 'Comment on joue ?' }).click();
   await page.keyboard.press('r');
   const roue = page.getByRole('dialog', { name: /Désigner/ });

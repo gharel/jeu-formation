@@ -1,7 +1,8 @@
 /**
- * Le groupe : les participants, une info par personne et le plan de salle, partagés par toutes
- * les pages (accueil, page « Le groupe », jeux). Les données passent par participants.js et
- * salle.js ; le plan est nettoyé dès que la liste change (personne retirée : place libérée).
+ * Le groupe : les participants, une info par personne, les absences du jour et le plan de
+ * salle, partagés par toutes les pages (accueil, page « Le groupe », jeux). Les données passent
+ * par participants.js et salle.js ; le plan et les absences sont nettoyés dès que la liste
+ * change (personne retirée : place libérée).
  */
 import * as listeParticipants from './participants.js';
 import * as salle from './salle.js';
@@ -10,6 +11,7 @@ import { el, icone } from './ui.js';
 export function creerGroupe() {
   let participants = listeParticipants.charger();
   let infos = listeParticipants.chargerInfos();
+  let absents = listeParticipants.chargerAbsents(participants);
   let plan = salle.charger(participants);
   const ecouteurs = new Set();
   const prevenir = () => {
@@ -26,14 +28,35 @@ export function creerGroupe() {
     get plan() {
       return plan;
     },
+    /** Prénoms (en minuscules) des personnes absentes aujourd'hui. */
+    get absents() {
+      return absents;
+    },
+    /** Les personnes présentes aujourd'hui, dans l'ordre de la liste. */
+    get presents() {
+      return listeParticipants.presents(participants, absents);
+    },
 
     changerParticipants(nouveaux) {
       participants = nouveaux;
       listeParticipants.enregistrer(participants);
       infos = listeParticipants.garderInfos(infos, participants);
       listeParticipants.enregistrerInfos(infos);
+      absents = listeParticipants.garderAbsents(absents, participants);
+      listeParticipants.enregistrerAbsents(absents);
       plan = salle.nettoyerPlan(plan, participants);
       salle.enregistrer(plan);
+      prevenir();
+    },
+
+    estAbsent(prenom) {
+      return listeParticipants.estAbsent(absents, prenom);
+    },
+
+    /** Marque la personne absente aujourd'hui, ou de nouveau présente. */
+    basculerAbsent(prenom) {
+      absents = listeParticipants.basculerAbsent(absents, prenom);
+      listeParticipants.enregistrerAbsents(absents);
       prevenir();
     },
 

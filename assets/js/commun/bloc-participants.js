@@ -1,14 +1,14 @@
 /**
- * Bloc « Participants » : ajout de prénoms (plusieurs à la fois), une info par personne,
- * retrait, liste effacée. Il sert sur l'accueil de chaque jeu et sur la page « Le groupe ».
- * `designer` (facultatif) : la roue, pour le bouton « Désigner quelqu'un ».
+ * Bloc « Participants » de la page « Le groupe » : ajout de prénoms (plusieurs à la fois), une
+ * info par personne, absence du jour, retrait, liste effacée. Dans les jeux, le bloc « Qui
+ * joue ? » (bloc-joueurs.js) choisit les joueurs parmi ce groupe.
  */
 import * as listeParticipants from './participants.js';
 import { el, remplir, icone } from './ui.js';
 import { confirmer, modifierInfo } from './dialogues.js';
 import { etiquetteInfo } from './groupe.js';
 
-export function creerBlocParticipants(groupe, { designer = null } = {}) {
+export function creerBlocParticipants(groupe) {
   const bloc = el('section', {
     class: 'carte bloc-participants',
     'aria-labelledby': 'titre-participants',
@@ -24,14 +24,6 @@ export function creerBlocParticipants(groupe, { designer = null } = {}) {
   });
   const liste = el('ul', { class: 'puces', 'aria-label': 'Participants' });
   const compteur = el('p', { class: 'bloc-participants__compte' });
-  const boutonRoue = designer
-    ? el(
-        'button',
-        { type: 'button', class: 'bouton', onclick: () => designer() },
-        icone('arrows-spin'),
-        'Désigner quelqu’un',
-      )
-    : null;
   const boutonEffacer = el(
     'button',
     {
@@ -57,12 +49,34 @@ export function creerBlocParticipants(groupe, { designer = null } = {}) {
   function dessiner() {
     remplir(
       liste,
-      groupe.participants.map((prenom) =>
-        el(
+      groupe.participants.map((prenom) => {
+        const absent = groupe.estAbsent(prenom);
+        return el(
           'li',
-          { class: 'puce' },
+          { class: `puce${absent ? ' puce--absente' : ''}` },
           el('span', { class: 'puce__prenom' }, prenom),
+          absent ? el('span', { class: 'puce__absence' }, 'absence') : null,
           etiquetteInfo(groupe, prenom, 'puce__info'),
+          // Absence du jour : la personne reste dans le groupe, mais ne joue pas
+          el(
+            'button',
+            {
+              type: 'button',
+              class: 'puce__retirer puce__basculer-absence',
+              dataset: { absence: prenom },
+              'aria-pressed': String(absent),
+              'aria-label': `Absence aujourd’hui : ${prenom}`,
+              title: absent
+                ? 'De retour : la personne rejoue'
+                : 'Absence aujourd’hui : la personne ne joue pas et la roue ne la tire pas',
+              onclick: () => {
+                groupe.basculerAbsent(prenom);
+                dessiner();
+                liste.querySelector(`[data-absence="${CSS.escape(prenom)}"]`)?.focus();
+              },
+            },
+            icone(absent ? 'user-check' : 'user-slash'),
+          ),
           el(
             'button',
             {
@@ -99,16 +113,17 @@ export function creerBlocParticipants(groupe, { designer = null } = {}) {
             },
             icone('xmark'),
           ),
-        ),
-      ),
+        );
+      }),
     );
+    const total = groupe.participants.length;
+    const absences = groupe.absents.length;
     remplir(
       compteur,
-      groupe.participants.length
-        ? `${groupe.participants.length} participant${groupe.participants.length > 1 ? 's' : ''}`
+      total
+        ? `${total} participant${total > 1 ? 's' : ''}${absences ? ` · ${absences} absence${absences > 1 ? 's' : ''} aujourd’hui` : ''}`
         : 'Aucun participant : on peut jouer sans prénoms, mais sans classement.',
     );
-    if (boutonRoue) boutonRoue.disabled = groupe.participants.length < 2;
     boutonEffacer.hidden = groupe.participants.length === 0;
   }
 
@@ -200,7 +215,7 @@ export function creerBlocParticipants(groupe, { designer = null } = {}) {
     formulaire,
     compteur,
     liste,
-    el('div', { class: 'groupe-boutons' }, boutonRoue, boutonEffacer),
+    el('div', { class: 'groupe-boutons' }, boutonEffacer),
   );
   return bloc;
 }

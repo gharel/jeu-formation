@@ -44,11 +44,11 @@ test('le bouton « Un jeu au hasard » tire un jeu avec la roue et l’ouvre', a
   expect(erreurs).toEqual([]);
 });
 
-test('une info par participant, affichée par la roue et partagée entre les jeux', async ({
+test('une info par participant, saisie dans le groupe et affichée par la roue des jeux', async ({
   page,
 }) => {
   const erreurs = surveillerErreurs(page);
-  await page.goto(`/jeux/${JEUX[0].slug}/?graine=2`);
+  await page.goto('/groupe/?graine=2');
   // Prénom + info
   await page.getByLabel('Ajouter un prénom').fill('Marie');
   await page.getByLabel('Thème de l’info').selectOption('dessert');
@@ -63,7 +63,6 @@ test('une info par participant, affichée par la roue et partagée entre les jeu
     'le tiramisu',
   );
   await expect(puces).not.toContainText('ignorée');
-  await verifierAccessibilite(page);
 
   // Ajouter une info à Paul avec le crayon
   await page.getByRole('button', { name: 'Ajouter une info sur Paul' }).click();
@@ -75,7 +74,9 @@ test('une info par participant, affichée par la roue et partagée entre les jeu
     'Le Grand Bleu',
   );
 
-  // La roue montre l'info de la personne tirée
+  // Dans un jeu, tout le groupe joue, et la roue montre l'info de la personne tirée
+  await page.goto(`/jeux/${JEUX[0].slug}/?graine=2`);
+  await expect(page.getByRole('list', { name: 'Joueurs' }).getByRole('button')).toHaveCount(3);
   await page.getByRole('button', { name: /Désigner quelqu’un/ }).click();
   const roue = page.getByRole('dialog', { name: /Désigner/ });
   for (let i = 0; i < 3; i++) {
@@ -90,11 +91,8 @@ test('une info par participant, affichée par la roue et partagée entre les jeu
   }
   await roue.getByRole('button', { name: 'Fermer' }).click();
 
-  // Partagé avec un autre jeu, retiré avec la personne
-  await page.goto(`/jeux/${JEUX[1].slug}/`);
-  await expect(puces.getByRole('listitem').filter({ hasText: 'Marie' })).toContainText(
-    'le tiramisu',
-  );
+  // Retirée du groupe puis ajoutée de nouveau : son info est oubliée
+  await page.goto('/groupe/');
   await page.getByRole('button', { name: 'Retirer Marie' }).click();
   await page.getByLabel('Ajouter un prénom').fill('Marie');
   await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
@@ -120,11 +118,19 @@ test.describe('chaque jeu', () => {
       await expect(page.getByRole('button', { name: /Lancer la partie/ })).toBeEnabled();
       await verifierAccessibilite(page);
 
-      // Les prénoms saisis ici se retrouvent dans les autres jeux
-      await page.getByLabel('Ajouter un prénom').fill('Ana, Bob');
-      await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
+      // Qui joue ? Le groupe se gère sur sa page ; un retardataire s'ajoute depuis le jeu
+      const bloc = page.getByRole('region', { name: 'Qui joue ?' });
+      await expect(bloc.getByRole('link', { name: 'Gérer le groupe' })).toHaveAttribute(
+        'href',
+        /\/groupe\/$/,
+      );
+      await bloc.getByRole('button', { name: 'Ajouter quelqu’un' }).click();
+      await page.getByRole('dialog').getByLabel('Prénom').fill('Ana');
+      await page.getByRole('dialog').getByRole('button', { name: 'Ajouter' }).click();
+      // L'ajout se fait à la fermeture de la fenêtre : on l'attend avant de recharger
+      await expect(page.getByRole('list', { name: 'Joueurs' })).toContainText('Ana');
       await page.reload();
-      await expect(page.getByRole('list', { name: 'Participants' })).toContainText('Ana');
+      await expect(page.getByRole('list', { name: 'Joueurs' })).toContainText('Ana');
 
       await page.getByRole('button', { name: /Préparer le contenu/ }).click();
       await expect(page.getByRole('heading', { name: 'Préparer le contenu' })).toBeVisible();
@@ -139,11 +145,10 @@ test.describe('chaque jeu', () => {
 
 test('la roue désigne chacun une fois avant de recommencer', async ({ page }) => {
   await page.goto(`/jeux/${JEUX[0].slug}/?graine=3`);
-  await page.getByLabel('Ajouter un prénom').fill('Ana, Bob, Chloé');
-  await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
-  // La touche R est ignorée pendant la saisie d'un prénom
-  await page.keyboard.press('r');
-  await expect(page.getByRole('dialog')).toHaveCount(0);
+  await page.evaluate(() =>
+    localStorage.setItem('skazy-jeux:participants', JSON.stringify(['Ana', 'Bob', 'Chloé'])),
+  );
+  await page.reload();
   await page.getByRole('heading', { name: 'Comment on joue ?' }).click();
   const tires = [];
   for (let i = 0; i < 3; i++) {

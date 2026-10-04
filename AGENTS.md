@@ -48,8 +48,9 @@ assets/js/commun/
   editeur-contenu.js           Éditeur généré à partir du schéma de contenu du jeu
   contenu.js                   Schéma : valeurs par défaut, liste vide, nettoyage, validation, import/export
   participants.js              Liste des prénoms partagée entre les jeux + une info par personne (passion, film…)
-  groupe.js                    État partagé du groupe : participants, infos, plan de salle (nettoyé à chaque changement)
-  bloc-participants.js         Bloc « Participants » (accueil de chaque jeu et page Groupe)
+  groupe.js                    État partagé du groupe : participants, infos, absences du jour, plan de salle (nettoyés à chaque changement)
+  bloc-participants.js         Bloc « Participants » de la page Groupe (ajout, infos, absences, retrait)
+  bloc-joueurs.js · joueurs.js Bloc « Qui joue ? » de chaque jeu : tout le groupe, au clic, au hasard (tirage équitable)
   salle.js                     Plan de salle, fonctions pures : dispositions (U, classe, îlots, réunion), placement
   plan-salle.js                Plan affiché : places-boutons, toucher, glisser-déposer (pointer) ; fenêtre « Groupe »
   roue.js · dialogues.js       Roue aléatoire (tirage équitable) et fenêtres de dialogue
@@ -74,11 +75,12 @@ outils/dev.js                  Lance serve sur le port 4173 (refuse un port occu
 outils/empreinte-mot-de-passe.js  Saisie masquée d'un nouveau mot de passe → sel + empreinte pour acces.js
 tests/unit/                    Vitest (jsdom) : logique des jeux et modules communs
 tests/e2e/                     Playwright : parcours complets, accessibilité, aucune erreur console
-  outils.js                    ouvrirJeu, lancerPartie, attribuerPoints, pointsDe, verifierAccessibilite (axe + typographie)…
-  accueil.spec.js              Pour chaque jeu de jeux.js : lien, accueil, prénoms, éditeur masqué, axe
+  outils.js                    ouvrirJeu (prépare le groupe dans le stockage), lancerPartie, pointsDe, verifierAccessibilite (axe + typographie)…
+  accueil.spec.js              Pour chaque jeu de jeux.js : lien, accueil, « Qui joue ? », éditeur masqué, axe
   contenu.spec.js              Export / import JSON, contenu d'exemple
   mobile.spec.js               Téléphone tactile : pas de plein écran, icônes centrées, buzzers au doigt, plan au doigt
   groupe.spec.js               Page Groupe : placement (toucher, glisser, ordre), îlots, fenêtre Groupe en partie
+  joueurs.spec.js              Qui joue ? : tout le groupe, au clic, au hasard ; absences ; retardataire ajouté depuis le jeu
 ```
 
 ## Conventions de code
@@ -88,7 +90,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
 - **La logique est séparée de l'affichage.** Les règles vont dans `logique.js`, en fonctions pures testées unitairement. `jeu.js` ne fait que construire la page et réagir aux clics.
 - **Sécurité.** Tout texte saisi ou importé passe par `el()` ou `textContent`, jamais par `innerHTML`. Un JSON importé passe par `nettoyerContenu()`, qui ne garde que les clés et les types prévus par le schéma.
 - **Mot de passe d'accès.** Il n'est jamais écrit en clair : ni dans le code, ni dans les tests, ni dans un message de commit. Seule son empreinte est dans `acces.js`. Les tests e2e ouvrent les pages déverrouillées (`storageState` dans `playwright.config.js`) ; `acces.spec.js` teste l'écran sans le mot de passe.
-- **Groupe.** Les prénoms, les infos et le plan passent par `groupe.js` (`creerGroupe()`), qui garde le plan cohérent avec la liste ; jamais d'accès direct aux clés `participants`, `infos-participants` ou `plan-salle`. Toute nouvelle page à publier doit être ajoutée à `.github/workflows/publier.yml` et à `validate:html`.
+- **Groupe.** Les prénoms, les infos, les absences et le plan passent par `groupe.js` (`creerGroupe()`), qui les garde cohérents avec la liste ; un jeu ne voit que les joueurs choisis dans « Qui joue ? » (`ctx.participants`), parmi les présents ; jamais d'accès direct aux clés `participants`, `infos-participants` ou `plan-salle`. Toute nouvelle page à publier doit être ajoutée à `.github/workflows/publier.yml` et à `validate:html`.
 - **Stockage.** On passe toujours par `stockage.js` (localStorage, clés préfixées par `skazy-jeux:`) ou `images.js` (IndexedDB), jamais d'appel direct. Les erreurs de stockage ne doivent jamais faire planter un jeu.
 - **Hasard.** On utilise `ctx.hasard` (ou `hasardDePage()`), pas `Math.random()` directement, pour que `?graine=N` rende les tests reproductibles.
 - **Raccourcis clavier.** On passe par `ecouterClavier()` : il ignore les touches pendant la saisie et quand un dialogue est ouvert. Il faut retirer l'écoute dans la fonction de nettoyage renvoyée par `demarrer()`. Touches réservées : `R` (roue) et `F` (plein écran). Tout ce qui se fait au clavier doit aussi se faire au doigt (un téléphone n'a pas de clavier) : un bouton à l'écran pour chaque touche. Les aides sur les touches vont dans un `.raccourci` (ligne d'aide) ou un `.aide-clavier` (« (Entrée) » dans un bouton) : `base.css` les masque sur téléphone, comme le bouton Plein écran.

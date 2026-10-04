@@ -1945,3 +1945,172 @@
     margin: 0;
   }
 }
+
+/* ---------- Absences du jour ---------- */
+
+.puce--absente {
+  background: var(--fond);
+  outline: 2px dashed var(--bord);
+}
+
+.puce--absente .puce__prenom {
+  color: var(--texte-doux);
+  text-decoration: line-through;
+}
+
+.puce__absence {
+  padding: 0 0.45rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--texte-doux);
+  background: var(--blanc);
+  border-radius: var(--rayon-pilule);
+}
+
+.puce__basculer-absence[aria-pressed='true'] {
+  color: var(--blanc);
+  background: var(--bleu-nuit);
+}
+
+.avatar--absent {
+  color: var(--texte-doux);
+  background: var(--bord);
+}
+
+.salle__place--absente .salle__nom {
+  color: var(--texte-doux);
+  text-decoration: line-through;
+}
+
+.liste-groupe__ligne--absente .liste-groupe__prenom {
+  color: var(--texte-doux);
+  text-decoration: line-through;
+}
+
+/* ---------- Qui joue ? (accueil d'un jeu) ---------- */
+
+.bloc-joueurs__entete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.bloc-joueurs__entete h3 {
+  margin: 0;
+}
+
+.bloc-joueurs__corps {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.bloc-joueurs__corps > p {
+  margin: 0;
+}
+
+/* Sélecteur segmenté : Tout le groupe / Choisir / Au hasard */
+.segments {
+  display: inline-flex;
+  flex-wrap: wrap;
+  justify-self: start;
+  gap: 0.25rem;
+  margin: 0;
+  padding: 0.25rem;
+  background: var(--fond);
+  border: 1px solid var(--bord);
+  border-radius: var(--rayon-pilule);
+}
+
+.segment {
+  padding: 0.4rem 1rem;
+  font-weight: 800;
+  color: var(--texte-doux);
+  border-radius: var(--rayon-pilule);
+  cursor: pointer;
+}
+
+.segment:has(input:checked) {
+  color: var(--bleu-nuit);
+  background: var(--blanc);
+  box-shadow: var(--ombre);
+}
+
+/* Téléphone : trois segments égaux sur une ligne */
+@media (max-width: 600px) {
+  .segments {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    justify-self: stretch;
+  }
+
+  .segment {
+    display: grid;
+    place-items: center;
+    padding: 0.4rem 0.3rem;
+    font-size: 0.85rem;
+    line-height: 1.2;
+    text-align: center;
+  }
+}
+
+.segment:has(input:focus-visible) {
+  outline: 3px solid var(--bleu);
+  outline-offset: 2px;
+}
+
+.bloc-joueurs__tirage .champ__libelle {
+  margin-bottom: 0.3rem;
+}
+
+.bloc-joueurs__liste {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.joueur {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.9rem 0.3rem 0.35rem;
+  font: inherit;
+  font-weight: 800;
+  color: var(--bleu-nuit);
+  background: var(--blanc);
+  border: 2px solid var(--bleu-nuit);
+  border-radius: var(--rayon-pilule);
+  cursor: pointer;
+}
+
+.joueur .avatar {
+  box-shadow: none;
+}
+
+/* Ne joue pas : grisé, en pointillés */
+.joueur[aria-pressed='false'] {
+  color: var(--texte-doux);
+  background: var(--fond);
+  border: 2px dashed var(--gris);
+}
+
+.joueur[aria-pressed='false'] .avatar {
+  color: var(--texte-doux);
+  background: var(--bord);
+}
+
+@media (hover: hover) {
+  .joueur:hover {
+    background: var(--accent-clair);
+  }
+}
+
+.bloc-joueurs__compte {
+  font-weight: 700;
+  color: var(--texte-doux);
+}

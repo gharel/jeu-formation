@@ -11,16 +11,25 @@ export function surveillerErreurs(page) {
   return erreurs;
 }
 
-/** Ouvre un jeu avec une graine fixe (tirages reproductibles) et ajoute des prénoms. */
+/**
+ * Ouvre un jeu avec une graine fixe (tirages reproductibles). Les prénoms donnés forment le
+ * groupe (géré d'ordinaire sur la page « Le groupe ») : ils sont mis dans le stockage du
+ * navigateur, puis la page est rechargée. Par défaut, tout le groupe joue.
+ */
 export async function ouvrirJeu(page, slug, { prenoms = [] } = {}) {
+  const titre = page.getByRole('heading', { name: 'Comment on joue ?' });
   await page.goto(`/jeux/${slug}/?graine=1`);
-  await expect(page.getByRole('heading', { name: 'Comment on joue ?' })).toBeVisible();
+  await expect(titre).toBeVisible();
   if (prenoms.length) {
-    await page.getByLabel('Ajouter un prénom').fill(prenoms.join(', '));
-    await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
-    await expect(
-      page.getByRole('list', { name: 'Participants' }).getByRole('listitem'),
-    ).toHaveCount(prenoms.length);
+    await page.evaluate(
+      (liste) => localStorage.setItem('skazy-jeux:participants', JSON.stringify(liste)),
+      prenoms,
+    );
+    await page.reload();
+    await expect(titre).toBeVisible();
+    await expect(page.getByRole('list', { name: 'Joueurs' }).getByRole('listitem')).toHaveCount(
+      prenoms.length,
+    );
   }
 }
 

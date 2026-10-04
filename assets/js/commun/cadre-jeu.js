@@ -29,7 +29,8 @@ import {
 } from './ui.js';
 import { choisirPrenoms, confirmer, designerAvecRoue } from './dialogues.js';
 import { creerGroupe, etiquetteInfo } from './groupe.js';
-import { creerBlocParticipants } from './bloc-participants.js';
+import { creerBlocJoueurs } from './bloc-joueurs.js';
+import { selectionParDefaut, joueursDeLaPartie } from './joueurs.js';
 import { ouvrirGroupe } from './plan-salle.js';
 import {
   nettoyerContenu,
@@ -55,7 +56,13 @@ export function monterJeu(config) {
 
   // Participants, infos et plan de salle, partagés avec la page « Le groupe »
   const groupe = creerGroupe();
-  const tirage = creerTirage(groupe.participants, {
+  // Joueurs de la partie, choisis parmi les présents du groupe (bloc « Qui joue ? »). La
+  // sélection n'est pas mémorisée : chaque ouverture du jeu repart de « Tout le groupe ».
+  let selection = selectionParDefaut();
+  const joueurs = () => joueursDeLaPartie(groupe.presents, selection);
+  let mettreAJourLancer = () => {};
+  let joueursEnJeu = [];
+  const tirage = creerTirage(joueurs(), {
     equitable: lire('roue-equitable', true) !== false,
     hasard,
   });
@@ -127,13 +134,17 @@ export function monterJeu(config) {
     ?.append(...[boutonDesigner, boutonGroupe, boutonSon, boutonPleinEcran].filter(Boolean));
 
   function mettreAJourDesigner() {
-    boutonDesigner.hidden = groupe.participants.length < 2;
+    boutonDesigner.hidden = joueurs().length < 2;
   }
   mettreAJourDesigner();
-  groupe.surChangement(() => {
-    tirage.mettreAJour(groupe.participants);
+
+  /** Le groupe ou la sélection a changé : la roue et les boutons suivent. */
+  function actualiserJoueurs() {
+    tirage.mettreAJour(joueurs());
     mettreAJourDesigner();
-  });
+    mettreAJourLancer();
+  }
+  groupe.surChangement(actualiserJoueurs);
 
   ecouterClavier({
     r: () => designer(),
@@ -141,7 +152,7 @@ export function monterJeu(config) {
   });
 
   async function designer(titre) {
-    const { participants } = groupe;
+    const participants = joueurs();
     if (participants.length < 2) return participants[0] ?? null;
     const prenom = await designerAvecRoue({
       prenoms: participants,
@@ -251,12 +262,23 @@ export function monterJeu(config) {
       {
         type: 'button',
         class: 'bouton bouton--principal bouton--grand',
-        disabled: erreurs.length > 0,
         onclick: () => lancerPartie(),
       },
       'Lancer la partie',
       icone('play'),
     );
+    const aideLancer = el('p', { class: 'champ__aide' });
+    // Sans joueur choisi (mode « Choisir » ou « Au hasard »), pas de partie
+    mettreAJourLancer = () => {
+      const sansJoueur = selection.mode !== 'tous' && joueurs().length === 0;
+      lancer.disabled = erreurs.length > 0 || sansJoueur;
+      let aide = '';
+      if (erreurs.length) aide = 'Complétez d’abord le contenu du jeu.';
+      else if (sansJoueur) aide = 'Choisissez au moins un joueur.';
+      remplir(aideLancer, aide);
+      aideLancer.hidden = !aide;
+    };
+    mettreAJourLancer();
     afficherEcran(
       'ecran-accueil',
       el(
@@ -280,19 +302,20 @@ export function monterJeu(config) {
             `Durée : ${jeu.duree}`,
           ),
         ),
-        el(
-          'div',
-          { class: 'intro__lancer' },
-          lancer,
-          erreurs.length
-            ? el('p', { class: 'champ__aide' }, 'Complétez d’abord le contenu du jeu.')
-            : null,
-        ),
+        el('div', { class: 'intro__lancer' }, lancer, aideLancer),
       ),
       el(
         'div',
         { class: 'colonnes' },
-        creerBlocParticipants(groupe, { designer }),
+        creerBlocJoueurs(groupe, {
+          selection,
+          surSelection: (nouvelle) => {
+            selection = nouvelle;
+            actualiserJoueurs();
+          },
+          hasard,
+          designer: () => designer(),
+        }),
         blocContenu(erreurs),
       ),
     );
@@ -524,14 +547,16 @@ export function monterJeu(config) {
   // ---------- Partie ----------
   async function lancerPartie() {
     arreterPartie();
+    // Les joueurs du moment : ceux choisis dans « Qui joue ? », présents aujourd'hui
+    joueursEnJeu = joueurs();
     const tableau = el('ul', { class: 'tableau-points', 'aria-label': 'Points' });
-    const scores = creerScores(groupe.participants, { surChangement: dessinerPoints });
+    const scores = creerScores(joueursEnJeu, { surChangement: dessinerPoints });
     function dessinerPoints() {
       const classement = scores.classement();
       const meilleur = classement[0]?.points ?? 0;
       remplir(
         tableau,
-        groupe.participants.map((prenom) => {
+        joueursEnJeu.map((prenom) => {
           const points = scores.valeur(prenom);
           return el(
             'li',
@@ -573,7 +598,7 @@ export function monterJeu(config) {
           icone('arrow-left'),
           'Quitter la partie',
         ),
-        groupe.participants.length ? tableau : null,
+        joueursEnJeu.length ? tableau : null,
       ),
       zone,
     );
@@ -583,7 +608,7 @@ export function monterJeu(config) {
       contenu: structuredClone(contenu),
       reglages: structuredClone(contenu.reglages),
       elements: structuredClone(contenu.elements),
-      participants: [...groupe.participants],
+      participants: [...joueursEnJeu],
       scores,
       hasard,
       sons,
@@ -593,7 +618,7 @@ export function monterJeu(config) {
       quandDesigne(fonction) {
         ecouteDesignation = fonction;
       },
-      choisirPrenoms: (options) => choisirPrenoms({ prenoms: groupe.participants, ...options }),
+      choisirPrenoms: (options) => choisirPrenoms({ prenoms: joueursEnJeu, ...options }),
       terminer: (options) => afficherFin(scores, options),
     };
     const nettoyage = await demarrer(ctx);
@@ -626,7 +651,7 @@ export function monterJeu(config) {
             ),
         )
       : null;
-    const liste = groupe.participants.length
+    const liste = joueursEnJeu.length
       ? el(
           'ol',
           { class: 'classement', 'aria-label': 'Classement complet' },

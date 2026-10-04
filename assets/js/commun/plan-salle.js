@@ -36,18 +36,24 @@ function styleTable(t) {
   return `${cadrer(t)}${t.epaisseur ? ` --ep: ${t.epaisseur};` : ''}`;
 }
 
-/** Avatar rond aux initiales, de la couleur de la personne (son rang dans la liste). */
+/**
+ * Avatar rond aux initiales, de la couleur de la personne (son rang dans la liste), avec le
+ * badge du thème de son info. Grisé, avec un autre badge, si la personne est absente.
+ */
 export function avatar(groupe, prenom, classe = '') {
   const rang = Math.max(0, groupe.participants.indexOf(prenom));
   const info = groupe.infoDe(prenom);
+  const absent = groupe.estAbsent?.(prenom);
+  let badge = info ? icone(themeDe(info.theme).icone) : null;
+  if (absent) badge = icone('user-slash');
   return el(
     'span',
     {
-      class: `avatar avatar--c${(rang % COULEURS) + 1}${classe ? ` ${classe}` : ''}`,
+      class: `avatar avatar--c${(rang % COULEURS) + 1}${absent ? ' avatar--absent' : ''}${classe ? ` ${classe}` : ''}`,
       'aria-hidden': 'true',
     },
     initiales(prenom),
-    info ? el('span', { class: 'avatar__badge' }, icone(themeDe(info.theme).icone)) : null,
+    badge ? el('span', { class: 'avatar__badge' }, badge) : null,
   );
 }
 
@@ -75,7 +81,8 @@ export function creerPlanSalle(groupe, { modifiable = false, hasard = Math.rando
     const ou = ouEst(place);
     if (!prenom) return `${ou}, libre`;
     const info = groupe.decrire(prenom);
-    return `${ou} : ${prenom}${info ? `, ${info.charAt(0).toLowerCase()}${info.slice(1)}` : ''}`;
+    const absence = groupe.estAbsent(prenom) ? ', absence aujourd’hui' : '';
+    return `${ou} : ${prenom}${info ? `, ${info.charAt(0).toLowerCase()}${info.slice(1)}` : ''}${absence}`;
   }
 
   // ---------- Dessin ----------
@@ -87,7 +94,7 @@ export function creerPlanSalle(groupe, { modifiable = false, hasard = Math.rando
       'button',
       {
         type: 'button',
-        class: `salle__place${prenom ? '' : ' salle__place--libre'}${place.inverse ? ' salle__place--inverse' : ''}`,
+        class: `salle__place${prenom ? '' : ' salle__place--libre'}${prenom && groupe.estAbsent(prenom) ? ' salle__place--absente' : ''}${place.inverse ? ' salle__place--inverse' : ''}`,
         dataset: { place: place.id },
         'aria-label': nommerPlace(place),
         title: prenom ?? null,
@@ -574,7 +581,9 @@ export function ouvrirGroupe(groupe, { focusApres = null } = {}) {
               const info = groupe.infoDe(prenom);
               return el(
                 'li',
-                { class: 'liste-groupe__ligne' },
+                {
+                  class: `liste-groupe__ligne${groupe.estAbsent(prenom) ? ' liste-groupe__ligne--absente' : ''}`,
+                },
                 avatar(groupe, prenom, 'avatar--mini'),
                 el(
                   'span',
@@ -593,6 +602,9 @@ export function ouvrirGroupe(groupe, { focusApres = null } = {}) {
                       )
                     : null,
                 ),
+                groupe.estAbsent(prenom)
+                  ? el('span', { class: 'liste-groupe__place' }, 'Absence')
+                  : null,
                 groupe.placeDe(prenom)
                   ? el('span', { class: 'liste-groupe__place' }, groupe.placeDe(prenom))
                   : null,

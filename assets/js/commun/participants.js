@@ -7,6 +7,7 @@ import { lire, ecrire } from './stockage.js';
 
 const CLE = 'participants';
 const CLE_INFOS = 'infos-participants';
+const CLE_ABSENTS = 'absents';
 export const LONGUEUR_MAX = 30;
 export const NOMBRE_MAX = 60;
 export const LONGUEUR_INFO = 60;
@@ -128,4 +129,45 @@ export function chargerInfos() {
 
 export function enregistrerInfos(infos) {
   return ecrire(CLE_INFOS, infos);
+}
+
+// ---------- Absences du jour ----------
+// Une personne absente reste dans le groupe (et sur le plan), mais ne joue pas et la roue ne
+// la tire pas. Les absences sont gardées jusqu'au retour de la personne (formation sur
+// plusieurs jours).
+
+/** Absences (prénoms en minuscules) des personnes encore dans la liste, sans doublon. */
+export function garderAbsents(absents, liste) {
+  const presentes = new Set(liste.map(cleComparaison));
+  return [...new Set(absents.map((a) => cleComparaison(String(a))))].filter((a) =>
+    presentes.has(a),
+  );
+}
+
+export function estAbsent(absents, prenom) {
+  return absents.includes(cleComparaison(prenom));
+}
+
+/** Marque la personne absente, ou de nouveau présente si elle l'était. */
+export function basculerAbsent(absents, prenom) {
+  const cle = cleComparaison(prenom);
+  return absents.includes(cle) ? absents.filter((a) => a !== cle) : [...absents, cle];
+}
+
+/** Les personnes présentes aujourd'hui, dans l'ordre de la liste. */
+export function presents(liste, absents) {
+  return liste.filter((p) => !estAbsent(absents, p));
+}
+
+export function chargerAbsents(liste) {
+  const brut = lire(CLE_ABSENTS, []);
+  if (!Array.isArray(brut)) return [];
+  return garderAbsents(
+    brut.filter((a) => typeof a === 'string'),
+    liste,
+  );
+}
+
+export function enregistrerAbsents(absents) {
+  return ecrire(CLE_ABSENTS, absents);
 }
