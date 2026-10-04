@@ -38,30 +38,79 @@ function cleComparaison(prenom) {
   return prenom.toLocaleLowerCase('fr');
 }
 
-/** Ajoute un ou plusieurs prénoms (séparés par des virgules, points-virgules ou retours à la ligne). */
-export function ajouter(liste, saisie) {
-  const resultat = [...liste];
-  const connus = new Set(resultat.map(cleComparaison));
-  for (const morceau of String(saisie ?? '').split(/[,;\n]/)) {
-    const prenom = normaliserPrenom(morceau);
-    if (!prenom || connus.has(cleComparaison(prenom)) || resultat.length >= NOMBRE_MAX) continue;
-    connus.add(cleComparaison(prenom));
-    resultat.push(prenom);
-  }
-  return resultat;
+/** « Marie 2 » → « Marie » : le prénom sans son numéro d'homonyme. */
+function sansNumero(prenom) {
+  return prenom.replace(/ \d+$/, '');
 }
 
-/** Initiales pour un avatar : « A » pour Ana, « JP » pour Jean-Paul, « ML » pour Marie Laure. */
+/**
+ * Le prénom tel quel s'il est libre ; sinon, pour un homonyme, le premier numéro libre
+ * (« Marie 2 », « Marie 3 »…). Ce numéro sert d'identifiant partout : points, plan, infos.
+ * `connus` : prénoms déjà pris, en minuscules.
+ */
+export function prenomDistinct(prenom, connus) {
+  if (!connus.has(cleComparaison(prenom))) return prenom;
+  const base = sansNumero(prenom);
+  for (let numero = 2; ; numero++) {
+    const suffixe = ` ${numero}`;
+    const candidat = `${base.slice(0, LONGUEUR_MAX - suffixe.length).trim()}${suffixe}`;
+    if (!connus.has(cleComparaison(candidat))) return candidat;
+  }
+}
+
+/**
+ * Ajoute un ou plusieurs prénoms (séparés par des virgules, points-virgules ou retours à la
+ * ligne). Un prénom déjà pris reçoit un numéro. Renvoie la liste et, pour chaque ajout, le
+ * prénom saisi et celui retenu : { liste, ajouts: [{ saisi, prenom }] }.
+ */
+export function ajouterPrenoms(liste, saisie) {
+  const resultat = [...liste];
+  const connus = new Set(resultat.map(cleComparaison));
+  const ajouts = [];
+  for (const morceau of String(saisie ?? '').split(/[,;\n]/)) {
+    const saisi = normaliserPrenom(morceau);
+    if (!saisi || resultat.length >= NOMBRE_MAX) continue;
+    const prenom = prenomDistinct(saisi, connus);
+    connus.add(cleComparaison(prenom));
+    resultat.push(prenom);
+    ajouts.push({ saisi, prenom });
+  }
+  return { liste: resultat, ajouts };
+}
+
+export function ajouter(liste, saisie) {
+  return ajouterPrenoms(liste, saisie).liste;
+}
+
+/** Phrase qui explique les numéros donnés aux homonymes (vide s'il n'y en a pas). */
+export function messageHomonymes(ajouts) {
+  return (
+    ajouts
+      .filter(({ saisi, prenom }) => saisi !== prenom)
+      // Insécable : « Marie 2 » ne se coupe pas en fin de ligne
+      .map(
+        ({ saisi, prenom }) =>
+          `${saisi} est déjà dans le groupe : voici « ${prenom.replace(/ /g, '\u00a0')} ».`,
+      )
+      .join(' ')
+  );
+}
+
+/**
+ * Initiales pour un avatar : « A » pour Ana, « JP » pour Jean-Paul, « ML » pour Marie Laure,
+ * « M2 » pour Marie 2 (un homonyme garde son numéro).
+ */
 export function initiales(prenom) {
-  const morceaux = normaliserPrenom(prenom)
-    .split(/[\s'’-]+/)
-    .filter(Boolean);
-  if (!morceaux.length) return '?';
-  return morceaux
-    .slice(0, 2)
+  const propre = normaliserPrenom(prenom);
+  const numero = propre.match(/ (\d+)$/)?.[1] ?? '';
+  const morceaux = (numero ? sansNumero(propre) : propre).split(/[\s'’-]+/).filter(Boolean);
+  if (!morceaux.length) return numero || '?';
+  const lettres = morceaux
+    .slice(0, numero ? 1 : 2)
     .map((m) => [...m][0])
     .join('')
     .toLocaleUpperCase('fr');
+  return `${lettres}${numero}`;
 }
 
 export function retirer(liste, prenom) {

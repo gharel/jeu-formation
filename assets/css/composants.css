@@ -361,6 +361,17 @@
   margin-right: 0.3rem;
 }
 
+/* « Marie est déjà dans le groupe : voici « Marie 2 ». » */
+.ajout-prenom__homonymes {
+  margin: 0.4rem 0 0;
+  font-weight: 700;
+  color: var(--bleu-nuit);
+}
+
+.ajout-prenom__homonymes:empty {
+  display: none;
+}
+
 .ajout-prenom__info-titre {
   margin: 0.9rem 0 0.3rem;
 }

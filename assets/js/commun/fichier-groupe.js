@@ -19,7 +19,7 @@
  */
 import { FORMAT, FORMAT_DONNEES } from './contenu.js';
 import {
-  ajouter,
+  ajouterPrenoms,
   normaliserPrenom,
   normaliserNom,
   definirInfo,
@@ -64,8 +64,9 @@ function numeroDePlace(valeur) {
 
 /**
  * Lit un fichier de groupe. Renvoie { nom, participants, infos, absents, plan, avertissements }
- * prêt pour groupe.remplacer(). Les avertissements disent ce qui a été ignoré (doublon, place
- * inexistante ou déjà prise…). Lève une erreur au message lisible si le fichier ne convient pas.
+ * prêt pour groupe.remplacer(). Les avertissements disent ce qui a été changé ou ignoré (homonyme
+ * numéroté, place inexistante ou déjà prise…). Lève une erreur au message lisible si le fichier
+ * ne convient pas.
  */
 export function lireImportGroupe(contenuFichier) {
   let donnees;
@@ -98,16 +99,17 @@ export function lireImportGroupe(contenuFichier) {
     const entree = typeof brut === 'string' ? { prenom: brut } : brut;
     if (!entree || typeof entree !== 'object') continue;
     // Une virgule séparerait deux prénoms (voir ajouter()) : on la remplace par une espace
-    const prenom = normaliserPrenom(String(entree.prenom ?? '').replace(/[,;\n]/g, ' '));
-    if (!prenom) continue;
-    const avant = participants.length;
-    participants = ajouter(participants, prenom);
-    if (participants.length === avant) {
-      const deja = participants.find(
-        (p) => p.toLocaleLowerCase('fr') === prenom.toLocaleLowerCase('fr'),
+    const saisi = normaliserPrenom(String(entree.prenom ?? '').replace(/[,;\n]/g, ' '));
+    if (!saisi) continue;
+    const resultat = ajouterPrenoms(participants, saisi);
+    if (!resultat.ajouts.length) continue;
+    participants = resultat.liste;
+    // Deux personnes du même prénom : la deuxième reçoit un numéro (« Ana 2 »)
+    const { prenom } = resultat.ajouts[0];
+    if (prenom !== saisi) {
+      avertissements.push(
+        `${saisi} est déjà dans le groupe : cette personne devient « ${prenom} ».`,
       );
-      if (deja) avertissements.push(`${deja} apparaît deux fois : le doublon est ignoré.`);
-      continue;
     }
     const info =
       typeof entree.info === 'string' ? { theme: 'autre', texte: entree.info } : entree.info;

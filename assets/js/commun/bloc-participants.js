@@ -23,6 +23,7 @@ export function creerBlocParticipants(groupe) {
     'aria-describedby': 'aide-prenoms',
   });
   const liste = el('ul', { class: 'puces', 'aria-label': 'Participants' });
+  const homonymes = el('p', { class: 'ajout-prenom__homonymes', role: 'status' });
   const compteur = el('p', { class: 'bloc-participants__compte' });
   const boutonEffacer = el(
     'button',
@@ -149,24 +150,21 @@ export function creerBlocParticipants(groupe) {
       onsubmit: (e) => {
         e.preventDefault();
         if (!champ.value.trim()) return;
-        groupe.changerParticipants(listeParticipants.ajouter(groupe.participants, champ.value));
+        const { liste: nouvelle, ajouts } = listeParticipants.ajouterPrenoms(
+          groupe.participants,
+          champ.value,
+        );
+        groupe.changerParticipants(nouvelle);
+        // Un homonyme reçoit un numéro (« Marie 2 ») : on le dit
+        remplir(homonymes, listeParticipants.messageHomonymes(ajouts));
         // L'info ne s'applique que si un seul prénom est saisi
-        const saisis = champ.value
-          .split(/[,;\n]/)
-          .map(listeParticipants.normaliserPrenom)
-          .filter(Boolean);
-        if (saisis.length === 1 && info.value.trim()) {
-          const cible = groupe.participants.find(
-            (p) => p.toLocaleLowerCase('fr') === saisis[0].toLocaleLowerCase('fr'),
+        if (ajouts.length === 1 && info.value.trim()) {
+          groupe.changerInfos(
+            listeParticipants.definirInfo(groupe.infos, ajouts[0].prenom, {
+              theme: theme.value,
+              texte: info.value,
+            }),
           );
-          if (cible) {
-            groupe.changerInfos(
-              listeParticipants.definirInfo(groupe.infos, cible, {
-                theme: theme.value,
-                texte: info.value,
-              }),
-            );
-          }
         }
         champ.value = '';
         info.value = '';
@@ -184,8 +182,9 @@ export function creerBlocParticipants(groupe) {
     el(
       'p',
       { id: 'aide-prenoms', class: 'champ__aide' },
-      'Plusieurs à la fois ? Séparez-les par des virgules. La liste sert pour tous les jeux.',
+      'Plusieurs à la fois ? Séparez-les par des virgules. Deux personnes ont le même prénom ? La deuxième devient « Marie 2 » (ou écrivez « Marie\u00a0D. »). La liste sert pour tous les jeux.',
     ),
+    homonymes,
     el(
       'p',
       { class: 'champ__libelle ajout-prenom__info-titre', id: 'titre-info' },

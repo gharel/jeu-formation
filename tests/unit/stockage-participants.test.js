@@ -2,6 +2,9 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { lire, ecrire, effacer } from '../../assets/js/commun/stockage.js';
 import {
   ajouter,
+  ajouterPrenoms,
+  prenomDistinct,
+  messageHomonymes,
   retirer,
   normaliserPrenom,
   charger,
@@ -51,11 +54,45 @@ describe('participants', () => {
     expect(normaliserPrenom('x'.repeat(50))).toHaveLength(30);
   });
 
-  it('ajoute plusieurs prénoms séparés par des virgules, sans doublon', () => {
+  it('ajoute plusieurs prénoms séparés par des virgules', () => {
     let liste = ajouter([], 'Marie, Paul ; Léa');
     expect(liste).toEqual(['Marie', 'Paul', 'Léa']);
-    liste = ajouter(liste, 'marie, , Hugo');
+    liste = ajouter(liste, ' , Hugo');
     expect(liste).toEqual(['Marie', 'Paul', 'Léa', 'Hugo']);
+  });
+
+  it('numérote un homonyme au lieu de l’ignorer : le numéro sert d’identifiant', () => {
+    let liste = ajouter([], 'Marie, Paul, marie');
+    expect(liste).toEqual(['Marie', 'Paul', 'marie 2']);
+    const { liste: suite, ajouts } = ajouterPrenoms(liste, 'Marie, Léa');
+    expect(suite).toEqual(['Marie', 'Paul', 'marie 2', 'Marie 3', 'Léa']);
+    expect(ajouts).toEqual([
+      { saisi: 'Marie', prenom: 'Marie 3' },
+      { saisi: 'Léa', prenom: 'Léa' },
+    ]);
+    expect(messageHomonymes(ajouts)).toBe(
+      'Marie est déjà dans le groupe : voici « Marie\u00a03 ».',
+    );
+    // Retirer « Marie 2 » ne retire qu'elle
+    liste = retirer(suite, 'Marie 2');
+    expect(liste).toEqual(['Marie', 'Paul', 'Marie 3', 'Léa']);
+    // Le numéro libéré resservira
+    expect(ajouter(liste, 'Marie').at(-1)).toBe('Marie 2');
+  });
+
+  it('donne le premier numéro libre, sans dépasser la longueur maximale', () => {
+    const connus = new Set(['marie', 'marie 2']);
+    expect(prenomDistinct('Paul', connus)).toBe('Paul');
+    expect(prenomDistinct('Marie', connus)).toBe('Marie 3');
+    // « Marie 2 » saisi alors qu'il existe : on ne fait pas « Marie 2 2 »
+    expect(prenomDistinct('Marie 2', connus)).toBe('Marie 3');
+    const long = 'x'.repeat(30);
+    const numerote = prenomDistinct(long, new Set([long]));
+    expect(numerote).toHaveLength(30);
+    expect(numerote.endsWith(' 2')).toBe(true);
+    // Une liste déjà unique, rechargée, ne change pas
+    expect(ajouter([], 'Marie\nMarie 2\nPaul')).toEqual(['Marie', 'Marie 2', 'Paul']);
+    expect(messageHomonymes([{ saisi: 'Paul', prenom: 'Paul' }])).toBe('');
   });
 
   it('limite le nombre de participants', () => {
@@ -115,5 +152,8 @@ describe('initiales pour les avatars', () => {
     expect(initiales('Jean-Paul')).toBe('JP');
     expect(initiales('marie laure')).toBe('ML');
     expect(initiales('  ')).toBe('?');
+    // Un homonyme garde son numéro : Marie et Marie 2 ne se confondent pas sur le plan
+    expect(initiales('Marie 2')).toBe('M2');
+    expect(initiales('Jean-Paul 3')).toBe('J3');
   });
 });

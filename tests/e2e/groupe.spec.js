@@ -260,3 +260,34 @@ test('un groupe préparé à la main s’importe : salle en îlots, places, aver
   await expect(page.getByRole('dialog', { name: 'Le groupe : Excel débutant' })).toBeVisible();
   expect(erreurs).toEqual([]);
 });
+
+test('deux personnes du même prénom : la deuxième reçoit un numéro, partout', async ({ page }) => {
+  const erreurs = surveillerErreurs(page);
+  await page.goto('/groupe/');
+  await page.getByLabel('Ajouter un prénom').fill('Marie, Paul');
+  await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
+
+  // Le même prénom, avec une info : elle va à la nouvelle personne, pas à la première Marie
+  await page.getByLabel('Ajouter un prénom').fill('marie');
+  await page.getByLabel('Thème de l’info').selectOption('loisir');
+  await page.getByLabel('Info', { exact: true }).fill('le judo');
+  await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'déjà dans le groupe' })).toHaveText(
+    /marie est déjà dans le groupe\s:\svoici\s«\smarie\s2\s»\./,
+  );
+  const liste = page.getByRole('list', { name: 'Participants' });
+  await expect(liste.locator('.puce__prenom')).toHaveText(['Marie', 'Paul', 'marie 2']);
+  await expect(liste.getByRole('listitem').nth(2)).toContainText('le judo');
+  await expect(liste.getByRole('listitem').first()).not.toContainText('le judo');
+  await verifierAccessibilite(page);
+
+  // Dans les jeux, les deux Marie jouent chacune de leur côté
+  await page.goto('/jeux/motus/');
+  await expect(page.getByRole('list', { name: 'Joueurs' })).toContainText('marie 2');
+  await page.goto('/groupe/');
+
+  // Retirer la deuxième ne retire qu'elle
+  await page.getByRole('button', { name: 'Retirer marie 2' }).click();
+  await expect(liste.locator('.puce__prenom')).toHaveText(['Marie', 'Paul']);
+  expect(erreurs).toEqual([]);
+});

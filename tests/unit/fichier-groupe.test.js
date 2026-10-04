@@ -72,7 +72,7 @@ describe('fichier du groupe : import', () => {
     expect(lu.plan).toMatchObject({ disposition: 'cercle', nombre: 6, places: { p3: 'bob' } });
   });
 
-  it('signale ce qui est ignoré : doublon, place inexistante ou déjà prise, salle inconnue', () => {
+  it('signale ce qui change ou est ignoré : homonyme, place inexistante ou prise, salle inconnue', () => {
     const lu = lireImportGroupe(
       fichier({
         format: FORMAT_GROUPE,
@@ -80,7 +80,7 @@ describe('fichier du groupe : import', () => {
           salle: { disposition: 'amphi' },
           participants: [
             { prenom: 'Ana', place: 1 },
-            { prenom: 'ana' },
+            { prenom: 'ana', info: 'le judo', absent: true },
             { prenom: 'Bob', place: 1 },
             { prenom: 'Chloé', place: 9 },
             { prenom: 'David', place: 'fond' },
@@ -90,14 +90,17 @@ describe('fichier du groupe : import', () => {
         },
       }),
     );
-    expect(lu.participants).toEqual(['Ana', 'Bob', 'Chloé', 'David']);
+    // Deux Ana : la deuxième est numérotée, avec sa propre info et son absence
+    expect(lu.participants).toEqual(['Ana', 'ana 2', 'Bob', 'Chloé', 'David']);
+    expect(lu.infos).toEqual({ 'ana 2': { theme: 'autre', texte: 'le judo' } });
+    expect(lu.absents).toEqual(['ana 2']);
     expect(lu.plan.disposition).toBe('u');
     expect(lu.plan.places).toEqual({ p1: 'ana' });
     expect(lu.avertissements).toEqual([
-      'Ana apparaît deux fois : le doublon est ignoré.',
+      'ana est déjà dans le groupe : cette personne devient « ana 2 ».',
       'Disposition « amphi » inconnue (u, classe, ilots, cercle) : la salle est en U.',
       'Place 1 déjà prise : Bob reste à placer.',
-      'Place 9 de Chloé ignorée : la salle a 4 places.',
+      'Place 9 de Chloé ignorée : la salle a 5 places.',
       'Place « fond » de David ignorée : un numéro est attendu.',
     ]);
   });

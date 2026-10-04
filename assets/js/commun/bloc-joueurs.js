@@ -68,10 +68,11 @@ export function creerBlocJoueurs(groupe, { selection, surSelection, hasard, desi
   async function ajouterQuelquun() {
     const reponse = await demanderParticipant();
     if (!reponse) return;
-    const avant = new Set(groupe.participants.map(cle));
-    groupe.changerParticipants(listeParticipants.ajouter(groupe.participants, reponse.prenom));
-    const nouveau = groupe.participants.find((p) => cle(p) === cle(reponse.prenom.trim()));
+    const { liste, ajouts } = listeParticipants.ajouterPrenoms(groupe.participants, reponse.prenom);
+    // Un homonyme reçoit un numéro (« Marie 2 ») : c'est bien une nouvelle personne
+    const nouveau = ajouts[0]?.prenom;
     if (!nouveau) return;
+    groupe.changerParticipants(liste);
     if (reponse.texte.trim()) {
       groupe.changerInfos(
         listeParticipants.definirInfo(groupe.infos, nouveau, {
@@ -81,12 +82,16 @@ export function creerBlocJoueurs(groupe, { selection, surSelection, hasard, desi
       );
     }
     // Un retardataire vient pour jouer : on l'ajoute aussi à la sélection du moment
-    if (actuelle.mode !== 'tous' && !avant.has(cle(nouveau))) {
+    if (actuelle.mode !== 'tous') {
       changer({ ...actuelle, choisis: [...actuelle.choisis, cle(nouveau)] });
     } else {
       changer(actuelle);
     }
-    annoncer(`${nouveau} rejoint le groupe.`);
+    annoncer(
+      [listeParticipants.messageHomonymes(ajouts), `${nouveau} rejoint le groupe.`]
+        .filter(Boolean)
+        .join(' '),
+    );
   }
 
   function dessinerModes() {
