@@ -11,7 +11,7 @@ Un site statique de mini-jeux **projetés au vidéoprojecteur** pour casser la m
 - Chaque jeu a un écran d'accueil où l'on saisit les prénoms, avec une roue pour désigner quelqu'un.
 - Il n'y a ni serveur ni framework ni étape de build : HTML, CSS et JavaScript natifs (ES modules).
 - Le contenu de l'animateur est gardé dans le navigateur : localStorage pour le texte, IndexedDB pour les images.
-- Des thématiques prêtes à jouer (IA, Google Docs, Google Sheets, Microsoft 365, Facebook) se chargent dans tous les jeux depuis la page « Les contenus » ; les contenus s'échangent en fichiers JSON.
+- Des thématiques prêtes à jouer (IA, Google Docs, Google Sheets, Microsoft 365, Facebook) se chargent dans tous les jeux depuis la page « Les contenus » ; le groupe et les contenus s'échangent en fichiers JSON.
 - La charte graphique est celle de Skazy Formation (https://formation.skazy.nc).
 
 ## Commandes
@@ -39,7 +39,7 @@ Les pages ne s'ouvrent pas en double-cliquant sur le fichier (`file://`), car le
 
 ```
 index.html                     Accueil : une carte par jeu (générée depuis assets/js/jeux.js), liens « Le groupe » et « Les contenus »
-groupe/index.html              Page « Le groupe » : prénoms, infos, plan de salle (assets/js/groupe.js)
+groupe/index.html              Page « Le groupe » : nom, prénoms, infos, plan de salle, fichier JSON (assets/js/groupe.js)
 contenus/index.html            Page « Les contenus » : thématiques, jeu de données JSON, consultation (assets/js/contenus.js)
 contenus/thematiques/*.json    Une thématique prête à jouer par fichier (jeu de données)
 assets/css/charte.css          Couleurs, police Georama, couleur de chaque jeu (data-couleur)
@@ -52,9 +52,10 @@ assets/js/commun/
   editeur-contenu.js           Éditeur généré à partir du schéma de contenu du jeu
   contenu.js                   Schéma : valeurs par défaut, liste vide, nettoyage, validation, import/export, consultation
   jeux-de-donnees.js           Jeu de données (plusieurs jeux dans un fichier) : export, lecture, source de chaque contenu
+  fichier-groupe.js            Le groupe en JSON : export lisible, import tolérant avec avertissements
   fichiers.js                  Téléchargement d'un JSON et nom du fichier (« skazy-groupe-mairie-2026-10-04.json »)
   participants.js              Liste des prénoms partagée entre les jeux + une info par personne (passion, film…)
-  groupe.js                    État partagé du groupe : participants, infos, absences du jour, plan de salle (nettoyés à chaque changement)
+  groupe.js                    État partagé du groupe : nom, participants, infos, absences du jour, plan de salle (nettoyés à chaque changement)
   bloc-participants.js         Bloc « Participants » de la page Groupe (ajout, infos, absences, retrait)
   bloc-joueurs.js · joueurs.js Bloc « Qui joue ? » de chaque jeu : tout le groupe, au clic, au hasard (tirage équitable)
   salle.js                     Plan de salle, fonctions pures : dispositions (U, classe, îlots, réunion), placement
@@ -86,7 +87,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
   contenu.spec.js              Export / import JSON d'un jeu, contenu d'exemple
   contenus.spec.js             Page Les contenus : thématique chargée, aperçu, export et import du jeu de données
   mobile.spec.js               Téléphone tactile : pas de plein écran, icônes centrées, buzzers au doigt, plan au doigt
-  groupe.spec.js               Page Groupe : placement (toucher, glisser, ordre), îlots, fenêtre Groupe en partie
+  groupe.spec.js               Page Groupe : placement (toucher, glisser, ordre), îlots, fenêtre Groupe en partie, fichier JSON
   joueurs.spec.js              Qui joue ? : tout le groupe, au clic, au hasard ; absences ; retardataire ajouté depuis le jeu
 ```
 
@@ -97,7 +98,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
 - **La logique est séparée de l'affichage.** Les règles vont dans `logique.js`, en fonctions pures testées unitairement. `jeu.js` ne fait que construire la page et réagir aux clics.
 - **Sécurité.** Tout texte saisi ou importé passe par `el()` ou `textContent`, jamais par `innerHTML`. Un JSON importé passe par `nettoyerContenu()`, qui ne garde que les clés et les types prévus par le schéma.
 - **Mot de passe d'accès.** Il n'est jamais écrit en clair : ni dans le code, ni dans les tests, ni dans un message de commit. Seule son empreinte est dans `acces.js`. Les tests e2e ouvrent les pages déverrouillées (`storageState` dans `playwright.config.js`) ; `acces.spec.js` teste l'écran sans le mot de passe.
-- **Groupe.** Les prénoms, les infos, les absences et le plan passent par `groupe.js` (`creerGroupe()`), qui les garde cohérents avec la liste ; un jeu ne voit que les joueurs choisis dans « Qui joue ? » (`ctx.participants`), parmi les présents ; jamais d'accès direct aux clés `participants`, `infos-participants` ou `plan-salle`. Toute nouvelle page à publier doit être ajoutée à `.github/workflows/publier.yml` et à `validate:html`.
+- **Groupe.** Le nom, les prénoms, les infos, les absences et le plan passent par `groupe.js` (`creerGroupe()`), qui les garde cohérents avec la liste ; un fichier importé passe par `lireImportGroupe()` puis `groupe.remplacer()`. Un jeu ne voit que les joueurs choisis dans « Qui joue ? » (`ctx.participants`), parmi les présents ; jamais d'accès direct aux clés `participants`, `infos-participants`, `nom-groupe` ou `plan-salle`. Toute nouvelle page à publier doit être ajoutée à `.github/workflows/publier.yml` et à `validate:html`.
 - **Contenus et thématiques.** Le contenu d'un jeu est rangé sous `cleContenu(slug)` ; un jeu de données (thématique ou import) passe par `lireJeuDeDonnees()` puis `contenuDepuisDonnees()` (nettoyage avec le schéma du jeu, réglages de l'animateur gardés). La source affichée (« Google Sheets ») est notée par `noterSource()` et oubliée dès que l'animateur enregistre un contenu modifié.
 - **Stockage.** On passe toujours par `stockage.js` (localStorage, clés préfixées par `skazy-jeux:`) ou `images.js` (IndexedDB), jamais d'appel direct. Les erreurs de stockage ne doivent jamais faire planter un jeu.
 - **Hasard.** On utilise `ctx.hasard` (ou `hasardDePage()`), pas `Math.random()` directement, pour que `?graine=N` rende les tests reproductibles.

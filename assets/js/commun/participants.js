@@ -8,9 +8,11 @@ import { lire, ecrire } from './stockage.js';
 const CLE = 'participants';
 const CLE_INFOS = 'infos-participants';
 const CLE_ABSENTS = 'absents';
+const CLE_NOM = 'nom-groupe';
 export const LONGUEUR_MAX = 30;
 export const NOMBRE_MAX = 60;
 export const LONGUEUR_INFO = 60;
+export const LONGUEUR_NOM = 80;
 
 export const THEMES = [
   { valeur: 'passion', libelle: 'Passion', icone: 'heart' },
@@ -170,4 +172,23 @@ export function chargerAbsents(liste) {
 
 export function enregistrerAbsents(absents) {
   return ecrire(CLE_ABSENTS, absents);
+}
+
+// ---------- Nom du groupe ----------
+// Facultatif : « Google Sheets, mairie, octobre ». Il nomme aussi le fichier du groupe exporté.
+
+export function normaliserNom(texte) {
+  return String(texte ?? '')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, LONGUEUR_NOM);
+}
+
+export function chargerNom() {
+  const brut = lire(CLE_NOM, '');
+  return typeof brut === 'string' ? normaliserNom(brut) : '';
+}
+
+export function enregistrerNom(nom) {
+  return ecrire(CLE_NOM, nom);
 }

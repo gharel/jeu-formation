@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { readFile } from 'node:fs/promises';
 import { surveillerErreurs, ouvrirJeu, lancerPartie, verifierAccessibilite } from './outils.js';
 
 /** Fait glisser un élément sur un autre avec la souris (glisser-déposer du plan de salle). */
@@ -145,5 +146,117 @@ test('pendant une partie, le bouton Groupe rappelle les prénoms, les infos et l
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await page.keyboard.press('Enter');
   await expect(page.locator('#cadre').getByText('Trouvé en 1 mot d’indice !')).toBeVisible();
+  expect(erreurs).toEqual([]);
+});
+
+test('le groupe s’exporte en JSON avec son nom et son plan, puis se réimporte', async ({
+  page,
+}, testInfo) => {
+  const erreurs = surveillerErreurs(page);
+  await preparerGroupe(page);
+  await page.getByLabel('Nom du groupe').fill('Google Sheets, mairie');
+  await page.getByLabel('Nom du groupe').press('Enter');
+  const salle = page.getByRole('group', { name: /Plan de salle/ });
+  await salle.getByRole('button', { name: 'Place 1, libre' }).click();
+  await page.getByRole('dialog', { name: 'Place 1' }).getByRole('button', { name: 'Ana' }).click();
+  await page.getByRole('button', { name: 'Absence aujourd’hui : Bob' }).click();
+
+  const [telechargement] = await Promise.all([
+    page.waitForEvent('download'),
+    page.getByRole('button', { name: 'Exporter le groupe' }).click(),
+  ]);
+  expect(telechargement.suggestedFilename()).toMatch(
+    /^skazy-groupe-google-sheets-mairie-\d{4}-\d{2}-\d{2}\.json$/,
+  );
+  const chemin = testInfo.outputPath('groupe.json');
+  await telechargement.saveAs(chemin);
+  const donnees = JSON.parse(await readFile(chemin, 'utf8'));
+  expect(donnees.groupe).toMatchObject({
+    nom: 'Google Sheets, mairie',
+    salle: { disposition: 'u', nombreDePlaces: null, parIlot: 4 },
+  });
+  expect(donnees.groupe.participants.slice(0, 2)).toEqual([
+    { prenom: 'Ana', info: { theme: 'dessert', texte: 'le tiramisu' }, place: 1 },
+    { prenom: 'Bob', absent: true },
+  ]);
+
+  // On efface tout, puis le fichier rend le groupe tel quel
+  await page.getByRole('button', { name: 'Effacer la liste' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Effacer' }).click();
+  await page.getByLabel('Nom du groupe').fill('');
+  await page.getByLabel('Nom du groupe').press('Enter');
+  await page.locator('#fichier-groupe').setInputFiles(chemin);
+  await expect(page.locator('#cadre .message')).toContainText(
+    'Groupe importé : Google Sheets, mairie. 6 participants, 1 personne sur le plan.',
+  );
+  await expect(page.getByLabel('Nom du groupe')).toHaveValue('Google Sheets, mairie');
+  await expect(page.getByRole('list', { name: 'Participants' }).getByRole('listitem')).toHaveCount(
+    6,
+  );
+  await expect(page.getByText('6 participants · 1 absence aujourd’hui')).toBeVisible();
+  await expect(
+    salle.getByRole('button', { name: 'Place 1 : Ana, dessert préféré : le tiramisu' }),
+  ).toBeVisible();
+  expect(erreurs).toEqual([]);
+});
+
+test('un groupe préparé à la main s’importe : salle en îlots, places, avertissements', async ({
+  page,
+}) => {
+  const erreurs = surveillerErreurs(page);
+  await preparerGroupe(page);
+  const fichier = {
+    format: 'skazy-jeux-groupe',
+    version: 1,
+    groupe: {
+      nom: 'Excel débutant',
+      salle: { disposition: 'ilots', nombreDePlaces: 8, parIlot: 4 },
+      participants: [
+        { prenom: 'Léa', info: { theme: 'film', texte: 'Le Grand Bleu' }, place: 1 },
+        { prenom: 'Marc', info: 'la pétanque', place: 5 },
+        'Nina',
+        { prenom: 'Omar', place: 12 },
+      ],
+    },
+  };
+  await page.locator('#fichier-groupe').setInputFiles({
+    name: 'excel.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify(fichier)),
+  });
+  // Le groupe actuel (6 personnes) sera remplacé : on confirme
+  const dialogue = page.getByRole('dialog', { name: 'Remplacer le groupe ?' });
+  await expect(dialogue).toContainText('Les 6 participants actuels');
+  await dialogue.getByRole('button', { name: 'Remplacer' }).click();
+  const message = page.locator('#cadre .message');
+  await expect(message).toContainText('4 participants, 2 personnes sur le plan.');
+  await expect(message).toContainText('Place 12 de Omar ignorée : la salle a 8 places.');
+
+  await expect(page.getByRole('radio', { name: 'Îlots' })).toBeChecked();
+  await expect(page.getByLabel('Nombre de places')).toHaveValue('8');
+  const salle = page.getByRole('group', { name: /Plan de salle/ });
+  await expect(
+    salle.getByRole('button', { name: 'Place 1, îlot 1 : Léa, film préféré : Le Grand Bleu' }),
+  ).toBeVisible();
+  await expect(
+    salle.getByRole('button', { name: 'Place 5, îlot 2 : Marc, autre : la pétanque' }),
+  ).toBeVisible();
+  await verifierAccessibilite(page);
+
+  // Un mauvais fichier : rien ne change
+  await page.locator('#fichier-groupe').setInputFiles({
+    name: 'motus.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify({ format: 'skazy-jeux', jeu: 'motus', contenu: {} })),
+  });
+  await expect(page.getByRole('alert')).toContainText('pas un groupe');
+  await expect(page.getByRole('list', { name: 'Participants' }).getByRole('listitem')).toHaveCount(
+    4,
+  );
+
+  // En partie, la fenêtre Groupe porte le nom du groupe
+  await ouvrirJeu(page, 'motus');
+  await page.getByRole('button', { name: 'Groupe', exact: true }).click();
+  await expect(page.getByRole('dialog', { name: 'Le groupe : Excel débutant' })).toBeVisible();
   expect(erreurs).toEqual([]);
 });

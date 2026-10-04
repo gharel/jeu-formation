@@ -562,7 +562,7 @@ export function creerPlanSalle(groupe, { modifiable = false, hasard = Math.rando
 export function ouvrirGroupe(groupe, { focusApres = null } = {}) {
   return ouvrirDialogue({
     focusApres,
-    titre: 'Le groupe',
+    titre: groupe.nom ? `Le groupe : ${groupe.nom}` : 'Le groupe',
     classe: 'dialogue--groupe',
     construire({ corps, pied, fermer, dialog }) {
       const { participants } = groupe;

@@ -1,12 +1,17 @@
 /**
- * Page « Le groupe » : les prénoms et l'info de chacun, puis le plan de salle pour retenir
- * qui est assis où. Les données sont partagées avec tous les jeux (groupe.js).
+ * Page « Le groupe » : son nom, les prénoms et l'info de chacun, puis le plan de salle pour
+ * retenir qui est assis où. Les données sont partagées avec tous les jeux (groupe.js), et tout
+ * le groupe s'exporte ou s'importe en un fichier JSON (fichier-groupe.js).
  */
 import { exigerAcces } from './commun/acces.js';
 import { creerGroupe } from './commun/groupe.js';
 import { creerBlocParticipants } from './commun/bloc-participants.js';
 import { creerPlanSalle } from './commun/plan-salle.js';
 import { hasardDePage } from './commun/hasard.js';
+import { LONGUEUR_NOM } from './commun/participants.js';
+import { preparerExportGroupe, lireImportGroupe } from './commun/fichier-groupe.js';
+import { telechargerJson, nomDeFichier } from './commun/fichiers.js';
+import { confirmer } from './commun/dialogues.js';
 import {
   el,
   remplir,
@@ -15,6 +20,7 @@ import {
   ecouterClavier,
   basculerPleinEcran,
   pleinEcranDisponible,
+  annoncer,
 } from './commun/ui.js';
 
 await exigerAcces();
@@ -40,6 +46,138 @@ if (pleinEcranDisponible()) {
   );
 }
 ecouterClavier({ f: () => basculerPleinEcran() });
+
+const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? 's' : ''}`;
+
+/** Nom du groupe, export et import du fichier JSON. */
+function creerBlocFichier() {
+  const messages = el('div', { class: 'messages', role: 'status' });
+  const erreurs = el('div', { class: 'messages', role: 'alert' });
+  const champNom = el('input', {
+    id: 'nom-groupe',
+    type: 'text',
+    class: 'champ__controle',
+    autocomplete: 'off',
+    maxlength: LONGUEUR_NOM,
+    placeholder: 'Ex. : Google Sheets, mairie, octobre',
+    value: groupe.nom,
+    onchange: (e) => groupe.changerNom(e.target.value),
+  });
+  // Groupe importé : le nom suit (et s'affiche nettoyé après la saisie)
+  groupe.surChangement(() => {
+    champNom.value = groupe.nom;
+  });
+
+  /** Un seul message à la fois ; `aVerifier` : ce que l'import a ignoré. */
+  function afficher(zone, classe, texte, aVerifier = []) {
+    remplir(messages);
+    remplir(erreurs);
+    remplir(
+      zone,
+      el(
+        'div',
+        { class: `message ${classe}` },
+        el('p', {}, texte),
+        aVerifier.length
+          ? [
+              el('p', {}, 'À vérifier :'),
+              el(
+                'ul',
+                {},
+                aVerifier.map((d) => el('li', {}, d)),
+              ),
+            ]
+          : null,
+      ),
+    );
+  }
+
+  async function importer(fichier) {
+    let lu;
+    try {
+      lu = lireImportGroupe(await fichier.text());
+    } catch (erreur) {
+      afficher(erreurs, 'message--erreur', erreur.message);
+      return;
+    }
+    const actuels = groupe.participants.length;
+    if (
+      actuels &&
+      !(await confirmer({
+        titre: 'Remplacer le groupe ?',
+        message: `Les ${pluriel(actuels, 'participant')} actuels, leurs infos et le plan de salle seront remplacés par le groupe du fichier (${pluriel(lu.participants.length, 'participant')}).`,
+        oui: 'Remplacer',
+      }))
+    ) {
+      return;
+    }
+    groupe.remplacer(lu);
+    const places = Object.keys(groupe.plan.places).length;
+    const texte = `Groupe importé${groupe.nom ? ` : ${groupe.nom}` : ''}. ${pluriel(groupe.participants.length, 'participant')}, ${pluriel(places, 'personne')} sur le plan.`;
+    afficher(messages, 'message--info', texte, lu.avertissements);
+    annoncer(texte);
+  }
+
+  const entreeImport = el('input', {
+    id: 'fichier-groupe',
+    type: 'file',
+    accept: 'application/json,.json',
+    class: 'visuellement-cache',
+    onchange: async (e) => {
+      const fichier = e.target.files?.[0];
+      e.target.value = '';
+      if (fichier) await importer(fichier);
+    },
+  });
+
+  return el(
+    'section',
+    { class: 'carte bloc-fichier-groupe', 'aria-labelledby': 'titre-fichier-groupe' },
+    el('h3', { id: 'titre-fichier-groupe' }, 'Nom et fichier du groupe'),
+    el(
+      'div',
+      { class: 'bloc-fichier-groupe__ligne' },
+      el(
+        'div',
+        { class: 'champ bloc-fichier-groupe__nom' },
+        el('label', { for: 'nom-groupe', class: 'champ__libelle' }, 'Nom du groupe (facultatif)'),
+        champNom,
+      ),
+      el(
+        'div',
+        { class: 'groupe-boutons' },
+        el(
+          'button',
+          {
+            type: 'button',
+            class: 'bouton',
+            onclick: () =>
+              telechargerJson(
+                nomDeFichier('skazy-groupe', groupe.nom),
+                preparerExportGroupe(groupe),
+              ),
+          },
+          icone('download'),
+          'Exporter le groupe',
+        ),
+        el(
+          'label',
+          { for: 'fichier-groupe', class: 'bouton bouton--discret' },
+          icone('upload'),
+          'Importer un groupe…',
+        ),
+        entreeImport,
+      ),
+    ),
+    el(
+      'p',
+      { class: 'champ__aide' },
+      'Le fichier JSON garde le nom, les prénoms, les infos, les absences, la disposition de la salle et les places. Exportez-le pour retrouver ce groupe à la prochaine séance, ou préparez-le à l’avance.',
+    ),
+    messages,
+    erreurs,
+  );
+}
 
 const titre = el('h2', {}, 'Qui est dans la salle ?');
 remplir(
@@ -67,6 +205,7 @@ remplir(
         ),
       ),
     ),
+    creerBlocFichier(),
     el(
       'div',
       { class: 'groupe-colonnes' },

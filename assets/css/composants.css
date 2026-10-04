@@ -2117,12 +2117,14 @@
 
 /* ---------- Blocs d’export et d’import JSON ---------- */
 
+.bloc-fichier-groupe,
 .bloc-fichier-contenus,
 .bloc-consultation,
 .bloc-thematiques {
   margin-top: 1.5rem;
 }
 
+.bloc-fichier-groupe__ligne,
 .bloc-fichier-contenus__ligne {
   display: flex;
   margin-top: 1rem;
@@ -2131,6 +2133,7 @@
   align-items: flex-end;
 }
 
+.bloc-fichier-groupe__nom,
 .bloc-fichier-contenus__titre {
   flex: 1 1 18rem;
   margin: 0;
@@ -2138,6 +2141,10 @@
 
 .bloc-fichier-contenus__ligne .groupe-boutons {
   margin-bottom: 1.6rem;
+}
+
+.bloc-fichier-groupe__ligne + .champ__aide {
+  margin-top: 0.75rem;
 }
 
 /* ---------- Les contenus : thématiques, jeu de données, consultation ---------- */

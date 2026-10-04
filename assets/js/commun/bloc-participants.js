@@ -210,6 +210,8 @@ export function creerBlocParticipants(groupe) {
     ),
   );
   dessiner();
+  // Groupe remplacé ailleurs (fichier importé) : la liste suit
+  groupe.surChangement(dessiner);
   bloc.append(
     el('h3', { id: 'titre-participants' }, 'Participants'),
     formulaire,

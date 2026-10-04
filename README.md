@@ -25,6 +25,26 @@ La page **Le groupe** (bouton sur l'accueil) rassemble les participants :
 - leurs **prénoms**, avec une **info** facultative sur chacun : sa passion, son film ou son dessert préféré… ;
 - un **plan de salle** pour retenir qui est assis où : en U, salle de classe, îlots ou réunion. Le plan prévoit autant de places que de participants (12 au plus), et l'on peut en saisir jusqu'à 30. On place chacun en touchant une place, en faisant glisser son prénom (souris ou doigt), ou d'un coup avec « Placer dans l'ordre » ou « Mélanger ».
 
+Tout le groupe s'**exporte en un fichier JSON** (bouton « Exporter le groupe ») : son nom (facultatif, « Google Sheets, mairie »), les prénoms, les infos, les absences, la disposition de la salle et les places. « Importer un groupe… » le recharge, pour reprendre une formation sur plusieurs jours ou préparer le groupe à l'avance. Le fichier se lit et s'écrit à la main :
+
+```json
+{
+  "format": "skazy-jeux-groupe",
+  "version": 1,
+  "groupe": {
+    "nom": "Google Sheets, mairie",
+    "salle": { "disposition": "ilots", "nombreDePlaces": 8, "parIlot": 4 },
+    "participants": [
+      { "prenom": "Ana", "info": { "theme": "dessert", "texte": "le tiramisu" }, "place": 1 },
+      { "prenom": "Bob", "absent": true },
+      "Chloé"
+    ]
+  }
+}
+```
+
+`disposition` : `u`, `classe`, `ilots` ou `cercle` (réunion). `nombreDePlaces: null` : la salle suit la taille du groupe. `place` : le numéro affiché sur le plan. `theme` de l'info : `passion`, `loisir`, `film`, `musique`, `dessert`, `plat`, `voyage`, `animal` ou `autre` (une info en simple texte prend le thème « Autre »). À l'import, ce qui ne peut pas s'appliquer (doublon, place inexistante ou déjà prise) est signalé.
+
 Une personne absente un jour se marque d'un clic sur la page Groupe : elle reste dans le groupe et sur le plan, mais ne joue pas et la roue ne la tire pas. Pendant une partie, le bouton **Groupe** du bandeau réaffiche le plan, les prénoms et les infos, et la roue indique la place de la personne désignée.
 
 Sur l'écran d'accueil de chaque jeu, on peut :

@@ -1,14 +1,15 @@
 /**
- * Le groupe : les participants, une info par personne, les absences du jour et le plan de
- * salle, partagés par toutes les pages (accueil, page « Le groupe », jeux). Les données passent
- * par participants.js et salle.js ; le plan et les absences sont nettoyés dès que la liste
- * change (personne retirée : place libérée).
+ * Le groupe : son nom, les participants, une info par personne, les absences du jour et le plan
+ * de salle, partagés par toutes les pages (accueil, page « Le groupe », jeux). Les données
+ * passent par participants.js et salle.js ; le plan et les absences sont nettoyés dès que la
+ * liste change (personne retirée : place libérée).
  */
 import * as listeParticipants from './participants.js';
 import * as salle from './salle.js';
 import { el, icone } from './ui.js';
 
 export function creerGroupe() {
+  let nom = listeParticipants.chargerNom();
   let participants = listeParticipants.charger();
   let infos = listeParticipants.chargerInfos();
   let absents = listeParticipants.chargerAbsents(participants);
@@ -19,6 +20,10 @@ export function creerGroupe() {
   };
 
   return {
+    /** Nom du groupe (facultatif), '' sans nom. */
+    get nom() {
+      return nom;
+    },
     get participants() {
       return participants;
     },
@@ -35,6 +40,30 @@ export function creerGroupe() {
     /** Les personnes présentes aujourd'hui, dans l'ordre de la liste. */
     get presents() {
       return listeParticipants.presents(participants, absents);
+    },
+
+    changerNom(nouveau) {
+      nom = listeParticipants.normaliserNom(nouveau);
+      listeParticipants.enregistrerNom(nom);
+      prevenir();
+    },
+
+    /**
+     * Remplace tout le groupe d'un coup (fichier importé) : nom, prénoms, infos, absences et
+     * plan, gardés cohérents avec la nouvelle liste. Les écouteurs ne sont prévenus qu'une fois.
+     */
+    remplacer(nouveau) {
+      nom = listeParticipants.normaliserNom(nouveau.nom);
+      participants = listeParticipants.ajouter([], (nouveau.participants ?? []).join('\n'));
+      infos = listeParticipants.garderInfos(nouveau.infos ?? {}, participants);
+      absents = listeParticipants.garderAbsents(nouveau.absents ?? [], participants);
+      plan = salle.nettoyerPlan(nouveau.plan, participants);
+      listeParticipants.enregistrerNom(nom);
+      listeParticipants.enregistrer(participants);
+      listeParticipants.enregistrerInfos(infos);
+      listeParticipants.enregistrerAbsents(absents);
+      salle.enregistrer(plan);
+      prevenir();
     },
 
     changerParticipants(nouveaux) {
