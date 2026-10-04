@@ -15,6 +15,11 @@ const COULEURS = [
   'rouge',
   'ciel',
   'beige',
+  'caramel',
+  'sapin',
+  'anis',
+  'ardoise',
+  'prune',
 ];
 
 describe('liste des jeux', () => {

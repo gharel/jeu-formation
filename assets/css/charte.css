@@ -50,6 +50,17 @@
   --ciel-clair: #e0f7ff;
   --beige: #f3e6ce;
   --beige-clair: #faf5eb;
+  /* Teintes ajoutées pour les jeux suivants, dans l'esprit de la charte */
+  --caramel: #d9893b;
+  --caramel-clair: #f9e7d3;
+  --sapin: #1d7a52;
+  --sapin-clair: #dcf0e5;
+  --anis: #b7d63e;
+  --anis-clair: #f2f8d8;
+  --ardoise: #4e5d78;
+  --ardoise-clair: #e5e9f1;
+  --prune: #8f2f78;
+  --prune-clair: #f6e2f1;
 
   /* Neutres */
   --texte: #212529;
@@ -130,4 +141,29 @@
   --accent: var(--beige);
   --accent-clair: var(--beige-clair);
   --sur-accent: var(--bleu-nuit);
+}
+[data-couleur='caramel'] {
+  --accent: var(--caramel);
+  --accent-clair: var(--caramel-clair);
+  --sur-accent: var(--bleu-nuit);
+}
+[data-couleur='sapin'] {
+  --accent: var(--sapin);
+  --accent-clair: var(--sapin-clair);
+  --sur-accent: var(--blanc);
+}
+[data-couleur='anis'] {
+  --accent: var(--anis);
+  --accent-clair: var(--anis-clair);
+  --sur-accent: var(--bleu-nuit);
+}
+[data-couleur='ardoise'] {
+  --accent: var(--ardoise);
+  --accent-clair: var(--ardoise-clair);
+  --sur-accent: var(--blanc);
+}
+[data-couleur='prune'] {
+  --accent: var(--prune);
+  --accent-clair: var(--prune-clair);
+  --sur-accent: var(--blanc);
 }
