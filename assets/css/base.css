@@ -73,10 +73,15 @@ img {
   margin-inline-end: 0.4em;
 }
 
+/* Pas d'espace dans un bouton (il a son propre écart), ni pour une icône seule dans sa pastille
+   (icône du jeu, médaille du podium) : l'espace à droite la décalerait vers la gauche */
 .bouton .icone,
 .bouton-bandeau .icone,
 .bouton-icone .icone,
-.puce__retirer .icone {
+.puce__retirer .icone,
+.intro__icone .icone,
+.carte-jeu__icone .icone,
+.podium__medaille .icone {
   margin-inline-end: 0;
 }
 
@@ -258,8 +263,12 @@ img {
     background-color 0.15s ease;
 }
 
-.bouton:hover:not(:disabled) {
-  background: var(--accent-clair);
+/* Seulement avec une souris : sur écran tactile, le survol resterait collé au bouton touché
+   (et au bouton qui apparaît ensuite au même endroit) */
+@media (hover: hover) {
+  .bouton:hover:not(:disabled) {
+    background: var(--accent-clair);
+  }
 }
 
 .bouton:active:not(:disabled) {
@@ -530,6 +539,17 @@ textarea.champ__controle {
   justify-content: flex-end;
   gap: 0.75rem;
   padding: 0 1.25rem 1.25rem;
+}
+
+/* Téléphone tactile (petit écran, ni souris ni clavier) : on retire le plein écran, qui n'apporte
+   rien sur un si petit écran, et les aides sur les touches du clavier (Espace, Entrée…) */
+@media (hover: none) and (pointer: coarse) and (max-width: 600px),
+  (hover: none) and (pointer: coarse) and (max-height: 600px) {
+  .bouton-plein-ecran,
+  .raccourci,
+  .aide-clavier {
+    display: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -24,6 +24,7 @@ import {
   annoncer,
   ecouterClavier,
   basculerPleinEcran,
+  pleinEcranDisponible,
   focaliser,
 } from './ui.js';
 import { choisirPrenoms, confirmer, designerAvecRoue, modifierInfo } from './dialogues.js';
@@ -62,7 +63,7 @@ export function monterJeu(config) {
 
   const estExemple = () => lire(cleContenu) === null;
 
-  // ---------- Bandeau : désigner, son, plein écran ----------
+  // ---------- Bandeau : désigner, son, plein écran (sauf sur téléphone, voir base.css) ----------
   const boutonDesigner = el(
     'button',
     {
@@ -91,19 +92,23 @@ export function monterJeu(config) {
     remplir(boutonSon, icone(actif ? 'volume-high' : 'volume-xmark'), 'Son');
   }
   dessinerBoutonSon(sonActif());
-  const boutonPleinEcran = el(
-    'button',
-    {
-      type: 'button',
-      class: 'bouton-bandeau',
-      'aria-keyshortcuts': 'F',
-      title: 'Plein écran (touche F)',
-      onclick: () => basculerPleinEcran(),
-    },
-    icone('expand'),
-    'Plein écran',
-  );
-  document.getElementById('actions')?.append(boutonDesigner, boutonSon, boutonPleinEcran);
+  const boutonPleinEcran = pleinEcranDisponible()
+    ? el(
+        'button',
+        {
+          type: 'button',
+          class: 'bouton-bandeau bouton-plein-ecran',
+          'aria-keyshortcuts': 'F',
+          title: 'Plein écran (touche F)',
+          onclick: () => basculerPleinEcran(),
+        },
+        icone('expand'),
+        'Plein écran',
+      )
+    : null;
+  document
+    .getElementById('actions')
+    ?.append(...[boutonDesigner, boutonSon, boutonPleinEcran].filter(Boolean));
 
   function mettreAJourDesigner() {
     boutonDesigner.hidden = participants.length < 2;
@@ -855,7 +860,8 @@ export function monterJeu(config) {
             class: 'bouton bouton--principal bouton--grand',
             onclick: () => lancerPartie(),
           },
-          '↻ Rejouer',
+          icone('rotate-right'),
+          'Rejouer',
         ),
         el(
           'button',

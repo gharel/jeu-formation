@@ -188,9 +188,17 @@
   color: var(--sur-accent);
 }
 
+/* Même pastille que sur la page du jeu : l'icône y est toujours centrée */
 .carte-jeu__icone {
-  font-size: 2.6rem;
+  display: grid;
+  place-items: center;
+  width: 4.2rem;
+  height: 4.2rem;
+  font-size: 2.1rem;
   line-height: 1;
+  color: var(--bleu-nuit);
+  background: var(--accent-clair);
+  border-radius: 50%;
 }
 
 .carte-jeu__duree {
@@ -1166,6 +1174,34 @@
   }
   .bandeau {
     flex-wrap: wrap;
+  }
+  /* Les points décoratifs restent dans les coins : sur un écran étroit, ils passaient sous le texte */
+  .points-deco span:nth-child(1) {
+    width: 56px;
+    height: 56px;
+    right: -14px;
+    top: 14px;
+  }
+  .points-deco span:nth-child(2) {
+    width: 28px;
+    height: 28px;
+    right: 8%;
+    top: auto;
+    bottom: 16px;
+  }
+  .points-deco span:nth-child(3) {
+    right: -24px;
+    top: auto;
+    bottom: -24px;
+  }
+  .points-deco span:nth-child(4) {
+    width: 18px;
+    height: 18px;
+    right: 22%;
+    top: 20px;
+  }
+  .points-deco span:nth-child(5) {
+    display: none;
   }
 }
 

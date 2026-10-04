@@ -149,6 +149,11 @@ export function ecouterClavier(actions) {
   return () => document.removeEventListener('keydown', surTouche);
 }
 
+/** Plein écran possible ? Pas sur iPhone, par exemple : le bouton est alors inutile. */
+export function pleinEcranDisponible() {
+  return Boolean(document.fullscreenEnabled);
+}
+
 export async function basculerPleinEcran() {
   try {
     if (document.fullscreenElement) await document.exitFullscreen();
