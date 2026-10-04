@@ -405,6 +405,60 @@
           "idees": "Algorithme, prompt, chatbot, données, apprentissage automatique, apprentissage profond, réseau de neurones, IA générative, modèle de langage, entraînement, hallucination, biais, hypertrucage, robot, reconnaissance vocale, agent, assistant…"
         }
       ]
+    },
+    "memoire-vive": {
+      "elements": [
+        {
+          "carteA": "LLM",
+          "carteB": "Grand modèle de langage",
+          "explication": "LLM, pour « large language model » : c’est le moteur des chatbots comme ChatGPT ou Le Chat, qui a appris à écrire en lisant d’immenses quantités de textes."
+        },
+        {
+          "carteA": "ELIZA",
+          "carteB": "Chatbot pionnier des années 1960",
+          "explication": "Présenté en 1966 par Joseph Weizenbaum, au MIT, ce programme imitait un psychothérapeute en reprenant vos phrases sous forme de questions."
+        },
+        {
+          "carteA": "Saisie prédictive",
+          "carteB": "Propose des mots pendant qu’on tape",
+          "explication": "Le clavier du téléphone devine le mot le plus probable : les chatbots reposent sur la même idée, à une tout autre échelle."
+        },
+        {
+          "carteA": "Filtre antispam",
+          "carteB": "Trie les courriels indésirables",
+          "explication": "Il a appris à repérer les messages douteux grâce à de très nombreux exemples : jetez quand même un œil de temps en temps au dossier des indésirables."
+        },
+        {
+          "carteA": "Recommandation",
+          "carteB": "Vidéos ou achats proposés selon vos goûts",
+          "explication": "YouTube, Netflix ou les sites marchands s’appuient sur l’IA pour vous proposer ce qui ressemble à ce que vous avez déjà regardé ou acheté."
+        },
+        {
+          "carteA": "Reconnaissance vocale",
+          "carteB": "Transforme la parole en texte",
+          "explication": "C’est elle qui permet de dicter un message à son téléphone ou d’afficher les sous-titres automatiques d’une vidéo."
+        },
+        {
+          "carteA": "Synthèse vocale",
+          "carteB": "Lit un texte à voix haute",
+          "explication": "Les voix de synthèse sont de plus en plus naturelles : une aide précieuse pour les personnes malvoyantes, ou pour écouter un article en marchant."
+        },
+        {
+          "carteA": "OCR",
+          "carteB": "Extrait le texte d’une image",
+          "explication": "OCR, pour « optical character recognition », ou reconnaissance optique de caractères : photographiez une page, et son texte devient modifiable."
+        },
+        {
+          "carteA": "Anonymiser",
+          "carteB": "Effacer ce qui permet d’identifier quelqu’un",
+          "explication": "Avant de confier un document à une IA, remplacez les noms, adresses et numéros par des mentions neutres : elle pourra vous aider sans savoir de qui il s’agit."
+        },
+        {
+          "carteA": "Centre de données",
+          "carteB": "Bâtiment rempli de serveurs",
+          "explication": "C’est là, et non sur votre ordinateur, que tournent les chatbots : ces bâtiments consomment beaucoup d’électricité, et souvent beaucoup d’eau pour se refroidir."
+        }
+      ]
     }
   }
 }

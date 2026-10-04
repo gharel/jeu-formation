@@ -105,6 +105,16 @@ export const JEUX = [
     duree: '5 à 10 min',
     preparation: 'Des consignes « Citez… »',
   },
+  {
+    slug: 'memoire-vive',
+    titre: 'Mémoire vive',
+    icone: 'memory',
+    couleur: 'sapin',
+    accroche:
+      'Retournez deux cartes : « Ctrl + Z » et « Annuler » ? C’est une paire ! Qui a la meilleure mémoire ?',
+    duree: '5 à 10 min',
+    preparation: 'Des paires à associer',
+  },
 ];
 
 export function trouverJeu(slug) {

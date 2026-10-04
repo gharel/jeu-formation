@@ -404,6 +404,60 @@
           "idees": "L’ouvrir sur son téléphone, le modifier, le partager, le renommer, le déplacer, le copier, le télécharger, le supprimer, le restaurer depuis la corbeille, retrouver une ancienne version, le garder hors connexion, le modifier à plusieurs, voir qui y a accès…"
         }
       ]
+    },
+    "memoire-vive": {
+      "elements": [
+        {
+          "carteA": "Ctrl + Entrée",
+          "carteB": "Saut de page dans Word",
+          "explication": "La suite du texte passe en haut de la page suivante : plus besoin de taper Entrée à répétition."
+        },
+        {
+          "carteA": "F7",
+          "carteB": "Vérifier l’orthographe",
+          "explication": "La touche F7 marche dans Word, Excel et PowerPoint. Sur certains ordinateurs portables, il faut aussi appuyer sur la touche Fn."
+        },
+        {
+          "carteA": "F12",
+          "carteB": "Enregistrer sous",
+          "explication": "Pratique pour faire une copie d’un fichier sous un autre nom ou à un autre endroit, sans toucher à l’original."
+        },
+        {
+          "carteA": "Alt + Entrée",
+          "carteB": "Retour à la ligne dans une cellule",
+          "explication": "Dans Excel, la touche Entrée seule valide la cellule et descend d’une ligne : Alt + Entrée ajoute une ligne à l’intérieur."
+        },
+        {
+          "carteA": "#####",
+          "carteB": "Colonne trop étroite",
+          "explication": "Excel affiche des dièses quand un nombre ou une date ne tient pas dans la cellule : il suffit d’élargir la colonne."
+        },
+        {
+          "carteA": "Échap",
+          "carteB": "Quitter le diaporama",
+          "explication": "Dans PowerPoint, Échap arrête la projection. Pour la reprendre à la diapositive affichée : Maj + F5."
+        },
+        {
+          "carteA": "Trombone",
+          "carteB": "Pièce jointe",
+          "explication": "Dans Outlook, un trombone à côté d’un message signale qu’un fichier y est joint."
+        },
+        {
+          "carteA": "Drapeau rouge",
+          "carteB": "Message à suivre",
+          "explication": "Dans Outlook, cet indicateur rappelle qu’un message attend encore une réponse ou une action."
+        },
+        {
+          "carteA": "Pastille verte",
+          "carteB": "Disponible",
+          "explication": "Dans Teams, la couleur près de la photo indique aux collègues si l’on est disponible, occupé ou absent."
+        },
+        {
+          "carteA": "Nuage bleu",
+          "carteB": "Fichier uniquement en ligne",
+          "explication": "Dans l’Explorateur de fichiers, ce nuage signale un fichier OneDrive qui n’est pas sur l’ordinateur : il faut Internet pour l’ouvrir."
+        }
+      ]
     }
   }
 }

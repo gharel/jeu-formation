@@ -397,6 +397,60 @@
           "idees": "Comptable, secrétaire, assistant de direction, gestionnaire de paie, commercial, enseignant, chef de projet, chef de chantier, logisticien, magasinier, banquier, chercheur, ingénieur, responsable des ressources humaines, trésorier d’association, agent immobilier…"
         }
       ]
+    },
+    "memoire-vive": {
+      "elements": [
+        {
+          "carteA": "Ctrl + Maj + V",
+          "carteB": "Coller les valeurs seulement",
+          "explication": "Seul le résultat est collé, sans la formule ni la mise en forme : il restera fixe, même si les cellules de départ changent."
+        },
+        {
+          "carteA": "$A$1",
+          "carteB": "Référence absolue",
+          "explication": "Les $ bloquent la colonne et la ligne : recopiée ailleurs, la formule vise toujours A1. Pendant la saisie, la touche F4 les ajoute pour vous."
+        },
+        {
+          "carteA": "=AUJOURDHUI()",
+          "carteB": "La date du jour",
+          "explication": "Ses parenthèses restent vides : elle n’a besoin d’aucune information. Et demain, elle affichera toute seule la date de demain."
+        },
+        {
+          "carteA": "Ctrl + D",
+          "carteB": "Recopier vers le bas",
+          "explication": "D comme « down », vers le bas en anglais. Sélectionnez la cellule modèle et celles du dessous, puis Ctrl + D : tout se remplit d’un coup."
+        },
+        {
+          "carteA": "NBVAL",
+          "carteB": "Compte les cellules non vides",
+          "explication": "Contrairement à NB, qui ne compte que les nombres, NBVAL compte aussi les textes : pratique pour savoir combien de noms contient une liste."
+        },
+        {
+          "carteA": "#N/A",
+          "carteB": "Valeur introuvable",
+          "explication": "RECHERCHEV l’affiche quand elle ne trouve pas la valeur cherchée : vérifiez l’orthographe et les espaces en trop."
+        },
+        {
+          "carteA": "Ctrl + H",
+          "carteB": "Rechercher et remplacer",
+          "explication": "Pratique pour corriger d’un coup un nom mal écrit dans tout le tableau, et même dans toutes les feuilles du fichier."
+        },
+        {
+          "carteA": "MAJUSCULE",
+          "carteB": "Met un texte en capitales",
+          "explication": "=MAJUSCULE(A2) transforme « Dupont » en « DUPONT ». Sa cousine MINUSCULE fait l’inverse."
+        },
+        {
+          "carteA": "=ARRONDI(A1;2)",
+          "carteB": "Garde deux chiffres après la virgule",
+          "explication": "Avec 3,14159 en A1, on obtient 3,14. Avec 0 à la place du 2, le résultat devient un nombre entier : 3."
+        },
+        {
+          "carteA": "Protéger une plage",
+          "carteB": "Empêcher les autres de modifier des cellules",
+          "explication": "Seules les personnes que vous choisissez pourront y toucher : idéal pour mettre à l’abri les formules d’un tableau partagé."
+        }
+      ]
     }
   }
 }

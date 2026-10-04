@@ -338,4 +338,23 @@ export const sons = {
       note(220, { duree: 0.8, vers: 55, forme: 'sawtooth', volume: 0.14 });
     },
   },
+
+  // ---------- Mémoire vive : les cartes qu'on retourne ----------
+  memoire: {
+    /** Une carte se retourne : un léger froissement. */
+    retourner() {
+      bruit({ duree: 0.05, volume: 0.08, filtre: 2600 });
+      note(N.mi5, { debut: 0.02, duree: 0.06, volume: 0.05 });
+    },
+    /** Une paire : deux cloches qui s'accordent. */
+    paire() {
+      cloche(N.do5, { volume: 0.12, duree: 0.6 });
+      cloche(N.sol5, { debut: 0.12, volume: 0.12, duree: 0.7 });
+    },
+    /** Pas de paire : deux notes douces qui descendent. */
+    ratee() {
+      note(N.mi4, { duree: 0.14, forme: 'triangle', volume: 0.12 });
+      note(N.do4, { debut: 0.14, duree: 0.3, forme: 'triangle', volume: 0.12 });
+    },
+  },
 };

@@ -391,6 +391,60 @@
           "idees": "L’orthographe, le titre du document, le rôle de chaque personne (lecteur, commentateur, éditeur), les noms et les dates, la mise en page, les liens, les images, les numéros de page, la table des matières à jour, les commentaires résolus, les suggestions acceptées ou refusées, les informations personnelles…"
         }
       ]
+    },
+    "memoire-vive": {
+      "elements": [
+        {
+          "carteA": "Ctrl + B",
+          "carteB": "Mettre en gras",
+          "explication": "B comme « bold », gras en anglais. Un second Ctrl + B retire le gras."
+        },
+        {
+          "carteA": "Ctrl + U",
+          "carteB": "Souligner",
+          "explication": "U comme « underline », souligner en anglais. Avec modération : un texte souligné ressemble à un lien."
+        },
+        {
+          "carteA": "Alt + Maj + 5",
+          "carteB": "Barrer le texte",
+          "explication": "Pratique pour rayer une idée abandonnée sans l’effacer : elle reste lisible."
+        },
+        {
+          "carteA": "Ctrl + Maj + 8",
+          "carteB": "Liste à puces",
+          "explication": "Autre astuce : en début de ligne, un astérisque suivi d’une espace lance aussi une liste à puces."
+        },
+        {
+          "carteA": "Rouleau de peinture",
+          "carteB": "Reproduire la mise en forme",
+          "explication": "Sélectionnez le texte modèle, cliquez sur le rouleau, puis sélectionnez le texte à transformer. Un double-clic sur le rouleau permet de l’appliquer plusieurs fois."
+        },
+        {
+          "carteA": "Filigrane",
+          "carteB": "Texte ou image en fond de chaque page",
+          "explication": "Menu Insertion, puis Filigrane : idéal pour marquer « Brouillon » ou « Confidentiel » sur toutes les pages."
+        },
+        {
+          "carteA": "Caractères spéciaux",
+          "carteB": "Insérer €, ½ ou une flèche",
+          "explication": "Menu Insertion : on peut même dessiner le symbole cherché à la souris, et Google Docs propose ceux qui lui ressemblent."
+        },
+        {
+          "carteA": "Commentateur",
+          "carteB": "Peut commenter, mais pas modifier",
+          "explication": "Le rôle idéal pour une relecture : ses propositions de changement arrivent en mode Suggestion."
+        },
+        {
+          "carteA": ".docx",
+          "carteB": "Format des fichiers Word",
+          "explication": "Fichier, puis Télécharger, puis Microsoft Word : pour un correspondant qui n’utilise pas Google Docs."
+        },
+        {
+          "carteA": "Traduire le document",
+          "carteB": "Une copie dans une autre langue",
+          "explication": "Dans le menu Outils : la traduction arrive dans un nouveau document, et l’original reste intact."
+        }
+      ]
     }
   }
 }

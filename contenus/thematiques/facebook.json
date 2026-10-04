@@ -406,6 +406,60 @@
           "idees": "Un faux concours, un faux gain à la loterie, un ami piraté qui demande de l’argent, un faux vendeur sur le Marketplace, un faux acheteur qui envoie un lien de paiement, un faux message de Facebook qui menace de fermer votre compte, un faux placement en cryptomonnaie, une arnaque aux sentiments, une fausse offre d’emploi, un profil cloné, une vidéo piégée…"
         }
       ]
+    },
+    "memoire-vive": {
+      "elements": [
+        {
+          "carteA": "J’aime",
+          "carteB": "Pouce levé",
+          "explication": "C’est la façon la plus simple de dire à un ami que sa publication vous plaît, sans rien écrire."
+        },
+        {
+          "carteA": "Identifier",
+          "carteB": "Relier une photo au profil d’un ami",
+          "explication": "La personne reçoit une notification et peut retirer l’identification. Demandez-lui son accord avant de publier sa photo."
+        },
+        {
+          "carteA": "Public",
+          "carteB": "Visible par tout le monde, même sans compte",
+          "explication": "Son icône est un petit globe. Avant de publier, vérifiez toujours qui pourra voir votre publication."
+        },
+        {
+          "carteA": "Moi uniquement",
+          "carteB": "Caché à tout le monde, sauf à vous",
+          "explication": "Son icône est un cadenas. Vous pouvez changer l’audience d’une publication à tout moment, même après l’avoir publiée."
+        },
+        {
+          "carteA": "Ne plus suivre",
+          "carteB": "Rester ami sans voir ses publications",
+          "explication": "Personne n’est prévenu, et vous pouvez suivre à nouveau cette personne quand vous le souhaitez."
+        },
+        {
+          "carteA": "Bloquer",
+          "carteB": "Empêcher quelqu’un de vous contacter",
+          "explication": "La personne ne peut plus voir vos publications, vous identifier ni vous écrire. Vous pourrez la débloquer plus tard si vous changez d’avis."
+        },
+        {
+          "carteA": "Mettre en sourdine",
+          "carteB": "Couper les notifications d’une conversation",
+          "explication": "Les messages arrivent toujours, mais sans sonnerie ni alerte : pratique pour une discussion de groupe très bavarde."
+        },
+        {
+          "carteA": "Sponsorisé",
+          "carteB": "Publicité payée par un annonceur",
+          "explication": "Cette mention signale une publicité, et non la publication d’un ami. Méfiez-vous des promotions trop belles pour être vraies."
+        },
+        {
+          "carteA": "Profil cloné",
+          "carteB": "Copie du profil d’un de vos amis",
+          "explication": "Un escroc reprend son nom et ses photos pour piéger ses proches. Une nouvelle invitation d’un ami déjà dans votre liste ? Méfiance !"
+        },
+        {
+          "carteA": "Authentification à deux facteurs",
+          "carteB": "Un code en plus du mot de passe",
+          "explication": "Même s’il a volé votre mot de passe, un pirate ne peut pas entrer sans ce code, reçu par SMS ou dans une application."
+        }
+      ]
     }
   }
 }

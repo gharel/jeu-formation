@@ -204,6 +204,9 @@ describe('sons', () => {
       () => sons.verite.faux(),
       () => sons.ordre.carte(),
       () => sons.patate.passe(),
+      () => sons.memoire.retourner(),
+      () => sons.memoire.paire(),
+      () => sons.memoire.ratee(),
     ];
     for (const appel of appels) expect(appel).not.toThrow();
     expect(journal.notes.length).toBeGreaterThan(40);
