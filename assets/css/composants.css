@@ -290,6 +290,11 @@
   margin-bottom: 1rem;
 }
 
+/* Boutons « Préparer le contenu » : un peu d'air sous le texte d'aide */
+.bloc-contenu .groupe-boutons {
+  margin-top: 1rem;
+}
+
 .bloc-participants__compte {
   font-weight: 700;
   color: var(--texte-doux);
