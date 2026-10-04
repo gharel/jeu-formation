@@ -3,14 +3,28 @@
  * avec du contenu saisi ou importé.
  */
 
-const ESPACE_FINE = String.fromCharCode(0x202f);
+const ESPACE_INSECABLE = '\u00a0';
 
-/** Typographie française : espace fine insécable avant ! ? ; : et dans les guillemets. */
+/**
+ * Typographie française : espace insécable avant ! ? ; : » et après «, pour qu'un retour
+ * à la ligne ne laisse jamais la ponctuation seule en début de ligne.
+ * - Une espace ordinaire (ou fine) devant la ponctuation devient insécable.
+ * - Une espace qui manque est ajoutée (« Prêts? » → « Prêts ? »), seulement en fin de mot :
+ *   la ponctuation doit être suivie d'une espace ou finir le texte. Une adresse ou une heure
+ *   (https://, page?id=2, 10:30) reste intacte.
+ * L'espace fine (U+202F) n'est pas utilisée : trop étroite dans la police Georama, elle ne se
+ * voyait pas.
+ */
 export function typographier(texte) {
   return String(texte)
-    .replace(/ ([!?;:»])/g, `${ESPACE_FINE}$1`)
-    .replace(/« /g, `«${ESPACE_FINE}`);
+    .replace(/[ \u202f]+([!?;:»])/g, `${ESPACE_INSECABLE}$1`)
+    .replace(/([\p{L}\p{N}.…»])([!?;:]+)(?=[\s)»]|$)/gu, `$1${ESPACE_INSECABLE}$2`)
+    .replace(/«[ \u202f]*(?=[^\s\u00a0])/g, `«${ESPACE_INSECABLE}`)
+    .replace(/([^\s\u00a0«])»/g, `$1${ESPACE_INSECABLE}»`);
 }
+
+/** Attributs dont le texte s'affiche (placeholder, info-bulle) ou se lit : même typographie. */
+const ATTRIBUTS_TEXTE = new Set(['placeholder', 'title', 'aria-label']);
 
 function ajouterEnfants(noeud, enfants) {
   for (const enfant of enfants.flat(Infinity)) {
@@ -34,6 +48,7 @@ export function el(balise, attributs = {}, ...enfants) {
     } else if (cle === 'value') noeud.value = valeur;
     else if (cle === 'checked') noeud.checked = Boolean(valeur);
     else if (valeur === true) noeud.setAttribute(cle, '');
+    else if (ATTRIBUTS_TEXTE.has(cle)) noeud.setAttribute(cle, typographier(valeur));
     else noeud.setAttribute(cle, String(valeur));
   }
   ajouterEnfants(noeud, enfants);
@@ -65,7 +80,7 @@ export function annoncer(texte) {
   if (!zone) return;
   zone.textContent = '';
   setTimeout(() => {
-    zone.textContent = texte;
+    zone.textContent = typographier(texte);
   }, 30);
 }
 

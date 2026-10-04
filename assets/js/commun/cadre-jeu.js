@@ -278,9 +278,12 @@ export function monterJeu(config) {
           ),
         ),
       );
-      compteur.textContent = participants.length
-        ? `${participants.length} participant${participants.length > 1 ? 's' : ''}`
-        : 'Aucun participant : on peut jouer sans prénoms, mais sans classement.';
+      remplir(
+        compteur,
+        participants.length
+          ? `${participants.length} participant${participants.length > 1 ? 's' : ''}`
+          : 'Aucun participant : on peut jouer sans prénoms, mais sans classement.',
+      );
       boutonRoue.disabled = participants.length < 2;
       boutonEffacer.hidden = participants.length === 0;
     }

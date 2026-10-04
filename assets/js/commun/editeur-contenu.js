@@ -84,9 +84,10 @@ function construireChamp(champ, lire, ecrire, outils) {
         onblur: (e) => {
           const invalide = e.target.value.trim() !== '' && lireNombre(e.target.value) === null;
           erreur.hidden = !invalide;
-          erreur.textContent = invalide
-            ? 'Ce n’est pas un nombre reconnu (exemple : 1 500 ou 2,5).'
-            : '';
+          remplir(
+            erreur,
+            invalide ? 'Ce n’est pas un nombre reconnu (exemple : 1 500 ou 2,5).' : '',
+          );
           e.target.setAttribute('aria-invalid', String(invalide));
         },
       });
@@ -236,7 +237,7 @@ function construireImage(champ, lire, ecrire, outils, avecAide) {
       ecrire({ id, focus: { x: 0.5, y: 0.5 } });
       dessiner();
     } catch (erreur) {
-      message.textContent = erreur.message;
+      remplir(message, erreur.message);
     }
   }
 

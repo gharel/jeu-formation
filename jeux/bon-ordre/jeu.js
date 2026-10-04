@@ -232,7 +232,7 @@ function demarrer(ctx) {
         libres.map((c) => c.lettre),
       );
       if (lu.erreur) {
-        erreur.textContent = lu.erreur;
+        remplir(erreur, lu.erreur);
         animer(saisie, 'secousse');
         return;
       }

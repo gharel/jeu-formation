@@ -274,7 +274,7 @@ function demarrer(ctx) {
     const mot = proposition();
     const probleme = verifierProposition(secret, mot);
     if (probleme) {
-      message.textContent = probleme;
+      remplir(message, probleme);
       ctx.sons.erreur();
       animer(grille.querySelector('.motus-ligne--active') ?? grille, 'secousse');
       saisie.focus();

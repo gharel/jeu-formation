@@ -79,14 +79,14 @@ test('on vide la liste pour saisir son contenu, les exemples restent en placehol
   const mot = page.getByLabel('Mot à deviner', { exact: true });
   await expect(mot).toHaveCount(1);
   await expect(mot).toHaveValue('');
-  await expect(mot).toHaveAttribute('placeholder', 'Ex. : souris');
+  await expect(mot).toHaveAttribute('placeholder', 'Ex.\u00a0: souris');
   await expect(page.getByLabel('Indice 1', { exact: true })).toHaveAttribute(
     'placeholder',
-    'Ex. : rongeur',
+    'Ex.\u00a0: rongeur',
   );
   await expect(page.getByLabel('Indice 3', { exact: true })).toHaveAttribute(
     'placeholder',
-    'Ex. : clic',
+    'Ex.\u00a0: clic',
   );
 
   await mot.fill('Écran');

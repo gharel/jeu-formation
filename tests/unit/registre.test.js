@@ -51,10 +51,12 @@ describe('liste des jeux', () => {
 
     it('déclare le bon jeu, la bonne couleur et le bon titre dans sa page', () => {
       const html = readFileSync(`${dossier}index.html`, 'utf8');
+      // Dans la page, une espace insécable précède ? et ! (« Qui suis-je&nbsp;? »)
+      const titre = jeu.titre.replace(/ ([!?;:])/g, '&nbsp;$1');
       expect(html).toContain(`data-jeu="${jeu.slug}"`);
       expect(html).toContain(`data-couleur="${jeu.couleur}"`);
-      expect(html).toContain(`<h1 class="bandeau__titre">${jeu.titre}</h1>`);
-      expect(html).toContain(`<title>${jeu.titre} · Mini-jeux Skazy Formation</title>`);
+      expect(html).toContain(`<h1 class="bandeau__titre">${titre}</h1>`);
+      expect(html).toContain(`<title>${titre} · Mini-jeux Skazy Formation</title>`);
     });
 
     it('monte le jeu avec le bon slug', () => {

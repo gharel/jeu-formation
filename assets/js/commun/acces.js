@@ -9,7 +9,7 @@
  * les fichiers restent téléchargeables par qui connaît leur adresse.
  */
 import { lire, ecrire, effacer } from './stockage.js';
-import { el, icone } from './ui.js';
+import { el, icone, remplir } from './ui.js';
 
 const SEL = '284ebb77d9526d1b91143afc658a187b';
 /** Empreinte, pas le mot de passe : la publier ne le révèle pas (sert aussi aux tests e2e). */
@@ -126,8 +126,10 @@ export function exigerAcces() {
       try {
         correct = await motDePasseCorrect(champ.value);
       } catch {
-        message.textContent =
-          'Vérification impossible ici : ouvrez le site en https:// (ou sur localhost).';
+        remplir(
+          message,
+          'Vérification impossible ici : ouvrez le site en https:// (ou sur localhost).',
+        );
         bouton.disabled = false;
         return;
       }

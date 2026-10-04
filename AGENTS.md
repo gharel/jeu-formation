@@ -69,7 +69,7 @@ outils/dev.js                  Lance serve sur le port 4173 (refuse un port occu
 outils/empreinte-mot-de-passe.js  Saisie masquée d'un nouveau mot de passe → sel + empreinte pour acces.js
 tests/unit/                    Vitest (jsdom) : logique des jeux et modules communs
 tests/e2e/                     Playwright : parcours complets, accessibilité, aucune erreur console
-  outils.js                    ouvrirJeu, lancerPartie, attribuerPoints, pointsDe, verifierAccessibilite…
+  outils.js                    ouvrirJeu, lancerPartie, attribuerPoints, pointsDe, verifierAccessibilite (axe + typographie)…
   accueil.spec.js              Pour chaque jeu de jeux.js : lien, accueil, prénoms, éditeur masqué, axe
   contenu.spec.js              Export / import JSON, contenu d'exemple
 ```
@@ -97,7 +97,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
 - **Contraste** : pas de texte blanc sur le vert, le jaune, le rose, l'orange ou le bleu clair. Sur ces fonds, le texte est en bleu nuit. Seuls `bleu-numerique` et `rouge` portent du texte blanc. Utiliser `var(--sur-accent)`.
 - **Formes** : boutons en pilule (`--rayon-pilule`), cartes arrondies à 15px (`--rayon`), ombres douces.
 - **Logo** : `assets/img/logo-skazy-formation-blanc.svg` sur fond sombre, `logo-skazy-formation.svg` sur fond clair. Ne pas le déformer ni le recolorer.
-- **Ton** : motivant, simple, en vouvoiement pour l'animateur. Le typographe ajoute automatiquement les espaces fines avant `! ? ; :`.
+- **Ton** : motivant, simple, en vouvoiement pour l'animateur. `el()` et `remplir()` ajoutent automatiquement une espace insécable avant `! ? ; :` et dans les guillemets « » (aussi dans `placeholder`, `title`, `aria-label`) : pas de `textContent` pour un texte qui peut contenir cette ponctuation. Dans le HTML, écrire `&nbsp;?`. L'espace fine (U+202F) ne se voit pas dans Georama : ne pas l'utiliser. `verifierAccessibilite` contrôle la typographie de chaque écran testé.
 - **Projection** : textes lisibles de loin. Vérifier en 1280×720 (vidéoprojecteur courant) et en 1920×1080.
 
 ## Ajouter un mini-jeu
