@@ -7,18 +7,23 @@ Chaque jeu dure de 5 à 15 minutes.
 
 ## Les jeux
 
-| Jeu               | Principe                                                                           | À préparer                             |
-| ----------------- | ---------------------------------------------------------------------------------- | -------------------------------------- |
-| Motus numérique   | Deviner 5 mots en 6 essais, lettres colorées                                       | 5 mots (+ définitions)                 |
-| Instant défi      | La roue tire un défi éclair (« 30 secondes pour trouver… »), chrono                | Les fins des défis                     |
-| Le Juste Chiffre  | « C'est plus ! », « C'est moins ! », minuteur réglable (30 s)                      | Questions à réponse chiffrée           |
-| Debout ou assis ? | Vrai = debout, faux = assis (ou main levée), mode survie                           | Affirmations vrai/faux                 |
-| Le Bon Ordre      | Remettre dans l'ordre les étapes d'une procédure, 3 essais                         | Procédures de 3 à 7 étapes             |
-| Qui suis-je ?     | Indices progressifs, points qui fondent 5 4 3 2 1, Stop                            | Mystères + 3 à 5 indices               |
-| Zoom mystère      | Capture très zoomée qui se dévoile, 5 4 3 2 1, Stop                                | Captures collées (Ctrl+V) ou importées |
-| Duel buzzer       | Deux joueurs, touches A et L ou buzzers à l'écran (tactile), le plus rapide répond | Questions + réponses                   |
-| Pyramide          | Par deux, faire deviner un mot en 1, 2, 3 ou 4 mots d'indice : 4, 3, 2 ou 1 point  | Une liste de mots                      |
-| Batterie faible   | Proposer des lettres ; chaque erreur vide la batterie                              | Mots ou courtes expressions            |
+| Jeu               | Principe                                                                                          | À préparer                             |
+| ----------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| Motus numérique   | Deviner 5 mots en 6 essais, lettres colorées                                                      | 5 mots (+ définitions)                 |
+| Instant défi      | La roue tire un défi éclair (« 30 secondes pour trouver… »), chrono                               | Les fins des défis                     |
+| Le Juste Chiffre  | « C'est plus ! », « C'est moins ! », minuteur réglable (30 s)                                     | Questions à réponse chiffrée           |
+| Debout ou assis ? | Vrai = debout, faux = assis (ou main levée), mode survie                                          | Affirmations vrai/faux                 |
+| Le Bon Ordre      | Remettre dans l'ordre les étapes d'une procédure, 3 essais                                        | Procédures de 3 à 7 étapes             |
+| Qui suis-je ?     | Indices progressifs, points qui fondent 5 4 3 2 1, Stop                                           | Mystères + 3 à 5 indices               |
+| Zoom mystère      | Capture très zoomée qui se dévoile, 5 4 3 2 1, Stop                                               | Captures collées (Ctrl+V) ou importées |
+| Duel buzzer       | Deux joueurs, touches A et L ou buzzers à l'écran (tactile), le plus rapide répond                | Questions + réponses                   |
+| Pyramide          | Par deux, faire deviner un mot en 1, 2, 3 ou 4 mots d'indice : 4, 3, 2 ou 1 point                 | Une liste de mots                      |
+| Batterie faible   | Proposer des lettres ; chaque erreur vide la batterie                                             | Mots ou courtes expressions            |
+| Patate chaude     | Une consigne « Citez… », une patate qui brûle au bout d'un temps caché, on la passe               | Consignes (+ idées de réponses)        |
+| Mémoire vive      | Retrouver les paires (« Ctrl + Z » et « Annuler ») ; de 8 à 24 cartes au choix                    | Paires de cartes (+ explication)       |
+| Bingo             | Chacun remplit sa grille ; le jeu tire les mots : « Ligne ! », puis « Bingo ! »                   | Mots (définitions facultatives)        |
+| Le Coffre-fort    | Des énigmes pour ouvrir les serrures avant la fin du chrono ; erreurs et indices coûtent du temps | Énigmes, réponses, indices             |
+| Top 5             | Trouver les 5 réponses cachées, de la plus attendue (5 points) à la moins (1 point)               | Questions « Citez… » + 5 réponses      |
 
 La page **Le groupe** (bouton sur l'accueil) rassemble les participants :
 
@@ -55,13 +60,13 @@ Sur l'écran d'accueil de chaque jeu, on peut :
 
 La page **Les contenus** (bouton sur l'accueil, ou « Charger une thématique » dans chaque jeu) rassemble les questions de tous les jeux :
 
-- **5 thématiques prêtes à jouer**, chargées en un clic dans les 9 jeux sans image (Zoom mystère garde ses captures) : **Initiation à l'IA**, **Google Docs**, **Google Sheets**, **Microsoft 365** et **Facebook**. Les réglages de l'animateur (durées, points…) sont conservés. « Revenir aux exemples » remet le contenu livré avec les jeux ;
-- **un jeu de données JSON** : « Exporter tous les contenus » écrit les questions des 10 jeux dans un seul fichier (avec un titre), « Importer un jeu de données… » le recharge. L'export d'un seul jeu s'importe aussi ici, et un jeu de données s'importe aussi dans un seul jeu (il en prend sa part) ;
+- **5 thématiques prêtes à jouer**, chargées en un clic dans les 14 jeux sans image (Zoom mystère garde ses captures) : **Initiation à l'IA**, **Google Docs**, **Google Sheets**, **Microsoft 365** et **Facebook**. Les réglages de l'animateur (durées, points…) sont conservés. « Revenir aux exemples » remet le contenu livré avec les jeux ;
+- **un jeu de données JSON** : « Exporter tous les contenus » écrit les questions des 15 jeux dans un seul fichier (avec un titre), « Importer un jeu de données… » le recharge. L'export d'un seul jeu s'importe aussi ici, et un jeu de données s'importe aussi dans un seul jeu (il en prend sa part) ;
 - **la consultation** des questions de chaque jeu, réponses floutées tant qu'on ne les affiche pas, et l'aperçu d'une thématique avant de la charger.
 
 Dans chaque jeu, une étiquette indique la thématique chargée (« Google Sheets ») ; elle disparaît dès que l'animateur retouche et enregistre le contenu. Les thématiques sont des fichiers JSON dans `contenus/thematiques/` : pour en ajouter une, voir [AGENTS.md](AGENTS.md).
 
-La touche `F` passe en plein écran (bouton masqué sur téléphone, où il ne sert à rien). Chaque jeu a son habillage sonore façon jeu télévisé : notes des lettres de Motus, cloche des étages de Pyramide, gong du « Stop », buzzers du duel, cliquetis de la roue, fanfares et applaudissements. Ce sont des sons originaux générés par le navigateur, sans fichier ni droits d'auteur. Le bouton Son du bandeau les coupe.
+La touche `F` passe en plein écran (bouton masqué sur téléphone, où il ne sert à rien). Chaque jeu a son illustration, dessinée aux couleurs de la charte, qui réagit à la partie : la flèche se plante dans la cible, le téléphone transpire quand la batterie faiblit, la porte du coffre s'ouvre… Chaque jeu a aussi son habillage sonore façon jeu télévisé : notes des lettres de Motus, cloche des étages de Pyramide, gong du « Stop », buzzers du duel, tic-tac de la patate, cliquetis des serrures, cliquetis de la roue, fanfares et applaudissements. Ce sont des sons originaux générés par le navigateur, sans fichier ni droits d'auteur. Le bouton Son du bandeau les coupe.
 Les icônes viennent de Font Awesome Free, hébergé dans le projet (fonctionne hors ligne).
 
 ## Utiliser les jeux

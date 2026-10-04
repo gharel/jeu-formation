@@ -42,9 +42,9 @@ index.html                     Accueil : une carte par jeu (générée depuis as
 groupe/index.html              Page « Le groupe » : nom, prénoms, infos, plan de salle, fichier JSON (assets/js/groupe.js)
 contenus/index.html            Page « Les contenus » : thématiques, jeu de données JSON, consultation (assets/js/contenus.js)
 contenus/thematiques/*.json    Une thématique prête à jouer par fichier (jeu de données)
-assets/css/charte.css          Couleurs, police Georama, couleur de chaque jeu (data-couleur)
+assets/css/charte.css          Couleurs (et teintes ajoutées pour les jeux), police Georama, couleur de chaque jeu (data-couleur)
 assets/css/base.css            Mise en page, bandeau, boutons, formulaires, dialogues
-assets/css/composants.css      Accueil, participants, éditeur, roue, chrono, paliers, podium
+assets/css/composants.css      Accueil, participants, éditeur, roue, chrono, paliers, podium, illustrations (.ill-*)
 assets/js/jeux.js              Liste des jeux (slug, titre, icône, couleur, accroche, durée)
 assets/js/thematiques.js       Liste des thématiques (slug, titre, icône) ; leur fichier est dans contenus/thematiques/
 assets/js/commun/
@@ -61,13 +61,15 @@ assets/js/commun/
   salle.js                     Plan de salle, fonctions pures : dispositions (U, classe, îlots, réunion), placement
   plan-salle.js                Plan affiché : places-boutons, toucher, glisser-déposer (pointer) ; fenêtre « Groupe »
   roue.js · dialogues.js       Roue aléatoire (tirage équitable) et fenêtres de dialogue
-  chrono.js                    Compte à rebours ; creerMinuteur() = chrono affiché + bips de fin
+  chrono.js                    Compte à rebours (ajuster() : pénalité ou temps rendu) ; creerMinuteur() = chrono affiché + bips de fin
   paliers.js                   Chiffres 5 4 3 2 1 qui s'éteignent (logique + affichage)
   manche-paliers.js            Manche Démarrer / Stop / Bonne / Reprendre (Qui suis-je ?, Zoom mystère)
   scores.js · points.js        Points de la partie ; bouton « Attribuer le point »
   acces.js                     Mot de passe d'accès : empreinte PBKDF2 seule, écran de saisie, Verrouiller
   stockage.js · images.js      Seuls accès à localStorage et à IndexedDB
   hasard.js · nombres.js       Hasard reproductible (?graine=) ; nombres au format français
+  reponses.js                  Réponse tapée comparée avec tolérance : accents, article, pluriel, fautes de frappe, variantes « / »
+  illustration.js              Illustration SVG de chaque jeu : svg(), ombrer(), etoile(), creerIllustration() (états, réactions)
   sons.js                      Habillage sonore par jeu (Web Audio : notes, bruit filtré, fanfares)
   ui.js                        el(), icone(), raccourcis clavier, typographie
 jeux/<slug>/
@@ -75,7 +77,8 @@ jeux/<slug>/
   jeu.js                       Affichage et déroulé : appelle monterJeu({ slug, schema, exemple, regles, demarrer })
   logique.js                   Règles du jeu, en fonctions pures, sans accès à la page
   exemple.js                   Schéma du contenu + contenu d'exemple prêt à jouer (+ `transfert` : import/export des images)
-  jeu.css                      Styles propres au jeu
+  jeu.css                      Styles propres au jeu (y compris les parties de son illustration)
+  illustration.js              L'illustration du jeu, dessinée en SVG (une patate, un coffre, une cible…)
 jeux/zoom-mystere/exemples/    Illustrations SVG du contenu d'exemple de Zoom mystère
 assets/vendor/fontawesome/     Font Awesome Free (CSS + polices woff2 + licence), copié par npm run vendor:fontawesome
 outils/dev.js                  Lance serve sur le port 4173 (refuse un port occupé) et ouvre le navigateur
@@ -106,6 +109,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
 - **Minuteries.** Tout `setInterval`, chrono ou palier lancé par un jeu est arrêté dans la fonction de nettoyage, sinon il continue après « Quitter la partie ».
 - **Accessibilité.** Le contraste respecte WCAG AA, tout se fait au clavier, les messages importants passent par `role="alert"` ou `ctx.annoncer()`, et les animations sont coupées si l'utilisateur a demandé à réduire les animations (`prefers-reduced-motion`).
 - **Sons** : tous générés par `sons.js` (Web Audio), sans fichier audio. Chaque jeu a son espace (`sons.motus`, `sons.pyramide`, `sons.duel`…). On **évoque** l'ambiance des jeux télévisés, on ne reproduit jamais leurs jingles (droits d'auteur). Le bouton Son coupe tout : passer par `audio()` de `sons.js`, qui respecte ce choix.
+- **Illustrations.** Chaque jeu a son illustration, dessinée en SVG dans `jeux/<slug>/illustration.js` avec `creerIllustration()` de `illustration.js` (seule exception : la patate de Patate chaude, en CSS). Même style partout : aplats de la charte (classes `.ill-*` de `composants.css`), une ombre (`ombrer()`) et un reflet, l'ombre portée commune. Elle est décorative (`aria-hidden`), réagit à la partie (`etat('ouvert')`, `reagir('hop' | 'secousse' | 'fete')`) et se place à côté du contenu plutôt qu'au-dessus : l'écran de partie doit tenir en 1280 × 720 sans défiler.
 - **Pas d'emoji** dans l'interface : uniquement des icônes Font Awesome Free (style solid ou regular) via `icone('nom')` de `ui.js`, décoratives (`aria-hidden`) : le texte du bouton ou du message doit suffire. `tests/unit/icones.test.js` refuse tout emoji et toute icône inexistante. Une `<option>` ne peut pas contenir d'icône : texte seul.
 - **Format** : Prettier (guillemets simples, 100 colonnes). Lint : ESLint `recommended` + `eqeqeq`, `prefer-const`.
 
@@ -113,7 +117,8 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
 
 - **Police** : Georama, de 400 à 900, avec des titres très gras (800–900).
 - **Couleurs** : bleu nuit `#0E1027` (bandeau, texte fort), vert `#00AEA0` (accent principal). Chaque jeu a sa couleur (`data-couleur` sur `<body>`), qui définit `--accent`, `--accent-clair` et `--sur-accent`. Ne jamais écrire une couleur en dur hors de `charte.css`, sauf dans les SVG.
-- **Contraste** : pas de texte blanc sur le vert, le jaune, le rose, l'orange ou le bleu clair. Sur ces fonds, le texte est en bleu nuit. Seuls `bleu-numerique` et `rouge` portent du texte blanc. Utiliser `var(--sur-accent)`.
+- **Teintes des jeux** : en plus des couleurs de la charte, cinq teintes dans le même esprit, ajoutées pour les jeux suivants : `caramel`, `sapin`, `anis`, `ardoise`, `prune`. Une nouvelle teinte se déclare dans `charte.css` (avec sa version `-clair` et `--sur-accent`, contraste AA vérifié) et dans `registre.test.js`.
+- **Contraste** : pas de texte blanc sur le vert, le jaune, le rose, l'orange, le bleu clair, le caramel ou l'anis. Sur ces fonds, le texte est en bleu nuit. Seuls `bleu-numerique`, `rouge`, `sapin`, `ardoise` et `prune` portent du texte blanc. Utiliser `var(--sur-accent)`.
 - **Formes** : boutons en pilule (`--rayon-pilule`), cartes arrondies à 15px (`--rayon`), ombres douces.
 - **Logo** : `assets/img/logo-skazy-formation-blanc.svg` sur fond sombre, `logo-skazy-formation.svg` sur fond clair. Ne pas le déformer ni le recolorer.
 - **Ton** : motivant, simple, en vouvoiement pour l'animateur. `el()` et `remplir()` ajoutent automatiquement une espace insécable avant `! ? ; :` et dans les guillemets « » (aussi dans `placeholder`, `title`, `aria-label`) : pas de `textContent` pour un texte qui peut contenir cette ponctuation. Dans le HTML, écrire `&nbsp;?`. L'espace fine (U+202F) ne se voit pas dans Georama : ne pas l'utiliser. `verifierAccessibilite` contrôle la typographie de chaque écran testé.
@@ -130,7 +135,7 @@ Un nouveau mini-jeu sans image doit être ajouté à chaque thématique : le tes
 
 ## Ajouter un mini-jeu
 
-1. Ajouter l'entrée dans `assets/js/jeux.js`, avec une couleur de `charte.css` pas encore utilisée.
+1. Ajouter l'entrée dans `assets/js/jeux.js`, avec une couleur de `charte.css` pas encore utilisée (sinon, ajouter une teinte : voir la charte graphique).
 2. Copier `jeux/motus/index.html` dans `jeux/<slug>/index.html`, puis adapter `<title>`, la description, `data-jeu`, `data-couleur` et le `<h1>` (le test `registre.test.js` vérifie leur cohérence).
 3. Écrire `logique.js` et ses tests unitaires **d'abord**.
 4. Écrire `exemple.js` : le schéma du contenu (voir l'en-tête de `contenu.js`) et un contenu d'exemple valide. Chaque champ à saisir a un `exemple` affiché en placeholder (un tableau pour une liste : une suggestion par ligne), jamais une valeur pré-remplie ; `contenu-vide.test.js` le vérifie.
@@ -138,7 +143,9 @@ Un nouveau mini-jeu sans image doit être ajouté à chaque thématique : le tes
    - `zone`, `elements`, `reglages`, `participants`, `scores`, `hasard`, `sons` ;
    - `choisirPrenoms()`, `designer()`, `quandDesigne()`, `annoncer()`, `confirmer()`, `terminer()`.
      Elle renvoie une fonction de nettoyage.
-6. Écrire `tests/e2e/<slug>.spec.js` : une partie complète avec le contenu d'exemple, en réutilisant `tests/e2e/outils.js`.
+6. Écrire `illustration.js` : l'illustration du jeu (voir la convention « Illustrations »), et la faire réagir dans `jeu.js`.
+7. Écrire `tests/e2e/<slug>.spec.js` : une partie complète avec le contenu d'exemple, en réutilisant `tests/e2e/outils.js`.
+8. Ajouter son contenu à chaque thématique (voir « Ajouter une thématique ») : `thematiques.test.js` le réclame.
 
 ## Tests : quoi tester et où
 
@@ -149,6 +156,8 @@ Un nouveau mini-jeu sans image doit être ajouté à chaque thématique : le tes
   - aucune erreur dans la console (`surveillerErreurs`) ;
   - accessibilité sans violation grave ou critique (`verifierAccessibilite`).
 - `accueil.spec.js` vérifie automatiquement, pour chaque jeu de `jeux.js` : le lien, l'écran d'accueil, la liste de prénoms partagée, l'éditeur masqué et l'accessibilité.
+- **Jeu à minuterie** : `page.clock.install()` avant d'ouvrir la page, puis `page.clock.pauseAt()` fige le temps ; `page.clock.runFor()` le fait avancer d'un coup (pas d'attente réelle). axe-core a besoin de ses minuteries : relâcher l'horloge (`page.clock.resume()`) le temps de `verifierAccessibilite`, à un moment où aucun chrono du jeu ne tourne (voir `coffre-fort.spec.js`).
+- **Expressions régulières et typographie** : le site met une espace insécable avant `: ! ?` et dans les guillemets. Une chaîne passée à `getByText` est normalisée, pas une expression régulière : écrire `\s` (`/3 erreurs\s:\sla manche/`).
 - **Dans les tests e2e, cherchez les textes dans `#cadre`** : `page.locator('#cadre').getByText(…)`. La zone `#annonces` (lecteurs d'écran) répète certains messages, et `page.getByText` trouverait alors deux éléments selon le timing (test instable).
 
 ## Procédure obligatoire avant commit et push
