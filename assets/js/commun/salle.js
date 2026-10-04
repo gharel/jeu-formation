@@ -6,7 +6,8 @@
  * Une place : { id: 'p1', numero: 1, x, y, groupe, inverse } (x, y = centre ; inverse : la table
  * est en dessous, l'avatar se met donc en bas, côté table). Toutes les places d'une
  * disposition ont la même taille { l, h }, carrée : un avatar et un prénom.
- * Une table : { x, y, l, h, forme: 'rect' | 'ovale', libelle } (libellé facultatif : « Îlot 2 »).
+ * Une table : { x, y, l, h, forme: 'rect' | 'arrondie' | 'u', libelle, epaisseur } (libellé
+ * facultatif : « Îlot 2 » ; épaisseur des branches pour la table en U).
  *
  * Le plan enregistré : { disposition, nombre, parIlot, places: { p1: 'ana', … } }.
  * `nombre` vaut null tant que l'animateur ne l'a pas saisi : la salle suit alors la taille du
@@ -37,6 +38,18 @@ const cle = (prenom) => String(prenom).toLocaleLowerCase('fr');
 const PLACE = 13;
 /** Espace entre deux places voisines d'une même table. */
 const ECART = 1.5;
+/** Espace entre le bord d'une place et sa table. */
+const BORD = 1.5;
+/** Diamètre de l'avatar dans sa place (--d de composants.css : 56 % du côté). */
+const AVATAR = 0.56;
+
+/**
+ * Distance entre une table et une place posée au-dessus ou en dessous. Sur le côté d'une table,
+ * l'avatar est centré dans sa place : il est à BORD + (marge latérale de la place) de la table.
+ * Au-dessus ou en dessous, l'avatar touche le bord de sa place : on ajoute cette même marge,
+ * pour que l'écart entre l'avatar et la table soit partout le même.
+ */
+const espaceTable = (cote) => BORD + (cote * (1 - AVATAR)) / 2;
 
 /**
  * n positions centrées sur le milieu de [debut, fin], espacées de `pasMax` au plus
@@ -101,23 +114,29 @@ function enU(n) {
       .reverse()
       .map((y) => ({ x: 89, y })),
   ];
+  // Une seule table en U (épaisseur 5), ouverte vers l'écran. Son bas s'arrête à la même
+  // distance des places du fond que ses côtés des places latérales (BORD, avatar centré)
+  const basTable = 62.5 - cote / 2 - espaceTable(cote);
   const tables = [
-    { x: 21.5, y: 31.5, l: 5, h: 35, forme: 'rect' },
-    { x: 50, y: 52.5, l: 62, h: 5, forme: 'rect' },
-    { x: 78.5, y: 31.5, l: 5, h: 35, forme: 'rect' },
+    { x: 50, y: (14 + basTable) / 2, l: 62, h: basTable - 14, forme: 'u', epaisseur: 5 },
   ];
   return resultat(points, cote, tables);
 }
 
 /** Salle de classe : des rangées face à l'écran, une table devant chaque rangée. */
 function enClasse(n) {
-  const bureau = 4;
+  const bureau = 4.5;
   // Le nombre de colonnes qui donne les plus grandes places, puis le moins de places vides
   let choix = null;
-  for (let colonnes = 1; colonnes <= Math.min(n, 8); colonnes++) {
+  for (let colonnes = 1; colonnes <= Math.min(n, 10); colonnes++) {
     const rangees = Math.ceil(n / colonnes);
     const pasX = colonnes > 1 ? Math.min(76 / (colonnes - 1), PLACE + 6) : PLACE + 6;
-    const cote = Math.min(PLACE, pasX - ECART, (58 + 3) / rangees - bureau - 1 - 3);
+    // Une rangée : table, espace, place (côte + marge), puis 3 avant la table suivante
+    const cote = Math.min(
+      PLACE,
+      pasX - ECART,
+      ((58 + 3) / rangees - 3 - bureau - BORD) / (1 + (1 - AVATAR) / 2),
+    );
     const vides = colonnes * rangees - n;
     const mieux =
       !choix ||
@@ -126,7 +145,7 @@ function enClasse(n) {
     if (mieux) choix = { colonnes, rangees, pasX, cote, vides };
   }
   const { colonnes, rangees, pasX, cote } = choix;
-  const rangee = bureau + 1 + cote;
+  const rangee = bureau + espaceTable(cote) + cote;
   const hauteur = rangees * rangee + (rangees - 1) * 3;
   const debut = 11 + (58 - hauteur) / 2;
   const points = [];
@@ -135,7 +154,9 @@ function enClasse(n) {
     const haut = debut + r * (rangee + 3);
     const dans = Math.min(colonnes, n - r * colonnes);
     const { positions } = centrer(dans, 50 - pasX * 4, 50 + pasX * 4, pasX);
-    for (const x of positions) points.push({ x, y: haut + bureau + 1 + cote / 2 });
+    for (const x of positions) {
+      points.push({ x, y: haut + bureau + espaceTable(cote) + cote / 2 });
+    }
     tables.push({
       x: 50,
       y: haut + bureau / 2,
@@ -154,7 +175,7 @@ function enClasse(n) {
 function enIlots(n, parIlot = 4) {
   const ilots = Math.ceil(n / parIlot);
   const parCote = Math.ceil(parIlot / 2);
-  const table = 6;
+  const table = 5;
   let grille = null;
   for (let colonnes = 1; colonnes <= ilots; colonnes++) {
     const lignes = Math.ceil(ilots / colonnes);
@@ -163,7 +184,7 @@ function enIlots(n, parIlot = 4) {
     const cote = Math.min(
       PLACE,
       (celluleX - 5 - ECART * (parCote - 1)) / parCote,
-      (celluleY - table - 6) / 2,
+      (celluleY - table - 4 - 2 * BORD) / (2 + (1 - AVATAR)),
     );
     if (!grille || cote > grille.cote + 0.01) {
       grille = { colonnes, celluleX, celluleY, cote };
@@ -180,7 +201,7 @@ function enIlots(n, parIlot = 4) {
     const assis = Math.min(parIlot, n - i * parIlot);
     const enHaut = Math.ceil(assis / 2);
     const rangee = (combien) => centrer(combien, cx - 40, cx + 40, cote + ECART).positions;
-    const decalage = table / 2 + 1 + cote / 2;
+    const decalage = table / 2 + espaceTable(cote) + cote / 2;
     // Dans le sens des aiguilles d'une montre : le côté haut de gauche à droite, puis le bas
     // Au-dessus de la table : l'avatar côté table, le prénom au-dessus (inverse)
     for (const x of rangee(enHaut)) {
@@ -205,28 +226,41 @@ function enIlots(n, parIlot = 4) {
   };
 }
 
-/** Réunion : autour d'une table ovale, la première place en haut, côté écran. */
+/**
+ * Réunion : une table rectangulaire aux angles arrondis, des places le long des deux grands
+ * côtés et, à partir de 6 personnes, une à chaque bout. Dans le sens des aiguilles d'une
+ * montre : le côté haut de gauche à droite, le bout droit, le bas de droite à gauche, le bout
+ * gauche.
+ */
 function enCercle(n) {
-  // Une table plus grande pour un grand groupe, toute la salle au-delà de 12 personnes
-  const ry = n > 12 ? 24 : Math.min(22, Math.max(14, 8 + n * 1.5));
-  const rx = n > 12 ? 42 : ry * 1.6;
-  const perimetre = 2 * Math.PI * Math.sqrt((rx * rx + ry * ry) / 2);
-  const cote = Math.min(PLACE, (perimetre / Math.max(n, 2)) * 0.8);
-  const points = Array.from({ length: n }, (_, i) => {
-    const angle = -Math.PI / 2 + (i * 2 * Math.PI) / n;
-    const y = 40 + ry * Math.sin(angle);
-    // Moitié haute : l'avatar côté table, le prénom vers l'extérieur
-    return { x: 50 + rx * Math.cos(angle), y, inverse: y < 39 };
-  });
-  const tables = [
-    {
-      x: 50,
-      y: 40,
-      l: Math.max(8, (rx - cote / 2 - 1.5) * 2),
-      h: Math.max(6, (ry - cote / 2 - 1.5) * 2),
-      forme: 'ovale',
-    },
+  const bouts = n >= 6 ? 1 : 0;
+  const enHaut = Math.ceil((n - 2 * bouts) / 2);
+  const enBas = n - 2 * bouts - enHaut;
+  const parCote = Math.max(enHaut, 1);
+  // La table et ses places tiennent dans la largeur (96) et la hauteur (11 à 69) de la salle
+  const cote = Math.min(
+    PLACE,
+    (96 - 4 - (parCote - 1) * ECART - 2 * BORD * bouts) / (parCote + 2 * bouts),
+  );
+  const largeur = parCote * (cote + ECART) - ECART + 4;
+  // Une table plus basse ; assez haute pour l'avatar des places en bout de table
+  const hauteur = Math.max(10, bouts ? cote * AVATAR + 3 : 0);
+  const [cx, cy] = [50, 40];
+  const rangee = (combien) => centrer(combien, cx - 45, cx + 45, cote + ECART).positions;
+  const decalageY = hauteur / 2 + espaceTable(cote) + cote / 2;
+  const decalageX = largeur / 2 + BORD + cote / 2;
+  // En bout de table, l'avatar (en haut de sa place) est centré sur la hauteur de la table
+  const yBout = cy + (cote * (1 - AVATAR)) / 2;
+  const points = [
+    // Au-dessus de la table : l'avatar côté table, le prénom au-dessus (inverse)
+    ...rangee(enHaut).map((x) => ({ x, y: cy - decalageY, inverse: true })),
+    ...(bouts ? [{ x: cx + decalageX, y: yBout }] : []),
+    ...rangee(enBas)
+      .reverse()
+      .map((x) => ({ x, y: cy + decalageY })),
+    ...(bouts ? [{ x: cx - decalageX, y: yBout }] : []),
   ];
+  const tables = [{ x: cx, y: cy, l: largeur, h: hauteur, forme: 'arrondie' }];
   return resultat(points, cote, tables);
 }
 

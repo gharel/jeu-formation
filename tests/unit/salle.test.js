@@ -64,6 +64,23 @@ describe('plan de salle : dispositions', () => {
     }
   }
 
+  it('laisse le même écart entre l’avatar et la table, au-dessus, en dessous et sur le côté', () => {
+    // L'avatar occupe 56 % de sa place : centré sur le côté, au bord vers la table sinon
+    const { places, taille, tables } = dessinerSalle(plan('cercle', 8), []);
+    const [table] = tables;
+    const d = taille.l * 0.56;
+    const haut = places.find((p) => p.inverse);
+    const bas = places.find((p) => p.y > table.y + table.h / 2);
+    const bout = places.find((p) => p.x > table.x + table.l / 2);
+    const ecartHaut = table.y - table.h / 2 - (haut.y + taille.h / 2);
+    const ecartBas = bas.y - taille.h / 2 - (table.y + table.h / 2);
+    const ecartBout = bout.x - d / 2 - (table.x + table.l / 2);
+    expect(ecartHaut).toBeCloseTo(ecartBout, 5);
+    expect(ecartBas).toBeCloseTo(ecartBout, 5);
+    // En bout de table, l'avatar est centré sur la hauteur de la table
+    expect(bout.y - taille.h / 2 + d / 2).toBeCloseTo(table.y, 5);
+  });
+
   it('numérote les îlots', () => {
     const { places } = dessinerSalle(plan('ilots', 9, { parIlot: 4 }), []);
     expect(places.map((p) => p.groupe)).toEqual([1, 1, 1, 1, 2, 2, 2, 2, 3]);

@@ -1428,6 +1428,7 @@
 .disposition__apercu {
   position: relative;
   display: block;
+  container-type: inline-size;
   aspect-ratio: 100 / 70;
   background: var(--fond);
   border-radius: 8px;
@@ -1441,8 +1442,16 @@
   border-radius: 2px;
 }
 
-.disposition__table--ovale {
-  border-radius: 50%;
+.disposition__table--arrondie {
+  border-radius: 6px;
+}
+
+.disposition__table--u {
+  background: none;
+  border: calc(var(--ep) * 1cqi) solid var(--blanc);
+  border-top: 0;
+  border-radius: 0 0 4px 4px;
+  filter: var(--ombre-table-forme);
 }
 
 .disposition__point {
@@ -1603,8 +1612,19 @@
   box-shadow: var(--ombre-table);
 }
 
-.salle__table--ovale {
-  border-radius: 50%;
+.salle__table--arrondie {
+  border-radius: clamp(10px, 3.5cqi, 48px);
+}
+
+/* Table en U d'un seul tenant : trois branches dessinées par la bordure (épaisseur --ep) ;
+   l'ombre suit la forme du U */
+.salle__table--u {
+  background: none;
+  border: calc(var(--ep) * 1cqi) solid var(--blanc);
+  border-top: 0;
+  border-radius: 0 0 clamp(8px, 3cqi, 36px) clamp(8px, 3cqi, 36px);
+  box-shadow: none;
+  filter: var(--ombre-table-forme);
 }
 
 .salle__table-libelle {

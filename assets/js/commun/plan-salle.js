@@ -31,6 +31,11 @@ function cadrer({ x, y, l, h }) {
   return `left: ${pourcent(x - l / 2, salle.LARGEUR)}; top: ${pourcent(y - h / 2, salle.HAUTEUR)}; width: ${pourcent(l, salle.LARGEUR)}; height: ${pourcent(h, salle.HAUTEUR)};`;
 }
 
+/** Style d'une table : position, taille, et épaisseur des branches de la table en U. */
+function styleTable(t) {
+  return `${cadrer(t)}${t.epaisseur ? ` --ep: ${t.epaisseur};` : ''}`;
+}
+
 /** Avatar rond aux initiales, de la couleur de la personne (son rang dans la liste). */
 export function avatar(groupe, prenom, classe = '') {
   const rang = Math.max(0, groupe.participants.indexOf(prenom));
@@ -127,7 +132,7 @@ export function creerPlanSalle(groupe, { modifiable = false, hasard = Math.rando
           {
             class: `salle__table salle__table--${t.forme}`,
             'aria-hidden': 'true',
-            style: cadrer(t),
+            style: styleTable(t),
           },
           t.libelle ? el('span', { class: 'salle__table-libelle' }, t.libelle) : null,
         ),
@@ -203,7 +208,7 @@ export function creerPlanSalle(groupe, { modifiable = false, hasard = Math.rando
       tables.map((t) =>
         el('span', {
           class: `disposition__table disposition__table--${t.forme}`,
-          style: cadrer(t),
+          style: styleTable(t),
         }),
       ),
       places.map((p) =>
