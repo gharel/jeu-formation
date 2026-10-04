@@ -97,4 +97,19 @@ test.describe('sur téléphone', () => {
     await expect(pointsDe(page, droite)).toHaveText('1');
     expect(erreurs).toEqual([]);
   });
+
+  test('Pyramide se joue aussi sur téléphone', async ({ page }) => {
+    const erreurs = surveillerErreurs(page);
+    await ouvrirJeu(page, 'pyramide', { prenoms: ['Ana', 'Bob'] });
+    await lancerPartie(page);
+    await page.getByRole('button', { name: 'C’est parti !' }).tap();
+    await page.getByRole('button', { name: 'Afficher le mot' }).tap();
+    await expect(page.locator('.pyramide__mot')).toBeVisible();
+    await sansDefilementHorizontal(page);
+    await verifierAccessibilite(page);
+    await page.getByRole('button', { name: /Raté/ }).tap();
+    await page.getByRole('button', { name: /Trouvé/ }).tap();
+    await expect(page.locator('#cadre').getByText('Trouvé en 2 mots d’indice !')).toBeVisible();
+    expect(erreurs).toEqual([]);
+  });
 });

@@ -81,9 +81,10 @@ export const JEUX = [
     titre: 'Pyramide',
     icone: 'cubes-stacked',
     couleur: 'ciel',
-    accroche: 'Devinez un mot avec 1, 2 ou 3 mots d’indice. Trouvé au premier : 3 points !',
-    duree: '5 à 10 min',
-    preparation: 'Des mots et 3 indices d’un mot',
+    accroche:
+      'Faites deviner un mot à votre binôme en 1, 2, 3 ou 4 mots. Du premier coup : 4 points !',
+    duree: '5 à 15 min',
+    preparation: 'Une liste de mots à faire deviner',
   },
   {
     slug: 'batterie-faible',

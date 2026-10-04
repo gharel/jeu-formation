@@ -17,7 +17,7 @@ Chaque jeu dure de 5 à 15 minutes.
 | Qui suis-je ?     | Indices progressifs, points qui fondent 5 4 3 2 1, Stop                            | Mystères + 3 à 5 indices               |
 | Zoom mystère      | Capture très zoomée qui se dévoile, 5 4 3 2 1, Stop                                | Captures collées (Ctrl+V) ou importées |
 | Duel buzzer       | Deux joueurs, touches A et L ou buzzers à l'écran (tactile), le plus rapide répond | Questions + réponses                   |
-| Pyramide          | Deviner un mot avec 1, 2 ou 3 mots d'indice : 3, 2 ou 1 point                      | Mots + 3 indices d'un mot              |
+| Pyramide          | Par deux, faire deviner un mot en 1, 2, 3 ou 4 mots d'indice : 4, 3, 2 ou 1 point  | Une liste de mots                      |
 | Batterie faible   | Proposer des lettres ; chaque erreur vide la batterie                              | Mots ou courtes expressions            |
 
 Sur l'écran d'accueil de chaque jeu, on peut :

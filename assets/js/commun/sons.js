@@ -200,16 +200,23 @@ export const sons = {
     },
   },
 
-  // ---------- Pyramide : une cloche qui monte à chaque étage ----------
+  // ---------- Pyramide : une cloche qui monte à chaque mot d'indice ----------
   pyramide: {
     etage(numero) {
-      cloche([N.mi5, N.fad5, N.sold5][Math.min(2, Math.max(0, numero - 1))] ?? N.mi5);
+      const notes = [N.mi5, N.fad5, N.sold5, N.la5];
+      cloche(notes[Math.min(notes.length - 1, Math.max(0, numero - 1))]);
     },
-    trouve: (points) => fanfare(points),
+    /** Trouvé : fanfare d'autant plus longue qu'il y a de points, et la salle applaudit à 4. */
+    trouve(points) {
+      fanfare(points);
+      if (points >= 4) sons.applaudissements(1.8);
+    },
     perdu() {
       note(N.sol4, { duree: 0.25, forme: 'triangle', volume: 0.16 });
       note(N.do4, { debut: 0.25, duree: 0.5, forme: 'triangle', volume: 0.16 });
     },
+    /** Indice interdit : « eh-eh ». */
+    faute: () => rate(),
   },
 
   // ---------- Chiffres 5 4 3 2 1 (Qui suis-je ?, Zoom mystère) ----------

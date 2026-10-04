@@ -1,50 +1,155 @@
-.pyramide__mot {
-  margin: 0.25rem 0 1.25rem;
-}
+/* ---------- Choix du binôme ---------- */
 
-.pyramide__cases {
+.pyramide-choix .pyramide__choix {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.35rem;
+  align-items: flex-end;
+  gap: 1rem 1.5rem;
+  margin: 1rem 0;
+  text-align: left;
 }
 
-.pyramide__case {
-  display: grid;
-  place-items: center;
-  width: clamp(2rem, 3.4vw, 3rem);
-  height: clamp(2.4rem, 4vw, 3.4rem);
-  font-size: clamp(1.3rem, 2.4vw, 2rem);
-  font-weight: 900;
-  color: var(--bleu-nuit);
-  border-bottom: 5px solid var(--bleu-nuit);
+.pyramide__choix .champ {
+  min-width: min(100%, 14rem);
+  margin: 0;
 }
 
-.pyramide__case--revelee {
-  background: var(--accent-clair);
-  border-radius: 8px 8px 0 0;
-}
-
-.pyramide__separateur {
-  display: grid;
-  place-items: end center;
-  width: 1.2rem;
-  font-size: 1.6rem;
-  font-weight: 900;
-}
-
-.pyramide__nombre {
-  margin: 0.5rem 0 0;
+.pyramide__erreur {
+  min-height: 1.2em;
   font-weight: 800;
+  color: var(--erreur);
+}
+
+/* ---------- Partie : le mot à gauche, la pyramide à droite (empilés sur écran étroit) ---------- */
+
+.pyramide__entete {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 1rem;
+}
+
+.pyramide__entete > * {
+  margin: 0;
+}
+
+.pyramide__plateau {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Sur écran étroit, la pyramide vient juste sous le mot, avant le résultat et les boutons */
+.pyramide__infos {
+  display: contents;
+}
+
+.pyramide__carton {
+  order: 1;
+}
+
+.pyramide__consigne {
+  order: 2;
+}
+
+.pyramide__etages {
+  order: 3;
+}
+
+.pyramide__resultat {
+  order: 4;
+}
+
+.pyramide .actions-jeu {
+  margin-top: 1.25rem;
+}
+
+@media (min-width: 900px) {
+  .pyramide__plateau {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: center;
+    gap: clamp(1.5rem, 4vw, 3rem);
+  }
+
+  .pyramide__infos {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+/* Le mot, ou l'alerte « dos à l'écran » tant qu'il est caché */
+.pyramide__carton {
+  padding: clamp(1rem, 2.5vw, 1.75rem);
+  background: var(--accent-clair);
+  border: 3px solid var(--bleu-nuit);
+  border-radius: var(--rayon);
+}
+
+.pyramide__carton--cache {
+  color: var(--blanc);
+  background: var(--bleu-nuit);
+}
+
+.pyramide__carton-titre {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   color: var(--texte-doux);
 }
 
-/* Trois étages : le 1er indice au sommet (étroit), le 3e à la base (large) */
+.pyramide__mot {
+  margin: 0.25rem 0 0;
+  font-size: clamp(2.2rem, 5.5vw, 5.5rem);
+  font-weight: 900;
+  line-height: 1.1;
+  text-transform: uppercase;
+  overflow-wrap: anywhere;
+  color: var(--bleu-nuit);
+}
+
+.pyramide__alerte {
+  margin: 0;
+  font-size: clamp(1.5rem, 3.2vw, 2.4rem);
+  font-weight: 900;
+  line-height: 1.2;
+  color: var(--blanc);
+}
+
+.pyramide__alerte .icone {
+  color: var(--ciel);
+}
+
+.pyramide__alerte-aide {
+  margin: 0.5rem 0 0;
+  font-weight: 600;
+  color: var(--ciel-clair);
+}
+
+.pyramide__consigne {
+  margin: 0;
+  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-weight: 800;
+  color: var(--bleu-nuit);
+}
+
+.pyramide__consigne:empty {
+  display: none;
+}
+
+/* Quatre étages : 1 mot d'indice au sommet (4 points), 4 mots à la base (1 point) */
 .pyramide__etages {
   display: grid;
   justify-items: center;
-  gap: 0.6rem;
-  margin: 0 auto;
+  gap: 0.5rem;
+  width: 100%;
+  margin: 0;
   padding: 0;
   list-style: none;
 }
@@ -53,67 +158,123 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
-  min-height: clamp(4rem, 9vh, 5.5rem);
-  padding: 0.5rem 1.25rem;
+  gap: 0.6rem;
+  min-width: max-content;
+  min-height: clamp(3rem, 8vh, 4.5rem);
+  padding: 0.35rem 0.9rem;
   background: var(--fond);
   border: 3px dashed var(--bord);
   border-radius: var(--rayon);
+  transition:
+    transform 0.2s ease,
+    background-color 0.2s ease;
 }
 
 .pyramide__etage--1 {
-  width: min(100%, 26rem);
+  width: 40%;
 }
 
 .pyramide__etage--2 {
-  width: min(100%, 38rem);
+  width: 60%;
 }
 
 .pyramide__etage--3 {
-  width: min(100%, 50rem);
+  width: 80%;
 }
 
-.pyramide__etage--visible {
-  background: var(--accent);
-  border: 3px solid var(--bleu-nuit);
+.pyramide__etage--4 {
+  width: 100%;
 }
 
-.pyramide__etage--courant {
-  box-shadow: 0 0 0 5px var(--accent-clair);
-  transform: scale(1.03);
+.pyramide__nombre {
+  font-size: clamp(1.15rem, 2.2vw, 2.1rem);
+  font-weight: 900;
+  color: var(--bleu-nuit);
 }
 
 .pyramide__points {
   flex: none;
-  padding: 0.15rem 0.7rem;
-  font-size: 0.95rem;
+  padding: 0.1rem 0.65rem;
+  font-size: clamp(0.95rem, 1.1vw, 1.25rem);
   font-weight: 900;
   color: var(--blanc);
   background: var(--bleu-nuit);
   border-radius: var(--rayon-pilule);
 }
 
-.pyramide__indice {
-  font-size: clamp(1.6rem, 3.4vw, 2.8rem);
-  font-weight: 900;
-  color: var(--bleu-nuit);
+.pyramide__etage--courant {
+  background: var(--accent);
+  border: 3px solid var(--bleu-nuit);
+  box-shadow: 0 0 0 5px var(--accent-clair);
+  transform: scale(1.05);
 }
 
-.pyramide__etage:not(.pyramide__etage--visible) .pyramide__indice::before {
-  content: '?';
-  color: var(--gris);
+.pyramide__etage--passe {
+  border-style: solid;
 }
+
+.pyramide__etage--passe .pyramide__nombre {
+  color: var(--texte-doux);
+  text-decoration: line-through;
+}
+
+.pyramide__etage--passe .pyramide__points {
+  background: var(--gris);
+}
+
+.pyramide__etage--gagne {
+  background: var(--jaune);
+  border: 3px solid var(--bleu-nuit);
+  transform: scale(1.05);
+}
+
+.pyramide__etage--faute {
+  background: var(--rouge-clair);
+  border: 3px solid var(--erreur);
+}
+
+/* Téléphone : des étages plus bas, pour garder les boutons à portée de vue */
+@media (max-width: 600px) {
+  .pyramide__etage {
+    min-height: 2.75rem;
+    padding: 0.2rem 0.75rem;
+  }
+
+  .pyramide__etage--1 {
+    width: 55%;
+  }
+
+  .pyramide__etage--2 {
+    width: 70%;
+  }
+
+  .pyramide__etage--3 {
+    width: 85%;
+  }
+
+  .pyramide__points {
+    font-size: 0.85rem;
+  }
+}
+
+/* ---------- Résultat ---------- */
 
 .pyramide__verdict {
-  margin: 1rem 0 0;
-  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  margin: 0;
+  font-size: clamp(1.5rem, 3vw, 2.2rem);
   font-weight: 900;
   color: var(--bleu-nuit);
 }
 
 .pyramide__gain {
-  margin: 0.4rem 0 0;
+  margin: 0.3rem 0 0;
   font-size: 1.2rem;
   font-weight: 800;
   color: var(--succes);
+}
+
+.pyramide__retour {
+  margin: 0.3rem 0 0;
+  font-weight: 700;
+  color: var(--texte-doux);
 }

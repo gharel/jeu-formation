@@ -69,32 +69,33 @@ test('on vide la liste pour saisir son contenu, les exemples restent en placehol
   page,
 }) => {
   const erreurs = surveillerErreurs(page);
-  await ouvrirJeu(page, 'pyramide');
+  await ouvrirJeu(page, 'qui-suis-je');
   await page.getByRole('button', { name: /Préparer le contenu/ }).click();
   await page.getByRole('button', { name: 'Vider la liste' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Vider' }).click();
   await expect(page.locator('#cadre').getByText(/Liste vidée/)).toBeVisible();
 
-  // Un seul mot vide, mais avec des exemples grisés : rien à effacer avant de saisir
-  const mot = page.getByLabel('Mot à deviner', { exact: true });
-  await expect(mot).toHaveCount(1);
-  await expect(mot).toHaveValue('');
-  await expect(mot).toHaveAttribute('placeholder', 'Ex.\u00a0: souris');
+  // Un seul mystère vide, mais avec des exemples grisés : rien à effacer avant de saisir.
+  // Les placeholders suivent la typographie française : espace insécable avant « : ».
+  const reponse = page.getByLabel('Réponse', { exact: true });
+  await expect(reponse).toHaveCount(1);
+  await expect(reponse).toHaveValue('');
+  await expect(reponse).toHaveAttribute('placeholder', 'Ex.\u00a0: la souris');
   await expect(page.getByLabel('Indice 1', { exact: true })).toHaveAttribute(
     'placeholder',
-    'Ex.\u00a0: rongeur',
+    /^Ex.\u00a0: Je suis née dans les années 1960/,
   );
   await expect(page.getByLabel('Indice 3', { exact: true })).toHaveAttribute(
     'placeholder',
-    'Ex.\u00a0: clic',
+    'Ex.\u00a0: J’ai souvent deux boutons et une molette.',
   );
 
-  await mot.fill('Écran');
-  await page.getByLabel('Indice 1', { exact: true }).fill('Pixel');
-  await page.getByLabel('Indice 2', { exact: true }).fill('Luminosité');
-  await page.getByLabel('Indice 3', { exact: true }).fill('Moniteur');
+  await reponse.fill('L’écran');
+  await page.getByLabel('Indice 1', { exact: true }).fill('Je suis fait de pixels.');
+  await page.getByLabel('Indice 2', { exact: true }).fill('On règle ma luminosité.');
+  await page.getByLabel('Indice 3', { exact: true }).fill('On me regarde toute la journée.');
   await page.getByRole('button', { name: 'Enregistrer' }).click();
-  await expect(page.locator('#cadre').getByText('1 mot prêt')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('1 mystère prêt')).toBeVisible();
   await expect(page.locator('#cadre').getByText('contenu d’exemple', { exact: true })).toHaveCount(
     0,
   );

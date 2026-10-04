@@ -94,7 +94,7 @@ describe('sons', () => {
     expect(journal.notes[0].arrivee).toBeLessThan(journal.notes[0].frequence);
   });
 
-  it('Pyramide : la cloche monte à chaque étage, la fanfare dépend des points', () => {
+  it('Pyramide : la cloche monte à chaque mot d’indice, la fanfare dépend des points', () => {
     const etage = (n) => {
       journal.notes = [];
       sons.pyramide.etage(n);
@@ -102,12 +102,17 @@ describe('sons', () => {
     };
     expect(etage(2)).toBeGreaterThan(etage(1));
     expect(etage(3)).toBeGreaterThan(etage(2));
+    expect(etage(4)).toBeGreaterThan(etage(3));
     const fanfare = (points) => {
       journal.notes = [];
+      journal.bruits = 0;
       sons.pyramide.trouve(points);
       return journal.notes.length;
     };
     expect(fanfare(3)).toBeGreaterThan(fanfare(1));
+    // Trouvé avec un seul mot d'indice : la salle applaudit
+    fanfare(4);
+    expect(journal.bruits).toBeGreaterThan(20);
   });
 
   it('Duel : un buzzer différent à gauche et à droite', () => {
@@ -173,6 +178,7 @@ describe('sons', () => {
       () => sons.ding(),
       () => sons.fanfare(2, { debut: 0.5 }),
       () => sons.pyramide.perdu(),
+      () => sons.pyramide.faute(),
       () => sons.paliers.tictac(true),
       () => sons.paliers.bonne(4),
       () => sons.paliers.mauvaise(),
