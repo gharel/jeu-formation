@@ -365,8 +365,16 @@
   margin: 0.9rem 0 0.3rem;
 }
 
+/* Le thème, puis l'info en dessous, sur toute la largeur : la colonne est trop étroite pour
+   les deux côte à côte */
+.ajout-prenom__info {
+  flex-direction: column;
+  align-items: stretch;
+}
+
 .ajout-prenom__theme {
   flex: none;
+  align-self: flex-start;
   width: auto;
   max-width: 14rem;
 }
