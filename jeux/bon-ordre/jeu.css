@@ -1,5 +1,23 @@
+/* Les cartes dessinées à côté du titre de la procédure */
+.ordre__entete {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  margin-bottom: 0.5rem;
+  text-align: left;
+}
+
+.ordre__entete .illustration {
+  --taille: clamp(3.5rem, min(6.5vw, 10vh), 6rem);
+}
+
+.ordre__entete .panneau__surtitre {
+  margin-bottom: 0.25rem;
+}
+
 .ordre__titre {
-  margin-bottom: 1rem;
+  margin: 0;
   font-size: clamp(1.5rem, 2.8vw, 2.3rem);
 }
 
@@ -22,7 +40,7 @@
 .ordre__pioche,
 .ordre__emplacements {
   display: grid;
-  gap: 0.5rem;
+  gap: 0.4rem;
   margin: 0;
   padding: 0;
   list-style: none;
@@ -34,8 +52,8 @@
   align-items: center;
   gap: 0.75rem;
   width: 100%;
-  min-height: 2.9rem;
-  padding: 0.35rem 0.9rem 0.35rem 0.45rem;
+  min-height: 2.45rem;
+  padding: 0.2rem 0.9rem 0.2rem 0.4rem;
   font: inherit;
   font-size: clamp(1rem, 1.4vw, 1.25rem);
   font-weight: 700;
@@ -62,8 +80,8 @@
   flex: none;
   display: grid;
   place-items: center;
-  width: 2.2rem;
-  height: 2.2rem;
+  width: 2rem;
+  height: 2rem;
   font-weight: 900;
   color: var(--blanc);
   background: var(--bleu-nuit);
@@ -93,7 +111,7 @@
   flex: 1;
   display: flex;
   align-items: center;
-  min-height: 2.9rem;
+  min-height: 2.45rem;
   padding: 0 1rem;
   color: var(--gris);
   border: 2px dashed var(--bord);
@@ -120,9 +138,24 @@
   color: var(--succes);
 }
 
+/* La saisie et les boutons sur une même ligne, sous les colonnes */
+.ordre__bas {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 0.75rem 1.5rem;
+  margin-top: 0.75rem;
+}
+
+/* Les boutons à la hauteur de la saisie, sous son libellé */
+.ordre__bas .actions-jeu {
+  margin-top: 1.9rem;
+}
+
 .ordre__formulaire {
-  max-width: 34rem;
-  margin: 1rem auto 0;
+  flex: 1 1 22rem;
+  max-width: 32rem;
   text-align: left;
 }
 
@@ -138,6 +171,12 @@
   margin: 0.4rem 0 0;
   font-weight: 800;
   color: var(--erreur);
+}
+
+/* Sans erreur, la ligne ne prend pas de place (elle reste lue par les lecteurs d'écran) */
+.ordre__erreur:empty {
+  min-height: 0;
+  margin: 0;
 }
 
 .ordre__message {
@@ -156,4 +195,44 @@
   .ordre__colonnes {
     grid-template-columns: 1fr;
   }
+}
+
+/* ---------- Illustration : trois cartes, en vrac puis dans l'ordre ---------- */
+
+.ordre-ill__fond {
+  fill: var(--blanc);
+  stroke: var(--accent);
+  stroke-width: 4;
+}
+
+.ordre-ill__ombre {
+  fill: rgb(14 16 39 / 6%);
+}
+
+.ordre-ill__carte {
+  transition: transform 0.45s ease;
+}
+
+.ordre-ill__carte--1 {
+  transform: translate(100px, 76px) rotate(-4deg);
+}
+
+.ordre-ill__carte--2 {
+  transform: translate(56px, 82px) rotate(-16deg);
+}
+
+.ordre-ill__carte--3 {
+  transform: translate(144px, 82px) rotate(14deg);
+}
+
+.illustration--range .ordre-ill__carte--1 {
+  transform: translate(34px, 76px);
+}
+
+.illustration--range .ordre-ill__carte--2 {
+  transform: translate(100px, 76px);
+}
+
+.illustration--range .ordre-ill__carte--3 {
+  transform: translate(166px, 76px);
 }

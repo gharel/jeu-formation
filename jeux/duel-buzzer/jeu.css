@@ -174,6 +174,13 @@
   box-shadow: var(--ombre);
 }
 
+/* Le buzzer dessiné, en haut du plateau (et de l'écran de choix des duellistes) */
+.duel__centre .illustration,
+.duel-choix > .illustration {
+  --taille: clamp(4.5rem, min(9vw, 14vh), 7.5rem);
+  margin: 0 auto 0.5rem;
+}
+
 .duel__question {
   margin: 0.5rem 0;
   font-size: clamp(1.5rem, 2.8vw, 2.3rem);
@@ -210,4 +217,27 @@
   .duel__joueur {
     grid-row: 2;
   }
+}
+
+/* ---------- Illustration : un buzzer et un éclair ---------- */
+
+.duel-ill__plateau {
+  fill: color-mix(in srgb, var(--bleu-nuit) 82%, var(--blanc));
+}
+
+.duel-ill__eclair {
+  opacity: 0.25;
+  transition: opacity 0.15s ease;
+}
+
+.duel-ill__dome {
+  transition: transform 0.1s ease;
+}
+
+.illustration--buzze .duel-ill__eclair {
+  opacity: 1;
+}
+
+.illustration--buzze .duel-ill__dome {
+  transform: translateY(8px);
 }

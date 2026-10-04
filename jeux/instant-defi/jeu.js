@@ -12,6 +12,7 @@ import { creerMinuteur } from '../../assets/js/commun/chrono.js';
 import { entierEntre } from '../../assets/js/commun/hasard.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { schema, exemple } from './exemple.js';
+import { creerIllustrationDefi } from './illustration.js';
 import { resoudreDefi } from './logique.js';
 
 function demarrer(ctx) {
@@ -20,6 +21,8 @@ function demarrer(ctx) {
   let auTourDe = null;
   let minuteur = null;
   let actionPrincipale = null;
+  // Le même chronomètre passe de la roue au défi
+  const illustration = creerIllustrationDefi();
 
   const retirerClavier = ecouterClavier({ Espace: () => actionPrincipale?.() });
   ctx.quandDesigne((prenom) => {
@@ -35,6 +38,7 @@ function demarrer(ctx) {
 
   function afficherRoue() {
     minuteur?.arreter();
+    illustration.etat(null);
     auTourDe = null;
     const roue = creerRoue(
       restants.map((d) => `Défi ${d.numero}`),
@@ -70,6 +74,7 @@ function demarrer(ctx) {
         el(
           'div',
           { class: 'defi-roue__texte' },
+          illustration.element,
           el(
             'p',
             { class: 'panneau__surtitre' },
@@ -121,6 +126,7 @@ function demarrer(ctx) {
 
     function partir() {
       minuteur.demarrer();
+      illustration.etat('en-cours');
       const stop = el(
         'button',
         {
@@ -140,6 +146,8 @@ function demarrer(ctx) {
       minuteur.arreter();
       minuteur.element.classList.add('chrono--compact');
       actionPrincipale = null;
+      illustration.etat(null);
+      illustration.reagir(reussi ? 'fete' : 'secousse');
       if (reussi) ctx.sons.succes();
       const message = reussi ? 'Défi réussi !' : 'Temps écoulé !';
       remplir(
@@ -185,7 +193,7 @@ function demarrer(ctx) {
         el('p', { class: 'panneau__surtitre' }, `Défi ${defi.numero}`),
         tour,
         enonce,
-        minuteur.element,
+        el('div', { class: 'defi__compte' }, illustration.element, minuteur.element),
         issue,
         actions,
       ),

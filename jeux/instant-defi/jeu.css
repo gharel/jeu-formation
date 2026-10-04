@@ -13,6 +13,29 @@
   margin-top: 1rem;
 }
 
+.defi-roue__texte .illustration {
+  margin: 0 auto 0.75rem;
+}
+
+/* Le chronomètre dessiné à côté du compte à rebours */
+.defi__compte {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(1rem, 3vw, 2rem);
+  max-width: 46rem;
+  margin: 1.25rem auto 0;
+}
+
+.defi__compte .illustration {
+  --taille: clamp(4.5rem, min(10vw, 16vh), 8rem);
+}
+
+.defi__compte .chrono {
+  flex: 1;
+  margin: 0;
+}
+
 .defi__enonce {
   max-width: 28ch;
   margin: 0.5rem auto 0;
@@ -29,5 +52,31 @@
 @media (max-width: 800px) {
   .defi-roue {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Illustration : un chronomètre ---------- */
+
+.defi-ill__graduation {
+  stroke: var(--bleu-nuit);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.defi-ill__graduation--grande {
+  stroke-width: 5;
+}
+
+.defi-ill__aiguille {
+  transform-origin: 100px 104px;
+}
+
+.illustration--en-cours .defi-ill__aiguille {
+  animation: defi-aiguille 2s linear infinite;
+}
+
+@keyframes defi-aiguille {
+  to {
+    transform: rotate(360deg);
   }
 }

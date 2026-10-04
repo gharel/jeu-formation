@@ -26,6 +26,11 @@
   user-select: none;
 }
 
+.zoom__commandes .illustration {
+  --taille: clamp(4.5rem, min(8vw, 14vh), 7rem);
+  margin: 0 auto 0.75rem;
+}
+
 .zoom__commandes .paliers {
   margin-bottom: 1rem;
 }
@@ -40,7 +45,8 @@
   font-size: clamp(1.6rem, 3vw, 2.4rem);
 }
 
-.manche-finie .zoom__question {
+.manche-finie .zoom__question,
+.manche-finie .zoom__commandes .paliers {
   display: none;
 }
 
@@ -51,7 +57,7 @@
 }
 
 .zoom__verdict {
-  margin: 1rem 0 0.25rem;
+  margin: 0.5rem 0 0.25rem;
   font-size: clamp(1.6rem, 3vw, 2.3rem);
   font-weight: 900;
   color: var(--bleu-nuit);
@@ -71,5 +77,36 @@
 @media (max-width: 900px) {
   .zoom__colonnes {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Illustration : une loupe sur des pixels ---------- */
+
+.zoom-ill__cerclage {
+  fill: none;
+  stroke: var(--bleu-nuit);
+  stroke-width: 12;
+}
+
+.zoom-ill__reflet {
+  fill: none;
+  stroke: rgb(255 255 255 / 75%);
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+
+.illustration--cherche .zoom-ill__loupe {
+  animation: zoom-balayer 2.4s ease-in-out infinite;
+}
+
+@keyframes zoom-balayer {
+  25% {
+    transform: translate(8px, -6px) rotate(-4deg);
+  }
+  50% {
+    transform: translate(14px, 4px);
+  }
+  75% {
+    transform: translate(4px, 8px) rotate(3deg);
   }
 }

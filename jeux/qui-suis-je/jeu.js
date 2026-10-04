@@ -4,6 +4,7 @@ import { creerMancheAPaliers } from '../../assets/js/commun/manche-paliers.js';
 import { elementsDeListe } from '../../assets/js/commun/contenu.js';
 import { schema, exemple } from './exemple.js';
 import { indicesVisibles } from './logique.js';
+import { creerIllustrationQuiSuisJe } from './illustration.js';
 
 function demarrer(ctx) {
   const mysteres = ctx.elements.map((e) => ({
@@ -12,9 +13,12 @@ function demarrer(ctx) {
   }));
   let index = 0;
   let manche = null;
+  // Le personnage masqué : sa bulle passe de « ? » à « ! » quand on trouve
+  const illustration = creerIllustrationQuiSuisJe();
 
   function afficherMystere() {
     manche?.detruire();
+    illustration.etat(null);
     const { reponse, indices } = mysteres[index];
     const liste = el('ol', {
       class: 'qsj__indices',
@@ -43,6 +47,12 @@ function demarrer(ctx) {
       surFin({ trouve, prenom, points }) {
         ctx.zone.querySelector('.panneau')?.classList.add('manche-finie');
         montrerIndices(indices.length);
+        if (trouve) {
+          illustration.etat('trouve');
+          illustration.reagir('fete');
+        } else {
+          illustration.reagir('secousse');
+        }
         const dernier = index === mysteres.length - 1;
         const titre = el(
           'p',
@@ -103,12 +113,10 @@ function demarrer(ctx) {
         'div',
         { class: 'panneau qsj' },
         el('p', { class: 'panneau__surtitre' }, `Mystère ${index + 1} sur ${mysteres.length}`),
-        manche.paliers,
-        question,
-        liste,
+        el('div', { class: 'qsj__haut' }, illustration.element, manche.paliers, question),
+        el('div', { class: 'qsj__corps' }, liste, resultat),
         manche.actions,
         el('p', { class: 'raccourci' }, el('kbd', {}, 'Espace'), ' : démarrer, stop, reprendre'),
-        resultat,
       ),
     );
     manche.actions.querySelector('button')?.focus();

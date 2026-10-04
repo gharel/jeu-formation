@@ -11,6 +11,7 @@ import { creerMinuteur } from '../../assets/js/commun/chrono.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { schema, exemple } from './exemple.js';
 import { consigne, appliquerEliminations, gagnant } from './logique.js';
+import { creerIllustrationDebout } from './illustration.js';
 
 function tuileGeste(c, sens) {
   const { geste, icone: nomIcone } = c[sens];
@@ -33,6 +34,9 @@ function demarrer(ctx) {
   let minuteur = null;
   let actionPrincipale = null;
   const retirerClavier = ecouterClavier({ Espace: () => actionPrincipale?.() });
+  // Le personnage se lève (vrai) ou s'assoit (faux) ; avec les mains, il les baisse
+  const illustration = creerIllustrationDebout();
+  const etatFaux = ctx.reglages.consigne === 'main' ? 'baisse' : 'faux';
 
   function blocEnJeu() {
     if (!survie) return null;
@@ -45,6 +49,7 @@ function demarrer(ctx) {
   }
 
   function afficherDepart() {
+    illustration.etat(null);
     const titre = el('h3', { class: 'panneau__texte debout__depart' }, c.depart);
     const bouton = el(
       'button',
@@ -61,7 +66,7 @@ function demarrer(ctx) {
       el(
         'div',
         { class: 'panneau debout' },
-        el('p', { class: 'debout__grande-icone' }, icone(c.vrai.icone)),
+        illustration.element,
         titre,
         el('div', { class: 'debout__tuiles' }, tuileGeste(c, 'vrai'), tuileGeste(c, 'faux')),
         survie
@@ -82,6 +87,9 @@ function demarrer(ctx) {
     const a = affirmations[index];
     minuteur?.arreter();
     minuteur = creerMinuteur({ duree, sons: ctx.sons, surFin: () => reveler() });
+    illustration.etat(null);
+    // Le chrono, puis le verdict à sa place : tout tient sur une ligne avec les tuiles
+    const zoneMinute = el('div', { class: 'debout__minute' }, minuteur.element);
     const enonce = el('h3', { class: 'panneau__texte debout__affirmation' }, a.affirmation);
     const devoiler = el(
       'button',
@@ -103,9 +111,10 @@ function demarrer(ctx) {
       if (revele) return;
       revele = true;
       minuteur.arreter();
-      minuteur.element.hidden = true;
       const vrai = a.reponse === 'vrai';
       const sens = vrai ? 'vrai' : 'faux';
+      illustration.etat(vrai ? 'vrai' : etatFaux);
+      illustration.reagir('hop');
       if (vrai) ctx.sons.verite.vrai();
       else ctx.sons.verite.faux();
       for (const tuile of tuiles.children) {
@@ -124,7 +133,7 @@ function demarrer(ctx) {
         vrai ? 'VRAI' : 'FAUX',
       );
       remplir(
-        resultat,
+        zoneMinute,
         verdict,
         el(
           'p',
@@ -133,6 +142,10 @@ function demarrer(ctx) {
           icone(c[sens].icone),
           c[sens].geste.toLowerCase(),
         ),
+      );
+      animer(zoneMinute, 'apparition');
+      remplir(
+        resultat,
         a.explication ? el('p', { class: 'debout__explication' }, a.explication) : null,
       );
       resultat.hidden = false;
@@ -247,8 +260,7 @@ function demarrer(ctx) {
           `Affirmation ${index + 1} sur ${affirmations.length}`,
         ),
         enonce,
-        tuiles,
-        minuteur.element,
+        el('div', { class: 'debout__scene' }, illustration.element, tuiles, zoneMinute),
         resultat,
         actions,
       ),

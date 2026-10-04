@@ -699,7 +699,7 @@
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: 1.25rem;
+  margin-bottom: clamp(0.6rem, 1.6vh, 1.25rem);
 }
 
 .tableau-points {
@@ -742,7 +742,7 @@
 }
 
 .panneau {
-  padding: clamp(1.25rem, 3vw, 2.5rem);
+  padding: clamp(1rem, min(3vw, 3.5vh), 2.5rem);
   text-align: center;
   background: var(--blanc);
   border-radius: var(--rayon);
@@ -1149,6 +1149,127 @@
   100% {
     opacity: 0;
     transform: translateY(80vh) rotate(540deg);
+  }
+}
+
+/* ---------- Illustrations des jeux (illustration.js) ---------- */
+
+/* Même taille de référence, même ombre portée : chaque jeu peut ajuster --taille */
+.illustration {
+  --taille: clamp(5.5rem, min(12vw, 16vh), 9rem);
+  flex: none;
+  width: var(--taille);
+  filter: drop-shadow(0 8px 10px rgb(14 16 39 / 16%));
+}
+
+.illustration__dessin {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.illustration text {
+  font-family: var(--police);
+  font-weight: 900;
+  text-anchor: middle;
+  dominant-baseline: central;
+}
+
+/* Palette commune des dessins : les aplats de la charte, une ombre et un reflet identiques */
+.ill-accent {
+  fill: var(--accent);
+}
+.ill-accent-clair {
+  fill: var(--accent-clair);
+}
+.ill-nuit {
+  fill: var(--bleu-nuit);
+}
+.ill-blanc {
+  fill: var(--blanc);
+}
+.ill-fond {
+  fill: var(--fond);
+}
+.ill-bord {
+  fill: var(--bord);
+}
+.ill-jaune {
+  fill: var(--jaune);
+}
+.ill-vert {
+  fill: var(--vert);
+}
+.ill-orange {
+  fill: var(--orange);
+}
+.ill-rouge {
+  fill: var(--rouge);
+}
+.ill-rose {
+  fill: var(--rose);
+}
+.ill-bleu {
+  fill: var(--bleu);
+}
+.ill-violet {
+  fill: var(--violet);
+}
+.ill-ombre {
+  fill: rgb(14 16 39 / 16%);
+}
+.ill-reflet {
+  fill: rgb(255 255 255 / 45%);
+}
+.ill-trait {
+  fill: none;
+  stroke: var(--bleu-nuit);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.ill-texte-nuit {
+  fill: var(--bleu-nuit);
+}
+.ill-texte-blanc {
+  fill: var(--blanc);
+}
+.ill-texte-accent {
+  fill: var(--sur-accent);
+}
+
+/* Réactions courtes, rejouées par illustration.reagir() */
+.illustration--hop {
+  animation: illustration-hop 0.5s ease-out;
+}
+
+.illustration--secousse {
+  animation: secouer 0.4s ease;
+}
+
+.illustration--fete {
+  animation: illustration-fete 0.8s ease-out;
+}
+
+@keyframes illustration-hop {
+  35% {
+    transform: translateY(-14%);
+  }
+  70% {
+    transform: translateY(3%);
+  }
+}
+
+@keyframes illustration-fete {
+  25% {
+    transform: scale(1.15) rotate(-6deg);
+  }
+  55% {
+    transform: scale(0.96) rotate(4deg);
+  }
+  80% {
+    transform: scale(1.04) rotate(-1deg);
   }
 }
 

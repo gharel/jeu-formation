@@ -4,6 +4,7 @@ import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { elementsDeListe } from '../../assets/js/commun/contenu.js';
 import { schema, exemple } from './exemple.js';
 import { creerCartes, lireOrdre, verifier, pointsPourEssai } from './logique.js';
+import { creerIllustrationOrdre } from './illustration.js';
 
 function demarrer(ctx) {
   const essaisMax = ctx.reglages.essais;
@@ -12,6 +13,8 @@ function demarrer(ctx) {
     etapes: elementsDeListe(e.etapes),
   }));
   let index = 0;
+  // Trois cartes en vrac, qui se rangent quand l'ordre est juste
+  const illustration = creerIllustrationOrdre();
 
   function afficherProcedure() {
     const { titre, etapes } = procedures[index];
@@ -23,6 +26,7 @@ function demarrer(ctx) {
     const verrouilles = new Set();
     let essai = 1;
     let terminee = false;
+    illustration.etat(null);
 
     const surtitre = el('p', { class: 'panneau__surtitre' });
     const titreProcedure = el('h3', { class: 'panneau__texte ordre__titre' }, titre);
@@ -53,6 +57,7 @@ function demarrer(ctx) {
         { id: 'ordre-aide', class: 'champ__aide' },
         'Tapez les lettres dans l’ordre (« C A D B »), ou cliquez sur les cartes une à une.',
       ),
+      erreur,
     );
     const boutonVerifier = el(
       'button',
@@ -160,10 +165,13 @@ function demarrer(ctx) {
         else emplacements[i] = null;
       });
       if (justes === emplacements.length) {
+        illustration.etat('range');
+        illustration.reagir('fete');
         reussir();
         return;
       }
       animer(ordre, 'secousse');
+      illustration.reagir('secousse');
       if (essai >= essaisMax) {
         echouer();
         return;
@@ -251,18 +259,20 @@ function demarrer(ctx) {
       el(
         'div',
         { class: 'panneau ordre' },
-        surtitre,
-        titreProcedure,
+        el(
+          'div',
+          { class: 'ordre__entete' },
+          illustration.element,
+          el('div', {}, surtitre, titreProcedure),
+        ),
         el(
           'div',
           { class: 'ordre__colonnes' },
           el('div', {}, el('p', { class: 'ordre__intertitre' }, 'Les étapes mélangées'), pioche),
           el('div', {}, el('p', { class: 'ordre__intertitre' }, 'Ordre proposé'), ordre),
         ),
-        formulaire,
-        erreur,
+        el('div', { class: 'ordre__bas' }, formulaire, actions),
         message,
-        actions,
       ),
     );
     dessiner();

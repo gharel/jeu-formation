@@ -3,6 +3,7 @@ import { el, remplir, icone, animer, focaliser } from '../../assets/js/commun/ui
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { lire, ecrire } from '../../assets/js/commun/stockage.js';
 import { schema, exemple } from './exemple.js';
+import { creerIllustrationBatterie } from './illustration.js';
 import {
   decouper,
   etatInitial,
@@ -79,6 +80,8 @@ function demarrer(ctx) {
       'aria-label': 'Mot à découvrir',
     });
     const batterie = creerBatterie(crans);
+    // Le téléphone suit sa batterie : il sourit, transpire, puis s'éteint
+    const illustration = creerIllustrationBatterie();
     const ratees = el('p', { class: 'lettres__ratees' });
     const message = el('p', { class: 'lettres__message', 'aria-live': 'polite' });
     const clavier = el('div', { class: 'lettres__clavier', 'aria-label': 'Clavier' });
@@ -187,6 +190,7 @@ function demarrer(ctx) {
 
     function dessinerEtat() {
       batterie.afficher(Math.max(0, crans - etat.erreurs));
+      illustration.niveau(crans - etat.erreurs, crans);
       const fausses = etat.proposees.filter((l) => !cases.some((c) => c.lettre === l));
       remplir(ratees, fausses.length ? `Lettres absentes : ${fausses.join(' ')}` : '');
       dessinerClavier();
@@ -207,6 +211,7 @@ function demarrer(ctx) {
         return;
       }
       etat = coup.etat;
+      illustration.reagir(coup.resultat === 'bonne' ? 'hop' : 'secousse');
       if (coup.resultat === 'bonne') {
         ctx.sons.batterie.lettre(coup.occurrences);
         remplir(message, `Oui ! ${coup.occurrences} « ${coup.lettre} »`);
@@ -227,6 +232,7 @@ function demarrer(ctx) {
       remplir(message);
       dessinerMot(!trouve);
       dessinerEtat();
+      illustration.reagir(trouve ? 'fete' : 'secousse');
       if (trouve) ctx.sons.fanfare(3);
       else ctx.sons.batterie.aPlat();
       const dernier = index === mots.length - 1;
@@ -313,7 +319,13 @@ function demarrer(ctx) {
         el(
           'div',
           { class: 'lettres__colonnes' },
-          el('div', { class: 'lettres__gauche' }, batterie.element, ratees, message),
+          el(
+            'div',
+            { class: 'lettres__gauche' },
+            el('div', { class: 'lettres__jauge' }, illustration.element, batterie.element),
+            ratees,
+            message,
+          ),
           el('div', { class: 'lettres__droite' }, commandes, resultat),
         ),
       ),

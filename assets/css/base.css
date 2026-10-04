@@ -204,9 +204,11 @@ img {
   outline: none;
 }
 
-/* En partie, on profite de toute la largeur du vidéoprojecteur */
+/* En partie, on profite de toute la largeur du vidéoprojecteur, et de sa hauteur : en
+   1280 × 720, les marges du haut et du bas se resserrent */
 .cadre:has(> .ecran-jeu) {
   max-width: 1680px;
+  padding-block: clamp(0.75rem, 2vh, 1.75rem);
 }
 
 .pied {

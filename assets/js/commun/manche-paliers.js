@@ -9,8 +9,17 @@ import { creerPaliers, creerAffichagePaliers } from './paliers.js';
 /**
  * `surValeur(valeur)` : appelé au départ et à chaque chiffre perdu (le jeu montre un indice,
  * dézoome…). `surFin({ trouve, prenom, points })` : la manche est finie, le jeu révèle la réponse.
+ * `surEtat(etat)` (facultatif) : 'attente', 'enCours', 'pause' ou 'fini', à chaque changement
+ * (l'illustration du jeu s'anime pendant que les chiffres s'éteignent).
  */
-export function creerMancheAPaliers({ ctx, dureePalier, nombre = 5, surValeur, surFin }) {
+export function creerMancheAPaliers({
+  ctx,
+  dureePalier,
+  nombre = 5,
+  surValeur,
+  surFin,
+  surEtat = null,
+}) {
   const affichage = creerAffichagePaliers(nombre);
   const actions = el('div', { class: 'actions-jeu' });
   let etat = 'attente';
@@ -61,6 +70,7 @@ export function creerMancheAPaliers({ ctx, dureePalier, nombre = 5, surValeur, s
     } else {
       remplir(actions);
     }
+    surEtat?.(etat);
     // En pause, le focus va sur « reprendre » : Espace reprend toujours, comme annoncé
     const boutons = actions.querySelectorAll('button');
     boutons[boutons.length - 1]?.focus();

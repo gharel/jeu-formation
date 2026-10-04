@@ -1,7 +1,5 @@
-.debout__grande-icone {
-  margin: 0;
-  font-size: clamp(3.5rem, 8vw, 6rem);
-  line-height: 1;
+.debout > .illustration {
+  margin: 0 auto 0.5rem;
 }
 
 .debout__depart {
@@ -10,7 +8,40 @@
 
 .debout__affirmation {
   max-width: 32ch;
-  margin: 0 auto 1.25rem;
+  margin: 0 auto 1rem;
+}
+
+/* Le personnage, les deux tuiles et le chrono (puis le verdict) sur une seule ligne */
+.debout__scene {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.75rem, 2.5vw, 2rem);
+}
+
+.debout__scene .debout__tuiles {
+  margin: 0;
+}
+
+.debout__scene .illustration {
+  --taille: clamp(5.5rem, min(13vw, 21vh), 10rem);
+}
+
+.debout__minute {
+  min-width: min(100%, 15rem);
+}
+
+.debout__minute .chrono {
+  margin: 0;
+}
+
+.debout__minute .chrono__temps {
+  font-size: clamp(2.6rem, 5.5vw, 4.5rem);
+}
+
+.debout__minute .debout__verdict {
+  margin-top: 0;
 }
 
 .debout__tuiles {
@@ -106,4 +137,24 @@
 
 .debout__regle {
   margin-top: 1rem;
+}
+
+/* ---------- Illustration : un personnage et sa chaise ---------- */
+
+.debout-ill__assis,
+.debout-ill__bras-haut {
+  display: none;
+}
+
+.illustration--vrai .debout-ill__bras-bas,
+.illustration--vrai .debout-ill__bulle,
+.illustration--faux .debout-ill__debout,
+.illustration--faux .debout-ill__bulle,
+.illustration--baisse .debout-ill__bulle {
+  display: none;
+}
+
+.illustration--vrai .debout-ill__bras-haut,
+.illustration--faux .debout-ill__assis {
+  display: inline;
 }

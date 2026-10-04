@@ -1,11 +1,51 @@
+/* Le personnage mystère à côté des chiffres 5 4 3 2 1 : pas de hauteur en plus */
+.qsj__haut {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem clamp(1rem, 3vw, 2.5rem);
+  margin-bottom: 0.75rem;
+}
+
+.qsj__haut .paliers {
+  margin: 0;
+}
+
+.qsj__haut .illustration {
+  --taille: clamp(4.5rem, min(9vw, 14vh), 7.5rem);
+}
+
 .qsj__question {
-  margin: 0 0 0.75rem;
+  margin: 0;
   font-size: clamp(2rem, 4vw, 3rem);
+}
+
+/* Manche finie : les indices à gauche, la réponse à droite, sans faire défiler l'écran */
+.manche-finie .qsj__corps {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: clamp(1rem, 3vw, 2rem);
+  align-items: center;
+}
+
+.manche-finie .qsj__resultat .qsj__verdict {
+  margin-top: 0;
+}
+
+.qsj .actions-jeu:empty {
+  display: none;
+}
+
+@media (max-width: 860px) {
+  .manche-finie .qsj__corps {
+    grid-template-columns: 1fr;
+  }
 }
 
 .qsj__indices {
   display: grid;
-  gap: 0.5rem;
+  gap: 0.4rem;
   max-width: 52rem;
   margin: 0 auto;
   padding: 0;
@@ -18,7 +58,7 @@
   display: flex;
   gap: 0.75rem;
   align-items: baseline;
-  padding: 0.55rem 1rem;
+  padding: 0.4rem 1rem;
   font-size: clamp(1.1rem, 1.8vw, 1.5rem);
   font-weight: 700;
   text-align: left;
@@ -56,4 +96,23 @@
   font-size: 1.3rem;
   font-weight: 800;
   color: var(--succes);
+}
+
+/* ---------- Illustration : un personnage masqué et sa bulle ---------- */
+
+.quisuisje-ill__reflet {
+  fill: rgb(255 255 255 / 22%);
+}
+
+.quisuisje-ill__signe {
+  fill: var(--sur-accent);
+}
+
+.quisuisje-ill__signe--trouve,
+.illustration--trouve .quisuisje-ill__signe--question {
+  display: none;
+}
+
+.illustration--trouve .quisuisje-ill__signe--trouve {
+  display: inline;
 }

@@ -45,6 +45,38 @@
   color: var(--erreur);
 }
 
+/* La cible et le verdict côte à côte */
+.juste__retour {
+  display: flex;
+  align-items: center;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+  margin-top: 0.5rem;
+}
+
+.juste__retour .illustration {
+  --taille: clamp(4.5rem, min(9vw, 16vh), 8rem);
+}
+
+.juste__retour .juste__verdict {
+  font-size: clamp(2rem, 4vw, 3.6rem);
+}
+
+/* En fin de question, la cible rejoint le titre du bilan */
+.juste__bilan {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+.juste__bilan .illustration {
+  --taille: clamp(4rem, min(7vw, 12vh), 6rem);
+}
+
+.juste__bilan .juste__resultat {
+  margin: 0;
+}
+
 .juste__verdict {
   min-height: 1.2em;
   margin: 0.25rem 0 0;
@@ -141,4 +173,24 @@
   .juste__colonnes {
     grid-template-columns: 1fr;
   }
+}
+
+/* ---------- Illustration : une cible et sa flèche ---------- */
+
+/* La pointe de la flèche : en vol près de la cible, puis plantée selon la réponse */
+.juste-ill__fleche {
+  transform: translate(168px, 66px);
+  transition: transform 0.35s cubic-bezier(0.3, 1.4, 0.6, 1);
+}
+
+.illustration--plus .juste-ill__fleche {
+  transform: translate(92px, 122px);
+}
+
+.illustration--moins .juste-ill__fleche {
+  transform: translate(92px, 46px);
+}
+
+.illustration--juste .juste-ill__fleche {
+  transform: translate(88px, 84px);
 }

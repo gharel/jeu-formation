@@ -51,8 +51,25 @@
   order: 1;
 }
 
-.pyramide__consigne {
+/* La pyramide dessinée et la consigne, sous le mot */
+.pyramide__suivi {
   order: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.75rem, 2vw, 1.25rem);
+}
+
+.pyramide__suivi .illustration {
+  --taille: clamp(4rem, min(8vw, 13vh), 6.5rem);
+}
+
+.pyramide__suivi-texte {
+  min-width: 0;
+}
+
+.pyramide__suivi-texte .pyramide__verdict {
+  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
 }
 
 .pyramide__etages {
@@ -277,4 +294,31 @@
   margin: 0.3rem 0 0;
   font-weight: 700;
   color: var(--texte-doux);
+}
+
+/* ---------- Illustration : une pyramide de quatre étages ---------- */
+
+.pyramide-ill__pierre {
+  fill: var(--accent);
+  transition: fill 0.3s ease;
+}
+
+.illustration--etage-1 .pyramide-ill__etage--1 .pyramide-ill__pierre,
+.illustration--etage-2 .pyramide-ill__etage--2 .pyramide-ill__pierre,
+.illustration--etage-3 .pyramide-ill__etage--3 .pyramide-ill__pierre,
+.illustration--etage-4 .pyramide-ill__etage--4 .pyramide-ill__pierre {
+  fill: var(--jaune);
+}
+
+.pyramide-ill__drapeau {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.4s ease;
+}
+
+.illustration--trouve .pyramide-ill__drapeau {
+  opacity: 1;
+  transform: none;
 }

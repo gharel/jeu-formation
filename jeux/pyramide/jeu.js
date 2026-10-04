@@ -9,6 +9,7 @@ import {
 } from '../../assets/js/commun/ui.js';
 import { schema, exemple } from './exemple.js';
 import { INDICES_MAX, pointsPourIndices, creerMot, roles, tirerBinome } from './logique.js';
+import { creerIllustrationPyramide } from './illustration.js';
 
 const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? 's' : ''}`;
 const ordinal = (n) => (n === 1 ? '1er' : `${n}e`);
@@ -22,6 +23,8 @@ function demarrer(ctx) {
   // Binôme en cours ([prénom, prénom], null sans prénoms) et rang de son mot (0, 1…)
   let binome = null;
   let rang = 0;
+  // Une pyramide de quatre étages : l'étage en jeu s'allume, un drapeau quand c'est trouvé
+  const illustration = creerIllustrationPyramide();
   // Raccourcis du moment : Entrée (trouvé) et Espace (raté, afficher, continuer)
   let touches = {};
   const retirerClavier = ecouterClavier({
@@ -149,7 +152,17 @@ function demarrer(ctx) {
       el(
         'div',
         { class: 'pyramide__plateau' },
-        el('div', { class: 'pyramide__infos' }, carton, consigne, resultat),
+        el(
+          'div',
+          { class: 'pyramide__infos' },
+          carton,
+          el(
+            'div',
+            { class: 'pyramide__suivi' },
+            illustration.element,
+            el('div', { class: 'pyramide__suivi-texte' }, consigne, resultat),
+          ),
+        ),
         etages,
       ),
       actions,
@@ -300,6 +313,8 @@ function demarrer(ctx) {
       dessinerCarton();
       dessinerEtages();
       dessinerActions();
+      if (partie.phase === 'jeu') illustration.etat(`etage-${partie.indice}`);
+      else illustration.etat(partie.issue === 'trouve' ? 'trouve' : null);
     }
 
     function afficher() {
@@ -345,6 +360,7 @@ function demarrer(ctx) {
 
     function conclure() {
       dessiner();
+      illustration.reagir(partie.issue === 'trouve' ? 'fete' : 'secousse');
       const { issue, indice, points } = partie;
       const verdict = el(
         'p',

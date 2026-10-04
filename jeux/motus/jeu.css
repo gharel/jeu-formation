@@ -91,6 +91,22 @@
   text-align: left;
 }
 
+/* L'illustration à côté de la saisie : elle ne prend pas de hauteur en plus */
+.motus-droite__haut {
+  display: flex;
+  align-items: flex-start;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+.motus-droite__haut .illustration {
+  --taille: clamp(4.5rem, min(9vw, 15vh), 8rem);
+}
+
+.motus-droite__saisie {
+  flex: 1;
+  min-width: 0;
+}
+
 .motus-saisie {
   font-size: 1.6rem;
   font-weight: 900;
@@ -177,4 +193,50 @@
   .motus-grille {
     --taille: min(3.4rem, calc((100vw - 4rem) / var(--colonnes, 8)));
   }
+}
+
+/* ---------- Illustration : un écran et une ligne de lettres ---------- */
+
+.motus-ill__case {
+  fill: rgb(255 255 255 / 14%);
+}
+
+.motus-ill__rond {
+  fill: none;
+}
+
+.motus-ill__tuile--bien .motus-ill__case {
+  fill: var(--vert);
+}
+
+.motus-ill__tuile--mal .motus-ill__rond {
+  fill: var(--jaune);
+}
+
+.motus-ill__lettre {
+  fill: var(--bleu-nuit);
+}
+
+.motus-ill__tuile--absent .motus-ill__lettre {
+  fill: var(--blanc);
+}
+
+.motus-ill__vide {
+  fill: rgb(255 255 255 / 9%);
+}
+
+.motus-ill__reflet {
+  fill: rgb(255 255 255 / 7%);
+}
+
+.illustration--trouve .motus-ill__case {
+  fill: var(--vert);
+}
+
+.illustration--trouve .motus-ill__rond {
+  fill: none;
+}
+
+.illustration--trouve .motus-ill__lettre {
+  fill: var(--bleu-nuit);
 }

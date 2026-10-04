@@ -9,6 +9,7 @@ import {
 } from '../../assets/js/commun/ui.js';
 import { schema, exemple } from './exemple.js';
 import { creerDuel, autre, tirerDuellistes, TOUCHES } from './logique.js';
+import { creerIllustrationDuel } from './illustration.js';
 
 const COTES = ['gauche', 'droite'];
 
@@ -21,6 +22,8 @@ function demarrer(ctx) {
   const avecPrenoms = ctx.participants.length >= 2;
   let indexQuestion = 0;
   let retirerClavier = null;
+  // Le buzzer du plateau : il s'enfonce quand quelqu'un buzze
+  const illustration = creerIllustrationDuel();
 
   const restantes = () => questions.length - indexQuestion;
   const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? 's' : ''}`;
@@ -109,6 +112,7 @@ function demarrer(ctx) {
       el(
         'div',
         { class: 'panneau duel-choix' },
+        illustration.element,
         el(
           'p',
           { class: 'panneau__surtitre' },
@@ -175,7 +179,16 @@ function demarrer(ctx) {
       'div',
       { class: 'duel', tabindex: '-1' },
       cotes.gauche.bloc,
-      el('div', { class: 'duel__centre' }, surtitre, question, statut, reponse, actions),
+      el(
+        'div',
+        { class: 'duel__centre' },
+        illustration.element,
+        surtitre,
+        question,
+        statut,
+        reponse,
+        actions,
+      ),
       cotes.droite.bloc,
     );
     let actionEntree = null;
@@ -224,6 +237,7 @@ function demarrer(ctx) {
 
     function dessiner() {
       dessinerPoints();
+      illustration.etat(duel.phase === 'buzze' ? 'buzze' : null);
       // Les buzzers s'allument quand la question s'affiche
       plateau.classList.toggle('duel--ouvert', duel.phase === 'ouvert');
       surtitre.textContent = `Question ${indexQuestion + 1} sur ${questions.length}`;
@@ -325,6 +339,7 @@ function demarrer(ctx) {
       const cote = duel.main;
       const issue = duel.valider(bonne);
       if (issue === null) return;
+      illustration.reagir(issue === 'point' ? 'fete' : 'secousse');
       if (issue === 'point') {
         // La victoire a sa propre fanfare (dessinerFin)
         if (!duel.vainqueur) ctx.sons.duel.bonne();

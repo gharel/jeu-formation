@@ -2,6 +2,7 @@ import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
 import { el, remplir, icone, animer, focaliser } from '../../assets/js/commun/ui.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { schema, exemple } from './exemple.js';
+import { creerIllustrationMotus } from './illustration.js';
 import {
   NOMBRE_ESSAIS,
   normaliserMot,
@@ -60,11 +61,23 @@ function demarrer(ctx) {
   );
   const clavier = el('div', { class: 'motus-clavier', 'aria-label': 'Clavier' });
   const resultat = el('div', { class: 'motus-resultat', hidden: true });
+  const illustration = creerIllustrationMotus();
   const jeu = el(
     'div',
     { class: 'motus-jeu' },
     el('div', { class: 'motus-gauche' }, grille),
-    el('div', { class: 'motus-droite' }, formulaire, message, clavier, resultat),
+    el(
+      'div',
+      { class: 'motus-droite' },
+      el(
+        'div',
+        { class: 'motus-droite__haut' },
+        illustration.element,
+        el('div', { class: 'motus-droite__saisie' }, formulaire, message),
+      ),
+      clavier,
+      resultat,
+    ),
   );
 
   remplir(
@@ -207,6 +220,7 @@ function demarrer(ctx) {
     clavier.hidden = false;
     resultat.hidden = true;
     message.textContent = '';
+    illustration.etat(null);
     dessinerGrille();
     dessinerClavier();
     saisie.focus();
@@ -259,6 +273,12 @@ function demarrer(ctx) {
     );
     resultat.hidden = false;
     animer(resultat, 'apparition');
+    if (trouve) {
+      illustration.etat('trouve');
+      illustration.reagir('fete');
+    } else {
+      illustration.reagir('secousse');
+    }
     // Fanfare ou « boum » une fois toutes les lettres révélées
     const apresLettres = { debut: secret.length * 0.12 + 0.1 };
     if (trouve) ctx.sons.motus.trouve(apresLettres);

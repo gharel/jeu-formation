@@ -4,6 +4,7 @@ import { creerMancheAPaliers } from '../../assets/js/commun/manche-paliers.js';
 import { adresseImage } from '../../assets/js/commun/images.js';
 import { schema, exemple, transfert } from './exemple.js';
 import { ZOOMS, echelle, origine } from './logique.js';
+import { creerIllustrationZoom } from './illustration.js';
 
 async function demarrer(ctx) {
   const max = ZOOMS[ctx.reglages.zoom] ?? ZOOMS.moyen;
@@ -12,6 +13,8 @@ async function demarrer(ctx) {
   const adresses = await Promise.all(images.map((e) => adresseImage(e.image).catch(() => null)));
   let index = 0;
   let manche = null;
+  // La loupe balaie l'image pendant que les chiffres s'éteignent
+  const illustration = creerIllustrationZoom();
 
   function afficherImage() {
     manche?.detruire();
@@ -39,8 +42,10 @@ async function demarrer(ctx) {
       ctx,
       dureePalier: ctx.reglages.dureePalier,
       surValeur: zoomer,
+      surEtat: (etat) => illustration.etat(etat === 'enCours' ? 'cherche' : null),
       surFin({ trouve, prenom, points }) {
         ctx.zone.querySelector('.panneau')?.classList.add('manche-finie');
+        illustration.reagir(trouve ? 'fete' : 'secousse');
         zoomer(0);
         photo.alt = `Image entière : ${reponse}`;
         const dernier = index === images.length - 1;
@@ -109,6 +114,7 @@ async function demarrer(ctx) {
           el(
             'div',
             { class: 'zoom__commandes' },
+            illustration.element,
             manche.paliers,
             el('h3', { class: 'panneau__texte zoom__question' }, 'Qu’est-ce que c’est ?'),
             manche.actions,

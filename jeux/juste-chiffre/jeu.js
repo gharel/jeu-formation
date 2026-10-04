@@ -4,6 +4,7 @@ import { creerMinuteur } from '../../assets/js/commun/chrono.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { lireNombre, formaterNombre } from '../../assets/js/commun/nombres.js';
 import { schema, exemple } from './exemple.js';
+import { creerIllustrationJuste } from './illustration.js';
 import { MESSAGES, comparer, fourchette, decrireFourchette, suivant } from './logique.js';
 
 const FLECHES = { plus: 'arrow-up', moins: 'arrow-down', juste: 'bullseye' };
@@ -68,6 +69,8 @@ function demarrer(ctx) {
       ),
     );
     const verdict = el('p', { class: 'juste__verdict', 'aria-live': 'assertive' });
+    // La flèche se plante sous le centre (c'est plus), au-dessus (c'est moins) ou en plein cœur
+    const illustration = creerIllustrationJuste();
     const borne = el('p', { class: 'juste__fourchette' });
     const liste = el('ol', { class: 'juste__historique', 'aria-label': 'Propositions' });
     const compteur = el('p', { class: 'juste__compteur' });
@@ -142,6 +145,7 @@ function demarrer(ctx) {
       remplir(erreur, '');
       const trouve = raison === 'juste';
       const gagnant = trouve ? historique.at(-1)?.joueur : null;
+      illustration.reagir(trouve ? 'fete' : 'secousse');
       if (gagnant) ctx.scores.ajouter(gagnant, 1);
       if (!trouve) ctx.sons.erreur();
       const reponse = `${formaterNombre(q.reponse)}${unite ? ` ${unite}` : ''}`;
@@ -157,7 +161,7 @@ function demarrer(ctx) {
       const dernier = indexQuestion === questions.length - 1;
       remplir(
         fin,
-        titre,
+        el('div', { class: 'juste__bilan' }, illustration.element, titre),
         el(
           'div',
           { class: 'reponse-revelee' },
@@ -215,6 +219,7 @@ function demarrer(ctx) {
         MESSAGES[resultat],
       );
       verdict.className = `juste__verdict juste__verdict--${resultat}`;
+      illustration.etat(resultat);
       animer(verdict, 'apparition');
       dessinerHistorique();
       if (resultat === 'juste') {
@@ -249,7 +254,15 @@ function demarrer(ctx) {
             commandes,
             el('div', { class: 'juste__infos' }, borne, compteur, liste),
           ),
-          el('div', { class: 'juste__droite' }, tour, formulaire, erreur, verdict, fin),
+          el(
+            'div',
+            { class: 'juste__droite' },
+            tour,
+            formulaire,
+            erreur,
+            el('div', { class: 'juste__retour' }, illustration.element, verdict),
+            fin,
+          ),
         ),
       ),
     );

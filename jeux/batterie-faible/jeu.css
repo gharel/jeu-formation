@@ -25,7 +25,7 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 0.4rem;
-  margin: 1.5rem 0;
+  margin: 1rem 0;
 }
 
 .lettres__case {
@@ -69,6 +69,18 @@
   gap: clamp(1rem, 3vw, 2.5rem);
   align-items: start;
   text-align: left;
+}
+
+/* Le téléphone dessiné à côté de la batterie */
+.lettres__jauge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(0.75rem, 2vw, 1.5rem);
+}
+
+.lettres__jauge .illustration {
+  --taille: clamp(3.5rem, min(6vw, 12vh), 5.5rem);
 }
 
 /* Batterie : un cran par erreur permise */
@@ -166,7 +178,7 @@
 .lettres__touche {
   flex: 1;
   max-width: 3rem;
-  min-height: 2.9rem;
+  min-height: 2.6rem;
   font: inherit;
   font-size: 1.1rem;
   font-weight: 800;
@@ -220,4 +232,57 @@
   .lettres__colonnes {
     grid-template-columns: 1fr;
   }
+}
+
+/* ---------- Illustration : un téléphone qui suit sa batterie ---------- */
+
+.batterie-ill__tranche {
+  fill: rgb(255 255 255 / 10%);
+}
+
+.batterie-ill__ecran {
+  fill: var(--accent-clair);
+  transition: fill 0.4s ease;
+}
+
+.batterie-ill__contour {
+  fill: var(--blanc);
+  stroke: var(--bleu-nuit);
+  stroke-width: 3;
+}
+
+.batterie-ill__jauge {
+  fill: var(--succes);
+  transition: fill 0.3s ease;
+}
+
+.illustration--moyenne .batterie-ill__jauge {
+  fill: var(--jaune);
+}
+
+.illustration--faible .batterie-ill__jauge {
+  fill: var(--erreur);
+}
+
+.batterie-ill__croix,
+.batterie-ill__bouche--inquiete,
+.batterie-ill__goutte {
+  display: none;
+}
+
+.illustration--faible .batterie-ill__bouche--sourire,
+.illustration--vide .batterie-ill__bouche--sourire,
+.illustration--vide .batterie-ill__oeil {
+  display: none;
+}
+
+.illustration--faible .batterie-ill__bouche--inquiete,
+.illustration--faible .batterie-ill__goutte,
+.illustration--vide .batterie-ill__bouche--inquiete,
+.illustration--vide .batterie-ill__croix {
+  display: inline;
+}
+
+.illustration--vide .batterie-ill__ecran {
+  fill: var(--bord);
 }
