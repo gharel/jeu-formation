@@ -115,3 +115,27 @@ test('depuis l’accueil, on part directement d’une liste vide', async ({ page
   ).toBeVisible();
   await expect(page.locator('#cadre').getByText('10 questions prêtes')).toBeVisible();
 });
+
+test('un jeu de données (tous les jeux) s’importe aussi dans un seul jeu', async ({ page }) => {
+  await ouvrirJeu(page, 'pyramide');
+  await page.getByRole('button', { name: /Préparer le contenu/ }).click();
+  const jeuDeDonnees = (jeux) =>
+    Buffer.from(JSON.stringify({ format: 'skazy-jeux-donnees', version: 1, titre: 'Essai', jeux }));
+  await page.locator('#fichier-import').setInputFiles({
+    name: 'thematique.json',
+    mimeType: 'application/json',
+    buffer: jeuDeDonnees({ pyramide: { elements: [{ mot: 'Tableur' }, { mot: 'Cellule' }] } }),
+  });
+  await expect(
+    page.locator('#cadre').getByText('Fichier importé. Vérifiez puis enregistrez.'),
+  ).toBeVisible();
+  await expect(page.getByLabel('Mot à faire deviner')).toHaveCount(2);
+  await expect(page.getByLabel('Mot à faire deviner').first()).toHaveValue('Tableur');
+  // Sans la part de ce jeu, le fichier est refusé
+  await page.locator('#fichier-import').setInputFiles({
+    name: 'autre.json',
+    mimeType: 'application/json',
+    buffer: jeuDeDonnees({ motus: { elements: [] } }),
+  });
+  await expect(page.getByRole('alert')).toContainText('ne contient rien pour « Pyramide »');
+});

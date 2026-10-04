@@ -1,5 +1,6 @@
 # À chaque push sur main : on relance tous les tests, puis on publie le site sur GitHub Pages.
-# Le site n'est publié que si les tests passent. Seuls index.html, assets/, jeux/ et groupe/ sont publiés.
+# Le site n'est publié que si les tests passent. Seuls index.html, assets/, jeux/, groupe/ et
+# contenus/ (page et thématiques JSON) sont publiés.
 name: Vérifier puis publier sur GitHub Pages
 
 on:
@@ -57,7 +58,7 @@ jobs:
       - name: Préparer le site (fichiers statiques uniquement)
         run: |
           mkdir _site
-          cp -r index.html assets jeux groupe _site/
+          cp -r index.html assets jeux groupe contenus _site/
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:

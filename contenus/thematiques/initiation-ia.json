@@ -1,0 +1,378 @@
+{
+  "format": "skazy-jeux-donnees",
+  "version": 1,
+  "titre": "Initiation à l’IA",
+  "description": "Le vocabulaire de l’IA générative, ses outils, ses grandes dates et les bons réflexes : bien demander, vérifier, protéger ses données.",
+  "jeux": {
+    "motus": {
+      "elements": [
+        {
+          "mot": "ALGORITHME",
+          "definition": "Une suite d’instructions précises qui permet de résoudre un problème."
+        },
+        {
+          "mot": "CHATBOT",
+          "definition": "Un programme qui dialogue avec vous par écrit, comme ChatGPT ou Le Chat."
+        },
+        {
+          "mot": "CONTEXTE",
+          "definition": "Les informations de départ qui aident l’IA à comprendre votre situation et votre besoin."
+        },
+        {
+          "mot": "BIAIS",
+          "definition": "Un déséquilibre dans les données qui rend les réponses d’une IA partiales ou injustes."
+        },
+        {
+          "mot": "SOURCE",
+          "definition": "L’origine d’une information : à vérifier dès qu’une IA avance un fait."
+        }
+      ]
+    },
+    "instant-defi": {
+      "elements": [
+        {
+          "amorce": "trouver30",
+          "amorcePerso": "",
+          "fin": "… trois informations à ne jamais confier à un chatbot"
+        },
+        {
+          "amorce": "expliquer20",
+          "amorcePerso": "",
+          "fin": "… la différence entre un moteur de recherche et un chatbot"
+        },
+        {
+          "amorce": "montrer60",
+          "amorcePerso": "",
+          "fin": "… comment demander à un assistant d’IA de simplifier un texte"
+        },
+        {
+          "amorce": "retrouver45",
+          "amorcePerso": "",
+          "fin": "… l’origine du mot « robot », en vérifiant sur deux sites différents"
+        },
+        {
+          "amorce": "surprise",
+          "amorcePerso": "",
+          "fin": "… où l’on écrit sa demande dans un assistant d’IA"
+        },
+        {
+          "amorce": "expliquer20",
+          "amorcePerso": "",
+          "fin": "… pourquoi il ne faut pas croire une IA sur parole"
+        }
+      ]
+    },
+    "juste-chiffre": {
+      "elements": [
+        {
+          "question": "En quelle année s’est tenue la conférence de Dartmouth, souvent présentée comme la naissance de l’intelligence artificielle ?",
+          "reponse": 1956,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "L’expression « intelligence artificielle » a été choisie par John McCarthy dans le projet de cette rencontre de chercheurs, aux États-Unis."
+        },
+        {
+          "question": "En quelle année l’ordinateur Deep Blue d’IBM a-t-il battu pour la première fois un champion du monde d’échecs en match ?",
+          "reponse": 1997,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "En mai 1997, Deep Blue bat Garry Kasparov, qui avait pourtant gagné leur premier match en 1996."
+        },
+        {
+          "question": "En quelle année l’assistant vocal Siri est-il arrivé sur l’iPhone ?",
+          "reponse": 2011,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Il est présenté avec l’iPhone 4S en octobre 2011 : on peut alors parler à son téléphone pour envoyer un SMS ou créer un rappel."
+        },
+        {
+          "question": "Au jeu de go, le plateau compte 19 lignes sur 19. Combien d’intersections cela fait-il ?",
+          "reponse": 361,
+          "unite": "intersections",
+          "marge": 0,
+          "anecdote": "Les pierres se posent sur ces intersections : le nombre de parties possibles est si grand que le go a longtemps résisté aux ordinateurs."
+        },
+        {
+          "question": "En mars 2016, le programme AlphaGo affronte le Sud-Coréen Lee Sedol, l’un des meilleurs joueurs de go du monde, en 5 parties. Combien en gagne-t-il ?",
+          "reponse": 4,
+          "unite": "parties",
+          "marge": 0,
+          "anecdote": "Lee Sedol remporte la quatrième partie : la seule victoire humaine du match."
+        },
+        {
+          "question": "En quelle année ChatGPT a-t-il été ouvert au grand public ?",
+          "reponse": 2022,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Lancé le 30 novembre 2022, il fait connaître l’IA générative au grand public en quelques semaines."
+        }
+      ]
+    },
+    "debout-assis": {
+      "elements": [
+        {
+          "affirmation": "Une IA comme ChatGPT comprend ce qu’elle écrit, comme le ferait un humain.",
+          "reponse": "faux",
+          "explication": "Elle calcule, mot après mot, la suite de texte la plus probable d’après ce qu’elle a appris : c’est très différent de notre compréhension."
+        },
+        {
+          "affirmation": "Plus votre demande est précise, plus la réponse a de chances d’être utile.",
+          "reponse": "vrai",
+          "explication": "Donnez le contexte, le but et le format attendu : l’IA ne devine pas ce que vous ne lui dites pas."
+        },
+        {
+          "affirmation": "On peut coller sans risque le contrat d’un client dans un chatbot gratuit pour le faire résumer.",
+          "reponse": "faux",
+          "explication": "Ce que vous écrivez peut être conservé, voire servir à améliorer l’outil : ne partagez ni données personnelles ni informations confidentielles."
+        },
+        {
+          "affirmation": "La même demande, envoyée deux fois, peut donner deux réponses différentes.",
+          "reponse": "vrai",
+          "explication": "Une part de hasard entre dans la rédaction des réponses : relancer la demande donne souvent une autre version."
+        },
+        {
+          "affirmation": "On peut demander à une IA de jouer un rôle, par exemple « Vous êtes un formateur patient ».",
+          "reponse": "vrai",
+          "explication": "Donner un rôle aide l’IA à choisir le bon ton et le bon niveau de détail."
+        },
+        {
+          "affirmation": "Si la première réponse ne convient pas, il faut ouvrir une nouvelle conversation et tout réécrire.",
+          "reponse": "faux",
+          "explication": "Il suffit de poursuivre l’échange : précisez, corrigez ou demandez une version plus courte ou plus simple."
+        },
+        {
+          "affirmation": "Quand une IA cite une source, cette source existe forcément.",
+          "reponse": "faux",
+          "explication": "Une IA peut inventer un titre, un auteur ou un lien : ouvrez la source pour vérifier qu’elle existe et dit bien cela."
+        },
+        {
+          "affirmation": "Une IA peut reproduire des stéréotypes présents dans les textes et les images dont elle a appris.",
+          "reponse": "vrai",
+          "explication": "Si ses exemples sont déséquilibrés, ses réponses risquent de l’être aussi : gardez un regard critique."
+        },
+        {
+          "affirmation": "Une image créée par une IA peut être utilisée librement, dans tous les cas.",
+          "reponse": "faux",
+          "explication": "Chaque outil a ses conditions d’utilisation, et l’image ne doit ni imiter une œuvre protégée ni montrer une personne réelle sans son accord."
+        },
+        {
+          "affirmation": "Avec l’IA, on peut imiter la voix d’une personne à partir d’enregistrements.",
+          "reponse": "vrai",
+          "explication": "Méfiez-vous d’un appel urgent qui réclame de l’argent : raccrochez et rappelez la personne sur son numéro habituel."
+        }
+      ]
+    },
+    "bon-ordre": {
+      "elements": [
+        {
+          "titre": "Poser une première question à un assistant d’IA",
+          "etapes": [
+            "Ouvrir le navigateur web",
+            "Aller sur le site de l’assistant (ChatGPT, Le Chat, Copilot…)",
+            "Cliquer dans la zone de saisie du message",
+            "Écrire sa demande avec le contexte et le format attendu",
+            "Appuyer sur Entrée pour envoyer la demande",
+            "Lire la réponse et vérifier les informations importantes"
+          ]
+        },
+        {
+          "titre": "Vérifier un chiffre donné par une IA",
+          "etapes": [
+            "Repérer dans la réponse le chiffre à vérifier",
+            "Demander à l’IA sur quelle source elle s’appuie",
+            "Ouvrir cette source et vérifier qu’elle dit bien la même chose",
+            "Confirmer le chiffre avec une deuxième source fiable",
+            "Utiliser le chiffre en citant la source"
+          ]
+        },
+        {
+          "titre": "Retirer le nom d’un client avant de confier un texte à une IA",
+          "etapes": [
+            "Ouvrir le document dans Word",
+            "L’enregistrer sous un autre nom pour travailler sur une copie",
+            "Appuyer sur Ctrl + H pour ouvrir « Rechercher et remplacer »",
+            "Remplacer le nom du client par « Client A » avec « Remplacer tout »",
+            "Copier le texte de la copie et le coller dans le chatbot"
+          ]
+        },
+        {
+          "titre": "Créer une illustration avec une IA pour un support de formation",
+          "etapes": [
+            "Ouvrir un outil d’IA qui crée des images",
+            "Décrire l’image voulue : sujet, style, couleurs",
+            "Envoyer la demande et patienter",
+            "Choisir la meilleure proposition ou demander une variante",
+            "Télécharger l’image sur l’ordinateur",
+            "Indiquer sous l’image qu’elle a été créée par une IA"
+          ]
+        }
+      ]
+    },
+    "qui-suis-je": {
+      "elements": [
+        {
+          "reponse": "Le test de Turing",
+          "indices": [
+            "Au départ, on m’appelait « le jeu de l’imitation ».",
+            "Je suis né en 1950, dans un article qui se demande si les machines peuvent penser.",
+            "Un juge discute par écrit, sans savoir s’il parle à une personne ou à une machine.",
+            "Je suis réussi si le juge ne parvient pas à reconnaître la machine.",
+            "Je porte le nom du savant britannique qui a aidé à percer les codes d’Enigma."
+          ]
+        },
+        {
+          "reponse": "L’hallucination",
+          "indices": [
+            "Je peux toucher n’importe quel assistant d’IA, même le plus récent.",
+            "Je suis bien écrite et sûre de moi… et pourtant fausse.",
+            "Je peux inventer une date, une citation ou un livre qui n’existe pas.",
+            "Pour me démasquer, il faut vérifier auprès d’une source fiable.",
+            "Mon nom évoque quelqu’un qui voit des choses qui n’existent pas."
+          ]
+        },
+        {
+          "reponse": "L’hypertrucage",
+          "indices": [
+            "Mon nom français est recommandé pour remplacer un mot anglais.",
+            "Je peux faire dire à une célébrité des paroles qu’elle n’a jamais prononcées.",
+            "On me trouve en vidéo, en photo ou même en enregistrement de voix.",
+            "Grâce à l’IA, je suis de plus en plus réaliste et difficile à repérer.",
+            "En anglais, on m’appelle « deepfake »."
+          ]
+        },
+        {
+          "reponse": "Le réseau de neurones",
+          "indices": [
+            "Mon idée est ancienne, mais il a fallu des ordinateurs puissants pour me rendre efficace.",
+            "Je suis organisé en couches qui se transmettent des informations.",
+            "J’apprends en ajustant mes connexions grâce à de très nombreux exemples.",
+            "Quand j’ai beaucoup de couches, on parle d’apprentissage profond.",
+            "Je m’inspire, de très loin, des cellules du cerveau."
+          ]
+        },
+        {
+          "reponse": "Le prompt",
+          "indices": [
+            "Mon nom vient de l’anglais, et je peux être très court ou très long.",
+            "Plus je suis précis, meilleur est le résultat.",
+            "On conseille de m’écrire avec un rôle, du contexte et le format attendu.",
+            "On me tape dans la zone de saisie d’un chatbot.",
+            "Je suis la demande que vous envoyez à une IA."
+          ]
+        }
+      ]
+    },
+    "duel-buzzer": {
+      "elements": [
+        {
+          "question": "Quelle entreprise américaine a créé ChatGPT ?",
+          "reponse": "OpenAI"
+        },
+        {
+          "question": "Comment s’appelle l’assistant d’IA de Microsoft ?",
+          "reponse": "Copilot"
+        },
+        {
+          "question": "Comment s’appelle l’assistant d’IA de Google ?",
+          "reponse": "Gemini"
+        },
+        {
+          "question": "Quelle entreprise française a créé l’assistant Le Chat ?",
+          "reponse": "Mistral AI"
+        },
+        {
+          "question": "Quelle entreprise a créé l’assistant Claude ?",
+          "reponse": "Anthropic"
+        },
+        {
+          "question": "Dans le nom ChatGPT, que signifie la lettre G ?",
+          "reponse": "Generative (génératif)"
+        },
+        {
+          "question": "Dans la plupart des chatbots, quel raccourci permet d’aller à la ligne sans envoyer sa demande ?",
+          "reponse": "Maj + Entrée"
+        },
+        {
+          "question": "Comment s’appelle l’assistant vocal d’Amazon ?",
+          "reponse": "Alexa"
+        },
+        {
+          "question": "Dans quel film de Stanley Kubrick l’ordinateur HAL 9000 se retourne-t-il contre l’équipage ?",
+          "reponse": "2001 : l’Odyssée de l’espace"
+        },
+        {
+          "question": "Dans quel film de 1984 Arnold Schwarzenegger joue-t-il une machine venue du futur ?",
+          "reponse": "Terminator"
+        },
+        {
+          "question": "Quel service de traduction en ligne, né en Allemagne, s’appuie sur l’IA ?",
+          "reponse": "DeepL"
+        },
+        {
+          "question": "Quel verbe désigne le fait de redire sa demande autrement pour obtenir une meilleure réponse ?",
+          "reponse": "Reformuler"
+        }
+      ]
+    },
+    "pyramide": {
+      "elements": [
+        { "mot": "Robot" },
+        { "mot": "Cerveau" },
+        { "mot": "Ordinateur" },
+        { "mot": "Voiture autonome" },
+        { "mot": "Reconnaissance faciale" },
+        { "mot": "Traduction" },
+        { "mot": "Science-fiction" },
+        { "mot": "Assistant vocal" },
+        { "mot": "Photo truquée" },
+        { "mot": "Vie privée" },
+        { "mot": "Question" },
+        { "mot": "ChatGPT" }
+      ]
+    },
+    "batterie-faible": {
+      "elements": [
+        {
+          "mot": "Intelligence artificielle",
+          "theme": "Le vocabulaire",
+          "definition": "La capacité d’un programme à réaliser des tâches qui demandent d’habitude l’intelligence humaine."
+        },
+        {
+          "mot": "Apprentissage automatique",
+          "theme": "Le fonctionnement",
+          "definition": "La méthode qui permet à un programme de s’améliorer à partir d’exemples, sans qu’on lui écrive chaque règle."
+        },
+        {
+          "mot": "Données d’entraînement",
+          "theme": "Le fonctionnement",
+          "definition": "Les textes, images ou sons dont une IA s’est servie pour apprendre."
+        },
+        {
+          "mot": "IA générative",
+          "theme": "Le vocabulaire",
+          "definition": "Une IA qui crée un contenu nouveau : texte, image, son ou vidéo."
+        },
+        {
+          "mot": "Générateur d’images",
+          "theme": "Les outils",
+          "definition": "Un outil d’IA qui crée une image à partir d’une description écrite."
+        },
+        {
+          "mot": "Droit d’auteur",
+          "theme": "Le cadre légal",
+          "definition": "Il protège les créations originales : méfiez-vous d’un contenu généré qui imite une œuvre existante."
+        },
+        {
+          "mot": "Confidentialité",
+          "theme": "Les bons réflexes",
+          "definition": "Ne confiez jamais à une IA un mot de passe, des données de santé ou des informations sur vos clients."
+        },
+        {
+          "mot": "Esprit critique",
+          "theme": "Les bons réflexes",
+          "definition": "Le réflexe indispensable face à une réponse d’IA : douter, vérifier, recouper."
+        }
+      ]
+    }
+  }
+}

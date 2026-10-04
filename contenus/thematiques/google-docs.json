@@ -1,0 +1,364 @@
+{
+  "format": "skazy-jeux-donnees",
+  "version": 1,
+  "titre": "Google Docs",
+  "description": "Révisez Google Docs : créer et mettre en forme un document, le commenter, le partager, écrire à plusieurs et l’exporter.",
+  "jeux": {
+    "motus": {
+      "elements": [
+        {
+          "mot": "POLICE",
+          "definition": "Le style des lettres du texte, comme Verdana ou Times New Roman."
+        },
+        {
+          "mot": "PUCE",
+          "definition": "Le petit symbole placé devant chaque élément d’une liste."
+        },
+        {
+          "mot": "MODÈLE",
+          "definition": "Un document tout prêt (CV, lettre, rapport…) qu’il suffit de compléter."
+        },
+        {
+          "mot": "MARGE",
+          "definition": "L’espace blanc laissé autour du texte, sur les bords de la page."
+        },
+        { "mot": "ÉDITEUR", "definition": "Le rôle de partage qui permet de modifier le document." }
+      ]
+    },
+    "instant-defi": {
+      "elements": [
+        {
+          "amorce": "trouver30",
+          "amorcePerso": "",
+          "fin": "… le menu qui permet de télécharger le document au format PDF"
+        },
+        {
+          "amorce": "montrer60",
+          "amorcePerso": "",
+          "fin": "… comment insérer un tableau de 3 colonnes et 4 lignes"
+        },
+        {
+          "amorce": "expliquer20",
+          "amorcePerso": "",
+          "fin": "… la différence entre partager un document et l’envoyer en pièce jointe"
+        },
+        {
+          "amorce": "retrouver45",
+          "amorcePerso": "",
+          "fin": "… le raccourci qui affiche tous les raccourcis clavier, en fouillant le menu Aide"
+        },
+        {
+          "amorce": "surprise",
+          "amorcePerso": "",
+          "fin": "… où l’on passe la page en orientation paysage"
+        },
+        {
+          "amorce": "montrer60",
+          "amorcePerso": "",
+          "fin": "… comment mettre un titre en gras, en couleur, puis le centrer"
+        }
+      ]
+    },
+    "juste-chiffre": {
+      "elements": [
+        {
+          "question": "En quelle année Google a-t-il racheté Writely, l’ancêtre de Google Docs ?",
+          "reponse": 2006,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Writely, lancé en 2005 par une petite start-up américaine, est devenu Google Docs après ce rachat."
+        },
+        {
+          "question": "En quelle année Google Drive a-t-il été lancé ?",
+          "reponse": 2012,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Lancé en avril 2012, Google Drive est devenu la maison de tous vos documents Google Docs."
+        },
+        {
+          "question": "Combien de gigaoctets de stockage gratuit offre un compte Google ?",
+          "reponse": 15,
+          "unite": "Go",
+          "marge": 0,
+          "anecdote": "Ces 15 Go sont partagés entre Gmail, Google Drive et Google Photos."
+        },
+        {
+          "question": "Jusqu’à combien de personnes peuvent travailler en même temps dans un même document Google Docs ?",
+          "reponse": 100,
+          "unite": "personnes",
+          "marge": 0,
+          "anecdote": "Au-delà de 100 personnes, seuls le propriétaire et quelques éditeurs peuvent encore modifier le document."
+        },
+        {
+          "question": "Combien de niveaux de titre numérotés (Titre 1, Titre 2…) propose Google Docs ?",
+          "reponse": 6,
+          "unite": "niveaux",
+          "marge": 0,
+          "anecdote": "De « Titre 1 » à « Titre 6 », en plus des styles « Titre » et « Sous-titre »."
+        },
+        {
+          "question": "Quelle est la taille de police par défaut d’un nouveau document Google Docs ?",
+          "reponse": 11,
+          "unite": "points",
+          "marge": 0,
+          "anecdote": "Le style « Texte normal » utilise Arial en taille 11, mais vous pouvez changer ce réglage."
+        }
+      ]
+    },
+    "debout-assis": {
+      "elements": [
+        {
+          "affirmation": "Dans Google Docs, il faut penser à cliquer régulièrement sur « Enregistrer ».",
+          "reponse": "faux",
+          "explication": "Il n’y a pas de bouton Enregistrer : chaque modification est enregistrée automatiquement dans Google Drive."
+        },
+        {
+          "affirmation": "Pour utiliser Google Docs, il faut installer un logiciel sur l’ordinateur.",
+          "reponse": "faux",
+          "explication": "Un navigateur web et un compte Google suffisent. Sur téléphone, il existe aussi une application."
+        },
+        {
+          "affirmation": "Plusieurs personnes peuvent écrire dans le même document au même moment.",
+          "reponse": "vrai",
+          "explication": "Chacun voit le curseur des autres, avec leur nom, et les modifications s’affichent en direct."
+        },
+        {
+          "affirmation": "Si vous renommez un document dans Google Docs, son nom change aussi dans Google Drive.",
+          "reponse": "vrai",
+          "explication": "C’est le même fichier : il porte le même nom partout."
+        },
+        {
+          "affirmation": "Une personne avec qui l’on partage un document peut forcément le modifier.",
+          "reponse": "faux",
+          "explication": "Tout dépend du rôle choisi au moment du partage : lecteur, commentateur ou éditeur."
+        },
+        {
+          "affirmation": "Le raccourci Ctrl + Maj + V colle un texte sans sa mise en forme d’origine.",
+          "reponse": "vrai",
+          "explication": "Pratique pour coller un texte copié sur un site web sans ses couleurs ni ses polices."
+        },
+        {
+          "affirmation": "Google Docs peut ouvrir et modifier un fichier Word (.docx).",
+          "reponse": "vrai",
+          "explication": "Une fois le fichier importé dans Google Drive, on peut le modifier directement ou le convertir au format Google Docs."
+        },
+        {
+          "affirmation": "Télécharger un document sur l’ordinateur le fait disparaître de Google Drive.",
+          "reponse": "faux",
+          "explication": "Le téléchargement crée une copie sur l’ordinateur : l’original reste dans Google Drive."
+        },
+        {
+          "affirmation": "Dans un commentaire, taper @ suivi d’un nom prévient cette personne par e-mail.",
+          "reponse": "vrai",
+          "explication": "Elle reçoit une notification ; si elle n’a pas encore accès au document, Google Docs propose de le partager avec elle."
+        },
+        {
+          "affirmation": "Une fois partagé, un document ne peut plus redevenir privé.",
+          "reponse": "faux",
+          "explication": "Dans la fenêtre de partage, on peut à tout moment retirer l’accès d’une personne ou restreindre le lien."
+        }
+      ]
+    },
+    "bon-ordre": {
+      "elements": [
+        {
+          "titre": "Créer un document depuis Google Drive et lui donner un nom",
+          "etapes": [
+            "Ouvrir Google Drive",
+            "Cliquer sur le bouton « Nouveau »",
+            "Choisir « Google Docs », puis « Document vierge »",
+            "Cliquer sur le titre du document, en haut à gauche",
+            "Taper le nom du document et appuyer sur Entrée"
+          ]
+        },
+        {
+          "titre": "Partager un document pour qu’un collègue puisse seulement le commenter",
+          "etapes": [
+            "Ouvrir le document dans Google Docs",
+            "Cliquer sur le bouton « Partager », en haut à droite",
+            "Saisir l’adresse e-mail du collègue",
+            "Choisir le rôle « Commentateur »",
+            "Cliquer sur « Envoyer »"
+          ]
+        },
+        {
+          "titre": "Insérer une image enregistrée sur l’ordinateur",
+          "etapes": [
+            "Placer le curseur à l’endroit voulu",
+            "Ouvrir le menu Insertion",
+            "Choisir « Image », puis « Importer depuis l’ordinateur »",
+            "Sélectionner le fichier de l’image",
+            "Cliquer sur « Ouvrir »"
+          ]
+        },
+        {
+          "titre": "Commenter un passage, puis marquer le commentaire comme résolu",
+          "etapes": [
+            "Sélectionner le passage à commenter",
+            "Cliquer sur l’icône « Ajouter un commentaire »",
+            "Écrire le commentaire",
+            "Cliquer sur « Commenter »",
+            "Une fois le point réglé, cliquer sur la coche pour le résoudre"
+          ]
+        }
+      ]
+    },
+    "qui-suis-je": {
+      "elements": [
+        {
+          "reponse": "Le mode Suggestion",
+          "indices": [
+            "Je permets de proposer des changements sans rien imposer.",
+            "Avec moi, le texte ajouté apparaît en couleur et le texte supprimé est barré.",
+            "Chaque changement que je propose peut être accepté ou refusé d’un clic.",
+            "Je suis idéal pour relire le travail d’un collègue sans abîmer son texte.",
+            "Dans Word, mon équivalent s’appelle le suivi des modifications."
+          ]
+        },
+        {
+          "reponse": "L’historique des versions",
+          "indices": [
+            "Je garde la mémoire du document depuis sa création.",
+            "Je sais qui a écrit quoi, et à quel moment.",
+            "On peut donner un nom à mes étapes les plus importantes.",
+            "Grâce à moi, on peut revenir à un état antérieur, même plusieurs jours après.",
+            "Je suis une sorte de machine à remonter le temps, rangée dans le menu Fichier."
+          ]
+        },
+        {
+          "reponse": "La saisie vocale",
+          "indices": [
+            "Je vous évite de taper au clavier.",
+            "J’ai besoin d’un micro pour fonctionner.",
+            "Je comprends le français, mais aussi de nombreuses autres langues.",
+            "On me lance avec le raccourci Ctrl + Maj + S.",
+            "Vous parlez, et j’écris à votre place."
+          ]
+        },
+        {
+          "reponse": "Le lien de partage",
+          "indices": [
+            "Je suis une longue suite de lettres et de chiffres, plutôt illisible.",
+            "On peut m’envoyer par e-mail, par SMS ou sur une messagerie.",
+            "Selon les réglages, je n’ouvre le document qu’aux personnes invitées, ou à tous ceux qui me reçoivent.",
+            "On me copie d’un clic, puis on me colle dans un message.",
+            "Mon adresse commence souvent par docs.google.com/document."
+          ]
+        },
+        {
+          "reponse": "La table des matières",
+          "indices": [
+            "Je me place souvent tout au début d’un long document.",
+            "Je ne fonctionne bien que si vos titres ont le bon style.",
+            "Chacune de mes lignes est un lien : un clic, et vous voilà au bon endroit.",
+            "Quand vous ajoutez une partie, il faut m’actualiser.",
+            "Je liste tous les titres du document, comme au début d’un livre."
+          ]
+        }
+      ]
+    },
+    "duel-buzzer": {
+      "elements": [
+        {
+          "question": "Quel raccourci insère un lien sur le texte sélectionné ?",
+          "reponse": "Ctrl + K"
+        },
+        { "question": "Quel raccourci centre le paragraphe ?", "reponse": "Ctrl + Maj + E" },
+        { "question": "Quel raccourci crée une liste numérotée ?", "reponse": "Ctrl + Maj + 7" },
+        {
+          "question": "Quel raccourci affiche le nombre de mots du document ?",
+          "reponse": "Ctrl + Maj + C"
+        },
+        {
+          "question": "Dans quel menu peut-on mettre le texte sur deux colonnes ?",
+          "reponse": "Format"
+        },
+        {
+          "question": "Quel raccourci applique le style « Titre 1 » ?",
+          "reponse": "Ctrl + Alt + 1"
+        },
+        { "question": "Quel raccourci ajoute un commentaire ?", "reponse": "Ctrl + Alt + M" },
+        {
+          "question": "Quelle courte adresse taper dans le navigateur pour créer tout de suite un nouveau document ?",
+          "reponse": "docs.new"
+        },
+        {
+          "question": "Quel rôle de partage permet seulement de lire le document, sans le commenter ?",
+          "reponse": "Lecteur"
+        },
+        {
+          "question": "Dans quel menu se trouve la vérification orthographique ?",
+          "reponse": "Outils"
+        },
+        {
+          "question": "Quel raccourci ouvre la fenêtre « Rechercher et remplacer » ?",
+          "reponse": "Ctrl + H"
+        },
+        {
+          "question": "Quel bouton, en haut à droite, sert à inviter d’autres personnes dans le document ?",
+          "reponse": "« Partager »"
+        }
+      ]
+    },
+    "pyramide": {
+      "elements": [
+        { "mot": "Imprimer" },
+        { "mot": "Italique" },
+        { "mot": "Gras" },
+        { "mot": "Travail d’équipe" },
+        { "mot": "Paragraphe" },
+        { "mot": "Majuscule" },
+        { "mot": "Annuler" },
+        { "mot": "Curseur" },
+        { "mot": "Brouillon" },
+        { "mot": "Lettre de motivation" },
+        { "mot": "Note de bas de page" },
+        { "mot": "Gmail" }
+      ]
+    },
+    "batterie-faible": {
+      "elements": [
+        {
+          "mot": "Document sans titre",
+          "theme": "Créer un document",
+          "definition": "Le nom donné d’office à tout nouveau document : pensez à le renommer !"
+        },
+        {
+          "mot": "Propriétaire",
+          "theme": "Le partage",
+          "definition": "La personne qui a créé le document ; elle peut transférer ce rôle à quelqu’un d’autre."
+        },
+        {
+          "mot": "Orthographe",
+          "theme": "Les vérifications",
+          "definition": "Google Docs souligne les fautes ; un clic droit sur le mot souligné propose des corrections."
+        },
+        {
+          "mot": "Saut de page",
+          "theme": "La mise en page",
+          "definition": "Avec Ctrl + Entrée, la suite du texte commence sur une nouvelle page."
+        },
+        {
+          "mot": "Hors connexion",
+          "theme": "Travailler sans Internet",
+          "definition": "À activer à l’avance : vos modifications seront synchronisées au retour d’Internet."
+        },
+        {
+          "mot": "Google Drive",
+          "theme": "Le stockage en ligne",
+          "definition": "L’espace en ligne où sont rangés tous vos documents Google Docs."
+        },
+        {
+          "mot": "Interligne",
+          "theme": "Le paragraphe",
+          "definition": "L’espace entre les lignes d’un paragraphe : simple, 1,15, 1,5 ou double."
+        },
+        {
+          "mot": "Effacer la mise en forme",
+          "theme": "Le menu Format",
+          "definition": "Elle retire le gras, les couleurs et les tailles pour revenir au texte de base."
+        }
+      ]
+    }
+  }
+}

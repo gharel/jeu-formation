@@ -40,7 +40,10 @@ import {
   compacterContenu,
   preparerExport,
   lireImport,
+  cleContenu as cleDuContenu,
 } from './contenu.js';
+import { sourceDe, oublierSource } from './jeux-de-donnees.js';
+import { telechargerJson, nomDeFichier } from './fichiers.js';
 import { creerEditeur } from './editeur-contenu.js';
 import { exigerAcces } from './acces.js';
 
@@ -52,7 +55,7 @@ export function monterJeu(config) {
   const jeu = trouverJeu(slug);
   const cadre = document.getElementById('cadre');
   const hasard = hasardDePage();
-  const cleContenu = `${slug}:contenu`;
+  const cleContenu = cleDuContenu(slug);
 
   // Participants, infos et plan de salle, partagés avec la page « Le groupe »
   const groupe = creerGroupe();
@@ -199,6 +202,19 @@ export function monterJeu(config) {
   // ---------- Écran d'accueil du jeu ----------
 
   function blocContenu(erreurs) {
+    // Contenu venu d'une thématique ou d'un jeu de données (page « Les contenus »)
+    const source = estExemple() ? null : sourceDe(slug);
+    let etiquette = null;
+    if (estExemple()) etiquette = 'contenu d’exemple';
+    else if (source) etiquette = source;
+    let aide =
+      'Votre contenu est enregistré dans ce navigateur. Exportez-le pour le garder ou le partager.';
+    if (estExemple()) {
+      aide =
+        'Un contenu d’exemple permet de jouer tout de suite. Remplacez-le par le vôtre, ou chargez une thématique prête à jouer, avant la séance.';
+    } else if (source) {
+      aide = `Contenu chargé depuis « ${source} ». Vous pouvez le retoucher : il reste enregistré dans ce navigateur.`;
+    }
     const etat = erreurs.length
       ? el('p', { class: 'etat etat--ko' }, icone('triangle-exclamation'), 'Contenu incomplet')
       : el(
@@ -206,7 +222,7 @@ export function monterJeu(config) {
           { class: 'etat etat--ok' },
           icone('circle-check'),
           resumerContenu(schema, contenu),
-          estExemple() ? el('span', { class: 'etiquette' }, 'contenu d’exemple') : null,
+          etiquette ? el('span', { class: 'etiquette' }, etiquette) : null,
         );
     return el(
       'section',
@@ -220,13 +236,7 @@ export function monterJeu(config) {
             erreurs.map((m) => el('li', {}, m)),
           )
         : null,
-      el(
-        'p',
-        { class: 'champ__aide' },
-        estExemple()
-          ? 'Un contenu d’exemple permet de jouer tout de suite. Remplacez-le par le vôtre avant la séance.'
-          : 'Votre contenu est enregistré dans ce navigateur. Exportez-le pour le garder ou le partager.',
-      ),
+      el('p', { class: 'champ__aide' }, aide),
       el(
         'div',
         { class: 'groupe-boutons' },
@@ -249,6 +259,12 @@ export function monterJeu(config) {
               'Partir d’une liste vide',
             )
           : null,
+        el(
+          'a',
+          { class: 'bouton bouton--discret', href: '../../contenus/' },
+          icone('layer-group'),
+          'Charger une thématique',
+        ),
       ),
     );
   }
@@ -326,19 +342,6 @@ export function monterJeu(config) {
   const MESSAGE_LISTE_VIDE =
     'Liste vidée. Les textes grisés ne sont que des exemples : saisissez votre contenu par-dessus, puis enregistrez.';
 
-  function telecharger(nom, texte) {
-    const lien = el('a', {
-      href: URL.createObjectURL(new Blob([texte], { type: 'application/json' })),
-      download: nom,
-    });
-    document.body.append(lien);
-    lien.click();
-    setTimeout(() => {
-      URL.revokeObjectURL(lien.href);
-      lien.remove();
-    }, 1000);
-  }
-
   function afficherPreparation(brouillon = contenu, messageInitial = '') {
     const titre = el('h2', {}, 'Préparer le contenu');
     const zoneMessages = el('div', { class: 'messages', role: 'status' });
@@ -394,11 +397,7 @@ export function monterJeu(config) {
             const aExporter = config.exporter
               ? await config.exporter(lireBrouillon())
               : lireBrouillon();
-            const date = new Date().toISOString().slice(0, 10);
-            telecharger(
-              `skazy-${slug}-${date}.json`,
-              JSON.stringify(preparerExport(slug, aExporter), null, 2),
-            );
+            telechargerJson(nomDeFichier(`skazy-${slug}`), preparerExport(slug, aExporter));
           },
         },
         icone('download'),
@@ -471,6 +470,8 @@ export function monterJeu(config) {
         );
         return;
       }
+      // Contenu retouché : ce n'est plus celui de la thématique chargée
+      if (JSON.stringify(nouveau) !== JSON.stringify(contenu)) oublierSource(slug);
       contenu = nouveau;
       reference = JSON.stringify(editeurCourant.valeur());
       await config.apresEnregistrement?.(contenu);
@@ -711,6 +712,7 @@ export function monterJeu(config) {
     /** Pour les tests : efface le contenu enregistré. */
     reinitialiser() {
       effacer(cleContenu);
+      oublierSource(slug);
       contenu = nettoyerContenu(schema, exemple);
       afficherAccueil();
     },

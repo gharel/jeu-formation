@@ -1,0 +1,377 @@
+{
+  "format": "skazy-jeux-donnees",
+  "version": 1,
+  "titre": "Microsoft 365",
+  "description": "Word, Excel, PowerPoint, Outlook, Teams, OneDrive : le rôle de chaque application, le partage, la coédition et les raccourcis utiles.",
+  "jeux": {
+    "motus": {
+      "elements": [
+        {
+          "mot": "RUBAN",
+          "definition": "La bande d’onglets et de boutons en haut de Word, Excel ou PowerPoint."
+        },
+        {
+          "mot": "CLASSEUR",
+          "definition": "Le fichier Excel, qui peut contenir plusieurs feuilles de calcul."
+        },
+        {
+          "mot": "ONEDRIVE",
+          "definition": "L’espace de stockage en ligne de Microsoft, pour retrouver ses fichiers partout."
+        },
+        {
+          "mot": "DIAPORAMA",
+          "definition": "La suite de diapositives que l’on projette en plein écran avec PowerPoint."
+        },
+        {
+          "mot": "SONDAGE",
+          "definition": "Ce que l’on crée avec Forms pour recueillir l’avis d’un groupe."
+        }
+      ]
+    },
+    "instant-defi": {
+      "elements": [
+        {
+          "amorce": "trouver30",
+          "amorcePerso": "",
+          "fin": "… l’onglet du ruban de Word qui permet d’insérer une image"
+        },
+        {
+          "amorce": "montrer60",
+          "amorcePerso": "",
+          "fin": "… comment ajouter une nouvelle diapositive dans PowerPoint et y écrire un titre"
+        },
+        {
+          "amorce": "expliquer20",
+          "amorcePerso": "",
+          "fin": "… la différence entre « Répondre » et « Répondre à tous » dans Outlook"
+        },
+        {
+          "amorce": "retrouver45",
+          "amorcePerso": "",
+          "fin": "… un document ouvert récemment dans Word, sans passer par l’Explorateur de fichiers"
+        },
+        {
+          "amorce": "surprise",
+          "amorcePerso": "",
+          "fin": "… trois raccourcis clavier qui fonctionnent dans Word, Excel et PowerPoint"
+        },
+        {
+          "amorce": "trouver30",
+          "amorcePerso": "",
+          "fin": "… quatre applications de Microsoft 365 en plus de Word, Excel et PowerPoint"
+        }
+      ]
+    },
+    "juste-chiffre": {
+      "elements": [
+        {
+          "question": "En quelle année la toute première version de Word est-elle sortie ?",
+          "reponse": 1983,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "À l’époque, Windows n’existait pas encore : il n’est arrivé qu’en 1985."
+        },
+        {
+          "question": "En quelle année est sorti PowerPoint, le logiciel de présentation ?",
+          "reponse": 1987,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Créé par la société Forethought, il a été racheté par Microsoft la même année."
+        },
+        {
+          "question": "En quelle année Microsoft a-t-il lancé Office 365 ?",
+          "reponse": 2011,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "L’offre réunissait déjà les logiciels Office, la messagerie et le partage de documents en ligne."
+        },
+        {
+          "question": "En quelle année Microsoft Teams a-t-il été lancé ?",
+          "reponse": 2017,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Annoncé fin 2016, il est devenu disponible pour tous en mars 2017."
+        },
+        {
+          "question": "Combien de lignes compte une feuille de calcul dans Excel ?",
+          "reponse": 1048576,
+          "unite": "lignes",
+          "marge": 10,
+          "anecdote": "C’est 2 puissance 20. Avant Excel 2007, une feuille s’arrêtait à 65 536 lignes."
+        },
+        {
+          "question": "Combien de colonnes compte une feuille de calcul dans Excel ?",
+          "reponse": 16384,
+          "unite": "colonnes",
+          "marge": 10,
+          "anecdote": "C’est 2 puissance 14. Avant Excel 2007, une feuille s’arrêtait à 256 colonnes."
+        }
+      ]
+    },
+    "debout-assis": {
+      "elements": [
+        {
+          "affirmation": "Word, Excel et PowerPoint peuvent s’utiliser dans un simple navigateur, sans rien installer.",
+          "reponse": "vrai",
+          "explication": "Ce sont les versions en ligne : il suffit de se connecter avec son compte Microsoft."
+        },
+        {
+          "affirmation": "Un fichier enregistré dans OneDrive ne s’ouvre que sur l’ordinateur qui l’a créé.",
+          "reponse": "faux",
+          "explication": "OneDrive est un stockage en ligne : vos fichiers vous suivent sur tous les appareils connectés à votre compte."
+        },
+        {
+          "affirmation": "Le raccourci Ctrl + Z ne fonctionne que dans Word.",
+          "reponse": "faux",
+          "explication": "Il annule la dernière action dans Excel, PowerPoint, Outlook et la plupart des logiciels."
+        },
+        {
+          "affirmation": "Plusieurs personnes peuvent modifier le même document Word en même temps.",
+          "reponse": "vrai",
+          "explication": "C’est la coédition : il suffit que le document soit enregistré dans OneDrive ou SharePoint, puis partagé."
+        },
+        {
+          "affirmation": "Quand l’enregistrement automatique est activé, les modifications sont enregistrées au fur et à mesure.",
+          "reponse": "vrai",
+          "explication": "Il fonctionne pour les fichiers stockés dans OneDrive ou SharePoint ; son interrupteur est en haut à gauche de la fenêtre."
+        },
+        {
+          "affirmation": "Dans Teams, un canal est une discussion privée entre deux personnes.",
+          "reponse": "faux",
+          "explication": "Un canal est un espace d’une équipe consacré à un sujet. Pour écrire à une seule personne, on ouvre une conversation."
+        },
+        {
+          "affirmation": "Dans Excel, le ruban a un onglet Formules que Word n’a pas.",
+          "reponse": "vrai",
+          "explication": "Le ruban s’adapte à chaque logiciel : PowerPoint a par exemple des onglets Transitions et Animations."
+        },
+        {
+          "affirmation": "Les versions en ligne et les applications installées ont exactement les mêmes fonctions.",
+          "reponse": "faux",
+          "explication": "Les versions en ligne sont plus simples : certaines fonctions avancées n’existent que dans les applications installées."
+        },
+        {
+          "affirmation": "Un fichier supprimé dans OneDrive disparaît aussitôt, pour toujours.",
+          "reponse": "faux",
+          "explication": "Il passe d’abord par la corbeille OneDrive, d’où l’on peut le restaurer pendant un certain temps."
+        },
+        {
+          "affirmation": "Dans Word, on peut répondre à un commentaire laissé par un collègue.",
+          "reponse": "vrai",
+          "explication": "Chaque commentaire peut recevoir des réponses : toute la discussion reste attachée au passage concerné."
+        }
+      ]
+    },
+    "bon-ordre": {
+      "elements": [
+        {
+          "titre": "Partager un document Word avec un collègue",
+          "etapes": [
+            "Enregistrer le document dans OneDrive",
+            "Cliquer sur le bouton « Partager »",
+            "Saisir le nom ou l’adresse du collègue",
+            "Cliquer sur « Envoyer »",
+            "Le collègue ouvre le lien reçu par courriel"
+          ]
+        },
+        {
+          "titre": "Inviter des collègues à une réunion avec Outlook",
+          "etapes": [
+            "Ouvrir le calendrier d’Outlook",
+            "Créer un nouvel événement",
+            "Remplir le titre, les invités, la date et l’heure",
+            "Cliquer sur « Envoyer »",
+            "Consulter les réponses des invités dans le calendrier"
+          ]
+        },
+        {
+          "titre": "Récupérer une version précédente d’un document Word enregistré dans OneDrive",
+          "etapes": [
+            "Ouvrir le document dans Word",
+            "Cliquer sur le menu « Fichier »",
+            "Choisir « Informations »",
+            "Cliquer sur « Historique des versions »",
+            "Ouvrir la version voulue dans la liste",
+            "Cliquer sur « Restaurer »"
+          ]
+        },
+        {
+          "titre": "Partager son écran pendant une réunion Teams",
+          "etapes": [
+            "Rejoindre la réunion depuis le calendrier de Teams",
+            "Cliquer sur « Partager » dans la barre de la réunion",
+            "Choisir l’écran ou la fenêtre à montrer",
+            "Présenter son document aux participants",
+            "Arrêter le partage à la fin de la présentation"
+          ]
+        }
+      ]
+    },
+    "qui-suis-je": {
+      "elements": [
+        {
+          "reponse": "Le tableur Excel",
+          "indices": [
+            "Je suis né en 1985, d’abord sur les ordinateurs Macintosh.",
+            "Je transforme vos chiffres en graphiques en quelques clics.",
+            "Chez moi, chaque case a une adresse, comme A1 ou C12.",
+            "Je calcule tout seul dès qu’on commence par le signe égal.",
+            "Mon icône est verte et porte la lettre X."
+          ]
+        },
+        {
+          "reponse": "L’application Teams",
+          "indices": [
+            "J’ai remplacé Skype Entreprise dans les entreprises.",
+            "Chez moi, on discute, on s’appelle et on travaille sur les mêmes fichiers.",
+            "Pendant mes réunions en ligne, on peut couper son micro et sa caméra.",
+            "Mon icône violette porte la lettre T.",
+            "Mon nom anglais veut dire « équipes »."
+          ]
+        },
+        {
+          "reponse": "L’application Outlook",
+          "indices": [
+            "Je gère aussi vos contacts et vos tâches.",
+            "Je peux vous rappeler un rendez-vous quelques minutes avant qu’il commence.",
+            "J’ai un dossier « Courrier indésirable » pour les messages suspects.",
+            "Grâce à mon calendrier, on envoie des invitations aux réunions.",
+            "Je suis la messagerie de Microsoft 365, avec une icône bleue marquée d’un O."
+          ]
+        },
+        {
+          "reponse": "Le mode Présentateur",
+          "indices": [
+            "Le public ne me voit jamais, et pourtant je suis là du début à la fin.",
+            "J’affiche vos notes, que les spectateurs ne voient pas.",
+            "Je montre aussi la diapositive suivante et le temps écoulé.",
+            "Je suis idéal avec deux écrans : votre ordinateur et le vidéoprojecteur.",
+            "Dans PowerPoint, je suis la vue réservée à la personne qui présente."
+          ]
+        },
+        {
+          "reponse": "La double authentification",
+          "indices": [
+            "Je suis une protection en plus pour votre compte Microsoft.",
+            "Même si quelqu’un vole votre mot de passe, je peux l’empêcher d’entrer.",
+            "Je vous demande parfois un code reçu par SMS ou affiché dans une application.",
+            "On me désigne souvent par les sigles 2FA ou MFA.",
+            "Je réclame deux preuves au lieu d’une pour vous connecter."
+          ]
+        }
+      ]
+    },
+    "duel-buzzer": {
+      "elements": [
+        {
+          "question": "Quel raccourci clavier enregistre le document en cours ?",
+          "reponse": "Ctrl + S"
+        },
+        {
+          "question": "Quel raccourci clavier lance l’impression ?",
+          "reponse": "Ctrl + P"
+        },
+        {
+          "question": "Dans Excel, quel raccourci écrit la date du jour dans une cellule ?",
+          "reponse": "Ctrl + ;"
+        },
+        {
+          "question": "Dans PowerPoint, quelle touche lance le diaporama depuis la première diapositive ?",
+          "reponse": "F5"
+        },
+        {
+          "question": "Dans PowerPoint, quel raccourci lance le diaporama à partir de la diapositive affichée ?",
+          "reponse": "Maj + F5"
+        },
+        {
+          "question": "Comment s’appelle la toute dernière colonne d’une feuille Excel ?",
+          "reponse": "XFD"
+        },
+        {
+          "question": "Quelle application de Microsoft 365 est un bloc-notes numérique, organisé en sections et en pages ?",
+          "reponse": "OneNote"
+        },
+        {
+          "question": "Quelle application de Microsoft 365 sert à créer des sites d’équipe pour partager des documents ?",
+          "reponse": "SharePoint"
+        },
+        {
+          "question": "Quelle application de Microsoft 365 organise les tâches d’une équipe sur un tableau de cartes ?",
+          "reponse": "Planner"
+        },
+        {
+          "question": "Dans Word, quel onglet du ruban contient les boutons Gras, Italique et Souligné ?",
+          "reponse": "Accueil"
+        },
+        {
+          "question": "Quel caractère tape-t-on avant un nom pour mentionner un collègue dans un commentaire ?",
+          "reponse": "L’arobase @"
+        },
+        {
+          "question": "En quelle année Office 365 a-t-il été renommé Microsoft 365 ?",
+          "reponse": "2020"
+        }
+      ]
+    },
+    "pyramide": {
+      "elements": [
+        { "mot": "Word" },
+        { "mot": "PowerPoint" },
+        { "mot": "Diapositive" },
+        { "mot": "Cellule" },
+        { "mot": "Formule" },
+        { "mot": "Calendrier" },
+        { "mot": "Copier-coller" },
+        { "mot": "Visioconférence" },
+        { "mot": "Pièce jointe" },
+        { "mot": "Graphique" },
+        { "mot": "Signature" },
+        { "mot": "Webcam" }
+      ]
+    },
+    "batterie-faible": {
+      "elements": [
+        {
+          "mot": "Traitement de texte",
+          "theme": "Les familles de logiciels",
+          "definition": "C’est la famille de Word : écrire, mettre en page et imprimer des documents."
+        },
+        {
+          "mot": "Mise en forme conditionnelle",
+          "theme": "Excel",
+          "definition": "Elle colore automatiquement les cellules selon des règles, par exemple en rouge sous zéro."
+        },
+        {
+          "mot": "Zone de texte",
+          "theme": "PowerPoint",
+          "definition": "Le cadre dans lequel on écrit sur une diapositive."
+        },
+        {
+          "mot": "Boîte de réception",
+          "theme": "Outlook",
+          "definition": "Le dossier où arrivent vos nouveaux courriels."
+        },
+        {
+          "mot": "Copie carbone invisible",
+          "theme": "Le courriel",
+          "definition": "C’est le sens de Cci : ces destinataires reçoivent le message sans que les autres le sachent."
+        },
+        {
+          "mot": "Lever la main",
+          "theme": "Les réunions Teams",
+          "definition": "Le bouton qui signale, pendant une réunion, que vous voulez prendre la parole."
+        },
+        {
+          "mot": "Lien de partage",
+          "theme": "Le partage",
+          "definition": "L’adresse à envoyer pour donner accès à un fichier, en lecture seule ou en modification."
+        },
+        {
+          "mot": "Correcteur orthographique",
+          "theme": "Word",
+          "definition": "Il souligne en rouge les mots qu’il ne reconnaît pas."
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,370 @@
+{
+  "format": "skazy-jeux-donnees",
+  "version": 1,
+  "titre": "Google Sheets",
+  "description": "Cellules, formules, fonctions en français, tris, filtres, graphiques et partage : les bases du tableur en ligne de Google.",
+  "jeux": {
+    "motus": {
+      "elements": [
+        {
+          "mot": "CELLULE",
+          "definition": "La case à la rencontre d’une ligne et d’une colonne, comme B3."
+        },
+        {
+          "mot": "COLONNE",
+          "definition": "Une suite verticale de cellules, repérée par une lettre."
+        },
+        {
+          "mot": "FORMULE",
+          "definition": "Un calcul écrit dans une cellule, dont le résultat se met à jour tout seul."
+        },
+        {
+          "mot": "ONGLET",
+          "definition": "En bas de l’écran, il permet de passer d’une feuille à l’autre du fichier."
+        },
+        {
+          "mot": "PLAGE",
+          "definition": "Un groupe de cellules voisines, désigné par sa première et sa dernière cellule."
+        }
+      ]
+    },
+    "instant-defi": {
+      "elements": [
+        {
+          "amorce": "trouver30",
+          "amorcePerso": "",
+          "fin": "… le menu qui permet de figer la première ligne d’un tableau"
+        },
+        {
+          "amorce": "montrer60",
+          "amorcePerso": "",
+          "fin": "… comment recopier une formule vers le bas avec la poignée de recopie"
+        },
+        {
+          "amorce": "expliquer20",
+          "amorcePerso": "",
+          "fin": "… à quoi sert le signe $ dans une référence comme $A$1"
+        },
+        {
+          "amorce": "retrouver45",
+          "amorcePerso": "",
+          "fin": "… la commande qui permet de renommer une feuille (un onglet)"
+        },
+        {
+          "amorce": "surprise",
+          "amorcePerso": "",
+          "fin": "… comment masquer une colonne, puis la faire réapparaître"
+        },
+        {
+          "amorce": "expliquer20",
+          "amorcePerso": "",
+          "fin": "… la différence entre trier et filtrer un tableau"
+        }
+      ]
+    },
+    "juste-chiffre": {
+      "elements": [
+        {
+          "question": "En quelle année Google a-t-il lancé son tableur en ligne, alors appelé Google Spreadsheets ?",
+          "reponse": 2006,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Il a d’abord été proposé en test dans Google Labs, le laboratoire des projets de Google."
+        },
+        {
+          "question": "Combien de millions de cellules un fichier Google Sheets peut-il contenir au maximum ?",
+          "reponse": 10,
+          "unite": "millions de cellules",
+          "marge": 0,
+          "anecdote": "Ce total compte toutes les feuilles (onglets) du fichier, pas seulement celle qui est affichée."
+        },
+        {
+          "question": "Combien de colonnes une feuille Google Sheets peut-elle compter au maximum ?",
+          "reponse": 18278,
+          "unite": "colonnes",
+          "marge": 10,
+          "anecdote": "La dernière s’appelle ZZZ : après Z viennent AA, AB… puis, après ZZ, AAA."
+        },
+        {
+          "question": "Combien de lignes compte une nouvelle feuille de calcul vierge ?",
+          "reponse": 1000,
+          "unite": "lignes",
+          "marge": 0,
+          "anecdote": "Et 26 colonnes, de A à Z. On ajoute d’autres lignes en bas de la feuille, en un clic."
+        },
+        {
+          "question": "Quel résultat affiche la formule =2+3*4 ?",
+          "reponse": 14,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "La multiplication passe avant l’addition, comme en maths. Avec =(2+3)*4, on obtient 20."
+        },
+        {
+          "question": "Combien de cellules compte la plage qui va de A1 à D25 ?",
+          "reponse": 100,
+          "unite": "cellules",
+          "marge": 0,
+          "anecdote": "4 colonnes (A, B, C et D) × 25 lignes = 100 cellules. Dans une formule, on relie les deux cellules par deux-points."
+        }
+      ]
+    },
+    "debout-assis": {
+      "elements": [
+        {
+          "affirmation": "Dans Google Sheets, il faut penser à cliquer régulièrement sur « Enregistrer ».",
+          "reponse": "faux",
+          "explication": "Il n’y a pas de bouton Enregistrer : chaque modification est enregistrée automatiquement, au fur et à mesure."
+        },
+        {
+          "affirmation": "Pour qu’un calcul se fasse, on commence la formule par le signe =.",
+          "reponse": "vrai",
+          "explication": "Sans le signe =, Google Sheets considère ce que vous tapez comme un simple texte ou un nombre."
+        },
+        {
+          "affirmation": "Plusieurs personnes peuvent modifier la même feuille en même temps.",
+          "reponse": "vrai",
+          "explication": "Chacun voit les modifications des autres en direct, avec une couleur par personne."
+        },
+        {
+          "affirmation": "En français, on sépare les arguments d’une fonction par des virgules.",
+          "reponse": "faux",
+          "explication": "La virgule sert déjà aux décimales (3,5) : on sépare donc les arguments par des points-virgules."
+        },
+        {
+          "affirmation": "Un filtre supprime les lignes qui ne correspondent pas au critère choisi.",
+          "reponse": "faux",
+          "explication": "Il les masque seulement : quand on retire le filtre, toutes les lignes réapparaissent."
+        },
+        {
+          "affirmation": "Au format pourcentage, la valeur 0,5 s’affiche 50 %.",
+          "reponse": "vrai",
+          "explication": "La cellule contient toujours 0,5 : seul l’affichage change."
+        },
+        {
+          "affirmation": "Dans un tableur, les lignes sont désignées par des lettres.",
+          "reponse": "faux",
+          "explication": "Ce sont les colonnes qui portent des lettres (A, B, C…) ; les lignes, elles, sont numérotées (1, 2, 3…)."
+        },
+        {
+          "affirmation": "On peut faire des calculs avec des dates, par exemple pour compter des jours.",
+          "reponse": "vrai",
+          "explication": "Pour le tableur, une date est un nombre : en soustrayant deux dates, on obtient les jours qui les séparent."
+        },
+        {
+          "affirmation": "Une formule peut utiliser des cellules d’une autre feuille du même fichier.",
+          "reponse": "vrai",
+          "explication": "Pendant la saisie de la formule, il suffit de cliquer sur l’autre onglet, puis sur la cellule voulue."
+        },
+        {
+          "affirmation": "Télécharger au format .csv garde toutes les feuilles (onglets) du fichier.",
+          "reponse": "faux",
+          "explication": "Le .csv ne contient que la feuille affichée, sans mise en forme ni graphique. Pour tout garder, choisissez .xlsx."
+        }
+      ]
+    },
+    "bon-ordre": {
+      "elements": [
+        {
+          "titre": "Calculer le total d’une colonne avec la fonction SOMME",
+          "etapes": [
+            "Cliquer dans la cellule sous la dernière valeur",
+            "Taper « =SOMME( »",
+            "Sélectionner les cellules à additionner",
+            "Fermer la parenthèse",
+            "Appuyer sur Entrée"
+          ]
+        },
+        {
+          "titre": "Créer un graphique à partir d’un tableau",
+          "etapes": [
+            "Sélectionner le tableau, titres compris",
+            "Ouvrir le menu Insertion",
+            "Choisir « Graphique »",
+            "Choisir le type de graphique dans l’éditeur, à droite"
+          ]
+        },
+        {
+          "titre": "Partager la feuille avec un collègue qui pourra seulement commenter",
+          "etapes": [
+            "Cliquer sur le bouton « Partager », en haut à droite",
+            "Saisir l’adresse e-mail du collègue",
+            "Choisir le rôle « Commentateur »",
+            "Cliquer sur « Envoyer »"
+          ]
+        },
+        {
+          "titre": "Afficher une colonne de prix au format monétaire",
+          "etapes": [
+            "Sélectionner la colonne des prix",
+            "Ouvrir le menu Format",
+            "Pointer « Nombre »",
+            "Choisir « Devise »"
+          ]
+        }
+      ]
+    },
+    "qui-suis-je": {
+      "elements": [
+        {
+          "reponse": "La fonction RECHERCHEV",
+          "indices": [
+            "Je relie deux tableaux grâce à une information commune, comme un code produit.",
+            "J’attends trois arguments, parfois quatre.",
+            "Je fouille la première colonne d’un tableau, de haut en bas.",
+            "Je renvoie ce qui se trouve sur la même ligne, dans la colonne demandée.",
+            "Mon nom veut dire que je cherche à la verticale."
+          ]
+        },
+        {
+          "reponse": "La mise en forme conditionnelle",
+          "indices": [
+            "Je réagis aussitôt qu’une valeur change dans le tableau.",
+            "Je peux peindre toute une colonne en dégradé, du rouge au vert.",
+            "On me trouve dans le menu Format.",
+            "Je fais ressortir d’un coup d’œil les retards ou les records.",
+            "Je colore une cellule toute seule selon sa valeur, par exemple les notes sous 10 en rouge."
+          ]
+        },
+        {
+          "reponse": "Le tableau croisé dynamique",
+          "indices": [
+            "Mon nom fait peur, pourtant je vous simplifie la vie.",
+            "Je résume des milliers de lignes sans que vous écriviez une seule formule.",
+            "On me crée depuis le menu Insertion, souvent dans une nouvelle feuille.",
+            "On range les informations dans mes zones Lignes, Colonnes et Valeurs.",
+            "Je croise deux informations, par exemple les ventes par vendeur et par mois."
+          ]
+        },
+        {
+          "reponse": "L’historique des versions",
+          "indices": [
+            "Je me souviens de tout ce qui s’est passé dans le fichier.",
+            "Je sais qui a modifié quoi, et à quel moment.",
+            "On peut donner un nom à mes moments importants.",
+            "Grâce à moi, on peut remettre le fichier tel qu’il était hier.",
+            "On me trouve dans le menu Fichier, ou avec Ctrl + Alt + Maj + H."
+          ]
+        },
+        {
+          "reponse": "La liste déroulante (ou menu déroulant)",
+          "indices": [
+            "Je limite les fautes de frappe dans un tableau partagé.",
+            "Grâce à moi, tout le monde écrit « Nouméa » de la même façon.",
+            "On me crée avec la validation des données, dans le menu Données.",
+            "Une petite flèche signale ma présence dans la cellule.",
+            "Je propose plusieurs choix : il suffit de cliquer sur le bon."
+          ]
+        }
+      ]
+    },
+    "duel-buzzer": {
+      "elements": [
+        {
+          "question": "Quel signe sépare la première et la dernière cellule d’une plage ?",
+          "reponse": "Les deux-points"
+        },
+        {
+          "question": "Quelle fonction additionne des valeurs puis divise par leur nombre ?",
+          "reponse": "MOYENNE"
+        },
+        {
+          "question": "Quelles fonctions renvoient la plus petite et la plus grande valeur ?",
+          "reponse": "MIN et MAX"
+        },
+        {
+          "question": "Quelle fonction compte les cellules qui contiennent des nombres ?",
+          "reponse": "NB"
+        },
+        {
+          "question": "Quelle fonction compte uniquement les cellules qui respectent un critère ?",
+          "reponse": "NB.SI"
+        },
+        {
+          "question": "Quelle fonction affiche un résultat différent selon qu’une condition est vraie ou fausse ?",
+          "reponse": "SI"
+        },
+        {
+          "question": "Dans quel menu se trouve la commande « Créer un filtre » ?",
+          "reponse": "Données"
+        },
+        {
+          "question": "Quel raccourci clavier insère un commentaire ?",
+          "reponse": "Ctrl + Alt + M"
+        },
+        {
+          "question": "Quelle extension porte un fichier téléchargé au format Microsoft Excel ?",
+          "reponse": ".xlsx"
+        },
+        { "question": "Comment s’appelle la cellule située colonne C, ligne 5 ?", "reponse": "C5" },
+        {
+          "question": "Dans quel service de Google les fichiers Google Sheets sont-ils rangés ?",
+          "reponse": "Google Drive"
+        },
+        {
+          "question": "Quel rôle faut-il donner à une personne pour qu’elle puisse modifier la feuille ?",
+          "reponse": "Éditeur"
+        }
+      ]
+    },
+    "pyramide": {
+      "elements": [
+        { "mot": "Ligne" },
+        { "mot": "Tableur" },
+        { "mot": "Camembert" },
+        { "mot": "Pourcentage" },
+        { "mot": "Imprimer" },
+        { "mot": "Signe égal" },
+        { "mot": "Parenthèse" },
+        { "mot": "Copier-coller" },
+        { "mot": "Feuille de calcul" },
+        { "mot": "Total" },
+        { "mot": "Date" },
+        { "mot": "Case à cocher" }
+      ]
+    },
+    "batterie-faible": {
+      "elements": [
+        {
+          "mot": "Barre de formule",
+          "theme": "L’écran",
+          "definition": "La zone au-dessus du tableau qui montre le vrai contenu de la cellule, formule comprise."
+        },
+        {
+          "mot": "Référence relative",
+          "theme": "Les formules",
+          "definition": "Une adresse de cellule qui s’adapte quand on recopie la formule : A1 devient A2 une ligne plus bas."
+        },
+        {
+          "mot": "Fusionner",
+          "theme": "La mise en forme",
+          "definition": "Réunir plusieurs cellules voisines en une seule, souvent pour centrer un titre."
+        },
+        {
+          "mot": "Paramètres régionaux",
+          "theme": "Les réglages du fichier",
+          "definition": "Ils fixent le format des dates, la devise et le séparateur décimal : Fichier, puis Paramètres."
+        },
+        {
+          "mot": "Supprimer les doublons",
+          "theme": "Les données",
+          "definition": "Une commande du menu Données qui retire les lignes en double d’un tableau."
+        },
+        {
+          "mot": "Collaborateur",
+          "theme": "Le partage",
+          "definition": "Une personne avec qui vous partagez la feuille et qui travaille dessus avec vous."
+        },
+        {
+          "mot": "Argument",
+          "theme": "Les fonctions",
+          "definition": "Chaque information donnée à une fonction, entre ses parenthèses : la plage à additionner pour SOMME, par exemple."
+        },
+        {
+          "mot": "Ordre croissant",
+          "theme": "Le tri",
+          "definition": "Du plus petit au plus grand, ou de A à Z pour du texte."
+        }
+      ]
+    }
+  }
+}

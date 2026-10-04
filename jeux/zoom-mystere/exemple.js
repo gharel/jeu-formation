@@ -1,3 +1,6 @@
+import { lireImage, enregistrerImage, nettoyerImages } from '../../assets/js/commun/images.js';
+import { idsImages } from './logique.js';
+
 export const schema = {
   reglages: [
     {
@@ -81,4 +84,34 @@ export const exemple = {
       explication: 'Les fichiers supprimés y attendent avant d’être effacés pour de bon.',
     },
   ],
+};
+
+/**
+ * Import et export du contenu (bouton du jeu et page « Les contenus ») : les images enregistrées
+ * dans le navigateur partent dans le fichier exporté, et reviennent dans IndexedDB à l'import.
+ */
+export const transfert = {
+  async exporter(contenu) {
+    const elements = await Promise.all(
+      contenu.elements.map(async (e) => {
+        if (!e.image?.id) return e;
+        const donnees = await lireImage(e.image.id);
+        return { ...e, image: { focus: e.image.focus, donnees } };
+      }),
+    );
+    return { ...contenu, elements };
+  },
+  async importer(contenu) {
+    const elements = await Promise.all(
+      (contenu.elements ?? []).map(async (e) => {
+        if (typeof e?.image?.donnees !== 'string') return e;
+        const id = await enregistrerImage(e.image.donnees);
+        return { ...e, image: { id, focus: e.image.focus } };
+      }),
+    );
+    return { ...contenu, elements };
+  },
+  async apresEnregistrement(contenu) {
+    await nettoyerImages(idsImages(contenu)).catch(() => {});
+  },
 };

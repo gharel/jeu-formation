@@ -13,10 +13,17 @@
  * }
  * Types de champs : texte, texte-long, nombre, case, choix, liste, image.
  */
-import { lireNombre } from './nombres.js';
+import { lireNombre, formaterNombre } from './nombres.js';
 
 export const FORMAT = 'skazy-jeux';
 export const VERSION = 1;
+/** Jeu de données : le contenu de plusieurs jeux dans un seul fichier (voir jeux-de-donnees.js). */
+export const FORMAT_DONNEES = 'skazy-jeux-donnees';
+
+/** Clé de stockage du contenu enregistré d'un jeu (absente : le jeu joue son exemple). */
+export function cleContenu(slug) {
+  return `${slug}:contenu`;
+}
 
 const LONGUEUR_TEXTE = 200;
 const LONGUEUR_TEXTE_LONG = 1000;
@@ -220,6 +227,42 @@ export function validerContenu(schema, contenu) {
   return erreurs;
 }
 
+/**
+ * Champs d'un élément à afficher en consultation, dans l'ordre du schéma :
+ * [{ cle, libelle, secret, texte | liste | image }]. Les champs facultatifs vides sont omis.
+ */
+export function champsAffiches(schema, element) {
+  return schema.elements.champs.flatMap((champ) => {
+    const valeur = element?.[champ.cle];
+    if (estVide(champ, valeur)) return [];
+    const champAffiche = { cle: champ.cle, libelle: champ.libelle, secret: Boolean(champ.secret) };
+    switch (champ.type) {
+      case 'liste':
+        return [{ ...champAffiche, liste: elementsDeListe(valeur) }];
+      case 'image':
+        return [{ ...champAffiche, image: valeur }];
+      case 'nombre':
+        return [
+          {
+            ...champAffiche,
+            texte: `${formaterNombre(valeur)}${champ.unite ? ` ${champ.unite}` : ''}`,
+          },
+        ];
+      case 'case':
+        return [{ ...champAffiche, texte: valeur ? 'Oui' : 'Non' }];
+      case 'choix':
+        return [
+          {
+            ...champAffiche,
+            texte: champ.options.find((o) => o.valeur === valeur)?.libelle ?? String(valeur),
+          },
+        ];
+      default:
+        return [{ ...champAffiche, texte: String(valeur).trim() }];
+    }
+  });
+}
+
 /** « 5 mots prêts », « 1 question prête ». */
 export function resumerContenu(schema, contenu) {
   const { libelle, pluriel, feminin } = schema.elements;
@@ -256,13 +299,23 @@ export function preparerExport(slug, contenu, maintenant = new Date()) {
   };
 }
 
-/** Lit un fichier exporté. Lève une erreur au message lisible si le fichier ne convient pas. */
+/**
+ * Lit un fichier exporté, ou un jeu de données dont on prend la part de ce jeu.
+ * Lève une erreur au message lisible si le fichier ne convient pas.
+ */
 export function lireImport(texte, slug, titresJeux = {}) {
   let donnees;
   try {
     donnees = JSON.parse(texte);
   } catch {
     throw new Error('Ce fichier n’est pas un export valide (JSON illisible).');
+  }
+  if (donnees?.format === FORMAT_DONNEES) {
+    const contenu = donnees.jeux?.[slug];
+    if (!contenu || typeof contenu !== 'object') {
+      throw new Error(`Ce jeu de données ne contient rien pour « ${titresJeux[slug] ?? slug} ».`);
+    }
+    return contenu;
   }
   if (!donnees || donnees.format !== FORMAT || !donnees.contenu) {
     throw new Error('Ce fichier n’est pas un export des mini-jeux Skazy Formation.');

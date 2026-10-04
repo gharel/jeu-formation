@@ -1,0 +1,379 @@
+{
+  "format": "skazy-jeux-donnees",
+  "version": 1,
+  "titre": "Facebook",
+  "description": "Profil, publications, confidentialité, groupes, Messenger et arnaques : les bons réflexes pour bien utiliser Facebook.",
+  "jeux": {
+    "motus": {
+      "elements": [
+        {
+          "mot": "PROFIL",
+          "definition": "Votre espace personnel sur Facebook, avec votre photo, vos publications et vos informations."
+        },
+        {
+          "mot": "ABONNÉ",
+          "definition": "Une personne qui suit une page ou un profil pour voir ses publications dans son fil."
+        },
+        {
+          "mot": "COMPTE",
+          "definition": "On le crée avec une adresse e-mail ou un numéro de téléphone, et un mot de passe, pour utiliser Facebook."
+        },
+        {
+          "mot": "ARNAQUE",
+          "definition": "Une escroquerie, comme un faux concours ou un message piraté qui vous réclame de l’argent."
+        },
+        {
+          "mot": "COMMENTER",
+          "definition": "Réagir à une publication en écrivant un message juste en dessous."
+        }
+      ]
+    },
+    "instant-defi": {
+      "elements": [
+        {
+          "amorce": "trouver30",
+          "amorcePerso": "",
+          "fin": "… trois indices qui doivent vous faire douter d’un concours sur Facebook"
+        },
+        {
+          "amorce": "montrer60",
+          "amorcePerso": "",
+          "fin": "… où se trouve la vérification de la confidentialité dans les menus de Facebook"
+        },
+        {
+          "amorce": "expliquer20",
+          "amorcePerso": "",
+          "fin": "… ce qui se passe quand on clique sur « Partager » sous une publication"
+        },
+        {
+          "amorce": "retrouver45",
+          "amorcePerso": "",
+          "fin": "… la page d’aide de Facebook à consulter si votre compte a été piraté"
+        },
+        {
+          "amorce": "surprise",
+          "amorcePerso": "",
+          "fin": "… où se trouvent les événements auxquels vous êtes invité"
+        },
+        {
+          "amorce": "trouver30",
+          "amorcePerso": "",
+          "fin": "… trois réactions que l’on peut laisser sous une publication, en plus de « J’aime »"
+        }
+      ]
+    },
+    "juste-chiffre": {
+      "elements": [
+        {
+          "question": "En quelle année Facebook a-t-il été créé ?",
+          "reponse": 2004,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Créé en février 2004 à l’université Harvard, il était d’abord réservé à ses étudiants. Il s’ouvre à tout le monde en 2006."
+        },
+        {
+          "question": "Combien d’amis peut-on avoir au maximum sur un profil Facebook ?",
+          "reponse": 5000,
+          "unite": "amis",
+          "marge": 0,
+          "anecdote": "Au-delà, d’autres personnes peuvent encore s’abonner à votre profil, si vous l’autorisez. Une page, elle, n’a pas de limite d’abonnés."
+        },
+        {
+          "question": "En quelle année le bouton « J’aime » est-il apparu sur Facebook ?",
+          "reponse": 2009,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Il a été lancé en février 2009. Depuis, le pouce levé est devenu l’un des symboles des réseaux sociaux."
+        },
+        {
+          "question": "Pendant combien d’heures une story reste-t-elle visible sur Facebook ?",
+          "reponse": 24,
+          "unite": "heures",
+          "marge": 0,
+          "anecdote": "Ensuite, elle disparaît pour les autres. Vous pouvez la retrouver dans vos archives, si l’archivage est activé."
+        },
+        {
+          "question": "Quel âge faut-il avoir au minimum pour créer un compte Facebook ?",
+          "reponse": 13,
+          "unite": "ans",
+          "marge": 0,
+          "anecdote": "C’est l’âge minimum inscrit dans les conditions d’utilisation de Facebook, comme sur la plupart des réseaux sociaux."
+        },
+        {
+          "question": "En quelle année la société qui possède Facebook a-t-elle pris le nom de Meta ?",
+          "reponse": 2021,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "En octobre 2021, l’entreprise Facebook devient Meta. Le réseau social, lui, garde son nom."
+        }
+      ]
+    },
+    "debout-assis": {
+      "elements": [
+        {
+          "affirmation": "Une publication réglée sur « Moi uniquement » est visible par vos amis proches.",
+          "reponse": "faux",
+          "explication": "Personne d’autre que vous ne la voit : pratique pour garder un souvenir pour soi."
+        },
+        {
+          "affirmation": "Une publication « Public » peut être vue par des personnes qui n’ont pas de compte Facebook.",
+          "reponse": "vrai",
+          "explication": "« Public » veut dire tout le monde, sur Facebook et en dehors : réfléchissez avant de choisir ce réglage."
+        },
+        {
+          "affirmation": "Quand vous signalez une publication, son auteur ne sait pas que c’est vous.",
+          "reponse": "vrai",
+          "explication": "Le signalement est anonyme : n’hésitez pas à signaler une arnaque ou un contenu choquant."
+        },
+        {
+          "affirmation": "La personne que vous bloquez reçoit une notification pour la prévenir.",
+          "reponse": "faux",
+          "explication": "Facebook ne la prévient pas, même si elle peut s’en rendre compte en ne trouvant plus votre profil."
+        },
+        {
+          "affirmation": "Dans un groupe privé, seuls les membres voient ce qui est publié.",
+          "reponse": "vrai",
+          "explication": "Prudence tout de même : n’importe quel membre peut faire une capture d’écran."
+        },
+        {
+          "affirmation": "Un message « C’est toi sur cette vidéo ? » suivi d’un lien vient forcément de votre ami.",
+          "reponse": "faux",
+          "explication": "C’est un piège classique envoyé depuis des comptes piratés : ne cliquez pas et prévenez votre ami par un autre moyen."
+        },
+        {
+          "affirmation": "Désactiver son compte le supprime définitivement.",
+          "reponse": "faux",
+          "explication": "La désactivation est temporaire : il suffit de se reconnecter pour revenir. La suppression, elle, devient définitive après un court délai pour changer d’avis."
+        },
+        {
+          "affirmation": "Un ami vous demande par Messenger le code que vous venez de recevoir par SMS : c’est probablement une arnaque.",
+          "reponse": "vrai",
+          "explication": "Son compte a sans doute été piraté. Ne donnez jamais un code reçu par SMS et appelez votre ami pour vérifier."
+        },
+        {
+          "affirmation": "Retirer votre identification d’une photo supprime cette photo de Facebook.",
+          "reponse": "faux",
+          "explication": "La photo reste en ligne, seul le lien vers votre profil disparaît. Pour la faire retirer, demandez-le à son auteur."
+        },
+        {
+          "affirmation": "On peut choisir qui a le droit de vous envoyer des invitations à devenir ami.",
+          "reponse": "vrai",
+          "explication": "Dans les paramètres, vous pouvez réserver les invitations aux amis de vos amis."
+        }
+      ]
+    },
+    "bon-ordre": {
+      "elements": [
+        {
+          "titre": "Changer sa photo de profil",
+          "etapes": [
+            "Cliquer sur votre nom pour ouvrir votre profil",
+            "Cliquer sur l’icône d’appareil photo, sur votre photo de profil",
+            "Choisir « Importer une photo »",
+            "Sélectionner l’image sur l’ordinateur",
+            "Recadrer la photo si besoin",
+            "Cliquer sur « Enregistrer »"
+          ]
+        },
+        {
+          "titre": "Rejoindre un groupe privé",
+          "etapes": [
+            "Taper le nom du groupe dans la barre de recherche",
+            "Ouvrir la page du groupe dans les résultats",
+            "Cliquer sur « Rejoindre le groupe »",
+            "Répondre aux questions des administrateurs, s’il y en a",
+            "Attendre qu’un administrateur accepte votre demande"
+          ]
+        },
+        {
+          "titre": "Activer l’authentification à deux facteurs",
+          "etapes": [
+            "Cliquer sur votre photo de profil, en haut à droite",
+            "Choisir « Paramètres et confidentialité », puis « Paramètres »",
+            "Ouvrir l’Espace Comptes, rubrique « Mot de passe et sécurité »",
+            "Cliquer sur « Authentification à deux facteurs », puis sur votre compte",
+            "Choisir une méthode, par exemple une application d’authentification ou un SMS",
+            "Saisir le code reçu pour confirmer"
+          ]
+        },
+        {
+          "titre": "Télécharger une copie de vos informations Facebook",
+          "etapes": [
+            "Ouvrir « Paramètres et confidentialité », puis « Paramètres »",
+            "Aller dans l’Espace Comptes, rubrique « Vos informations et autorisations »",
+            "Choisir l’option pour télécharger ou exporter vos informations",
+            "Sélectionner ce que vous voulez récupérer, la période et le format",
+            "Valider la demande et patienter pendant la préparation du fichier",
+            "Télécharger le fichier quand Facebook vous prévient qu’il est prêt"
+          ]
+        }
+      ]
+    },
+    "qui-suis-je": {
+      "elements": [
+        {
+          "reponse": "La story",
+          "indices": [
+            "Snapchat m’a rendue célèbre, puis Facebook m’a adoptée.",
+            "On me crée avec une photo, une courte vidéo ou un texte sur fond coloré.",
+            "Je m’affiche en plein écran, et l’on passe à la suivante d’un simple toucher.",
+            "Je suis éphémère : je ne reste pas longtemps en ligne.",
+            "Mon nom anglais veut dire « histoire »."
+          ]
+        },
+        {
+          "reponse": "Le fil d’actualité",
+          "indices": [
+            "Je ne suis jamais tout à fait le même deux fois de suite.",
+            "Un algorithme choisit l’ordre de ce que je vous montre.",
+            "Je mélange les publications de vos amis, des pages et des groupes que vous suivez.",
+            "On me fait défiler vers le bas, presque sans fin.",
+            "Je suis la première chose que vous voyez en ouvrant Facebook."
+          ]
+        },
+        {
+          "reponse": "La photo de couverture",
+          "indices": [
+            "Je suis une image, mais je ne montre pas forcément votre visage.",
+            "Je suis très large et peu haute.",
+            "Sur le profil d’un commerce, je montre souvent la boutique ou les produits.",
+            "Je m’étale tout en haut de votre profil, derrière votre photo ronde.",
+            "Je porte le même nom que l’enveloppe qui protège un livre."
+          ]
+        },
+        {
+          "reponse": "Le Marketplace",
+          "indices": [
+            "Je suis arrivé sur Facebook en 2016.",
+            "On me consulte pour trouver un canapé, un vélo ou une voiture près de chez soi.",
+            "Chez moi, on discute souvent du prix par Messenger.",
+            "Avec moi, prudence : rendez-vous dans un lieu public et ne payez jamais d’avance un inconnu.",
+            "Je suis le grand marché de Facebook, pour acheter et vendre entre particuliers."
+          ]
+        },
+        {
+          "reponse": "La page professionnelle",
+          "indices": [
+            "Je publie comme un profil, mais je ne suis pas une personne.",
+            "On ne devient pas mon ami : on s’abonne à moi.",
+            "Je peux afficher des horaires d’ouverture, une adresse et un numéro de téléphone.",
+            "Les commerces, les associations et les artistes me créent gratuitement.",
+            "Je suis la vitrine officielle d’une entreprise sur Facebook."
+          ]
+        }
+      ]
+    },
+    "duel-buzzer": {
+      "elements": [
+        {
+          "question": "Quel étudiant de Harvard a lancé Facebook avec ses camarades ?",
+          "reponse": "Mark Zuckerberg"
+        },
+        {
+          "question": "Comment s’appelle l’application de messagerie de Facebook ?",
+          "reponse": "Messenger"
+        },
+        {
+          "question": "Citez une application qui appartient, comme Facebook, à la société Meta.",
+          "reponse": "Instagram ou WhatsApp, par exemple"
+        },
+        {
+          "question": "Quel symbole tape-t-on avant le prénom d’un ami pour le mentionner dans un commentaire ?",
+          "reponse": "L’arobase @"
+        },
+        {
+          "question": "Quel raccourci permet d’aller à la ligne dans un commentaire, sans l’envoyer ?",
+          "reponse": "Maj + Entrée"
+        },
+        {
+          "question": "Que signifie l’icône de deux silhouettes à côté de la date d’une publication ?",
+          "reponse": "Elle est réservée aux amis de son auteur"
+        },
+        {
+          "question": "Comment appelle-t-on la personne qui gère un groupe Facebook ?",
+          "reponse": "L’administrateur (ou admin)"
+        },
+        {
+          "question": "Dans quel menu, sous votre photo de profil en haut à droite, trouve-t-on les paramètres ?",
+          "reponse": "Paramètres et confidentialité"
+        },
+        {
+          "question": "Comment s’appelle la liste de tout ce que vous avez fait sur Facebook : J’aime, commentaires, publications… ?",
+          "reponse": "L’historique personnel"
+        },
+        {
+          "question": "Comment appelle-t-on le fait de se faire passer pour quelqu’un d’autre en copiant son profil ?",
+          "reponse": "L’usurpation d’identité"
+        },
+        {
+          "question": "Quel symbole place-t-on devant un mot-clé pour en faire un hashtag ?",
+          "reponse": "Le dièse #"
+        },
+        {
+          "question": "Que faut-il vérifier avant de partager une information étonnante ?",
+          "reponse": "Sa source : d’où elle vient et si elle est fiable"
+        }
+      ]
+    },
+    "pyramide": {
+      "elements": [
+        { "mot": "J’aime" },
+        { "mot": "Demande d’ami" },
+        { "mot": "Notification" },
+        { "mot": "Anniversaire" },
+        { "mot": "Publicité" },
+        { "mot": "Vidéo en direct" },
+        { "mot": "Mot de passe" },
+        { "mot": "Piratage" },
+        { "mot": "Fausse information" },
+        { "mot": "Album photo" },
+        { "mot": "Selfie" },
+        { "mot": "Émoji" }
+      ]
+    },
+    "batterie-faible": {
+      "elements": [
+        {
+          "mot": "Publication",
+          "theme": "Les bases",
+          "definition": "Un texte, une photo ou une vidéo que vous partagez sur Facebook."
+        },
+        {
+          "mot": "Audience",
+          "theme": "La confidentialité",
+          "definition": "Les personnes qui peuvent voir une publication : Public, Amis, Moi uniquement…"
+        },
+        {
+          "mot": "Hameçonnage",
+          "theme": "Les arnaques",
+          "definition": "Un faux message qui imite un service connu pour vous voler vos codes ou votre argent."
+        },
+        {
+          "mot": "Groupe public",
+          "theme": "Les groupes",
+          "definition": "Tout le monde peut y voir les membres et les publications, même sans en faire partie."
+        },
+        {
+          "mot": "Alerte de connexion",
+          "theme": "La sécurité",
+          "definition": "Un message qui vous prévient quand quelqu’un se connecte à votre compte depuis un appareil inconnu."
+        },
+        {
+          "mot": "Appel vidéo",
+          "theme": "Messenger",
+          "definition": "Messenger permet de se voir et de se parler, sur ordinateur comme sur téléphone."
+        },
+        {
+          "mot": "Événement",
+          "theme": "Les sorties",
+          "definition": "Une date, un lieu et des invités : Facebook aide à organiser une fête, une réunion ou un atelier."
+        },
+        {
+          "mot": "Souvenirs",
+          "theme": "Les fonctions",
+          "definition": "Facebook vous montre ce que vous avez publié à la même date, les années précédentes."
+        }
+      ]
+    }
+  }
+}

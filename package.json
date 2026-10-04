@@ -11,7 +11,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "validate:html": "html-validate index.html groupe/index.html \"jeux/**/*.html\"",
+    "validate:html": "html-validate index.html groupe/index.html contenus/index.html \"jeux/**/*.html\"",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "playwright test",

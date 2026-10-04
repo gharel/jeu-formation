@@ -2114,3 +2114,255 @@
   font-weight: 700;
   color: var(--texte-doux);
 }
+
+/* ---------- Blocs d’export et d’import JSON ---------- */
+
+.bloc-fichier-contenus,
+.bloc-consultation,
+.bloc-thematiques {
+  margin-top: 1.5rem;
+}
+
+.bloc-fichier-contenus__ligne {
+  display: flex;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  align-items: flex-end;
+}
+
+.bloc-fichier-contenus__titre {
+  flex: 1 1 18rem;
+  margin: 0;
+}
+
+.bloc-fichier-contenus__ligne .groupe-boutons {
+  margin-bottom: 1.6rem;
+}
+
+/* ---------- Les contenus : thématiques, jeu de données, consultation ---------- */
+
+.grille-thematiques {
+  display: grid;
+  /* 3 cartes par ligne au vidéoprojecteur : les 3 boutons tiennent sur une ligne */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 1.25rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.carte-thematique {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  height: 100%;
+  border-top: 6px solid var(--accent);
+}
+
+.carte-thematique--exemples {
+  border-top-color: var(--bord);
+}
+
+.carte-thematique__entete {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.carte-thematique__icone {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 3.2rem;
+  height: 3.2rem;
+  font-size: 1.5rem;
+  line-height: 1;
+  color: var(--bleu-nuit);
+  background: var(--accent-clair);
+  border-radius: 50%;
+}
+
+.carte-thematique__titre {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.carte-thematique__description,
+.carte-thematique__jeux,
+.carte-thematique__chargee {
+  margin: 0;
+}
+
+.carte-thematique__jeux {
+  margin-top: auto;
+  font-size: 0.92rem;
+  color: var(--texte-doux);
+}
+
+.carte-thematique__chargee {
+  font-weight: 800;
+  color: var(--succes);
+}
+
+/* Trois boutons dans une carte étroite : plus compacts */
+.carte-thematique .groupe-boutons {
+  gap: 0.5rem;
+}
+
+.carte-thematique .bouton {
+  padding: 0.45em 0.9em;
+}
+
+.bloc-consultation__choix {
+  max-width: 32rem;
+}
+
+.consultation__jeux {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.apercu-jeu {
+  border: 2px solid var(--bord);
+  border-radius: var(--rayon);
+}
+
+.apercu-jeu[open] {
+  border-color: var(--accent);
+}
+
+.apercu-jeu__resume {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.7rem 1rem;
+  list-style: none;
+  cursor: pointer;
+}
+
+.apercu-jeu__resume::-webkit-details-marker {
+  display: none;
+}
+
+.apercu-jeu__icone {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--bleu-nuit);
+  background: var(--accent-clair);
+  border-radius: 50%;
+}
+
+.apercu-jeu__textes {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.apercu-jeu__titre {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--bleu-nuit);
+}
+
+.apercu-jeu__etat {
+  color: var(--texte-doux);
+}
+
+.apercu-jeu__etat .etiquette {
+  margin-left: 0.4rem;
+}
+
+.apercu-jeu__etat--ko {
+  font-weight: 700;
+  color: var(--erreur);
+}
+
+.apercu-jeu__chevron {
+  flex: none;
+  transition: transform 0.15s ease;
+}
+
+.apercu-jeu[open] .apercu-jeu__chevron {
+  transform: rotate(180deg);
+}
+
+.apercu-jeu__corps {
+  padding: 0 1rem 1rem;
+}
+
+.apercu-jeu__elements {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.apercu-element {
+  padding: 0.7rem 1rem;
+  background: var(--fond);
+  border-radius: 10px;
+}
+
+.apercu-element__numero {
+  margin: 0 0 0.35rem;
+  font-weight: 800;
+  color: var(--bleu-nuit);
+}
+
+.apercu-element__champs {
+  display: grid;
+  gap: 0.35rem;
+  margin: 0;
+}
+
+.apercu-element__champ {
+  display: grid;
+  grid-template-columns: minmax(9rem, 16rem) minmax(0, 1fr);
+  gap: 1rem;
+}
+
+.apercu-element__champ dt {
+  font-weight: 700;
+  color: var(--texte-doux);
+}
+
+.apercu-element__champ dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+
+.apercu-element__liste {
+  margin: 0;
+  padding-left: 1.3rem;
+}
+
+.apercu-element__image {
+  display: block;
+  max-width: min(100%, 20rem);
+  max-height: 12rem;
+  border-radius: 6px;
+}
+
+/* Réponses floutées tant que l'animateur ne les affiche pas */
+.consultation--masque .secret {
+  filter: blur(7px);
+  user-select: none;
+}
+
+@media (max-width: 640px) {
+  .apercu-element__champ {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+}

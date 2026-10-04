@@ -1,14 +1,9 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
 import { el, remplir, icone, animer, focaliser } from '../../assets/js/commun/ui.js';
 import { creerMancheAPaliers } from '../../assets/js/commun/manche-paliers.js';
-import {
-  adresseImage,
-  lireImage,
-  enregistrerImage,
-  nettoyerImages,
-} from '../../assets/js/commun/images.js';
-import { schema, exemple } from './exemple.js';
-import { ZOOMS, echelle, origine, idsImages } from './logique.js';
+import { adresseImage } from '../../assets/js/commun/images.js';
+import { schema, exemple, transfert } from './exemple.js';
+import { ZOOMS, echelle, origine } from './logique.js';
 
 async function demarrer(ctx) {
   const max = ZOOMS[ctx.reglages.zoom] ?? ZOOMS.moyen;
@@ -146,29 +141,5 @@ monterJeu({
     'Bonne réponse : la personne gagne les points encore allumés.',
   ],
   demarrer,
-  // Les images enregistrées dans le navigateur partent dans le fichier exporté…
-  async exporter(contenu) {
-    const elements = await Promise.all(
-      contenu.elements.map(async (e) => {
-        if (!e.image?.id) return e;
-        const donnees = await lireImage(e.image.id);
-        return { ...e, image: { focus: e.image.focus, donnees } };
-      }),
-    );
-    return { ...contenu, elements };
-  },
-  // … et reviennent dans IndexedDB à l'import.
-  async importer(contenu) {
-    const elements = await Promise.all(
-      (contenu.elements ?? []).map(async (e) => {
-        if (typeof e?.image?.donnees !== 'string') return e;
-        const id = await enregistrerImage(e.image.donnees);
-        return { ...e, image: { id, focus: e.image.focus } };
-      }),
-    );
-    return { ...contenu, elements };
-  },
-  async apresEnregistrement(contenu) {
-    await nettoyerImages(idsImages(contenu)).catch(() => {});
-  },
+  ...transfert,
 });

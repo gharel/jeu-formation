@@ -11,6 +11,7 @@ Un site statique de mini-jeux **projetés au vidéoprojecteur** pour casser la m
 - Chaque jeu a un écran d'accueil où l'on saisit les prénoms, avec une roue pour désigner quelqu'un.
 - Il n'y a ni serveur ni framework ni étape de build : HTML, CSS et JavaScript natifs (ES modules).
 - Le contenu de l'animateur est gardé dans le navigateur : localStorage pour le texte, IndexedDB pour les images.
+- Des thématiques prêtes à jouer (IA, Google Docs, Google Sheets, Microsoft 365, Facebook) se chargent dans tous les jeux depuis la page « Les contenus » ; les contenus s'échangent en fichiers JSON.
 - La charte graphique est celle de Skazy Formation (https://formation.skazy.nc).
 
 ## Commandes
@@ -37,16 +38,21 @@ Les pages ne s'ouvrent pas en double-cliquant sur le fichier (`file://`), car le
 ## Structure
 
 ```
-index.html                     Accueil : une carte par jeu (générée depuis assets/js/jeux.js), lien « Le groupe »
+index.html                     Accueil : une carte par jeu (générée depuis assets/js/jeux.js), liens « Le groupe » et « Les contenus »
 groupe/index.html              Page « Le groupe » : prénoms, infos, plan de salle (assets/js/groupe.js)
+contenus/index.html            Page « Les contenus » : thématiques, jeu de données JSON, consultation (assets/js/contenus.js)
+contenus/thematiques/*.json    Une thématique prête à jouer par fichier (jeu de données)
 assets/css/charte.css          Couleurs, police Georama, couleur de chaque jeu (data-couleur)
 assets/css/base.css            Mise en page, bandeau, boutons, formulaires, dialogues
 assets/css/composants.css      Accueil, participants, éditeur, roue, chrono, paliers, podium
 assets/js/jeux.js              Liste des jeux (slug, titre, icône, couleur, accroche, durée)
+assets/js/thematiques.js       Liste des thématiques (slug, titre, icône) ; leur fichier est dans contenus/thematiques/
 assets/js/commun/
   cadre-jeu.js                 monterJeu() : accueil du jeu, préparation, partie, fin
   editeur-contenu.js           Éditeur généré à partir du schéma de contenu du jeu
-  contenu.js                   Schéma : valeurs par défaut, liste vide, nettoyage, validation, import/export
+  contenu.js                   Schéma : valeurs par défaut, liste vide, nettoyage, validation, import/export, consultation
+  jeux-de-donnees.js           Jeu de données (plusieurs jeux dans un fichier) : export, lecture, source de chaque contenu
+  fichiers.js                  Téléchargement d'un JSON et nom du fichier (« skazy-groupe-mairie-2026-10-04.json »)
   participants.js              Liste des prénoms partagée entre les jeux + une info par personne (passion, film…)
   groupe.js                    État partagé du groupe : participants, infos, absences du jour, plan de salle (nettoyés à chaque changement)
   bloc-participants.js         Bloc « Participants » de la page Groupe (ajout, infos, absences, retrait)
@@ -67,7 +73,7 @@ jeux/<slug>/
   index.html                   Page du jeu (même gabarit pour tous)
   jeu.js                       Affichage et déroulé : appelle monterJeu({ slug, schema, exemple, regles, demarrer })
   logique.js                   Règles du jeu, en fonctions pures, sans accès à la page
-  exemple.js                   Schéma du contenu + contenu d'exemple prêt à jouer
+  exemple.js                   Schéma du contenu + contenu d'exemple prêt à jouer (+ `transfert` : import/export des images)
   jeu.css                      Styles propres au jeu
 jeux/zoom-mystere/exemples/    Illustrations SVG du contenu d'exemple de Zoom mystère
 assets/vendor/fontawesome/     Font Awesome Free (CSS + polices woff2 + licence), copié par npm run vendor:fontawesome
@@ -77,7 +83,8 @@ tests/unit/                    Vitest (jsdom) : logique des jeux et modules comm
 tests/e2e/                     Playwright : parcours complets, accessibilité, aucune erreur console
   outils.js                    ouvrirJeu (prépare le groupe dans le stockage), lancerPartie, pointsDe, verifierAccessibilite (axe + typographie)…
   accueil.spec.js              Pour chaque jeu de jeux.js : lien, accueil, « Qui joue ? », éditeur masqué, axe
-  contenu.spec.js              Export / import JSON, contenu d'exemple
+  contenu.spec.js              Export / import JSON d'un jeu, contenu d'exemple
+  contenus.spec.js             Page Les contenus : thématique chargée, aperçu, export et import du jeu de données
   mobile.spec.js               Téléphone tactile : pas de plein écran, icônes centrées, buzzers au doigt, plan au doigt
   groupe.spec.js               Page Groupe : placement (toucher, glisser, ordre), îlots, fenêtre Groupe en partie
   joueurs.spec.js              Qui joue ? : tout le groupe, au clic, au hasard ; absences ; retardataire ajouté depuis le jeu
@@ -91,6 +98,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
 - **Sécurité.** Tout texte saisi ou importé passe par `el()` ou `textContent`, jamais par `innerHTML`. Un JSON importé passe par `nettoyerContenu()`, qui ne garde que les clés et les types prévus par le schéma.
 - **Mot de passe d'accès.** Il n'est jamais écrit en clair : ni dans le code, ni dans les tests, ni dans un message de commit. Seule son empreinte est dans `acces.js`. Les tests e2e ouvrent les pages déverrouillées (`storageState` dans `playwright.config.js`) ; `acces.spec.js` teste l'écran sans le mot de passe.
 - **Groupe.** Les prénoms, les infos, les absences et le plan passent par `groupe.js` (`creerGroupe()`), qui les garde cohérents avec la liste ; un jeu ne voit que les joueurs choisis dans « Qui joue ? » (`ctx.participants`), parmi les présents ; jamais d'accès direct aux clés `participants`, `infos-participants` ou `plan-salle`. Toute nouvelle page à publier doit être ajoutée à `.github/workflows/publier.yml` et à `validate:html`.
+- **Contenus et thématiques.** Le contenu d'un jeu est rangé sous `cleContenu(slug)` ; un jeu de données (thématique ou import) passe par `lireJeuDeDonnees()` puis `contenuDepuisDonnees()` (nettoyage avec le schéma du jeu, réglages de l'animateur gardés). La source affichée (« Google Sheets ») est notée par `noterSource()` et oubliée dès que l'animateur enregistre un contenu modifié.
 - **Stockage.** On passe toujours par `stockage.js` (localStorage, clés préfixées par `skazy-jeux:`) ou `images.js` (IndexedDB), jamais d'appel direct. Les erreurs de stockage ne doivent jamais faire planter un jeu.
 - **Hasard.** On utilise `ctx.hasard` (ou `hasardDePage()`), pas `Math.random()` directement, pour que `?graine=N` rende les tests reproductibles.
 - **Raccourcis clavier.** On passe par `ecouterClavier()` : il ignore les touches pendant la saisie et quand un dialogue est ouvert. Il faut retirer l'écoute dans la fonction de nettoyage renvoyée par `demarrer()`. Touches réservées : `R` (roue) et `F` (plein écran). Tout ce qui se fait au clavier doit aussi se faire au doigt (un téléphone n'a pas de clavier) : un bouton à l'écran pour chaque touche. Les aides sur les touches vont dans un `.raccourci` (ligne d'aide) ou un `.aide-clavier` (« (Entrée) » dans un bouton) : `base.css` les masque sur téléphone, comme le bouton Plein écran.
@@ -109,6 +117,15 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
 - **Logo** : `assets/img/logo-skazy-formation-blanc.svg` sur fond sombre, `logo-skazy-formation.svg` sur fond clair. Ne pas le déformer ni le recolorer.
 - **Ton** : motivant, simple, en vouvoiement pour l'animateur. `el()` et `remplir()` ajoutent automatiquement une espace insécable avant `! ? ; :` et dans les guillemets « » (aussi dans `placeholder`, `title`, `aria-label`) : pas de `textContent` pour un texte qui peut contenir cette ponctuation. Dans le HTML, écrire `&nbsp;?`. L'espace fine (U+202F) ne se voit pas dans Georama : ne pas l'utiliser. `verifierAccessibilite` contrôle la typographie de chaque écran testé.
 - **Projection** : textes lisibles de loin. Vérifier en 1280×720 (vidéoprojecteur courant) et en 1920×1080, et sur téléphone (390 px de large) : pas de défilement horizontal.
+
+## Ajouter une thématique
+
+1. Ajouter l'entrée dans `assets/js/thematiques.js` (slug, titre, icône Font Awesome).
+2. Écrire `contenus/thematiques/<slug>.json` : `format: 'skazy-jeux-donnees'`, `version: 1`, le même `titre`, une `description`, et dans `jeux` le contenu de chaque jeu sans image (`{ elements: […] }`, sans `reglages` : ceux de l'animateur sont gardés). Chaque élément a toutes les clés de son schéma (`jeux/<slug>/exemple.js`), dans l'ordre, `""` pour un champ facultatif vide.
+3. Des faits stables et sûrs seulement (années, limites documentées), rien qui change chaque année (prix, nombre d'utilisateurs). Typographie : ’ « » …, et une espace ordinaire avant ? ! ; : (le site la rend insécable).
+4. `tests/unit/thematiques.test.js` vérifie le fichier : contenu complet et valide pour chaque jeu, rien de perdu au nettoyage, typographie, pas de doublon.
+
+Un nouveau mini-jeu sans image doit être ajouté à chaque thématique : le test le signale.
 
 ## Ajouter un mini-jeu
 

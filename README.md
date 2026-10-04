@@ -33,6 +33,14 @@ Sur l'écran d'accueil de chaque jeu, on peut :
 - **faire tourner la roue** pour désigner quelqu'un, avec la touche `R` ou le bouton « Désigner » ;
 - **préparer le contenu**, avec les réponses masquées pour pouvoir le faire écran projeté. Un contenu d'exemple permet de jouer tout de suite ; « Partir d'une liste vide » (ou « Vider la liste ») le remplace par des champs vides, où les exemples restent affichés en grisé, sans rien à effacer. Le contenu s'exporte et s'importe en JSON pour le réutiliser ou le partager.
 
+La page **Les contenus** (bouton sur l'accueil, ou « Charger une thématique » dans chaque jeu) rassemble les questions de tous les jeux :
+
+- **5 thématiques prêtes à jouer**, chargées en un clic dans les 9 jeux sans image (Zoom mystère garde ses captures) : **Initiation à l'IA**, **Google Docs**, **Google Sheets**, **Microsoft 365** et **Facebook**. Les réglages de l'animateur (durées, points…) sont conservés. « Revenir aux exemples » remet le contenu livré avec les jeux ;
+- **un jeu de données JSON** : « Exporter tous les contenus » écrit les questions des 10 jeux dans un seul fichier (avec un titre), « Importer un jeu de données… » le recharge. L'export d'un seul jeu s'importe aussi ici, et un jeu de données s'importe aussi dans un seul jeu (il en prend sa part) ;
+- **la consultation** des questions de chaque jeu, réponses floutées tant qu'on ne les affiche pas, et l'aperçu d'une thématique avant de la charger.
+
+Dans chaque jeu, une étiquette indique la thématique chargée (« Google Sheets ») ; elle disparaît dès que l'animateur retouche et enregistre le contenu. Les thématiques sont des fichiers JSON dans `contenus/thematiques/` : pour en ajouter une, voir [AGENTS.md](AGENTS.md).
+
 La touche `F` passe en plein écran (bouton masqué sur téléphone, où il ne sert à rien). Chaque jeu a son habillage sonore façon jeu télévisé : notes des lettres de Motus, cloche des étages de Pyramide, gong du « Stop », buzzers du duel, cliquetis de la roue, fanfares et applaudissements. Ce sont des sons originaux générés par le navigateur, sans fichier ni droits d'auteur. Le bouton Son du bandeau les coupe.
 Les icônes viennent de Font Awesome Free, hébergé dans le projet (fonctionne hors ligne).
 
@@ -40,7 +48,7 @@ Les icônes viennent de Font Awesome Free, hébergé dans le projet (fonctionne 
 
 En ligne : **https://gharel.github.io/jeu-formation/**
 
-Le site est 100 % statique : il suffit de copier `index.html`, `assets/`, `jeux/` et `groupe/` sur n'importe quel hébergement web (sous-dossier accepté).
+Le site est 100 % statique : il suffit de copier `index.html`, `assets/`, `jeux/`, `groupe/` et `contenus/` sur n'importe quel hébergement web (sous-dossier accepté).
 Il fonctionne hors ligne une fois chargé : aucune ressource externe.
 
 Un **mot de passe** est demandé à la première visite, sur l'accueil comme sur chaque jeu. Le navigateur s'en souvient ensuite ; le bouton « Verrouiller l'accès sur cet ordinateur », en bas de l'accueil, le fait redemander. Pour le changer : `npm run mot-de-passe`, puis recopier le sel et l'empreinte affichés dans `assets/js/commun/acces.js`. C'est une protection dissuasive : le site reste statique et ses fichiers publics.
@@ -48,7 +56,7 @@ Un **mot de passe** est demandé à la première visite, sur l'accueil comme sur
 ### Déploiement sur GitHub Pages
 
 Chaque push sur `main` lance l'action [Vérifier puis publier sur GitHub Pages](.github/workflows/publier.yml) :
-GitHub relance tous les tests (lint, format, HTML, unitaires, e2e et accessibilité), puis publie `index.html`, `assets/` et `jeux/` si tout passe.
+GitHub relance tous les tests (lint, format, HTML, unitaires, e2e et accessibilité), puis publie `index.html`, `assets/`, `jeux/`, `groupe/` et `contenus/` si tout passe.
 On peut aussi la relancer à la main depuis l'onglet **Actions** du dépôt (« Run workflow »).
 
 Réglage à faire une seule fois : **Settings → Pages → Build and deployment → Source : GitHub Actions**.
