@@ -359,6 +359,38 @@
           "definition": "Elle retire le gras, les couleurs et les tailles pour revenir au texte de base."
         }
       ]
+    },
+    "patate-chaude": {
+      "elements": [
+        {
+          "consigne": "Citez un service ou une application de Google",
+          "idees": "Gmail, Google Drive, Google Sheets, Google Slides, Google Forms, Google Agenda, Google Meet, Google Maps, YouTube, Google Photos, Google Keep, Google Traduction, Chrome, Android…"
+        },
+        {
+          "consigne": "Citez un type de document qu’on peut rédiger avec Google Docs",
+          "idees": "Une lettre, un CV, un rapport, un compte rendu de réunion, un ordre du jour, une invitation, une affiche, un menu, une recette, une note de service, un mémoire, un contrat, un bulletin d’information, une liste de courses…"
+        },
+        {
+          "consigne": "Citez une mise en forme qu’on peut donner à un texte",
+          "idees": "Gras, italique, souligné, barré, couleur du texte, surlignage, police, taille, majuscules, exposant, indice, alignement, interligne, retrait…"
+        },
+        {
+          "consigne": "Citez quelque chose qu’on peut insérer dans un document",
+          "idees": "Une image, un tableau, un lien, un dessin, un graphique, une ligne horizontale, un caractère spécial, une équation, une note de bas de page, un en-tête, un pied de page, des numéros de page, un saut de page, une table des matières, un commentaire, un filigrane…"
+        },
+        {
+          "consigne": "Citez un raccourci clavier qui fonctionne dans Google Docs",
+          "idees": "Ctrl + C (copier), Ctrl + V (coller), Ctrl + Z (annuler), Ctrl + Y (rétablir), Ctrl + B (gras), Ctrl + I (italique), Ctrl + U (souligner), Ctrl + K (lien), Ctrl + F (rechercher), Ctrl + H (remplacer), Ctrl + P (imprimer), Ctrl + Entrée (saut de page), Ctrl + Maj + V (coller sans mise en forme)…"
+        },
+        {
+          "consigne": "Citez un avantage de Google Docs",
+          "idees": "Enregistrement automatique, rien à installer, accessible depuis n’importe quel appareil connecté, travail à plusieurs en même temps, une seule version à jour, partage par lien, commentaires, mode Suggestion, historique des versions, saisie vocale, traduction du document, travail hors connexion…"
+        },
+        {
+          "consigne": "Citez une chose à vérifier avant de partager un document",
+          "idees": "L’orthographe, le titre du document, le rôle de chaque personne (lecteur, commentateur, éditeur), les noms et les dates, la mise en page, les liens, les images, les numéros de page, la table des matières à jour, les commentaires résolus, les suggestions acceptées ou refusées, les informations personnelles…"
+        }
+      ]
     }
   }
 }

@@ -374,6 +374,38 @@
           "definition": "Facebook vous montre ce que vous avez publié à la même date, les années précédentes."
         }
       ]
+    },
+    "patate-chaude": {
+      "elements": [
+        {
+          "consigne": "Citez une bonne raison d’utiliser Facebook",
+          "idees": "Garder le contact avec sa famille, retrouver d’anciens amis, partager ses photos, souhaiter les anniversaires, suivre l’actualité de sa commune, découvrir les commerces du coin, acheter ou vendre d’occasion, rejoindre un groupe de passionnés, organiser une fête, demander conseil, appeler ses proches en vidéo, regarder des vidéos…"
+        },
+        {
+          "consigne": "Citez quelque chose qu’on peut publier sur Facebook",
+          "idees": "Un texte, une photo, une vidéo, un album, une story, un reel, une vidéo en direct, un lien vers un article, un sondage dans un groupe, un événement, son humeur du moment, le lieu où l’on se trouve, un GIF, un souvenir, une annonce sur le Marketplace…"
+        },
+        {
+          "consigne": "Citez un objet qu’on peut vendre sur le Marketplace",
+          "idees": "Un canapé, une table, des vêtements, des chaussures, un vélo, une voiture, un téléphone, une télévision, une console de jeux, des jouets, une poussette, des livres, un réfrigérateur, des outils, des plantes…"
+        },
+        {
+          "consigne": "Citez un sujet qui rassemble des gens dans un groupe Facebook",
+          "idees": "Le quartier ou la commune, l’entraide, les petites annonces, les dons d’objets, la cuisine, le jardinage, la pêche, la randonnée, un club de sport, une association, les parents d’élèves, les anciens d’une école, la famille, les animaux perdus, le covoiturage, les bons plans…"
+        },
+        {
+          "consigne": "Citez quelque chose qu’on peut faire avec Messenger",
+          "idees": "Écrire un message, envoyer un message vocal, passer un appel audio ou vidéo, envoyer une photo, une vidéo ou un document, envoyer un GIF ou un autocollant, réagir à un message, créer une discussion de groupe, partager sa position, transférer un message, retirer un message envoyé, mettre une conversation en sourdine, bloquer quelqu’un…"
+        },
+        {
+          "consigne": "Citez une information qu’il vaut mieux ne pas publier sur Facebook",
+          "idees": "Son adresse, son numéro de téléphone, ses dates de vacances, une photo de sa carte bancaire, de sa carte d’identité ou de son passeport, un billet d’avion avec son code-barres, son mot de passe, un code reçu par SMS, l’école de ses enfants, une photo de ses clés, sa date de naissance complète, ses soucis de santé…"
+        },
+        {
+          "consigne": "Citez une arnaque qu’on peut croiser sur Facebook",
+          "idees": "Un faux concours, un faux gain à la loterie, un ami piraté qui demande de l’argent, un faux vendeur sur le Marketplace, un faux acheteur qui envoie un lien de paiement, un faux message de Facebook qui menace de fermer votre compte, un faux placement en cryptomonnaie, une arnaque aux sentiments, une fausse offre d’emploi, un profil cloné, une vidéo piégée…"
+        }
+      ]
     }
   }
 }

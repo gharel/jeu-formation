@@ -319,4 +319,23 @@ export const sons = {
       else rate({ debut: justes * 0.11 + 0.05 });
     },
   },
+
+  // ---------- Patate chaude : un tic-tac qui s'emballe ----------
+  patate: {
+    /** Un tic-tac, d'autant plus aigu et fort que la patate est chaude (`chaleur` de 0 à 1). */
+    tic(chaleur = 0) {
+      const c = Math.min(1, Math.max(0, chaleur));
+      const f = 900 + 900 * c;
+      bruit({ duree: 0.02, volume: 0.05 + 0.05 * c, filtre: f * 2, type: 'highpass' });
+      note(f, { duree: 0.04, forme: 'square', volume: 0.03 + 0.05 * c });
+    },
+    /** La patate change de main : un petit « hop » qui monte. */
+    passe: () => note(N.do5, { duree: 0.12, vers: N.sol5, forme: 'triangle', volume: 0.16 }),
+    /** Brûlé ! Un grésillement et un souffle qui retombe. */
+    brule() {
+      bruit({ duree: 0.9, volume: 0.2, filtre: 3000, type: 'highpass' });
+      bruit({ debut: 0.05, duree: 0.6, volume: 0.25, filtre: 300, type: 'lowpass' });
+      note(220, { duree: 0.8, vers: 55, forme: 'sawtooth', volume: 0.14 });
+    },
+  },
 };

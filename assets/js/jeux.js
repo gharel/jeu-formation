@@ -95,6 +95,16 @@ export const JEUX = [
     duree: '5 à 10 min',
     preparation: 'Des mots ou courtes expressions',
   },
+  {
+    slug: 'patate-chaude',
+    titre: 'Patate chaude',
+    icone: 'fire',
+    couleur: 'caramel',
+    accroche:
+      'Une consigne, une patate qui chauffe : on répond, puis on la passe. Quand elle brûle, tous les autres marquent !',
+    duree: '5 à 10 min',
+    preparation: 'Des consignes « Citez… »',
+  },
 ];
 
 export function trouverJeu(slug) {

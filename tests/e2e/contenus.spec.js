@@ -3,6 +3,9 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { JEUX } from '../../assets/js/jeux.js';
 import { surveillerErreurs, ouvrirJeu, lancerPartie, verifierAccessibilite } from './outils.js';
 
+// Les thématiques remplissent tous les jeux, sauf Zoom mystère (il lui faut des captures d'écran)
+const JEUX_SANS_IMAGE = JEUX.length - 1;
+
 /** Bloc d'un jeu dans la consultation (un <details>). */
 const apercuDe = (page, slug) => page.locator(`details[data-jeu="${slug}"]`);
 
@@ -23,7 +26,7 @@ test('depuis l’accueil, on charge une thématique dans tous les jeux', async (
   await expect(page.locator('.carte-thematique')).toHaveCount(6);
   await expect(page.locator('[data-thematique="google-sheets"]')).toContainText('tableur');
   await expect(page.locator('[data-thematique="google-sheets"]')).toContainText(
-    '9 jeux, sans Zoom mystère',
+    `${JEUX_SANS_IMAGE} jeux, sans Zoom mystère`,
   );
   await verifierAccessibilite(page);
 
@@ -32,10 +35,10 @@ test('depuis l’accueil, on charge une thématique dans tous les jeux', async (
   await expect(dialogue).toContainText('Zoom mystère garde son contenu');
   await dialogue.getByRole('button', { name: 'Charger' }).click();
   await expect(page.locator('#cadre .message')).toHaveText(
-    'Thématique « Google Sheets » chargée : 9 jeux mis à jour. Zoom mystère garde son contenu.',
+    `Thématique « Google Sheets » chargée : ${JEUX_SANS_IMAGE} jeux mis à jour. Zoom mystère garde son contenu.`,
   );
   await expect(page.locator('[data-thematique="google-sheets"]')).toContainText(
-    'Chargée dans 9 jeux',
+    `Chargée dans ${JEUX_SANS_IMAGE} jeux`,
   );
 
   // Consultation : la source s'affiche, les réponses sont floutées jusqu'au clic
@@ -74,7 +77,7 @@ test('depuis l’accueil, on charge une thématique dans tous les jeux', async (
   await expect(page).toHaveURL(/\/contenus\/$/);
   await expect(apercuDe(page, 'motus').locator('summary .etiquette')).toHaveCount(0);
   await expect(page.locator('[data-thematique="google-sheets"]')).toContainText(
-    'Chargée dans 8 jeux',
+    `Chargée dans ${JEUX_SANS_IMAGE - 1} jeux`,
   );
   expect(erreurs).toEqual([]);
 });

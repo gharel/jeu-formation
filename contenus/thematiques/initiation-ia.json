@@ -373,6 +373,38 @@
           "definition": "Le réflexe indispensable face à une réponse d’IA : douter, vérifier, recouper."
         }
       ]
+    },
+    "patate-chaude": {
+      "elements": [
+        {
+          "consigne": "Citez un sujet de la vie quotidienne sur lequel une IA peut vous donner des idées",
+          "idees": "Une recette avec les restes du frigo, les menus de la semaine, un voyage, une sortie en famille, un cadeau, une fête d’anniversaire, le jardinage, le bricolage, la décoration, le sport, le budget, les devoirs des enfants, un courrier administratif, l’apprentissage d’une langue, une activité pour un jour de pluie…"
+        },
+        {
+          "consigne": "Citez un film, une série ou un livre où l’on croise une IA ou un robot",
+          "idees": "Terminator, 2001 : l’Odyssée de l’espace, Matrix, Star Wars, Wall-E, Her, Ex Machina, A.I. Intelligence artificielle, Blade Runner, Le Géant de fer, Les Nouveaux Héros, Le Robot sauvage, K 2000, Real Humans, Black Mirror, Metropolis, les nouvelles d’Isaac Asimov…"
+        },
+        {
+          "consigne": "Citez un métier ou un secteur d’activité qui utilise déjà l’IA",
+          "idees": "La médecine (lecture des radios), la banque (repérage des fraudes), l’assurance, la traduction, le journalisme, le service client, le commerce en ligne, l’agriculture, la météo, les transports, la logistique, l’industrie, la sécurité, l’enseignement, le cinéma, les jeux vidéo, la recherche scientifique…"
+        },
+        {
+          "consigne": "Citez une fonction de votre téléphone qui fait appel à l’IA",
+          "idees": "Le déverrouillage par le visage, l’assistant vocal, la dictée vocale, la saisie prédictive, le correcteur automatique, le mode portrait, la retouche automatique des photos, la recherche dans ses photos (« plage », « chien »…), la traduction instantanée, les sous-titres automatiques, le filtrage des appels indésirables, la reconnaissance des plantes…"
+        },
+        {
+          "consigne": "Citez une forme de réponse qu’on peut demander à une IA",
+          "idees": "Un tableau, une liste à puces, un résumé, un plan, un e-mail, une lettre, un compte rendu, une fiche pratique, un mode d’emploi étape par étape, un quiz, un poème, une chanson, un slogan, un texte de 100 mots, une version pour les enfants, une traduction en anglais…"
+        },
+        {
+          "consigne": "Citez une chose à vérifier dans une réponse donnée par une IA",
+          "idees": "Les dates, les chiffres, les calculs, les noms propres, les citations, les sources, les liens, les adresses, les horaires, les références de lois, les titres de livres, les conseils de santé, l’orthographe, les traductions, l’actualité récente…"
+        },
+        {
+          "consigne": "Citez un mot du vocabulaire de l’intelligence artificielle",
+          "idees": "Algorithme, prompt, chatbot, données, apprentissage automatique, apprentissage profond, réseau de neurones, IA générative, modèle de langage, entraînement, hallucination, biais, hypertrucage, robot, reconnaissance vocale, agent, assistant…"
+        }
+      ]
     }
   }
 }

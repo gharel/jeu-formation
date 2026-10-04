@@ -151,6 +151,17 @@ describe('sons', () => {
     expect(journal.notes.length).toBeGreaterThan(partiel + 3);
   });
 
+  it('Patate chaude : le tic-tac monte quand la patate chauffe, la brûlure grésille', () => {
+    sons.patate.tic(0);
+    const tiede = journal.notes[0].frequence;
+    journal.notes = [];
+    sons.patate.tic(1);
+    expect(journal.notes[0].frequence).toBeGreaterThan(tiede);
+    journal.bruits = 0;
+    sons.patate.brule();
+    expect(journal.bruits).toBeGreaterThanOrEqual(2);
+  });
+
   it('roue et applaudissements utilisent du bruit filtré', () => {
     sons.roueClic();
     expect(journal.bruits).toBe(1);
@@ -192,6 +203,7 @@ describe('sons', () => {
       () => sons.verite.vrai(),
       () => sons.verite.faux(),
       () => sons.ordre.carte(),
+      () => sons.patate.passe(),
     ];
     for (const appel of appels) expect(appel).not.toThrow();
     expect(journal.notes.length).toBeGreaterThan(40);

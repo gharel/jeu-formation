@@ -372,6 +372,38 @@
           "definition": "Il souligne en rouge les mots qu’il ne reconnaît pas."
         }
       ]
+    },
+    "patate-chaude": {
+      "elements": [
+        {
+          "consigne": "Citez un document que l’on peut rédiger avec Word",
+          "idees": "Une lettre, un CV, une lettre de motivation, un rapport, un compte rendu, une affiche, une invitation, une attestation, un menu, un contrat, une procédure, une note de service, un mode d’emploi, des étiquettes…"
+        },
+        {
+          "consigne": "Citez quelque chose que l’on peut suivre dans un tableau Excel",
+          "idees": "Un budget, des dépenses, des stocks, un planning, des heures de travail, des congés, des ventes, des factures, des commandes, des notes, des présences, des inscriptions, des abonnements, des kilomètres…"
+        },
+        {
+          "consigne": "Citez un élément que l’on peut ajouter sur une diapositive PowerPoint",
+          "idees": "Un titre, du texte, une image, une vidéo, un son, une forme, une flèche, un tableau, un graphique, une icône, un SmartArt, un lien, un logo, le numéro de la diapositive, une animation, une transition…"
+        },
+        {
+          "consigne": "Citez une action possible sur un courriel reçu dans Outlook",
+          "idees": "Répondre, répondre à tous, transférer, supprimer, archiver, déplacer dans un dossier, imprimer, marquer comme non lu, ajouter un indicateur, épingler, classer dans une catégorie, signaler comme indésirable, bloquer l’expéditeur, enregistrer la pièce jointe, créer une règle…"
+        },
+        {
+          "consigne": "Citez un signe qui doit vous faire douter d’un courriel",
+          "idees": "Un expéditeur inconnu, une adresse bizarre, des fautes d’orthographe, un ton urgent, des menaces, une demande de mot de passe, un lien suspect, une pièce jointe inattendue, un gain trop beau pour être vrai, une demande de virement, une formule impersonnelle comme « Cher client »…"
+        },
+        {
+          "consigne": "Citez un équipement utile pour une réunion Teams",
+          "idees": "Un casque, des écouteurs, un micro, une webcam, un ordinateur, un téléphone, une tablette, une enceinte, un deuxième écran, une bonne connexion Internet, une lampe pour bien éclairer son visage, un chargeur…"
+        },
+        {
+          "consigne": "Citez une chose que l’on peut faire avec un fichier enregistré dans OneDrive",
+          "idees": "L’ouvrir sur son téléphone, le modifier, le partager, le renommer, le déplacer, le copier, le télécharger, le supprimer, le restaurer depuis la corbeille, retrouver une ancienne version, le garder hors connexion, le modifier à plusieurs, voir qui y a accès…"
+        }
+      ]
     }
   }
 }

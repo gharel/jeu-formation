@@ -365,6 +365,38 @@
           "definition": "Du plus petit au plus grand, ou de A à Z pour du texte."
         }
       ]
+    },
+    "patate-chaude": {
+      "elements": [
+        {
+          "consigne": "Citez un tableau qu’on peut tenir dans Google Sheets, au travail ou à la maison",
+          "idees": "Le budget du foyer, la liste de courses, un planning, les congés de l’équipe, un inventaire, une liste d’invités, les dépenses d’un voyage, un carnet d’adresses, les notes des élèves, le suivi des ventes, les comptes d’une association, les scores d’un tournoi, un suivi de chantier…"
+        },
+        {
+          "consigne": "Citez quelque chose qu’on peut mettre dans une cellule",
+          "idees": "Un nombre, un texte, une date, une heure, un prix, un pourcentage, une formule, une fonction, un lien, une image, une case à cocher, une liste déroulante, une note, un commentaire, une adresse e-mail…"
+        },
+        {
+          "consigne": "Citez une fonction de Google Sheets, avec son nom en français",
+          "idees": "SOMME, MOYENNE, MIN, MAX, NB, NBVAL, SI, NB.SI, SOMME.SI, RECHERCHEV, ARRONDI, AUJOURDHUI, MAJUSCULE, MINUSCULE, CONCATENER, ET, OU…"
+        },
+        {
+          "consigne": "Citez une action qu’on peut faire sur une ligne ou une colonne",
+          "idees": "L’insérer, la supprimer, la masquer, la faire réapparaître, la figer, l’élargir, la déplacer, la sélectionner, la copier, la colorer, la regrouper, trier le tableau selon cette colonne, ajuster sa taille au contenu…"
+        },
+        {
+          "consigne": "Citez un signe ou un symbole qu’on peut taper dans une formule",
+          "idees": "« = » pour commencer, « + », « - », « * » pour multiplier, « / » pour diviser, « ^ » pour une puissance, les parenthèses, « : » pour une plage, « ; » entre les arguments, « $ » pour bloquer une référence, « & » pour assembler des textes, « < » et « > » pour comparer, « % »…"
+        },
+        {
+          "consigne": "Citez quelque chose qu’un tableur fait mieux qu’un cahier et un stylo",
+          "idees": "Calculer tout seul, mettre les totaux à jour, effacer sans laisser de rature, trier, filtrer, dessiner un graphique, retrouver un nom en un instant, copier-coller, se partager en un clic, faire travailler plusieurs personnes en même temps, garder les anciennes versions, s’ouvrir sur n’importe quel appareil…"
+        },
+        {
+          "consigne": "Citez un métier où l’on se sert souvent d’un tableur",
+          "idees": "Comptable, secrétaire, assistant de direction, gestionnaire de paie, commercial, enseignant, chef de projet, chef de chantier, logisticien, magasinier, banquier, chercheur, ingénieur, responsable des ressources humaines, trésorier d’association, agent immobilier…"
+        }
+      ]
     }
   }
 }
