@@ -48,6 +48,19 @@ export function ajouter(liste, saisie) {
   return resultat;
 }
 
+/** Initiales pour un avatar : « A » pour Ana, « JP » pour Jean-Paul, « ML » pour Marie Laure. */
+export function initiales(prenom) {
+  const morceaux = normaliserPrenom(prenom)
+    .split(/[\s'’-]+/)
+    .filter(Boolean);
+  if (!morceaux.length) return '?';
+  return morceaux
+    .slice(0, 2)
+    .map((m) => [...m][0])
+    .join('')
+    .toLocaleUpperCase('fr');
+}
+
 export function retirer(liste, prenom) {
   return liste.filter((p) => cleComparaison(p) !== cleComparaison(prenom));
 }

@@ -17,6 +17,7 @@ import {
   garderInfos,
   chargerInfos,
   enregistrerInfos,
+  initiales,
 } from '../../assets/js/commun/participants.js';
 
 beforeEach(() => localStorage.clear());
@@ -104,5 +105,15 @@ describe('participants', () => {
     expect(charger()).toEqual(['Ana', 'Bob']);
     localStorage.setItem('skazy-jeux:participants', '"pas une liste"');
     expect(charger()).toEqual([]);
+  });
+});
+
+describe('initiales pour les avatars', () => {
+  it('une lettre pour un prénom simple, deux pour un prénom composé', () => {
+    expect(initiales('Ana')).toBe('A');
+    expect(initiales('élodie')).toBe('É');
+    expect(initiales('Jean-Paul')).toBe('JP');
+    expect(initiales('marie laure')).toBe('ML');
+    expect(initiales('  ')).toBe('?');
   });
 });
