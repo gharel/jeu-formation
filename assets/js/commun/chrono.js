@@ -41,6 +41,21 @@ export function creerChrono({ duree, surTic, surFin, intervalle = 100, maintenan
     arreter() {
       suspendre();
     },
+    /**
+     * Ajoute du temps (ms > 0) ou en retire (ms < 0), en cours comme en pause : une pénalité,
+     * par exemple. Si le temps tombe à zéro, le chrono s'arrête et appelle surFin.
+     */
+    ajuster(ms) {
+      if (restant() <= 0) return;
+      if (minuteur !== null) {
+        restantMs += ms;
+        tic();
+        return;
+      }
+      restantMs = Math.max(0, restantMs + ms);
+      surTic?.(restantMs);
+      if (restantMs <= 0) surFin?.();
+    },
     restant,
     ecoule() {
       return duree * 1000 - restant();
@@ -59,7 +74,7 @@ export function formaterDuree(ms) {
 
 /**
  * Minuteur prêt à afficher : chrono + affichage + bip à chacune des 5 dernières secondes.
- * `sons` vient de ctx.sons. Renvoie { element, demarrer, pause, arreter, restant, enCours }.
+ * `sons` vient de ctx.sons. Renvoie { element, demarrer, pause, arreter, ajuster, restant, enCours }.
  */
 export function creerMinuteur({ duree, sons, surFin }) {
   const affichage = creerAffichageChrono(duree);
@@ -86,6 +101,7 @@ export function creerMinuteur({ duree, sons, surFin }) {
     demarrer: () => chrono.demarrer(),
     pause: () => chrono.pause(),
     arreter: () => chrono.arreter(),
+    ajuster: (ms) => chrono.ajuster(ms),
     restant: () => chrono.restant(),
     get enCours() {
       return chrono.enCours;
@@ -110,7 +126,8 @@ export function creerAffichageChrono(duree) {
     element,
     afficher(restantMs) {
       temps.textContent = formaterDuree(restantMs);
-      progression.style.transform = `scaleX(${Math.max(0, restantMs / (duree * 1000))})`;
+      const part = Math.min(1, Math.max(0, restantMs / (duree * 1000)));
+      progression.style.transform = `scaleX(${part})`;
       element.classList.toggle('chrono--urgent', restantMs > 0 && restantMs <= 5000);
     },
   };

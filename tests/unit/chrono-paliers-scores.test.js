@@ -32,6 +32,49 @@ describe('chrono', () => {
     expect(chrono.ecoule()).toBe(5000);
   });
 
+  it('ajoute ou retire du temps, en cours comme en pause', () => {
+    const surFin = vi.fn();
+    const tics = [];
+    const chrono = creerChrono({ duree: 60, surFin, surTic: (r) => tics.push(r) });
+    chrono.demarrer();
+    vi.advanceTimersByTime(10000);
+    chrono.ajuster(-30000);
+    expect(chrono.restant()).toBe(20000);
+    // L'affichage suit tout de suite
+    expect(tics.at(-1)).toBe(20000);
+    chrono.ajuster(5000);
+    expect(chrono.restant()).toBe(25000);
+    chrono.pause();
+    chrono.ajuster(-5000);
+    expect(chrono.restant()).toBe(20000);
+    chrono.demarrer();
+    vi.advanceTimersByTime(5000);
+    expect(chrono.restant()).toBe(15000);
+    expect(surFin).not.toHaveBeenCalled();
+  });
+
+  it('s’arrête quand une pénalité épuise le temps, et ne bouge plus ensuite', () => {
+    const surFin = vi.fn();
+    const chrono = creerChrono({ duree: 20, surFin });
+    chrono.demarrer();
+    vi.advanceTimersByTime(5000);
+    chrono.ajuster(-30000);
+    expect(surFin).toHaveBeenCalledTimes(1);
+    expect(chrono.restant()).toBe(0);
+    expect(chrono.enCours).toBe(false);
+    chrono.ajuster(10000);
+    chrono.ajuster(-10000);
+    expect(chrono.restant()).toBe(0);
+    expect(surFin).toHaveBeenCalledTimes(1);
+
+    // En pause aussi
+    const enPause = vi.fn();
+    const autre = creerChrono({ duree: 10, surFin: enPause });
+    autre.ajuster(-15000);
+    expect(autre.restant()).toBe(0);
+    expect(enPause).toHaveBeenCalledTimes(1);
+  });
+
   it('formate le temps restant', () => {
     expect(formaterDuree(30000)).toBe('0:30');
     expect(formaterDuree(65000)).toBe('1:05');
