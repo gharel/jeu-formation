@@ -42,7 +42,14 @@
 }
 
 .heros__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
   margin: 1.75rem 0 0;
+}
+
+.heros__compte {
+  font-weight: 700;
 }
 
 /* Points colorés décoratifs, comme sur formation.skazy.nc */
@@ -1275,4 +1282,646 @@
   margin: 0.75rem 0 0;
   color: var(--rose);
   font-weight: 700;
+}
+
+/* ---------- Le groupe : page, plan de salle, fenêtre de consultation ---------- */
+
+.groupe-colonnes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+@media (min-width: 1000px) {
+  .groupe-colonnes {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
+    align-items: start;
+  }
+}
+
+/* Avatar : un rond aux initiales, une couleur de la charte par personne (rang dans la liste),
+   et un petit badge pour le thème de son info (cœur, film, dessert…) */
+.avatar {
+  position: relative;
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 2.4em;
+  height: 2.4em;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--bleu-nuit);
+  background: var(--vert);
+  border-radius: 50%;
+  box-shadow:
+    0 0 0 0.12em var(--blanc),
+    var(--ombre-avatar);
+}
+
+.avatar--c1 {
+  background: var(--vert);
+}
+.avatar--c2 {
+  background: var(--jaune);
+}
+.avatar--c3 {
+  background: var(--rose);
+}
+.avatar--c4 {
+  background: var(--bleu);
+}
+.avatar--c5 {
+  background: var(--violet);
+}
+.avatar--c6 {
+  background: var(--orange);
+}
+.avatar--c7 {
+  background: var(--ciel);
+}
+.avatar--c8 {
+  color: var(--blanc);
+  background: var(--bleu-numerique);
+}
+
+.avatar--mini {
+  width: 1.9em;
+  height: 1.9em;
+  font-size: 0.8em;
+}
+
+.avatar--libre {
+  color: var(--texte-doux);
+  background: var(--blanc);
+  border: 2px dashed var(--gris);
+  box-shadow: none;
+}
+
+.avatar__badge {
+  position: absolute;
+  right: -12%;
+  bottom: -12%;
+  display: grid;
+  place-items: center;
+  width: 46%;
+  aspect-ratio: 1;
+  font-size: 0.42em;
+  color: var(--bleu-nuit);
+  background: var(--blanc);
+  border-radius: 50%;
+  box-shadow: var(--ombre-avatar);
+}
+
+.avatar__badge .icone {
+  margin: 0;
+}
+
+.avatar--mini .avatar__badge {
+  display: none;
+}
+
+/* ---------- Réglages : dispositions en aperçus miniatures, taille, placement ---------- */
+
+.plan-salle__reglages {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.plan-salle__dispositions {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.plan-salle__choix {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 8.5rem), 1fr));
+  gap: 0.6rem;
+}
+
+.disposition {
+  position: relative;
+  display: grid;
+  gap: 0.4rem;
+  padding: 0.5rem 0.5rem 0.45rem;
+  text-align: center;
+  background: var(--blanc);
+  border: 2px solid var(--bord);
+  border-radius: var(--rayon);
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
+}
+
+.disposition__nom {
+  font-size: 0.95rem;
+  font-weight: 800;
+  line-height: 1.2;
+  color: var(--bleu-nuit);
+}
+
+.disposition__apercu {
+  position: relative;
+  display: block;
+  aspect-ratio: 100 / 70;
+  background: var(--fond);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.disposition__table {
+  position: absolute;
+  background: var(--blanc);
+  border: 1px solid var(--bord);
+  border-radius: 2px;
+}
+
+.disposition__table--ovale {
+  border-radius: 50%;
+}
+
+.disposition__point {
+  position: absolute;
+  background: var(--gris);
+  border-radius: 50%;
+}
+
+.disposition:has(input:checked) {
+  border-color: var(--bleu-nuit);
+  box-shadow: 0 0 0 3px var(--accent-clair);
+}
+
+.disposition:has(input:checked) .disposition__apercu {
+  background: var(--accent-clair);
+}
+
+.disposition:has(input:checked) .disposition__point {
+  background: var(--bleu-nuit);
+}
+
+.disposition__coche {
+  position: absolute;
+  top: -0.55rem;
+  right: -0.55rem;
+  display: none;
+  place-items: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 0.75rem;
+  color: var(--blanc);
+  background: var(--bleu-nuit);
+  border: 2px solid var(--blanc);
+  border-radius: 50%;
+}
+
+.disposition__coche .icone {
+  margin: 0;
+}
+
+.disposition:has(input:checked) .disposition__coche {
+  display: grid;
+}
+
+.disposition:has(input:focus-visible) {
+  outline: 3px solid var(--bleu);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) {
+  .disposition:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ombre);
+  }
+}
+
+/* Téléphone : les quatre dispositions sur une ligne */
+@media (max-width: 600px) {
+  .plan-salle__choix {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.4rem;
+  }
+
+  .disposition {
+    padding: 0.3rem 0.3rem 0.35rem;
+  }
+
+  .disposition__nom {
+    font-size: 0.72rem;
+  }
+}
+
+.plan-salle__barre {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+}
+
+.plan-salle__tailles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1rem;
+}
+
+.plan-salle__tailles .champ,
+.plan-salle__reglages > .champ__aide {
+  margin: 0;
+}
+
+.champ__controle--court {
+  max-width: 8rem;
+}
+
+/* ---------- La salle ---------- */
+
+/* 100 × 70 unités carrées, l'écran en haut. Places et tables sont posées en pourcentages ;
+   la taille des avatars et des prénoms suit la taille des places (--s, en unités cqi). */
+.salle {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 100 / 70;
+  container-type: inline-size;
+  overflow: hidden;
+  background-color: var(--fond);
+  background-image: radial-gradient(var(--bord) 1.2px, transparent 1.6px);
+  background-size: 22px 22px;
+  border: 1px solid var(--bord);
+  border-radius: 22px;
+}
+
+.salle__ecran {
+  position: absolute;
+  top: 2.2%;
+  left: 36%;
+  width: 28%;
+  height: 5.5%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  font-size: clamp(0.6rem, 1.45cqi, 1rem);
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--blanc);
+  background: var(--bleu-nuit);
+  border-radius: var(--rayon-pilule);
+  box-shadow: 0 0 0 4px var(--accent-clair);
+}
+
+.salle__ecran .icone {
+  margin: 0;
+  color: var(--accent);
+}
+
+/* La lumière du vidéoprojecteur, de l'écran vers la salle */
+.salle__faisceau {
+  position: absolute;
+  top: 7%;
+  left: 20%;
+  width: 60%;
+  height: 62%;
+  background: linear-gradient(to bottom, var(--accent-clair), transparent 90%);
+  clip-path: polygon(27% 0, 73% 0, 100% 100%, 0 100%);
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.salle__table {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  background: var(--blanc);
+  border: 1px solid var(--bord);
+  border-radius: clamp(4px, 1cqi, 12px);
+  box-shadow: var(--ombre-table);
+}
+
+.salle__table--ovale {
+  border-radius: 50%;
+}
+
+.salle__table-libelle {
+  font-size: clamp(0.55rem, 1.25cqi, 0.95rem);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--texte-doux);
+}
+
+/* Une place : l'avatar, le prénom en étiquette blanche, l'info en dessous */
+.salle__place {
+  --d: calc(var(--s) * 0.56cqi);
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  gap: calc(var(--s) * 0.05cqi);
+  padding: 0;
+  font: inherit;
+  color: var(--bleu-nuit);
+  background: none;
+  border: 0;
+  cursor: pointer;
+}
+
+/* Place au-dessus d'une table : l'avatar en bas, contre la table, le prénom au-dessus */
+.salle__place--inverse {
+  flex-direction: column-reverse;
+}
+
+.salle__avatar {
+  width: var(--d);
+  height: var(--d);
+  font-size: calc(var(--d) * 0.42);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+
+.salle__avatar.avatar--libre {
+  font-size: calc(var(--d) * 0.34);
+}
+
+.salle__nom {
+  max-width: calc(var(--s) * 1cqi + 2.5cqi);
+  padding: 0.12em 0.6em;
+  overflow: hidden;
+  font-size: clamp(0.6rem, calc(var(--s) * 0.155cqi), 1.6rem);
+  font-weight: 800;
+  line-height: 1.25;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  background: var(--blanc);
+  border-radius: var(--rayon-pilule);
+  box-shadow: var(--ombre-avatar);
+}
+
+.salle__info {
+  max-width: calc(var(--s) * 1cqi + 2cqi);
+  overflow: hidden;
+  font-size: clamp(0.55rem, calc(var(--s) * 0.105cqi), 1.05rem);
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--texte-doux);
+}
+
+/* Beaucoup de monde, ou petit écran : l'info disparaît, puis le prénom (gardé en info-bulle) */
+.salle--serree .salle__info,
+.salle--minuscule .salle__info,
+.salle--minuscule .salle__nom {
+  display: none;
+}
+
+.salle--minuscule .salle__place {
+  --d: calc(var(--s) * 0.8cqi);
+  justify-content: center;
+}
+
+/* Petit plan (téléphone) : des avatars plus grands dans chaque place, sans l'info ; au-delà
+   d'une douzaine de places, les initiales seules (les prénoms sont dans la liste) */
+@container (max-width: 560px) {
+  .salle__place {
+    --d: calc(var(--s) * 0.66cqi);
+  }
+
+  .salle__info,
+  .salle--serree .salle__nom {
+    display: none;
+  }
+
+  .salle--serree .salle__place {
+    --d: calc(var(--s) * 0.8cqi);
+    justify-content: center;
+  }
+}
+
+.salle__place:focus-visible {
+  outline: none;
+}
+
+.salle__place:focus-visible .salle__avatar {
+  outline: 3px solid var(--bleu);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) {
+  .plan-salle--modifiable .salle__place:hover .salle__avatar,
+  .salle__place:hover .salle__avatar {
+    transform: translateY(-2px) scale(1.05);
+  }
+
+  .salle__place:hover .avatar--libre {
+    border-color: var(--bleu-nuit);
+    background: var(--accent-clair);
+  }
+}
+
+/* Place visée pendant un glisser, ou touchée en consultation */
+.salle__place--visee .salle__avatar,
+.salle__place--choisie .salle__avatar {
+  transform: scale(1.12);
+  box-shadow:
+    0 0 0 calc(var(--d) * 0.06) var(--blanc),
+    0 0 0 calc(var(--d) * 0.13) var(--jaune),
+    var(--ombre-avatar);
+}
+
+.salle__place--visee .avatar--libre {
+  border-color: var(--bleu-nuit);
+  background: var(--jaune-clair);
+}
+
+/* Glisser-déposer : on saisit les personnes placées et les prénoms à placer au doigt */
+.plan-salle--modifiable .salle__place:not(.salle__place--libre),
+.plan-salle__puce {
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.salle__fantome {
+  position: fixed;
+  z-index: 2000;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.9rem 0.3rem 0.35rem;
+  font-weight: 900;
+  color: var(--bleu-nuit);
+  background: var(--blanc);
+  border-radius: var(--rayon-pilule);
+  box-shadow: var(--ombre-forte);
+  pointer-events: none;
+  transform: translate(-50%, -130%) rotate(-3deg);
+}
+
+/* ---------- À placer ---------- */
+
+.plan-salle__a-placer {
+  margin-top: 1.25rem;
+}
+
+.plan-salle__titre {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 0.6rem;
+  font-size: 1.1rem;
+}
+
+.plan-salle__compte {
+  min-width: 1.7rem;
+  padding: 0 0.45rem;
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--blanc);
+  background: var(--bleu-nuit);
+  border-radius: var(--rayon-pilule);
+}
+
+.plan-salle__puces {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 0.6rem;
+  padding: 0;
+  list-style: none;
+}
+
+.plan-salle__puce,
+.puce-prenom--avatar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.9rem 0.3rem 0.35rem;
+  font: inherit;
+  font-weight: 800;
+  color: var(--bleu-nuit);
+  background: var(--blanc);
+  border: 2px solid var(--bord);
+  border-radius: var(--rayon-pilule);
+  box-shadow: var(--ombre);
+  cursor: grab;
+}
+
+.puce-prenom--avatar {
+  justify-content: flex-start;
+  cursor: pointer;
+}
+
+.plan-salle__puce[aria-pressed='true'] {
+  background: var(--accent-clair);
+  border-color: var(--bleu-nuit);
+}
+
+.plan-salle__puce .avatar,
+.puce-prenom--avatar .avatar {
+  box-shadow: none;
+}
+
+/* ---------- Consultation ---------- */
+
+.plan-salle__detail {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 2.2em;
+  margin: 0.75rem 0 0;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.dialogue--groupe {
+  width: min(96vw, 1100px);
+}
+
+/* Dans la fenêtre, le plan tient dans la hauteur de l'écran (vidéoprojecteur 1280 × 720) */
+.dialogue--groupe .salle {
+  width: min(100%, 52vh * 100 / 70);
+  margin: 0 auto;
+}
+
+.liste-groupe {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr));
+  gap: 0.25rem 1rem;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.liste-groupe__ligne {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid var(--bord);
+}
+
+.liste-groupe__ligne .avatar {
+  font-size: 0.95rem;
+  box-shadow: none;
+}
+
+.liste-groupe__texte {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+}
+
+.liste-groupe__prenom {
+  font-size: 1.1rem;
+  line-height: 1.2;
+  color: var(--bleu-nuit);
+}
+
+.liste-groupe__info {
+  overflow: hidden;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--texte-doux);
+}
+
+.liste-groupe__place {
+  flex: none;
+  padding: 0.1rem 0.55rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--bleu-nuit);
+  background: var(--fond);
+  border-radius: var(--rayon-pilule);
+}
+
+/* Grand écran : la liste à côté du plan, qui peut alors être plus grand */
+@media (min-width: 900px) {
+  .dialogue--groupe .dialogue__corps:has(.liste-groupe) {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    align-items: start;
+    gap: 1.5rem;
+  }
+
+  .dialogue--groupe .salle {
+    width: min(100%, 66vh * 100 / 70);
+  }
+
+  .dialogue--groupe .liste-groupe {
+    grid-template-columns: 1fr;
+    margin: 0;
+  }
 }

@@ -4,6 +4,7 @@ import { join, relative } from 'node:path';
 import { JEUX } from '../../assets/js/jeux.js';
 import { THEMES } from '../../assets/js/commun/participants.js';
 import { CONSIGNES } from '../../jeux/debout-assis/logique.js';
+import { DISPOSITIONS } from '../../assets/js/commun/salle.js';
 
 // Vitest est lancé depuis la racine du projet
 const racine = process.cwd();
@@ -23,6 +24,7 @@ function fichiers(dossier, extensions) {
 
 const sources = [
   join(racine, 'index.html'),
+  join(racine, 'groupe/index.html'),
   ...fichiers(join(racine, 'assets'), ['.js', '.css']),
   ...fichiers(join(racine, 'jeux'), ['.js', '.css', '.html']),
   ...fichiers(join(racine, 'outils'), ['.js']),
@@ -51,6 +53,7 @@ describe('icônes', () => {
     const noms = new Set([
       ...JEUX.map((j) => j.icone),
       ...THEMES.map((t) => t.icone),
+      ...DISPOSITIONS.map((d) => d.icone),
       ...Object.values(CONSIGNES).flatMap((c) => [c.vrai.icone, c.faux.icone]),
     ]);
     for (const fichier of sources) {

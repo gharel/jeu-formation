@@ -37,7 +37,8 @@ Les pages ne s'ouvrent pas en double-cliquant sur le fichier (`file://`), car le
 ## Structure
 
 ```
-index.html                     Accueil : une carte par jeu (générée depuis assets/js/jeux.js)
+index.html                     Accueil : une carte par jeu (générée depuis assets/js/jeux.js), lien « Le groupe »
+groupe/index.html              Page « Le groupe » : prénoms, infos, plan de salle (assets/js/groupe.js)
 assets/css/charte.css          Couleurs, police Georama, couleur de chaque jeu (data-couleur)
 assets/css/base.css            Mise en page, bandeau, boutons, formulaires, dialogues
 assets/css/composants.css      Accueil, participants, éditeur, roue, chrono, paliers, podium
@@ -47,6 +48,10 @@ assets/js/commun/
   editeur-contenu.js           Éditeur généré à partir du schéma de contenu du jeu
   contenu.js                   Schéma : valeurs par défaut, liste vide, nettoyage, validation, import/export
   participants.js              Liste des prénoms partagée entre les jeux + une info par personne (passion, film…)
+  groupe.js                    État partagé du groupe : participants, infos, plan de salle (nettoyé à chaque changement)
+  bloc-participants.js         Bloc « Participants » (accueil de chaque jeu et page Groupe)
+  salle.js                     Plan de salle, fonctions pures : dispositions (U, classe, îlots, réunion), placement
+  plan-salle.js                Plan affiché : places-boutons, toucher, glisser-déposer (pointer) ; fenêtre « Groupe »
   roue.js · dialogues.js       Roue aléatoire (tirage équitable) et fenêtres de dialogue
   chrono.js                    Compte à rebours ; creerMinuteur() = chrono affiché + bips de fin
   paliers.js                   Chiffres 5 4 3 2 1 qui s'éteignent (logique + affichage)
@@ -72,7 +77,8 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
   outils.js                    ouvrirJeu, lancerPartie, attribuerPoints, pointsDe, verifierAccessibilite (axe + typographie)…
   accueil.spec.js              Pour chaque jeu de jeux.js : lien, accueil, prénoms, éditeur masqué, axe
   contenu.spec.js              Export / import JSON, contenu d'exemple
-  mobile.spec.js               Téléphone tactile : pas de plein écran, icônes centrées, buzzers au doigt
+  mobile.spec.js               Téléphone tactile : pas de plein écran, icônes centrées, buzzers au doigt, plan au doigt
+  groupe.spec.js               Page Groupe : placement (toucher, glisser, ordre), îlots, fenêtre Groupe en partie
 ```
 
 ## Conventions de code
@@ -82,6 +88,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
 - **La logique est séparée de l'affichage.** Les règles vont dans `logique.js`, en fonctions pures testées unitairement. `jeu.js` ne fait que construire la page et réagir aux clics.
 - **Sécurité.** Tout texte saisi ou importé passe par `el()` ou `textContent`, jamais par `innerHTML`. Un JSON importé passe par `nettoyerContenu()`, qui ne garde que les clés et les types prévus par le schéma.
 - **Mot de passe d'accès.** Il n'est jamais écrit en clair : ni dans le code, ni dans les tests, ni dans un message de commit. Seule son empreinte est dans `acces.js`. Les tests e2e ouvrent les pages déverrouillées (`storageState` dans `playwright.config.js`) ; `acces.spec.js` teste l'écran sans le mot de passe.
+- **Groupe.** Les prénoms, les infos et le plan passent par `groupe.js` (`creerGroupe()`), qui garde le plan cohérent avec la liste ; jamais d'accès direct aux clés `participants`, `infos-participants` ou `plan-salle`. Toute nouvelle page à publier doit être ajoutée à `.github/workflows/publier.yml` et à `validate:html`.
 - **Stockage.** On passe toujours par `stockage.js` (localStorage, clés préfixées par `skazy-jeux:`) ou `images.js` (IndexedDB), jamais d'appel direct. Les erreurs de stockage ne doivent jamais faire planter un jeu.
 - **Hasard.** On utilise `ctx.hasard` (ou `hasardDePage()`), pas `Math.random()` directement, pour que `?graine=N` rende les tests reproductibles.
 - **Raccourcis clavier.** On passe par `ecouterClavier()` : il ignore les touches pendant la saisie et quand un dialogue est ouvert. Il faut retirer l'écoute dans la fonction de nettoyage renvoyée par `demarrer()`. Touches réservées : `R` (roue) et `F` (plein écran). Tout ce qui se fait au clavier doit aussi se faire au doigt (un téléphone n'a pas de clavier) : un bouton à l'écran pour chaque touche. Les aides sur les touches vont dans un `.raccourci` (ligne d'aide) ou un `.aide-clavier` (« (Entrée) » dans un bouton) : `base.css` les masque sur téléphone, comme le bouton Plein écran.

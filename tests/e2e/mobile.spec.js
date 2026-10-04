@@ -112,4 +112,48 @@ test.describe('sur téléphone', () => {
     await expect(page.locator('#cadre').getByText('Trouvé en 2 mots d’indice !')).toBeVisible();
     expect(erreurs).toEqual([]);
   });
+
+  test('Le groupe : on place les participants au doigt, en touchant ou en glissant', async ({
+    page,
+  }) => {
+    const erreurs = surveillerErreurs(page);
+    await page.goto('/groupe/');
+    await page.getByLabel('Ajouter un prénom').fill('Ana, Bob, Chloé');
+    await page.getByRole('button', { name: 'Ajouter', exact: true }).tap();
+    const salle = page.getByRole('group', { name: /Plan de salle/ });
+
+    // Toucher une place, puis le prénom
+    await salle.getByRole('button', { name: 'Place 1, libre' }).tap();
+    await page.getByRole('dialog', { name: 'Place 1' }).getByRole('button', { name: 'Ana' }).tap();
+    await expect(salle.getByRole('button', { name: 'Place 1 : Ana' })).toBeVisible();
+
+    // Glisser au doigt : vrais événements tactiles (le navigateur en fait des événements pointer)
+    const depuis = await page
+      .getByRole('list', { name: 'À placer' })
+      .getByRole('button', { name: 'Bob' })
+      .boundingBox();
+    const vers = await salle.getByRole('button', { name: 'Place 3, libre' }).boundingBox();
+    const cdp = await page.context().newCDPSession(page);
+    const point = (b, t) => ({
+      x: b.x + b.width / 2 + t * (vers.x + vers.width / 2 - b.x - b.width / 2),
+      y: b.y + b.height / 2 + t * (vers.y + vers.height / 2 - b.y - b.height / 2),
+    });
+    await cdp.send('Input.dispatchTouchEvent', {
+      type: 'touchStart',
+      touchPoints: [point(depuis, 0)],
+    });
+    for (let i = 1; i <= 10; i++) {
+      await cdp.send('Input.dispatchTouchEvent', {
+        type: 'touchMove',
+        touchPoints: [point(depuis, i / 10)],
+      });
+    }
+    await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    await expect(salle.getByRole('button', { name: 'Place 3 : Bob' })).toBeVisible();
+    await expect(page.getByRole('dialog')).toHaveCount(0);
+
+    await sansDefilementHorizontal(page);
+    await verifierAccessibilite(page);
+    expect(erreurs).toEqual([]);
+  });
 });

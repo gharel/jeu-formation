@@ -27,7 +27,10 @@ import {
   pleinEcranDisponible,
   focaliser,
 } from './ui.js';
-import { choisirPrenoms, confirmer, designerAvecRoue, modifierInfo } from './dialogues.js';
+import { choisirPrenoms, confirmer, designerAvecRoue } from './dialogues.js';
+import { creerGroupe, etiquetteInfo } from './groupe.js';
+import { creerBlocParticipants } from './bloc-participants.js';
+import { ouvrirGroupe } from './plan-salle.js';
 import {
   nettoyerContenu,
   validerContenu,
@@ -50,9 +53,9 @@ export function monterJeu(config) {
   const hasard = hasardDePage();
   const cleContenu = `${slug}:contenu`;
 
-  let participants = listeParticipants.charger();
-  let infos = listeParticipants.chargerInfos();
-  const tirage = creerTirage(participants, {
+  // Participants, infos et plan de salle, partagés avec la page « Le groupe »
+  const groupe = creerGroupe();
+  const tirage = creerTirage(groupe.participants, {
     equitable: lire('roue-equitable', true) !== false,
     hasard,
   });
@@ -63,7 +66,7 @@ export function monterJeu(config) {
 
   const estExemple = () => lire(cleContenu) === null;
 
-  // ---------- Bandeau : désigner, son, plein écran (sauf sur téléphone, voir base.css) ----------
+  // ---------- Bandeau : désigner, groupe, son, plein écran (pas sur téléphone, voir base.css) ----------
   const boutonDesigner = el(
     'button',
     {
@@ -75,6 +78,21 @@ export function monterJeu(config) {
     },
     icone('arrows-spin'),
     'Désigner',
+  );
+  const boutonGroupe = el(
+    'button',
+    {
+      type: 'button',
+      class: 'bouton-bandeau',
+      title: 'Revoir les prénoms, les infos et le plan de salle',
+      onclick: async () => {
+        await ouvrirGroupe(groupe);
+        // Le focus revient au jeu (pas au bouton) : Entrée et Espace gardent leur sens en partie
+        cadre.focus({ preventScroll: true });
+      },
+    },
+    icone('users'),
+    'Groupe',
   );
   const boutonSon = el('button', {
     type: 'button',
@@ -108,22 +126,24 @@ export function monterJeu(config) {
     : null;
   document
     .getElementById('actions')
-    ?.append(...[boutonDesigner, boutonSon, boutonPleinEcran].filter(Boolean));
+    ?.append(...[boutonDesigner, boutonGroupe, boutonSon, boutonPleinEcran].filter(Boolean));
 
   function mettreAJourDesigner() {
-    boutonDesigner.hidden = participants.length < 2;
+    boutonDesigner.hidden = groupe.participants.length < 2;
   }
   mettreAJourDesigner();
+  groupe.surChangement(() => {
+    tirage.mettreAJour(groupe.participants);
+    mettreAJourDesigner();
+  });
 
   ecouterClavier({
     r: () => designer(),
     f: () => basculerPleinEcran(),
   });
 
-  const decrire = (prenom) =>
-    listeParticipants.decrireInfo(listeParticipants.infoDe(infos, prenom));
-
   async function designer(titre) {
+    const { participants } = groupe;
     if (participants.length < 2) return participants[0] ?? null;
     const prenom = await designerAvecRoue({
       prenoms: participants,
@@ -131,46 +151,22 @@ export function monterJeu(config) {
       hasard,
       titre,
       surEquitable: (v) => ecrire('roue-equitable', v),
+      // Sous le prénom tiré : son info et sa place (« Place 4, îlot 2 »)
       decrire: (p) => {
-        const info = listeParticipants.infoDe(infos, p);
-        return info ? [icone(listeParticipants.themeDe(info.theme).icone), decrire(p)] : '';
+        const info = groupe.infoDe(p);
+        const place = groupe.placeDe(p);
+        return [
+          info ? [icone(listeParticipants.themeDe(info.theme).icone), groupe.decrire(p)] : '',
+          info && place ? ' · ' : '',
+          place,
+        ];
       },
     });
     if (prenom) {
-      annoncer(`C’est au tour de ${prenom}. ${decrire(prenom)}`);
+      annoncer(`C’est au tour de ${prenom}. ${groupe.decrire(prenom)} ${groupe.placeDe(prenom)}`);
       ecouteDesignation?.(prenom);
     }
     return prenom;
-  }
-
-  function changerParticipants(nouveaux) {
-    participants = nouveaux;
-    listeParticipants.enregistrer(participants);
-    changerInfos(listeParticipants.garderInfos(infos, participants));
-    tirage.mettreAJour(participants);
-    mettreAJourDesigner();
-  }
-
-  function changerInfos(nouvelles) {
-    infos = nouvelles;
-    listeParticipants.enregistrerInfos(infos);
-  }
-
-  /** Petite étiquette « (icône) tiramisu » à côté d'un prénom (rien s'il n'y a pas d'info). */
-  function etiquetteInfo(prenom, classe) {
-    const info = listeParticipants.infoDe(infos, prenom);
-    if (!info) return null;
-    return el(
-      'span',
-      { class: classe, title: decrire(prenom) },
-      icone(listeParticipants.themeDe(info.theme).icone),
-      el(
-        'span',
-        { class: 'visuellement-cache' },
-        `${listeParticipants.themeDe(info.theme).libelle} : `,
-      ),
-      info.texte,
-    );
   }
 
   function arreterPartie() {
@@ -192,199 +188,6 @@ export function monterJeu(config) {
   }
 
   // ---------- Écran d'accueil du jeu ----------
-  function blocParticipants() {
-    const bloc = el('section', {
-      class: 'carte bloc-participants',
-      'aria-labelledby': 'titre-participants',
-    });
-    const champ = el('input', {
-      id: 'nouveau-prenom',
-      type: 'text',
-      class: 'champ__controle',
-      autocomplete: 'off',
-      maxlength: 200,
-      placeholder: 'Ex. : Marie, Paul, Léa',
-      'aria-describedby': 'aide-prenoms',
-    });
-    const liste = el('ul', { class: 'puces', 'aria-label': 'Participants' });
-    const compteur = el('p', { class: 'bloc-participants__compte' });
-    const boutonRoue = el(
-      'button',
-      { type: 'button', class: 'bouton', onclick: () => designer() },
-      icone('arrows-spin'),
-      'Désigner quelqu’un',
-    );
-    const boutonEffacer = el(
-      'button',
-      {
-        type: 'button',
-        class: 'bouton bouton--discret',
-        onclick: async () => {
-          if (
-            await confirmer({
-              titre: 'Effacer la liste ?',
-              message: 'Tous les prénoms (et leurs infos) seront retirés.',
-              oui: 'Effacer',
-            })
-          ) {
-            changerParticipants([]);
-            dessiner();
-            champ.focus();
-          }
-        },
-      },
-      'Effacer la liste',
-    );
-
-    function dessiner() {
-      remplir(
-        liste,
-        participants.map((prenom) =>
-          el(
-            'li',
-            { class: 'puce' },
-            el('span', { class: 'puce__prenom' }, prenom),
-            etiquetteInfo(prenom, 'puce__info'),
-            el(
-              'button',
-              {
-                type: 'button',
-                class: 'puce__retirer puce__modifier',
-                'aria-label': listeParticipants.infoDe(infos, prenom)
-                  ? `Modifier l’info sur ${prenom}`
-                  : `Ajouter une info sur ${prenom}`,
-                title: 'Une info sur cette personne (passion, film, dessert…)',
-                onclick: async () => {
-                  const reponse = await modifierInfo({
-                    prenom,
-                    info: listeParticipants.infoDe(infos, prenom),
-                    themes: listeParticipants.THEMES,
-                  });
-                  if (reponse) changerInfos(listeParticipants.definirInfo(infos, prenom, reponse));
-                  dessiner();
-                },
-              },
-              icone('pen'),
-            ),
-            el(
-              'button',
-              {
-                type: 'button',
-                class: 'puce__retirer',
-                'aria-label': `Retirer ${prenom}`,
-                onclick: () => {
-                  changerParticipants(listeParticipants.retirer(participants, prenom));
-                  dessiner();
-                  champ.focus();
-                },
-              },
-              icone('xmark'),
-            ),
-          ),
-        ),
-      );
-      remplir(
-        compteur,
-        participants.length
-          ? `${participants.length} participant${participants.length > 1 ? 's' : ''}`
-          : 'Aucun participant : on peut jouer sans prénoms, mais sans classement.',
-      );
-      boutonRoue.disabled = participants.length < 2;
-      boutonEffacer.hidden = participants.length === 0;
-    }
-
-    const theme = el(
-      'select',
-      { id: 'nouveau-theme', class: 'champ__controle ajout-prenom__theme' },
-      listeParticipants.THEMES.map((t) => el('option', { value: t.valeur }, t.libelle)),
-    );
-    const info = el('input', {
-      id: 'nouvelle-info',
-      type: 'text',
-      class: 'champ__controle',
-      autocomplete: 'off',
-      maxlength: listeParticipants.LONGUEUR_INFO,
-      placeholder: 'Ex. : la guitare, le tiramisu…',
-      'aria-describedby': 'aide-info',
-    });
-
-    const formulaire = el(
-      'form',
-      {
-        class: 'ajout-prenom',
-        onsubmit: (e) => {
-          e.preventDefault();
-          if (!champ.value.trim()) return;
-          changerParticipants(listeParticipants.ajouter(participants, champ.value));
-          // L'info ne s'applique que si un seul prénom est saisi
-          const saisis = champ.value
-            .split(/[,;\n]/)
-            .map(listeParticipants.normaliserPrenom)
-            .filter(Boolean);
-          if (saisis.length === 1 && info.value.trim()) {
-            const cible = participants.find(
-              (p) => p.toLocaleLowerCase('fr') === saisis[0].toLocaleLowerCase('fr'),
-            );
-            if (cible) {
-              changerInfos(
-                listeParticipants.definirInfo(infos, cible, {
-                  theme: theme.value,
-                  texte: info.value,
-                }),
-              );
-            }
-          }
-          champ.value = '';
-          info.value = '';
-          dessiner();
-          champ.focus();
-        },
-      },
-      el('label', { for: 'nouveau-prenom', class: 'champ__libelle' }, 'Ajouter un prénom'),
-      el(
-        'div',
-        { class: 'champ__ligne' },
-        champ,
-        el('button', { type: 'submit', class: 'bouton' }, 'Ajouter'),
-      ),
-      el(
-        'p',
-        { id: 'aide-prenoms', class: 'champ__aide' },
-        'Plusieurs à la fois ? Séparez-les par des virgules. La liste sert pour tous les jeux.',
-      ),
-      el(
-        'p',
-        { class: 'champ__libelle ajout-prenom__info-titre', id: 'titre-info' },
-        'Une info sur la personne (facultatif)',
-      ),
-      el(
-        'div',
-        {
-          class: 'champ__ligne ajout-prenom__info',
-          role: 'group',
-          'aria-labelledby': 'titre-info',
-        },
-        el('label', { for: 'nouveau-theme', class: 'visuellement-cache' }, 'Thème de l’info'),
-        theme,
-        el('label', { for: 'nouvelle-info', class: 'visuellement-cache' }, 'Info'),
-        info,
-      ),
-      el(
-        'p',
-        { id: 'aide-info', class: 'champ__aide' },
-        'Sa passion, son film ou son dessert préféré… La roue l’affiche quand elle désigne la personne. Modifiable avec le crayon. Rien ne sort de ce navigateur.',
-      ),
-    );
-    dessiner();
-    bloc.append(
-      el('h3', { id: 'titre-participants' }, 'Participants'),
-      formulaire,
-      compteur,
-      liste,
-      el('div', { class: 'groupe-boutons' }, boutonRoue, boutonEffacer),
-    );
-    return bloc;
-  }
 
   function blocContenu(erreurs) {
     const etat = erreurs.length
@@ -488,7 +291,12 @@ export function monterJeu(config) {
             : null,
         ),
       ),
-      el('div', { class: 'colonnes' }, blocParticipants(), blocContenu(erreurs)),
+      el(
+        'div',
+        { class: 'colonnes' },
+        creerBlocParticipants(groupe, { designer }),
+        blocContenu(erreurs),
+      ),
     );
     focaliser(titre);
   }
@@ -719,13 +527,13 @@ export function monterJeu(config) {
   async function lancerPartie() {
     arreterPartie();
     const tableau = el('ul', { class: 'tableau-points', 'aria-label': 'Points' });
-    const scores = creerScores(participants, { surChangement: dessinerPoints });
+    const scores = creerScores(groupe.participants, { surChangement: dessinerPoints });
     function dessinerPoints() {
       const classement = scores.classement();
       const meilleur = classement[0]?.points ?? 0;
       remplir(
         tableau,
-        participants.map((prenom) => {
+        groupe.participants.map((prenom) => {
           const points = scores.valeur(prenom);
           return el(
             'li',
@@ -767,7 +575,7 @@ export function monterJeu(config) {
           icone('arrow-left'),
           'Quitter la partie',
         ),
-        participants.length ? tableau : null,
+        groupe.participants.length ? tableau : null,
       ),
       zone,
     );
@@ -777,7 +585,7 @@ export function monterJeu(config) {
       contenu: structuredClone(contenu),
       reglages: structuredClone(contenu.reglages),
       elements: structuredClone(contenu.elements),
-      participants: [...participants],
+      participants: [...groupe.participants],
       scores,
       hasard,
       sons,
@@ -787,7 +595,7 @@ export function monterJeu(config) {
       quandDesigne(fonction) {
         ecouteDesignation = fonction;
       },
-      choisirPrenoms: (options) => choisirPrenoms({ prenoms: participants, ...options }),
+      choisirPrenoms: (options) => choisirPrenoms({ prenoms: groupe.participants, ...options }),
       terminer: (options) => afficherFin(scores, options),
     };
     const nettoyage = await demarrer(ctx);
@@ -814,13 +622,13 @@ export function monterJeu(config) {
                 { class: `podium__marche podium__marche--${e.rang}` },
                 el('span', { class: 'podium__medaille' }, icone('medal')),
                 el('span', { class: 'podium__prenom' }, e.prenom),
-                etiquetteInfo(e.prenom, 'podium__info'),
+                etiquetteInfo(groupe, e.prenom, 'podium__info'),
                 el('span', { class: 'podium__points' }, `${e.points} pt${e.points > 1 ? 's' : ''}`),
               ),
             ),
         )
       : null;
-    const liste = participants.length
+    const liste = groupe.participants.length
       ? el(
           'ol',
           { class: 'classement', 'aria-label': 'Classement complet' },

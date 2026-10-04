@@ -20,6 +20,13 @@ Chaque jeu dure de 5 à 15 minutes.
 | Pyramide          | Par deux, faire deviner un mot en 1, 2, 3 ou 4 mots d'indice : 4, 3, 2 ou 1 point  | Une liste de mots                      |
 | Batterie faible   | Proposer des lettres ; chaque erreur vide la batterie                              | Mots ou courtes expressions            |
 
+La page **Le groupe** (bouton sur l'accueil) rassemble les participants :
+
+- leurs **prénoms**, avec une **info** facultative sur chacun : sa passion, son film ou son dessert préféré… ;
+- un **plan de salle** pour retenir qui est assis où : en U, salle de classe, îlots ou réunion. Le plan prévoit autant de places que de participants (12 au plus), et l'on peut en saisir jusqu'à 30. On place chacun en touchant une place, en faisant glisser son prénom (souris ou doigt), ou d'un coup avec « Placer dans l'ordre » ou « Mélanger ».
+
+Pendant une partie, le bouton **Groupe** du bandeau réaffiche le plan, les prénoms et les infos, et la roue indique la place de la personne désignée.
+
 Sur l'écran d'accueil de chaque jeu, on peut :
 
 - **saisir les prénoms** (liste partagée entre tous les jeux), avec une info facultative sur chaque personne : sa passion, son film ou son dessert préféré… La roue l'affiche quand elle désigne quelqu'un ;
@@ -33,7 +40,7 @@ Les icônes viennent de Font Awesome Free, hébergé dans le projet (fonctionne 
 
 En ligne : **https://gharel.github.io/jeu-formation/**
 
-Le site est 100 % statique : il suffit de copier `index.html`, `assets/` et `jeux/` sur n'importe quel hébergement web (sous-dossier accepté).
+Le site est 100 % statique : il suffit de copier `index.html`, `assets/`, `jeux/` et `groupe/` sur n'importe quel hébergement web (sous-dossier accepté).
 Il fonctionne hors ligne une fois chargé : aucune ressource externe.
 
 Un **mot de passe** est demandé à la première visite, sur l'accueil comme sur chaque jeu. Le navigateur s'en souvient ensuite ; le bouton « Verrouiller l'accès sur cet ordinateur », en bas de l'accueil, le fait redemander. Pour le changer : `npm run mot-de-passe`, puis recopier le sel et l'empreinte affichés dans `assets/js/commun/acces.js`. C'est une protection dissuasive : le site reste statique et ses fichiers publics.

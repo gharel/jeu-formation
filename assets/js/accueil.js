@@ -8,6 +8,7 @@ import { hasardDePage } from './commun/hasard.js';
 import { creerTirage } from './commun/roue.js';
 import { tirerAvecRoue } from './commun/dialogues.js';
 import { exigerAcces, verrouiller } from './commun/acces.js';
+import { charger as chargerParticipants } from './commun/participants.js';
 
 await exigerAcces();
 
@@ -46,6 +47,17 @@ function carteJeu(jeu) {
 }
 
 remplir(document.getElementById('grille-jeux'), JEUX.map(carteJeu));
+
+// « Le groupe · 8 participants » : la liste sert à tous les jeux
+const lienGroupe = document.getElementById('lien-groupe');
+const nombre = chargerParticipants().length;
+lienGroupe?.append(
+  el(
+    'span',
+    { class: 'heros__compte' },
+    ` · ${nombre ? `${nombre} participant${nombre > 1 ? 's' : ''}` : 'à saisir'}`,
+  ),
+);
 
 const bouton = document.getElementById('jeu-hasard');
 const hasard = hasardDePage();
