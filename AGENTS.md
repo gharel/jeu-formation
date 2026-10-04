@@ -72,7 +72,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
   outils.js                    ouvrirJeu, lancerPartie, attribuerPoints, pointsDe, verifierAccessibilite (axe + typographie)…
   accueil.spec.js              Pour chaque jeu de jeux.js : lien, accueil, prénoms, éditeur masqué, axe
   contenu.spec.js              Export / import JSON, contenu d'exemple
-  mobile.spec.js               Téléphone tactile : pas de plein écran, icônes centrées
+  mobile.spec.js               Téléphone tactile : pas de plein écran, icônes centrées, buzzers au doigt
 ```
 
 ## Conventions de code

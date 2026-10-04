@@ -7,18 +7,18 @@ Chaque jeu dure de 5 à 15 minutes.
 
 ## Les jeux
 
-| Jeu               | Principe                                                            | À préparer                             |
-| ----------------- | ------------------------------------------------------------------- | -------------------------------------- |
-| Motus numérique   | Deviner 5 mots en 6 essais, lettres colorées                        | 5 mots (+ définitions)                 |
-| Instant défi      | La roue tire un défi éclair (« 30 secondes pour trouver… »), chrono | Les fins des défis                     |
-| Le Juste Chiffre  | « C'est plus ! », « C'est moins ! », minuteur réglable (30 s)       | Questions à réponse chiffrée           |
-| Debout ou assis ? | Vrai = debout, faux = assis (ou main levée), mode survie            | Affirmations vrai/faux                 |
-| Le Bon Ordre      | Remettre dans l'ordre les étapes d'une procédure, 3 essais          | Procédures de 3 à 7 étapes             |
-| Qui suis-je ?     | Indices progressifs, points qui fondent 5 4 3 2 1, Stop             | Mystères + 3 à 5 indices               |
-| Zoom mystère      | Capture très zoomée qui se dévoile, 5 4 3 2 1, Stop                 | Captures collées (Ctrl+V) ou importées |
-| Duel buzzer       | Deux joueurs, touches A et L, le plus rapide répond                 | Questions + réponses                   |
-| Pyramide          | Deviner un mot avec 1, 2 ou 3 mots d'indice : 3, 2 ou 1 point       | Mots + 3 indices d'un mot              |
-| Batterie faible   | Proposer des lettres ; chaque erreur vide la batterie               | Mots ou courtes expressions            |
+| Jeu               | Principe                                                                           | À préparer                             |
+| ----------------- | ---------------------------------------------------------------------------------- | -------------------------------------- |
+| Motus numérique   | Deviner 5 mots en 6 essais, lettres colorées                                       | 5 mots (+ définitions)                 |
+| Instant défi      | La roue tire un défi éclair (« 30 secondes pour trouver… »), chrono                | Les fins des défis                     |
+| Le Juste Chiffre  | « C'est plus ! », « C'est moins ! », minuteur réglable (30 s)                      | Questions à réponse chiffrée           |
+| Debout ou assis ? | Vrai = debout, faux = assis (ou main levée), mode survie                           | Affirmations vrai/faux                 |
+| Le Bon Ordre      | Remettre dans l'ordre les étapes d'une procédure, 3 essais                         | Procédures de 3 à 7 étapes             |
+| Qui suis-je ?     | Indices progressifs, points qui fondent 5 4 3 2 1, Stop                            | Mystères + 3 à 5 indices               |
+| Zoom mystère      | Capture très zoomée qui se dévoile, 5 4 3 2 1, Stop                                | Captures collées (Ctrl+V) ou importées |
+| Duel buzzer       | Deux joueurs, touches A et L ou buzzers à l'écran (tactile), le plus rapide répond | Questions + réponses                   |
+| Pyramide          | Deviner un mot avec 1, 2 ou 3 mots d'indice : 3, 2 ou 1 point                      | Mots + 3 indices d'un mot              |
+| Batterie faible   | Proposer des lettres ; chaque erreur vide la batterie                              | Mots ou courtes expressions            |
 
 Sur l'écran d'accueil de chaque jeu, on peut :
 

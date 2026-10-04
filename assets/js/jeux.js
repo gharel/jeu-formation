@@ -72,7 +72,7 @@ export const JEUX = [
     titre: 'Duel buzzer',
     icone: 'bolt',
     couleur: 'rouge',
-    accroche: 'Deux participants, deux touches du clavier. Le plus rapide répond !',
+    accroche: 'Deux participants, deux buzzers : clavier ou écran tactile. Le plus rapide répond !',
     duree: '5 à 10 min',
     preparation: 'Des questions et leurs réponses',
   },

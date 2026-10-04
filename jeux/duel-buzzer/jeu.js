@@ -12,6 +12,9 @@ import { creerDuel, autre, tirerDuellistes, TOUCHES } from './logique.js';
 
 const COTES = ['gauche', 'droite'];
 
+/** Aide « (Entrée) » d'un bouton : inutile sur téléphone, où elle est masquée (base.css). */
+const aideClavier = (touche) => el('span', { class: 'aide-clavier' }, ` (${touche})`);
+
 function demarrer(ctx) {
   const { pointsVictoire } = ctx.reglages;
   const questions = ctx.elements;
@@ -117,7 +120,7 @@ function demarrer(ctx) {
         el(
           'p',
           { class: 'champ__aide' },
-          'Les deux joueurs viennent au clavier : touche A à gauche, touche L à droite.',
+          'Pour buzzer : touche A à gauche, touche L à droite, ou le gros bouton de son côté de l’écran (souris ou écran tactile).',
         ),
         el('div', { class: 'actions-jeu' }, commencer),
       ),
@@ -130,11 +133,33 @@ function demarrer(ctx) {
     const duel = creerDuel({ pointsVictoire });
     const cotes = {};
     for (const cote of COTES) {
+      const touche = TOUCHES[cote].toUpperCase();
       const points = el('ol', { class: 'duel__points' });
+      // Buzzer à l'écran, pour la souris et le tactile (sur téléphone, pas de touche A ni L).
+      // Il réagit dès l'appui (pointerdown) : le plus rapide gagne, pas celui qui relâche.
+      // Le clic qui suit (ou Entrée sur le bouton) est refusé par la logique : déjà buzzé.
+      const buzzer = el(
+        'button',
+        {
+          type: 'button',
+          class: 'duel__buzzer',
+          'aria-label': `Buzzer de ${noms[cote]} (touche ${touche})`,
+          'aria-keyshortcuts': touche,
+          onpointerdown: (e) => {
+            if (e.button === 0) buzz(cote);
+          },
+          onclick: () => {
+            buzz(cote);
+            // Le focus revient au plateau : Entrée et Retour arrière restent actifs
+            plateau.focus();
+          },
+        },
+        el('span', { class: 'duel__touche', 'aria-hidden': 'true' }, touche),
+      );
       const bloc = el(
         'div',
         { class: `duel__joueur duel__joueur--${cote}` },
-        el('kbd', { class: 'duel__touche' }, TOUCHES[cote].toUpperCase()),
+        buzzer,
         el('p', { class: 'duel__nom' }, noms[cote]),
         points,
       );
@@ -199,6 +224,8 @@ function demarrer(ctx) {
 
     function dessiner() {
       dessinerPoints();
+      // Les buzzers s'allument quand la question s'affiche
+      plateau.classList.toggle('duel--ouvert', duel.phase === 'ouvert');
       surtitre.textContent = `Question ${indexQuestion + 1} sur ${questions.length}`;
       if (duel.phase === 'attente') {
         remplir(question, 'Mains sur les buzzers… Prêts ?');
@@ -208,12 +235,16 @@ function demarrer(ctx) {
         actionEntree = afficherQuestion;
         remplir(
           actions,
-          bouton('Afficher la question (Entrée)', 'bouton--principal', afficherQuestion),
+          bouton(
+            ['Afficher la question', aideClavier('Entrée')],
+            'bouton--principal',
+            afficherQuestion,
+          ),
         );
       } else if (duel.phase === 'ouvert') {
         remplir(question, questions[indexQuestion].question);
         question.classList.remove('duel__question--attente');
-        remplir(statut, 'À vos buzzers ! Touche A ou touche L');
+        remplir(statut, 'À vos buzzers !', el('span', { class: 'aide-clavier' }, ' Touche A ou L'));
         actionEntree = null;
         remplir(actions, bouton('Personne ne sait', 'bouton--discret', passer));
       } else if (duel.phase === 'buzze') {
@@ -221,9 +252,13 @@ function demarrer(ctx) {
         actionEntree = () => valider(true);
         remplir(
           actions,
-          bouton([icone('check'), 'Bonne (Entrée)'], 'bouton--succes', () => valider(true)),
-          bouton([icone('xmark'), 'Mauvaise (Retour arrière)'], 'bouton--danger', () =>
-            valider(false),
+          bouton([icone('check'), 'Bonne', aideClavier('Entrée')], 'bouton--succes', () =>
+            valider(true),
+          ),
+          bouton(
+            [icone('xmark'), 'Mauvaise', aideClavier('Retour arrière')],
+            'bouton--danger',
+            () => valider(false),
           ),
           bouton([icone('eye'), 'Voir la réponse'], 'bouton--discret', montrerReponse),
         );
@@ -266,7 +301,7 @@ function demarrer(ctx) {
       remplir(
         actions,
         bouton(
-          derniere ? 'Voir le classement' : 'Question suivante (Entrée)',
+          derniere ? 'Voir le classement' : ['Question suivante', aideClavier('Entrée')],
           'bouton--sombre',
           suite,
         ),
@@ -331,8 +366,8 @@ monterJeu({
   exemple,
   regles: [
     'Avant la séance, préparez des questions courtes avec leur réponse.',
-    'Choisissez deux participants (ou tirez-les au sort). Ils viennent au clavier : A à gauche, L à droite.',
-    'Affichez la question : le premier qui appuie sur sa touche répond. Pas de faux départ possible !',
+    'Choisissez deux participants (ou tirez-les au sort). Pour buzzer : touche A à gauche, L à droite, ou leur buzzer à l’écran (souris, écran tactile).',
+    'Affichez la question : le premier qui buzze répond. Pas de faux départ possible !',
     'Bonne réponse : 1 point. Mauvaise : la main passe à l’adversaire. Le premier à 3 points gagne.',
   ],
   demarrer,

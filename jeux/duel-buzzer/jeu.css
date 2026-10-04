@@ -53,12 +53,55 @@
     transform 0.2s ease;
 }
 
+/* Gros buzzer rond, avec la touche du clavier dessus. Éteint tant que la question n'est pas
+   affichée, allumé ensuite. Il se presse au doigt sans zoomer ni sélectionner de texte. */
+.duel__buzzer {
+  display: grid;
+  place-items: center;
+  width: clamp(5.5rem, 11vw, 8rem);
+  aspect-ratio: 1;
+  padding: 0;
+  font: inherit;
+  color: var(--texte-doux);
+  background: var(--bord);
+  border: 4px solid var(--bleu-nuit);
+  border-radius: 50%;
+  box-shadow: 0 7px 0 var(--bleu-nuit);
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.08s ease,
+    background-color 0.2s ease;
+}
+
+.duel__buzzer:active {
+  box-shadow: 0 2px 0 var(--bleu-nuit);
+  transform: translateY(5px);
+}
+
+.duel--ouvert .duel__buzzer {
+  color: var(--sur-accent);
+  background: var(--accent);
+  animation: buzzer-allume 0.9s ease-in-out infinite alternate;
+}
+
+@keyframes buzzer-allume {
+  to {
+    box-shadow:
+      0 7px 0 var(--bleu-nuit),
+      0 0 0 8px var(--accent-clair);
+  }
+}
+
 .duel__touche {
-  min-width: 4.5rem;
-  color: var(--bleu-nuit);
-  padding: 0.3rem 0.6rem;
   font-size: clamp(2.2rem, 4vw, 3.2rem);
-  border-bottom-width: 6px;
+  font-weight: 900;
+  line-height: 1;
 }
 
 .duel__nom {
@@ -155,12 +198,16 @@
   margin-top: 0.5rem;
 }
 
+/* Écran étroit (téléphone, tablette) : la question en haut, les deux buzzers dessous, sous les doigts */
 @media (max-width: 800px) {
   .duel {
     grid-template-columns: 1fr 1fr;
   }
   .duel__centre {
     grid-column: 1 / -1;
+    grid-row: 1;
+  }
+  .duel__joueur {
     grid-row: 2;
   }
 }
