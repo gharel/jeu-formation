@@ -7,6 +7,13 @@ import {
   verifierAccessibilite,
 } from './outils.js';
 
+/** Écran d'attente : le chrono ne part qu'avec la question. */
+async function afficherQuestion(page) {
+  await expect(page.getByRole('button', { name: /Afficher la question/ })).toBeVisible();
+  await expect(page.locator('.chrono__temps')).toHaveCount(0);
+  await page.getByRole('button', { name: /Afficher la question/ }).click();
+}
+
 async function proposer(page, nombre) {
   const saisie = page.locator('#juste-saisie');
   await saisie.fill(nombre);
@@ -18,7 +25,15 @@ test('Le Juste Chiffre : plus, moins, juste, avec tour de rôle', async ({ page 
   await ouvrirJeu(page, 'juste-chiffre', { prenoms: ['Ana', 'Bob'] });
   await lancerPartie(page);
 
+  // Écran d'attente : la question et le chrono attendent le signal (Entrée ou bouton)
   await expect(page.locator('#cadre').getByText('Question 1 sur 5')).toBeVisible();
+  await expect(
+    page.locator('#cadre').getByText('30 secondes pour trouver le nombre'),
+  ).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Ana propose en premier')).toBeVisible();
+  await expect(page.locator('.chrono__temps')).toHaveCount(0);
+  await verifierAccessibilite(page);
+  await page.keyboard.press('Enter');
   await expect(page.locator('.chrono__temps')).toHaveText(/0:(30|29)/);
   await expect(page.getByLabel('Proposition de Ana')).toBeFocused();
 
@@ -42,6 +57,8 @@ test('Le Juste Chiffre : plus, moins, juste, avec tour de rôle', async ({ page 
   // Question 2 : on révèle sans trouver
   await page.getByRole('button', { name: 'Question suivante' }).click();
   await expect(page.locator('#cadre').getByText('Question 2 sur 5')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Bob propose en premier')).toBeVisible();
+  await afficherQuestion(page);
   await page.getByRole('button', { name: 'Révéler la réponse' }).click();
   await expect(page.locator('.reponse-revelee')).toContainText('1992');
   await expect(pointsDe(page, 'Bob')).toHaveText('0');
@@ -54,6 +71,8 @@ test('le minuteur réglé par l’animateur révèle la réponse à zéro', asyn
   await page.getByLabel('Temps par question').fill('5');
   await page.getByRole('button', { name: 'Enregistrer' }).click();
   await lancerPartie(page);
+  await expect(page.locator('#cadre').getByText('5 secondes pour trouver le nombre')).toBeVisible();
+  await afficherQuestion(page);
   await expect(page.locator('.chrono__temps')).toHaveText(/0:0[45]/);
 
   // Pause : le temps se fige
@@ -71,9 +90,11 @@ test('une marge de 10 % accepte une réponse proche', async ({ page }) => {
   await ouvrirJeu(page, 'juste-chiffre');
   await lancerPartie(page);
   for (let i = 1; i <= 3; i++) {
+    await afficherQuestion(page);
     await page.getByRole('button', { name: 'Révéler la réponse' }).click();
     await page.getByRole('button', { name: 'Question suivante' }).click();
   }
+  await afficherQuestion(page);
   await expect(page.locator('#cadre').getByText('Question 4 sur 5')).toBeVisible();
   await proposer(page, '2 000 000');
   await expect(page.locator('#cadre').getByText(/Trouvé/)).toBeVisible();

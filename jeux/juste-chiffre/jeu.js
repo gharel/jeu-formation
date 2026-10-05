@@ -1,5 +1,12 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, icone, animer, focaliser } from '../../assets/js/commun/ui.js';
+import {
+  el,
+  remplir,
+  icone,
+  animer,
+  focaliser,
+  ecouterClavier,
+} from '../../assets/js/commun/ui.js';
 import { creerMinuteur } from '../../assets/js/commun/chrono.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { lireNombre, formaterNombre } from '../../assets/js/commun/nombres.js';
@@ -8,6 +15,17 @@ import { creerIllustrationJuste } from './illustration.js';
 import { MESSAGES, comparer, fourchette, decrireFourchette, suivant } from './logique.js';
 
 const FLECHES = { plus: 'arrow-up', moins: 'arrow-down', juste: 'bullseye' };
+const aideClavier = (touche) => el('span', { class: 'aide-clavier' }, ` (${touche})`);
+
+/** « 30 secondes », « 1 minute 30 ». */
+function dureeLisible(secondes) {
+  const minutes = Math.floor(secondes / 60);
+  const reste = secondes % 60;
+  const morceaux = [];
+  if (minutes) morceaux.push(`${minutes} minute${minutes > 1 ? 's' : ''}`);
+  if (reste) morceaux.push(minutes ? String(reste) : `${reste} seconde${reste > 1 ? 's' : ''}`);
+  return morceaux.join(' ');
+}
 
 function demarrer(ctx) {
   const { duree, tourDeRole } = ctx.reglages;
@@ -18,6 +36,9 @@ function demarrer(ctx) {
   let designe = null;
   let minuteur = null;
   let rafraichirJoueur = null;
+  // Entrée : « Afficher la question » sur l'écran d'attente
+  let toucheEntree = null;
+  const retirerClavier = ecouterClavier({ Entrée: () => toucheEntree?.() });
 
   function joueurCourant() {
     if (avecTour) return ctx.participants[indexJoueur];
@@ -29,6 +50,62 @@ function demarrer(ctx) {
     if (avecTour) indexJoueur = ctx.participants.indexOf(prenom);
     rafraichirJoueur?.();
   });
+
+  // ---------- Avant chaque question : le chrono ne part qu'au signal de l'animateur ----------
+  function afficherAttente() {
+    minuteur?.arreter();
+    const illustration = creerIllustrationJuste();
+    const titre = el(
+      'h3',
+      { class: 'panneau__texte juste-attente__titre' },
+      'Prêts ? La question s’affiche avec le chrono.',
+    );
+    const tour = el('p', { class: 'au-tour-de' });
+    rafraichirJoueur = () => {
+      const joueur = joueurCourant();
+      tour.hidden = !joueur;
+      remplir(tour, icone('microphone'), `${joueur} propose en premier`);
+    };
+    rafraichirJoueur();
+    const lancer = () => {
+      toucheEntree = null;
+      afficherQuestion();
+    };
+    toucheEntree = lancer;
+    remplir(
+      ctx.zone,
+      el(
+        'div',
+        { class: 'panneau juste-attente' },
+        illustration.element,
+        el(
+          'div',
+          { class: 'juste-attente__textes' },
+          el(
+            'p',
+            { class: 'panneau__surtitre' },
+            `Question ${indexQuestion + 1} sur ${questions.length}`,
+          ),
+          titre,
+          el(
+            'p',
+            { class: 'juste-attente__duree' },
+            icone('stopwatch'),
+            `${dureeLisible(duree)} pour trouver le nombre`,
+          ),
+          tour,
+          el(
+            'button',
+            { type: 'button', class: 'bouton bouton--principal bouton--grand', onclick: lancer },
+            icone('play'),
+            'Afficher la question',
+            aideClavier('Entrée'),
+          ),
+        ),
+      ),
+    );
+    focaliser(titre);
+  }
 
   function afficherQuestion() {
     const q = questions[indexQuestion];
@@ -188,7 +265,7 @@ function demarrer(ctx) {
                 }
                 indexQuestion += 1;
                 if (avecTour) indexJoueur = suivant(ctx.participants, indexJoueur);
-                afficherQuestion();
+                afficherAttente();
               },
             },
             dernier ? 'Voir le classement' : ['Question suivante', icone('arrow-right')],
@@ -270,8 +347,11 @@ function demarrer(ctx) {
     saisie.focus();
   }
 
-  afficherQuestion();
-  return () => minuteur?.arreter();
+  afficherAttente();
+  return () => {
+    minuteur?.arreter();
+    retirerClavier();
+  };
 }
 
 monterJeu({
@@ -281,7 +361,7 @@ monterJeu({
   regles: [
     'Avant la séance, préparez des questions dont la réponse est un nombre.',
     'Un participant propose un nombre à l’oral, vous le tapez : le jeu répond « c’est plus » ou « c’est moins ».',
-    'Le minuteur (30 s par défaut) tourne : à zéro, la réponse est révélée.',
+    'Le minuteur (30 s par défaut) part quand vous affichez la question : à zéro, la réponse est révélée.',
     'Celui ou celle qui trouve gagne 1 point. Le tour de rôle passe la main à chaque proposition.',
   ],
   demarrer,

@@ -178,8 +178,9 @@
 /* ---------- Illustration : une cible et sa flèche ---------- */
 
 /* La pointe de la flèche : en vol près de la cible, puis plantée selon la réponse */
+/* Au repos, la flèche est plantée en plein centre ; elle se déplace selon la réponse */
 .juste-ill__fleche {
-  transform: translate(168px, 66px);
+  transform: translate(88px, 84px);
   transition: transform 0.35s cubic-bezier(0.3, 1.4, 0.6, 1);
 }
 
@@ -193,4 +194,53 @@
 
 .illustration--juste .juste-ill__fleche {
   transform: translate(88px, 84px);
+}
+
+/* ---------- Écran d'attente, avant chaque question ---------- */
+
+.juste-attente {
+  display: flex;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: center;
+  justify-content: center;
+  text-align: left;
+}
+
+.juste-attente .illustration {
+  --taille: clamp(7rem, min(16vw, 26vh), 12rem);
+}
+
+.juste-attente__textes {
+  display: grid;
+  gap: 0.8rem;
+  justify-items: start;
+  max-width: 38rem;
+}
+
+.juste-attente__titre {
+  margin: 0;
+}
+
+.juste-attente__duree {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.juste-attente .au-tour-de {
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .juste-attente {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .juste-attente__textes {
+    justify-items: center;
+  }
 }
