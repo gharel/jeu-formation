@@ -1,13 +1,17 @@
 import { test, expect } from '@playwright/test';
 import { ouvrirJeu, lancerPartie } from './outils.js';
 
-/** Compte les notes (oscillateurs) et les bruits (clics, applaudissements) créés par la page. */
+/**
+ * Compte les notes (oscillateurs) et les bruits (clics, applaudissements) créés par la page,
+ * et les signaux de veille qui gardent la sortie audio ouverte.
+ */
 async function compterLesSons(page) {
   await page.addInitScript(() => {
-    window.__sons = { notes: 0, bruits: 0 };
+    window.__sons = { notes: 0, bruits: 0, veilles: 0 };
     const original = window.AudioContext.prototype;
     const creerOscillateur = original.createOscillator;
     const creerSource = original.createBufferSource;
+    const creerConstante = original.createConstantSource;
     original.createOscillator = function (...args) {
       window.__sons.notes += 1;
       return creerOscillateur.apply(this, args);
@@ -15,6 +19,10 @@ async function compterLesSons(page) {
     original.createBufferSource = function (...args) {
       window.__sons.bruits += 1;
       return creerSource.apply(this, args);
+    };
+    original.createConstantSource = function (...args) {
+      window.__sons.veilles += 1;
+      return creerConstante.apply(this, args);
     };
   });
 }
@@ -29,11 +37,14 @@ test.describe('habillage sonore', () => {
     await compterLesSons(page);
     await page.goto('/?graine=1');
     await page.getByRole('button', { name: 'Un jeu au hasard' }).click();
+    // La sortie audio s'ouvre dès l'affichage de la roue, et reste éveillée : pas au premier cliquetis
+    await expect.poll(() => sonsJoues(page).then((s) => s.veilles)).toBe(1);
     await page.getByRole('button', { name: 'Lancer la roue' }).click();
     await expect(page.locator('.roue-resultat')).not.toBeEmpty({ timeout: 8000 });
-    const { bruits, notes } = await sonsJoues(page);
+    const { bruits, notes, veilles } = await sonsJoues(page);
     expect(bruits).toBeGreaterThan(10);
     expect(notes).toBeGreaterThan(0);
+    expect(veilles).toBe(1);
   });
 
   test('Motus joue une note par lettre, puis la fanfare', async ({ page }) => {

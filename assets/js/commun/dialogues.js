@@ -220,7 +220,7 @@ export function tirerAvecRoue({
       lancer.addEventListener('click', async () => {
         if (enCours) return;
         enCours = true;
-        // Sortie audio ouverte avant que la roue tourne, pas au premier cliquetis
+        // Déjà fait à l'ouverture, sauf si le son vient d'être activé : pas au premier cliquetis
         preparerSon();
         lancer.disabled = true;
         valider.disabled = true;
@@ -264,6 +264,9 @@ export function tirerAvecRoue({
         );
       }
       pied.append(lancer, valider);
+      // La sortie audio s'ouvre dès que la roue s'affiche : le temps que l'animateur la lance,
+      // la sortie est prête (l'ouvrir au clic retardait les premiers cliquetis)
+      requestAnimationFrame(() => setTimeout(preparerSon, 0));
     },
   });
 }

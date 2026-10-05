@@ -18,7 +18,18 @@ export function sonActif() {
 export function basculerSon() {
   actif = !actif;
   ecrire('son', actif);
+  // Son coupé : la sortie audio est mise en pause (le signal de veille ne tourne plus pour rien)
+  if (!actif && contexte?.state === 'running') sansErreur(() => contexte.suspend());
   return actif;
+}
+
+/** Lance une action du contexte audio (promesse) sans jamais laisser passer d'erreur. */
+function sansErreur(action) {
+  try {
+    Promise.resolve(action()).catch(() => {});
+  } catch {
+    // le son est un bonus
+  }
 }
 
 /**
@@ -40,8 +51,9 @@ function audio() {
       sortie = nouveau.createDynamicsCompressor();
       sortie.connect(nouveau.destination);
       contexte = nouveau;
+      garderEveille(nouveau);
     }
-    if (contexte.state === 'suspended') contexte.resume();
+    if (contexte.state === 'suspended') sansErreur(() => contexte.resume());
     return contexte;
   } catch {
     if (!contexte) indisponible = true;
@@ -50,14 +62,34 @@ function audio() {
 }
 
 /**
+ * Garde la sortie audio ouverte entre deux sons. Après 30 s de silence, Chrome remplace la vraie
+ * sortie par une sortie factice : le son suivant attend qu'elle se rouvre, jusqu'à plusieurs
+ * secondes en HDMI ou en Bluetooth, dont le récepteur s'endort aussi sur un silence parfait.
+ * D'où le premier son en retard après une pause (la roue, la réponse d'un participant).
+ * Un signal constant à -80 dB, inaudible, joint directement à la sortie, l'en empêche.
+ */
+function garderEveille(ctx) {
+  try {
+    const veille = ctx.createConstantSource();
+    veille.offset.value = 0.0001;
+    veille.connect(ctx.destination);
+    veille.start();
+  } catch {
+    // navigateur sans ConstantSourceNode : le son marche, il peut juste partir en retard
+  }
+}
+
+/**
  * Ouvre la sortie audio tout de suite (au lancement d'une partie, de la roue), pour que ce soit
  * fait avant le premier son : sinon, c'est la fanfare de l'écran de réussite qui fige la page.
- * Calcule aussi ce qui ne se calcule qu'une fois (bruit blanc, applaudissements de fin).
+ * Calcule aussi ce qui ne se calcule qu'une fois : bruit blanc, applaudissements de fin, et les
+ * tables d'ondes que le navigateur calcule à la première note de chaque forme.
  */
 export function preparerSon() {
   const ctx = audio();
   if (!ctx) return;
   try {
+    for (const forme of ['triangle', 'square', 'sawtooth']) ctx.createOscillator().type = forme;
     bruitBlancDe(ctx);
     tamponApplaudissements(ctx, 2.5);
   } catch {

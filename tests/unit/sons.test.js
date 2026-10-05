@@ -29,6 +29,7 @@ class FauxContexte {
     this.sampleRate = 8000;
     this.state = 'running';
     this.destination = noeud();
+    this.veilles = [];
   }
   createOscillator() {
     const osc = noeud({ type: 'sine', frequency: parametre() });
@@ -66,7 +67,22 @@ class FauxContexte {
     });
     return source;
   }
-  resume() {}
+  createConstantSource() {
+    const source = noeud({ offset: { value: 1 }, start: () => this.veilles.push(source) });
+    source.connect = (cible) => {
+      source.cible = cible;
+      return cible;
+    };
+    return source;
+  }
+  resume() {
+    this.state = 'running';
+    return Promise.resolve();
+  }
+  suspend() {
+    this.state = 'suspended';
+    return Promise.resolve();
+  }
 }
 
 globalThis.AudioContext = FauxContexte;
@@ -259,6 +275,45 @@ describe('sons', () => {
       module.sons.fanfare(3);
       module.sons.batterie.lettre(2);
       expect(ouvertures).toBe(1);
+    });
+
+    it('la sortie reste éveillée entre deux sons, par un signal inaudible', async () => {
+      let ouvert = null;
+      const module = await sonsNeufs(
+        class extends FauxContexte {
+          constructor() {
+            super();
+            ouvert = this;
+          }
+        },
+      );
+      module.preparerSon();
+      // Sans signal, Chrome endort la sortie après 30 s de silence : le son suivant partirait en retard
+      expect(ouvert.veilles).toHaveLength(1);
+      const [veille] = ouvert.veilles;
+      expect(veille.cible).toBe(ouvert.destination);
+      expect(veille.offset.value).toBeGreaterThan(0);
+      expect(veille.offset.value).toBeLessThanOrEqual(0.0001);
+      module.sons.fanfare(3);
+      expect(ouvert.veilles).toHaveLength(1);
+    });
+
+    it('le son coupé met la sortie en pause, le son rétabli la relance', async () => {
+      let ouvert = null;
+      const module = await sonsNeufs(
+        class extends FauxContexte {
+          constructor() {
+            super();
+            ouvert = this;
+          }
+        },
+      );
+      module.preparerSon();
+      module.basculerSon();
+      expect(ouvert.state).toBe('suspended');
+      module.basculerSon();
+      module.sons.tic();
+      expect(ouvert.state).toBe('running');
     });
 
     it('sans sortie audio utilisable, on n’essaie plus à chaque son (chaque essai peut figer la page)', async () => {
