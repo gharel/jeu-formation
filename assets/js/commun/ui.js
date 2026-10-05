@@ -172,7 +172,19 @@ export function focaliser(noeud) {
 
 /** Petite animation CSS rejouable (secousse, apparition…). */
 export function animer(noeud, classe) {
-  noeud.classList.remove(classe);
-  void noeud.offsetWidth;
+  if (noeud.classList.contains(classe)) {
+    noeud.classList.remove(classe);
+    // Pour rejouer l'animation, le navigateur doit voir le style sans la classe : recalculer le
+    // style suffit. Lire offsetWidth forcerait aussi la mise en page de toute la page, coûteuse
+    // au milieu d'un écran qui se construit (c'était la moitié du temps de l'écran de réussite).
+    void getComputedStyle(noeud).animationName;
+  }
   noeud.classList.add(classe);
+  // Animation finie : la classe part. Sinon l'animation se rejouerait chaque fois que l'élément
+  // change de place (une illustration gardée d'un écran à l'autre refaisait sa « fête »).
+  noeud.addEventListener('animationend', function finir(evenement) {
+    if (evenement.target !== noeud) return;
+    noeud.classList.remove(classe);
+    noeud.removeEventListener('animationend', finir);
+  });
 }

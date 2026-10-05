@@ -8,6 +8,7 @@ import { lire, ecrire } from './stockage.js';
 let contexte = null;
 let sortie = null;
 let bruitBlanc = null;
+let indisponible = false;
 let actif = lire('son', true) !== false;
 
 export function sonActif() {
@@ -20,21 +21,47 @@ export function basculerSon() {
   return actif;
 }
 
-/** Contexte audio créé à la première utilisation, avec un compresseur pour éviter la saturation. */
+/**
+ * Contexte audio créé à la première utilisation, avec un compresseur pour éviter la saturation.
+ * Le créer bloque la page le temps d'ouvrir la sortie audio : quelques dizaines de millisecondes
+ * d'habitude, parfois plusieurs secondes (sortie HDMI du vidéoprojecteur, enceinte Bluetooth).
+ * D'où preparerSon(), et pas de nouvel essai après un échec.
+ */
 function audio() {
-  if (!actif) return null;
+  if (!actif || indisponible) return null;
   try {
     if (!contexte) {
       const Contexte = globalThis.AudioContext ?? globalThis.webkitAudioContext;
-      if (!Contexte) return null;
-      contexte = new Contexte();
-      sortie = contexte.createDynamicsCompressor();
-      sortie.connect(contexte.destination);
+      if (!Contexte) {
+        indisponible = true;
+        return null;
+      }
+      const nouveau = new Contexte();
+      sortie = nouveau.createDynamicsCompressor();
+      sortie.connect(nouveau.destination);
+      contexte = nouveau;
     }
     if (contexte.state === 'suspended') contexte.resume();
     return contexte;
   } catch {
+    if (!contexte) indisponible = true;
     return null;
+  }
+}
+
+/**
+ * Ouvre la sortie audio tout de suite (au lancement d'une partie, de la roue), pour que ce soit
+ * fait avant le premier son : sinon, c'est la fanfare de l'écran de réussite qui fige la page.
+ * Calcule aussi ce qui ne se calcule qu'une fois (bruit blanc, applaudissements de fin).
+ */
+export function preparerSon() {
+  const ctx = audio();
+  if (!ctx) return;
+  try {
+    bruitBlancDe(ctx);
+    tamponApplaudissements(ctx, 2.5);
+  } catch {
+    // le son est un bonus
   }
 }
 
@@ -66,19 +93,24 @@ function note(
   }
 }
 
-/** Bruit filtré : clics, souffle, applaudissements. */
+/** Une seconde de bruit blanc, calculée une fois : la matière des clics et des souffles. */
+function bruitBlancDe(ctx) {
+  if (!bruitBlanc) {
+    bruitBlanc = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
+    const donnees = bruitBlanc.getChannelData(0);
+    for (let i = 0; i < donnees.length; i++) donnees[i] = Math.random() * 2 - 1;
+  }
+  return bruitBlanc;
+}
+
+/** Bruit filtré : clics, souffle, grésillement. */
 function bruit({ debut = 0, duree = 0.05, volume = 0.1, filtre = 2000, type = 'bandpass' } = {}) {
   const ctx = audio();
   if (!ctx) return;
   try {
-    if (!bruitBlanc) {
-      bruitBlanc = ctx.createBuffer(1, ctx.sampleRate, ctx.sampleRate);
-      const donnees = bruitBlanc.getChannelData(0);
-      for (let i = 0; i < donnees.length; i++) donnees[i] = Math.random() * 2 - 1;
-    }
     const t = ctx.currentTime + debut;
     const source = ctx.createBufferSource();
-    source.buffer = bruitBlanc;
+    source.buffer = bruitBlancDe(ctx);
     const passe = ctx.createBiquadFilter();
     passe.type = type;
     passe.frequency.setValueAtTime(filtre, t);
@@ -91,6 +123,52 @@ function bruit({ debut = 0, duree = 0.05, volume = 0.1, filtre = 2000, type = 'b
   } catch {
     // le son est un bonus
   }
+}
+
+/**
+ * Applaudissements : une foule de petits claquements de bruit filtré. Ils sont calculés une fois
+ * (par durée) dans un seul tampon, joué d'un coup : créer des dizaines de nœuds audio au même
+ * instant (trois par claquement) figeait l'écran un moment sur un PC modeste.
+ */
+const applaudissementsCalcules = new Map();
+
+function tamponApplaudissements(ctx, duree) {
+  if (applaudissementsCalcules.has(duree)) return applaudissementsCalcules.get(duree);
+  const taux = ctx.sampleRate;
+  const tampon = ctx.createBuffer(1, Math.ceil((duree + 0.05) * taux), taux);
+  const donnees = tampon.getChannelData(0);
+  const claquements = Math.round(duree * 28);
+  for (let i = 0; i < claquements; i++) {
+    const debut = Math.random() * duree;
+    const volume = 0.03 + 0.07 * Math.sin((debut / duree) * Math.PI);
+    const longueur = Math.floor((0.02 + Math.random() * 0.02) * taux);
+    // Passe-bande d'un BiquadFilterNode « bandpass » (Q = 1) centré entre 1 200 et 3 000 Hz
+    const w0 = (2 * Math.PI * (1200 + Math.random() * 1800)) / taux;
+    const alpha = Math.sin(w0) / 2;
+    const b0 = alpha / (1 + alpha);
+    const a1 = (-2 * Math.cos(w0)) / (1 + alpha);
+    const a2 = (1 - alpha) / (1 + alpha);
+    // Volume qui s'éteint jusqu'à 0,0001, comme une rampe exponentielle
+    const extinction = (0.0001 / volume) ** (1 / longueur);
+    let gain = volume;
+    let x1 = 0;
+    let x2 = 0;
+    let y1 = 0;
+    let y2 = 0;
+    const premier = Math.floor(debut * taux);
+    for (let k = 0; k < longueur && premier + k < donnees.length; k++) {
+      const x = Math.random() * 2 - 1;
+      const y = b0 * (x - x2) - a1 * y1 - a2 * y2;
+      x2 = x1;
+      x1 = x;
+      y2 = y1;
+      y1 = y;
+      donnees[premier + k] += y * gain;
+      gain *= extinction;
+    }
+  }
+  applaudissementsCalcules.set(duree, tampon);
+  return tampon;
 }
 
 /** Fréquences des notes utilisées (Hz). */
@@ -154,18 +232,17 @@ export const sons = {
   fanfare,
   /** Clic de la roue quand un segment passe sous le pointeur. */
   roueClic: () => bruit({ duree: 0.015, volume: 0.08, filtre: 3500, type: 'highpass' }),
-  /** Applaudissements : une foule de petits claquements de bruit filtré. */
+  /** Applaudissements : une foule de petits claquements de bruit filtré (voir plus haut). */
   applaudissements(duree = 2.5) {
-    const claquements = Math.round(duree * 28);
-    for (let i = 0; i < claquements; i++) {
-      const t = Math.random() * duree;
-      const intensite = Math.sin((t / duree) * Math.PI);
-      bruit({
-        debut: t,
-        duree: 0.02 + Math.random() * 0.02,
-        volume: 0.03 + 0.07 * intensite,
-        filtre: 1200 + Math.random() * 1800,
-      });
+    const ctx = audio();
+    if (!ctx) return;
+    try {
+      const source = ctx.createBufferSource();
+      source.buffer = tamponApplaudissements(ctx, duree);
+      source.connect(sortie);
+      source.start(ctx.currentTime);
+    } catch {
+      // le son est un bonus
     }
   },
 

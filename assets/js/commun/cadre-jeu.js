@@ -16,7 +16,7 @@ import { lire, ecrire, effacer } from './stockage.js';
 import { hasardDePage } from './hasard.js';
 import { creerTirage } from './roue.js';
 import { creerScores } from './scores.js';
-import { sons, sonActif, basculerSon } from './sons.js';
+import { sons, sonActif, basculerSon, preparerSon } from './sons.js';
 import {
   el,
   remplir,
@@ -554,7 +554,7 @@ export function monterJeu(config) {
     // Chaque point gagné part aussi dans le score du groupe, gardé d'un jeu à l'autre
     const scores = creerScores(joueursEnJeu, {
       surChangement: dessinerPoints,
-      surAjout: (prenom, n) => groupe.ajouterPoints(prenom, slug, n),
+      surAjout: (prenoms, n) => groupe.ajouterPoints(prenoms, slug, n),
     });
     function dessinerPoints() {
       const classement = scores.classement();
@@ -608,10 +608,12 @@ export function monterJeu(config) {
       ),
       zone,
     );
+    // La sortie audio s'ouvre juste après l'affichage de l'écran de jeu, pas au premier son
+    // (ouvrir la sortie peut figer la page : mieux vaut maintenant qu'à l'écran de réussite)
+    requestAnimationFrame(() => setTimeout(preparerSon, 0));
 
     const ctx = {
       zone,
-      contenu: structuredClone(contenu),
       reglages: structuredClone(contenu.reglages),
       elements: structuredClone(contenu.elements),
       participants: [...joueursEnJeu],
@@ -634,8 +636,6 @@ export function monterJeu(config) {
   // ---------- Fin ----------
   function afficherFin(scores, { message = '' } = {}) {
     arreterPartie();
-    sons.fanfare(3);
-    sons.applaudissements();
     const titre = el('h2', { class: 'fin__titre' }, icone('trophy'), 'Partie terminée !');
     const classement = scores.classement();
     const aDesPoints = classement.some((e) => e.points > 0);
@@ -725,6 +725,9 @@ export function monterJeu(config) {
           )
         : null,
     );
+    // Les sons une fois l'écran construit
+    sons.fanfare(3);
+    sons.applaudissements();
     focaliser(titre);
   }
 

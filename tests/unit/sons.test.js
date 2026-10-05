@@ -1,11 +1,12 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { sons, basculerSon, sonActif } from '../../assets/js/commun/sons.js';
+import { creerHasard } from '../../assets/js/commun/hasard.js';
 
 /**
  * Faux contexte audio : enregistre chaque oscillateur (forme, fréquences, départ)
  * et chaque bruit joué, pour vérifier l'habillage sonore sans haut-parleur.
  */
-const journal = { notes: [], bruits: 0 };
+const journal = { notes: [], bruits: 0, tampons: [] };
 
 function parametre() {
   const valeurs = [];
@@ -56,21 +57,49 @@ class FauxContexte {
     return { getChannelData: () => donnees };
   }
   createBufferSource() {
-    return noeud({
+    const source = noeud({
       start: () => {
         journal.bruits += 1;
+        journal.tampons.push(source.buffer);
       },
       stop: () => {},
     });
+    return source;
   }
   resume() {}
 }
 
 globalThis.AudioContext = FauxContexte;
 
+/**
+ * Des applaudissements : des claquements sur toute la durée (du son dans au moins 80 % des
+ * fenêtres de 0,1 s, au taux de 8 000 du faux contexte), sans saturer.
+ */
+function verifierApplaudissements(tampon, duree) {
+  const donnees = tampon.getChannelData(0);
+  const fenetres = Array.from({ length: Math.round(duree * 10) }, (_, i) =>
+    donnees.slice(i * 800, (i + 1) * 800).reduce((max, v) => Math.max(max, Math.abs(v)), 0),
+  );
+  expect(fenetres.filter((crete) => crete > 0.001).length).toBeGreaterThanOrEqual(
+    Math.ceil(fenetres.length * 0.8),
+  );
+  expect(Math.max(...fenetres)).toBeLessThan(1);
+}
+
+/** Les claquements tombent toujours aux mêmes endroits : un test reproductible. */
+function avecHasardFixe(fonction) {
+  vi.spyOn(Math, 'random').mockImplementation(creerHasard(7));
+  try {
+    fonction();
+  } finally {
+    vi.restoreAllMocks();
+  }
+}
+
 beforeEach(() => {
   journal.notes = [];
   journal.bruits = 0;
+  journal.tampons = [];
   if (!sonActif()) basculerSon();
 });
 
@@ -111,8 +140,10 @@ describe('sons', () => {
     };
     expect(fanfare(3)).toBeGreaterThan(fanfare(1));
     // Trouvé avec un seul mot d'indice : la salle applaudit
-    fanfare(4);
-    expect(journal.bruits).toBeGreaterThan(20);
+    journal.tampons = [];
+    avecHasardFixe(() => fanfare(4));
+    expect(journal.tampons).toHaveLength(1);
+    verifierApplaudissements(journal.tampons[0], 1.8);
   });
 
   it('Duel : un buzzer différent à gauche et à droite', () => {
@@ -181,8 +212,13 @@ describe('sons', () => {
   it('roue et applaudissements utilisent du bruit filtré', () => {
     sons.roueClic();
     expect(journal.bruits).toBe(1);
+    // La foule de claquements est calculée dans un seul tampon, joué d'un coup
+    avecHasardFixe(() => sons.applaudissements(1));
+    expect(journal.bruits).toBe(2);
+    verifierApplaudissements(journal.tampons[1], 1);
+    // … une seule fois : la salve suivante réutilise le même tampon
     sons.applaudissements(1);
-    expect(journal.bruits).toBeGreaterThan(20);
+    expect(journal.tampons[2]).toBe(journal.tampons[1]);
   });
 
   it('le bouton Son coupe tout', () => {
@@ -194,6 +230,52 @@ describe('sons', () => {
     expect(journal.notes).toEqual([]);
     expect(journal.bruits).toBe(0);
     basculerSon();
+  });
+
+  describe('ouverture de la sortie audio', () => {
+    /** sons.js neuf (son activé), avec `Contexte` comme AudioContext du navigateur. */
+    async function sonsNeufs(Contexte) {
+      vi.resetModules();
+      localStorage.setItem('skazy-jeux:son', 'true');
+      globalThis.AudioContext = Contexte;
+      return import('../../assets/js/commun/sons.js');
+    }
+
+    afterEach(() => {
+      globalThis.AudioContext = FauxContexte;
+    });
+
+    it('preparerSon ouvre la sortie une seule fois, les sons suivants la réutilisent', async () => {
+      let ouvertures = 0;
+      const module = await sonsNeufs(
+        class extends FauxContexte {
+          constructor() {
+            super();
+            ouvertures += 1;
+          }
+        },
+      );
+      module.preparerSon();
+      module.sons.fanfare(3);
+      module.sons.batterie.lettre(2);
+      expect(ouvertures).toBe(1);
+    });
+
+    it('sans sortie audio utilisable, on n’essaie plus à chaque son (chaque essai peut figer la page)', async () => {
+      let essais = 0;
+      const module = await sonsNeufs(
+        class {
+          constructor() {
+            essais += 1;
+            throw new Error('aucune sortie audio');
+          }
+        },
+      );
+      module.preparerSon();
+      expect(() => module.sons.fanfare(3)).not.toThrow();
+      module.sons.applaudissements(1);
+      expect(essais).toBe(1);
+    });
   });
 
   it('chaque son de jeu se joue sans erreur', () => {

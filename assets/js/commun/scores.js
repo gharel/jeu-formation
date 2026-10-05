@@ -19,26 +19,29 @@ export function classer(entrees) {
 }
 
 /**
- * `surAjout(prenom, n)` (facultatif) : chaque point gagné part aussi dans le score du groupe,
+ * `surAjout(prenoms, n)` (facultatif) : les points gagnés partent aussi dans le score du groupe,
  * gardé d'un jeu à l'autre (scores-groupe.js).
  */
 export function creerScores(participants = [], { surChangement, surAjout } = {}) {
   const points = new Map(participants.map((p) => [p, 0]));
+  /**
+   * Les mêmes points à plusieurs personnes (les survivants, toute la salle…) : un seul
+   * enregistrement et un seul dessin du tableau, au lieu d'un par personne.
+   */
+  function ajouterATous(prenoms, n = 1) {
+    if (!prenoms.length) return;
+    for (const prenom of prenoms) points.set(prenom, (points.get(prenom) ?? 0) + n);
+    surAjout?.(prenoms, n);
+    surChangement?.();
+  }
   return {
-    ajouter(prenom, n = 1) {
-      if (!points.has(prenom)) points.set(prenom, 0);
-      points.set(prenom, points.get(prenom) + n);
-      surAjout?.(prenom, n);
-      surChangement?.();
-    },
+    ajouter: (prenom, n = 1) => ajouterATous([prenom], n),
+    ajouterATous,
     valeur(prenom) {
       return points.get(prenom) ?? 0;
     },
     classement() {
       return classer([...points].map(([prenom, p]) => ({ prenom, points: p })));
-    },
-    get vide() {
-      return points.size === 0;
     },
     reinitialiser() {
       for (const prenom of points.keys()) points.set(prenom, 0);

@@ -120,9 +120,16 @@ export function creerGroupe() {
     // Les scores sont relus dans le stockage avant chaque changement : un jeu ouvert dans un
     // autre onglet a pu en ajouter.
 
-    /** Points gagnés (ou perdus) dans un jeu : `source` est le slug du jeu. */
-    ajouterPoints(prenom, source, n) {
-      scores = scoresGroupe.ajouterPoints(scoresGroupe.charger(participants), prenom, source, n);
+    /**
+     * Points gagnés (ou perdus) dans un jeu par une personne ou plusieurs (une liste) : `source`
+     * est le slug du jeu. Une seule lecture et une seule écriture, quel que soit le nombre.
+     */
+    ajouterPoints(prenoms, source, n) {
+      let nouveaux = scoresGroupe.charger(participants);
+      for (const prenom of [].concat(prenoms)) {
+        nouveaux = scoresGroupe.ajouterPoints(nouveaux, prenom, source, n);
+      }
+      scores = nouveaux;
       scoresGroupe.enregistrer(scores);
       prevenirScores();
     },

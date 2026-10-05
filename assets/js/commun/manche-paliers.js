@@ -41,9 +41,10 @@ export function creerMancheAPaliers({
       if (seconde > 0 && seconde !== derniereSeconde) ctx.sons.paliers.tictac(seconde % 2 === 0);
       derniereSeconde = seconde;
     },
+    // Les sons une fois l'écran de réponse construit
     surFin: () => {
-      ctx.sons.fin();
       finir({ trouve: false });
+      ctx.sons.fin();
     },
   });
 
@@ -109,15 +110,15 @@ export function creerMancheAPaliers({
       prenom = choisi;
       ctx.scores.ajouter(prenom, points);
     }
-    ctx.sons.paliers.bonne(points);
     finir({ trouve: true, prenom, points });
+    ctx.sons.paliers.bonne(points);
   }
 
+  // Temps écoulé : les paliers ont déjà affiché 0 (surChangement)
   function finir(resultat) {
     if (etat === 'fini') return;
     etat = 'fini';
     paliers.arreter();
-    if (!resultat.trouve) affichage.afficher(0);
     dessiner();
     surFin(resultat);
   }

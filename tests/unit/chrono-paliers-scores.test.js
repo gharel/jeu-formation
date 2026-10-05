@@ -148,8 +148,21 @@ describe('scores', () => {
     scores.ajouter('Ana', 2);
     scores.ajouter('Ana', -1);
     expect(surAjout.mock.calls).toEqual([
-      ['Ana', 2],
-      ['Ana', -1],
+      [['Ana'], 2],
+      [['Ana'], -1],
     ]);
+  });
+
+  it('donne les mêmes points à plusieurs personnes en un seul envoi et un seul dessin', () => {
+    const surAjout = vi.fn();
+    const surChangement = vi.fn();
+    const scores = creerScores(['Ana', 'Bob', 'Chloé'], { surAjout, surChangement });
+    scores.ajouterATous(['Ana', 'Chloé'], 2);
+    expect([scores.valeur('Ana'), scores.valeur('Bob'), scores.valeur('Chloé')]).toEqual([2, 0, 2]);
+    expect(surAjout.mock.calls).toEqual([[['Ana', 'Chloé'], 2]]);
+    expect(surChangement).toHaveBeenCalledTimes(1);
+    // Personne : rien à envoyer ni à redessiner
+    scores.ajouterATous([], 1);
+    expect(surChangement).toHaveBeenCalledTimes(1);
   });
 });

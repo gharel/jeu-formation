@@ -3,7 +3,7 @@
  */
 import { el, remplir, icone } from './ui.js';
 import { creerRoue, couleursRoue } from './roue.js';
-import { sons } from './sons.js';
+import { sons, preparerSon } from './sons.js';
 
 /**
  * Ouvre un <dialog> modal. `construire({ corps, pied, fermer })` remplit le contenu.
@@ -220,6 +220,8 @@ export function tirerAvecRoue({
       lancer.addEventListener('click', async () => {
         if (enCours) return;
         enCours = true;
+        // Sortie audio ouverte avant que la roue tourne, pas au premier cliquetis
+        preparerSon();
         lancer.disabled = true;
         valider.disabled = true;
         remplir(resultat);

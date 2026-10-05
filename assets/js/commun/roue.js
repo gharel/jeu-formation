@@ -183,6 +183,9 @@ export function creerRoue(
   pointeur.className = 'roue__pointeur';
   conteneur.append(pointeur, svg);
 
+  // C'est tout le SVG qui tourne, pas le groupe des segments : le navigateur fait alors tourner
+  // l'image de la roue sans la redessiner à chaque image (le moyeu, rond, tourne sans que ça se
+  // voie). L'ombre, ronde elle aussi, reste immobile dessous (.roue::before).
   let angle = 0;
   return {
     element: conteneur,
@@ -195,8 +198,8 @@ export function creerRoue(
       });
       return new Promise((resoudre) => {
         if (mouvementReduit) {
-          disque.style.transition = 'none';
-          disque.style.transform = `rotate(${angle}deg)`;
+          svg.style.transition = 'none';
+          svg.style.transform = `rotate(${angle}deg)`;
           resoudre(index);
           return;
         }
@@ -206,21 +209,21 @@ export function creerRoue(
           fini = true;
           resoudre(index);
         };
-        disque.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.21, 1)';
+        svg.style.transition = 'transform 4s cubic-bezier(0.17, 0.67, 0.21, 1)';
         // Laisse le navigateur prendre en compte la transition avant de changer l'angle
         requestAnimationFrame(() => {
           requestAnimationFrame(() => {
-            disque.style.transform = `rotate(${angle}deg)`;
+            svg.style.transform = `rotate(${angle}deg)`;
           });
         });
-        disque.addEventListener('transitionend', terminer, { once: true });
+        svg.addEventListener('transitionend', terminer, { once: true });
         setTimeout(terminer, 4400);
         // Cliquetis : on suit l'angle réel pendant l'animation
         if (surPassage) {
           let dernier = null;
           const suivre = () => {
             if (fini) return;
-            const matrice = new DOMMatrixReadOnly(getComputedStyle(disque).transform);
+            const matrice = new DOMMatrixReadOnly(getComputedStyle(svg).transform);
             const segment = segmentSousPointeur(
               (Math.atan2(matrice.b, matrice.a) * 180) / Math.PI,
               nombre,

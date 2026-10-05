@@ -70,16 +70,17 @@ export function creerIllustration({ nom, dessin, largeur = 200, hauteur = 160, c
     element,
     /** Un seul état durable à la fois (null pour revenir au repos). */
     etat(nouveau = null) {
+      if (nouveau === etatActuel) return;
       if (etatActuel) element.classList.remove(`illustration--${etatActuel}`);
       etatActuel = nouveau;
       if (etatActuel) element.classList.add(`illustration--${etatActuel}`);
     },
-    get etatActuel() {
-      return etatActuel;
-    },
     /** Courte animation : 'hop' (petit saut), 'secousse' ou 'fete'. */
     reagir(reaction) {
-      for (const r of REACTIONS) element.classList.remove(`illustration--${r}`);
+      // La même réaction deux fois de suite : animer() la relance
+      for (const r of REACTIONS) {
+        if (r !== reaction) element.classList.remove(`illustration--${r}`);
+      }
       animer(element, `illustration--${reaction}`);
     },
   };

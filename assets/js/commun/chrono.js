@@ -74,9 +74,11 @@ export function formaterDuree(ms) {
 
 /**
  * Minuteur prêt à afficher : chrono + affichage + bip à chacune des 5 dernières secondes.
- * `sons` vient de ctx.sons. Renvoie { element, demarrer, pause, arreter, ajuster, restant, enCours }.
+ * `sons` vient de ctx.sons ; `sonFin: false` pour un jeu qui a son propre son de temps écoulé
+ * (alarme, révélation), au lieu de jouer les deux en même temps.
+ * Renvoie { element, demarrer, pause, arreter, ajuster, restant, enCours }.
  */
-export function creerMinuteur({ duree, sons, surFin }) {
+export function creerMinuteur({ duree, sons, surFin, sonFin = true }) {
   const affichage = creerAffichageChrono(duree);
   let derniereSeconde = null;
   const chrono = creerChrono({
@@ -91,7 +93,7 @@ export function creerMinuteur({ duree, sons, surFin }) {
     },
     surFin() {
       affichage.afficher(0);
-      sons?.fin();
+      if (sonFin) sons?.fin();
       surFin?.();
     },
   });
@@ -100,7 +102,11 @@ export function creerMinuteur({ duree, sons, surFin }) {
     element: affichage.element,
     demarrer: () => chrono.demarrer(),
     pause: () => chrono.pause(),
-    arreter: () => chrono.arreter(),
+    arreter: () => {
+      chrono.arreter();
+      // Arrêté dans les 5 dernières secondes (coffre ouvert à temps) : le rouge ne bat plus
+      affichage.element.classList.remove('chrono--urgent');
+    },
     ajuster: (ms) => chrono.ajuster(ms),
     restant: () => chrono.restant(),
     get enCours() {
@@ -122,12 +128,25 @@ export function creerAffichageChrono(duree) {
   const element = document.createElement('div');
   element.className = 'chrono';
   element.append(temps, barre);
+  let texte = null;
+  let part = null;
   return {
     element,
+    // Appelé 10 fois par seconde : on ne touche qu'à ce qui change vraiment. Le texte change une
+    // fois par seconde ; la barre avance au 500e près (un chrono de 30 minutes ne la redessine
+    // plus pour un déplacement de moins d'un pixel)
     afficher(restantMs) {
-      temps.textContent = formaterDuree(restantMs);
-      const part = Math.min(1, Math.max(0, restantMs / (duree * 1000)));
-      progression.style.transform = `scaleX(${part})`;
+      const nouveau = formaterDuree(restantMs);
+      if (nouveau !== texte) {
+        texte = nouveau;
+        temps.textContent = nouveau;
+      }
+      const nouvellePart =
+        Math.round(Math.min(1, Math.max(0, restantMs / (duree * 1000))) * 500) / 500;
+      if (nouvellePart !== part) {
+        part = nouvellePart;
+        progression.style.transform = `scaleX(${part})`;
+      }
       element.classList.toggle('chrono--urgent', restantMs > 0 && restantMs <= 5000);
     },
   };

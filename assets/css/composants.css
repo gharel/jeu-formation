@@ -625,15 +625,24 @@
   margin: 0 auto;
 }
 
+/* L'ombre de la roue, immobile sous le SVG qui tourne (un drop-shadow sur le SVG serait
+   recalculé à chaque image de la rotation) : un disque de même rayon (96 sur 200) */
+.roue::before {
+  content: '';
+  position: absolute;
+  inset: 2%;
+  border-radius: 50%;
+  box-shadow: 0 6px 14px rgb(14 16 39 / 25%);
+}
+
 .roue__svg {
+  position: relative;
   display: block;
   width: 100%;
   height: auto;
-  filter: drop-shadow(0 6px 14px rgb(14 16 39 / 25%));
 }
 
 .roue__disque {
-  transform-origin: 100px 100px;
   font-family: var(--police);
 }
 
@@ -1213,14 +1222,16 @@
   --taille: clamp(5.5rem, min(12vw, 16vh), 9rem);
   flex: none;
   width: var(--taille);
-  filter: drop-shadow(0 8px 10px rgb(14 16 39 / 16%));
 }
 
+/* L'ombre est sur le dessin et non sur .illustration, que les réactions font bouger : elle est
+   ainsi calculée une fois, puis déplacée avec le reste (pas recalculée à chaque image) */
 .illustration__dessin {
   display: block;
   width: 100%;
   height: auto;
   overflow: visible;
+  filter: drop-shadow(0 8px 10px rgb(14 16 39 / 16%));
 }
 
 .illustration text {
@@ -1243,17 +1254,8 @@
 .ill-blanc {
   fill: var(--blanc);
 }
-.ill-fond {
-  fill: var(--fond);
-}
-.ill-bord {
-  fill: var(--bord);
-}
 .ill-jaune {
   fill: var(--jaune);
-}
-.ill-vert {
-  fill: var(--vert);
 }
 .ill-orange {
   fill: var(--orange);
@@ -1285,9 +1287,6 @@
 }
 .ill-texte-nuit {
   fill: var(--bleu-nuit);
-}
-.ill-texte-blanc {
-  fill: var(--blanc);
 }
 .ill-texte-accent {
   fill: var(--sur-accent);

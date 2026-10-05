@@ -139,6 +139,23 @@ describe('scores du groupe : état partagé (groupe.js)', () => {
     expect(creerGroupe().scores).toEqual({});
   });
 
+  it('des points pour plusieurs personnes : une seule lecture et une seule écriture', () => {
+    const groupe = creerGroupe();
+    groupe.changerParticipants(['Ana', 'Bob', 'Chloé']);
+    const surScores = vi.fn();
+    groupe.surChangementScores(surScores);
+    const ecriture = vi.spyOn(Storage.prototype, 'setItem');
+    groupe.ajouterPoints(['Ana', 'Chloé'], 'patate-chaude', 1);
+    const ecrituresScores = ecriture.mock.calls.filter(([cle]) => cle.endsWith('scores-groupe'));
+    ecriture.mockRestore();
+    expect(ecrituresScores).toHaveLength(1);
+    expect(surScores).toHaveBeenCalledTimes(1);
+    expect(lire('scores-groupe')).toEqual({
+      ana: { 'patate-chaude': 1 },
+      chloé: { 'patate-chaude': 1 },
+    });
+  });
+
   it('un groupe remplacé (fichier importé) prend ses propres scores', () => {
     const groupe = creerGroupe();
     groupe.changerParticipants(['Zoé']);

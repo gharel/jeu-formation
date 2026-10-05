@@ -19,12 +19,11 @@ export function creerBoutonPoints(
   bouton.addEventListener('click', async () => {
     const choisis = await ctx.choisirPrenoms({ titre, message, multiple, preselection });
     if (!choisis.length) return;
-    for (const prenom of choisis) ctx.scores.ajouter(prenom, points);
+    ctx.scores.ajouterATous(choisis, points);
     bouton.disabled = true;
     remplir(bouton, icone('check'), `+${libelle} pour ${choisis.join(', ')}`);
     ctx.annoncer(`${libelle} pour ${choisis.join(', ')}`);
     ctx.sons.ding();
-    bouton.dispatchEvent(new CustomEvent('points-attribues', { bubbles: true, detail: choisis }));
   });
   return bouton;
 }
