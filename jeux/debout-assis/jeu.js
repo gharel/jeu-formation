@@ -86,18 +86,24 @@ function demarrer(ctx) {
   function afficherAffirmation() {
     const a = affirmations[index];
     minuteur?.arreter();
-    minuteur = creerMinuteur({ duree, sons: ctx.sons, surFin: () => reveler() });
+    // À zéro, la réponse se révèle avec son propre son : pas le son de fin par-dessus
+    minuteur = creerMinuteur({ duree, sons: ctx.sons, surFin: () => reveler(), sonFin: false });
     illustration.etat(null);
     // Le chrono, puis le verdict à sa place : tout tient sur une ligne avec les tuiles
     const zoneMinute = el('div', { class: 'debout__minute' }, minuteur.element);
-    const enonce = el('h3', { class: 'panneau__texte debout__affirmation' }, a.affirmation);
+    const enonce = el(
+      'h3',
+      { class: 'panneau__texte debout__affirmation apparition' },
+      a.affirmation,
+    );
     const devoiler = el(
       'button',
       { type: 'button', class: 'bouton bouton--grand', onclick: () => reveler() },
       'Révéler la réponse',
     );
     actionPrincipale = () => reveler();
-    const resultat = el('div', { class: 'debout__resultat', hidden: true });
+    // L'animation d'apparition se joue d'elle-même quand le résultat cesse d'être caché
+    const resultat = el('div', { class: 'debout__resultat apparition', hidden: true });
     const actions = el('div', { class: 'actions-jeu' }, devoiler);
     const tuiles = el(
       'div',
@@ -113,10 +119,6 @@ function demarrer(ctx) {
       minuteur.arreter();
       const vrai = a.reponse === 'vrai';
       const sens = vrai ? 'vrai' : 'faux';
-      illustration.etat(vrai ? 'vrai' : etatFaux);
-      illustration.reagir('hop');
-      if (vrai) ctx.sons.verite.vrai();
-      else ctx.sons.verite.faux();
       for (const tuile of tuiles.children) {
         tuile.classList.toggle(
           'debout__tuile--bonne',
@@ -149,9 +151,12 @@ function demarrer(ctx) {
         a.explication ? el('p', { class: 'debout__explication' }, a.explication) : null,
       );
       resultat.hidden = false;
-      animer(resultat, 'apparition');
-      ctx.annoncer(`${vrai ? 'Vrai' : 'Faux'}. ${a.explication ?? ''}`);
       afficherSuite();
+      // Le personnage et le son une fois la réponse affichée
+      illustration.etat(vrai ? 'vrai' : etatFaux);
+      illustration.reagir('hop');
+      ctx.sons.verite[sens]();
+      ctx.annoncer(`${vrai ? 'Vrai' : 'Faux'}. ${a.explication ?? ''}`);
     }
 
     function afficherSuite() {
@@ -235,7 +240,7 @@ function demarrer(ctx) {
 
     function passerALaSuite() {
       // Mode survie : chaque manche survécue rapporte 1 point (le classement suit l'ordre d'élimination)
-      if (survie) for (const prenom of enJeu) ctx.scores.ajouter(prenom, 1);
+      if (survie) ctx.scores.ajouterATous(enJeu, 1);
       const champion = survie ? gagnant(enJeu) : null;
       if (champion || index === affirmations.length - 1) {
         ctx.terminer({
@@ -265,7 +270,6 @@ function demarrer(ctx) {
         actions,
       ),
     );
-    animer(enonce, 'apparition');
     minuteur.demarrer();
     focaliser(enonce);
   }

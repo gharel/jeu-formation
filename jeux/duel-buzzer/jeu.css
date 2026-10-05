@@ -56,6 +56,7 @@
 /* Gros buzzer rond, avec la touche du clavier dessus. Éteint tant que la question n'est pas
    affichée, allumé ensuite. Il se presse au doigt sans zoomer ni sélectionner de texte. */
 .duel__buzzer {
+  position: relative;
   display: grid;
   place-items: center;
   width: clamp(5.5rem, 11vw, 8rem);
@@ -87,14 +88,36 @@
 .duel--ouvert .duel__buzzer {
   color: var(--sur-accent);
   background: var(--accent);
+}
+
+/* L'anneau qui pulse autour du buzzer allumé : seule son opacité change (une ombre animée
+   serait repeinte à chaque image). L'ombre du buzzer y est reprise en premier, pour rester
+   par-dessus l'anneau ; elle suit l'appui (:active) */
+.duel__buzzer::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  box-shadow:
+    0 7px 0 var(--bleu-nuit),
+    0 0 0 8px var(--accent-clair);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.duel__buzzer:active::after {
+  box-shadow:
+    0 2px 0 var(--bleu-nuit),
+    0 0 0 8px var(--accent-clair);
+}
+
+.duel--ouvert .duel__buzzer::after {
   animation: buzzer-allume 0.9s ease-in-out infinite alternate;
 }
 
 @keyframes buzzer-allume {
   to {
-    box-shadow:
-      0 7px 0 var(--bleu-nuit),
-      0 0 0 8px var(--accent-clair);
+    opacity: 1;
   }
 }
 

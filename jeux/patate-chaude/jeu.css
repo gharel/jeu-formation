@@ -102,6 +102,11 @@
   animation-delay: 0.3s;
 }
 
+/* Patate tiède : les flammes sont invisibles, inutile de les animer */
+.patate--1 .patate__flammes .icone {
+  animation: none;
+}
+
 .patate--2 .patate__flammes {
   opacity: 0.6;
   transform: scale(0.6);

@@ -118,6 +118,8 @@ function demarrer(ctx) {
     chrono = creerChrono({
       duree: duree / 1000,
       surTic(restantMs) {
+        // Dernier tic : bruler() prend la suite (pas de tic-tac par-dessus le grésillement)
+        if (restantMs <= 0) return;
         const ecoule = duree - restantMs;
         const valeur = chaleur(ecoule, meche);
         dessinerChaleur(valeur);
@@ -202,9 +204,9 @@ function demarrer(ctx) {
 
     function passer() {
       if (!manche.passer()) return;
-      ctx.sons.patate.passe();
       dessinerCompteur();
       animer(patate, 'patate--passe');
+      ctx.sons.patate.passe();
     }
 
     function basculerPause() {
@@ -218,11 +220,12 @@ function demarrer(ctx) {
 
     function bruler() {
       if (!manche.bruler()) return;
-      ctx.sons.patate.brule();
       patate.className = 'patate patate--brulee';
       scene.classList.add('patate__scene--fin');
       animer(patate, 'secousse');
       dessiner();
+      // Le grésillement une fois l'écran de fin construit
+      ctx.sons.patate.brule();
       ctx.annoncer(
         avecPrenoms
           ? 'Brûlé ! Qui tenait la patate ? Tous les autres marquent 1 point.'
@@ -248,12 +251,10 @@ function demarrer(ctx) {
       if (!prenom || brule) return;
       brule = prenom;
       dernierBrule = prenom;
-      for (const gagnant of gagnantsDeLaManche(ctx.participants, prenom)) {
-        ctx.scores.ajouter(gagnant, 1);
-      }
+      ctx.scores.ajouterATous(gagnantsDeLaManche(ctx.participants, prenom), 1);
+      dessiner();
       ctx.sons.ding();
       ctx.annoncer(`${prenom} tenait la patate : 1 point pour tous les autres.`);
-      dessiner();
     }
 
     function dessinerFin() {

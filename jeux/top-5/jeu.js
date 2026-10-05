@@ -75,7 +75,8 @@ function demarrer(ctx) {
       ),
     );
 
-    function dessinerTableau() {
+    /** `apparue` : le rang de la réponse qui vient d'être trouvée, qui se retourne (animation). */
+    function dessinerTableau(apparue = -1) {
       remplir(
         tableau,
         reponses.map((reponse, rang) => {
@@ -118,7 +119,9 @@ function demarrer(ctx) {
           }
           return el(
             'li',
-            { class: `top5__case top5__case--${trouvee ? 'trouvee' : 'manquee'}` },
+            {
+              class: `top5__case top5__case--${trouvee ? 'trouvee' : 'manquee'}${rang === apparue ? ' top5__case--apparue' : ''}`,
+            },
             rangAffiche,
             el('span', { class: 'top5__reponse' }, texte),
             gagnant,
@@ -188,42 +191,41 @@ function demarrer(ctx) {
       return null;
     }
 
-    function dessiner() {
-      dessinerTableau();
+    function dessiner(apparue = -1) {
+      dessinerTableau(apparue);
       dessinerEtat();
       return dessinerActions();
     }
 
     function trouver(rang) {
-      const valeur = pointsDuRang(rang);
-      const texte = reponseAffichee(reponses[rang]);
-      ctx.sons.top.trouvee(valeur);
-      illustration.reagir('hop');
-      remplir(message, icone('circle-check'), `« ${texte} » : ${points(valeur)} !`);
-      ctx.annoncer(`Trouvé : ${texte}, ${points(valeur)}.`);
+      // La dernière réponse du top 5 : directement le bilan, qui la retourne aussi
       if (manche.finie) {
-        conclure();
+        conclure(rang);
         return;
       }
-      dessiner();
-      animer(tableau.children[rang], 'top5__case--apparue');
+      const valeur = pointsDuRang(rang);
+      const texte = reponseAffichee(reponses[rang]);
+      remplir(message, icone('circle-check'), `« ${texte} » : ${points(valeur)} !`);
+      dessiner(rang);
+      // L'illustration et le son une fois le tableau à jour
+      illustration.reagir('hop');
+      ctx.sons.top.trouvee(valeur);
+      ctx.annoncer(`Trouvé : ${texte}, ${points(valeur)}.`);
     }
 
     function erreur(texte) {
-      ctx.sons.top.erreur();
-      illustration.reagir('secousse');
-      animer(croix, 'top5__croix--visible');
       remplir(
         message,
         icone('circle-xmark'),
         texte ? `« ${texte} » n’est pas dans le top 5.` : 'Ce n’est pas dans le top 5.',
       );
       ctx.annoncer(`Erreur ${manche.erreurs} sur ${erreursMax}.`);
-      if (manche.finie) {
-        conclure();
-        return;
-      }
-      dessinerEtat();
+      if (manche.finie) conclure();
+      else dessinerEtat();
+      // Les animations et le son une fois la page à jour
+      illustration.reagir('secousse');
+      animer(croix, 'top5__croix--visible');
+      ctx.sons.top.erreur();
     }
 
     formulaire.addEventListener('submit', (e) => {
@@ -278,7 +280,8 @@ function demarrer(ctx) {
       if (!manche.finie) saisie.focus();
     }
 
-    function conclure() {
+    /** `apparue` : la réponse qui finit le top 5, qui se retourne avec le bilan. */
+    function conclure(apparue = -1) {
       total += manche.points;
       saisie.disabled = true;
       formulaire.hidden = true;
@@ -287,21 +290,22 @@ function demarrer(ctx) {
         erreurs: `${erreursMax} erreurs : la manche s’arrête.`,
         abandon: 'Voici les réponses qui manquaient.',
       };
-      if (manche.issue === 'complet') {
-        ctx.sons.top.complet();
-        illustration.etat('complet');
-        illustration.reagir('fete');
-      } else {
-        ctx.sons.top.devoile();
-      }
       remplir(
         message,
         el('strong', {}, bilans[manche.issue]),
         ` Le groupe marque ${points(manche.points)} sur ${POINTS_PAR_QUESTION}.`,
       );
-      ctx.annoncer(`${bilans[manche.issue]} ${points(manche.points)} sur ${POINTS_PAR_QUESTION}.`);
-      const bouton = dessiner();
+      const bouton = dessiner(apparue);
       bouton?.focus();
+      // L'illustration et les sons une fois le bilan affiché
+      if (manche.issue === 'complet') {
+        illustration.etat('complet');
+        illustration.reagir('fete');
+        ctx.sons.top.complet();
+      } else {
+        ctx.sons.top.devoile();
+      }
+      ctx.annoncer(`${bilans[manche.issue]} ${points(manche.points)} sur ${POINTS_PAR_QUESTION}.`);
     }
 
     remplir(ctx.zone, panneau);

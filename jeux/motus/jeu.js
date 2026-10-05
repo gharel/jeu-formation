@@ -1,5 +1,5 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, icone, animer, focaliser } from '../../assets/js/commun/ui.js';
+import { el, remplir, icone, animer, focaliser, typographier } from '../../assets/js/commun/ui.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { schema, exemple } from './exemple.js';
 import { creerIllustrationMotus } from './illustration.js';
@@ -60,7 +60,8 @@ function demarrer(ctx) {
     ),
   );
   const clavier = el('div', { class: 'motus-clavier', 'aria-label': 'Clavier' });
-  const resultat = el('div', { class: 'motus-resultat', hidden: true });
+  // L'animation d'apparition se rejoue d'elle-même chaque fois que le résultat cesse d'être caché
+  const resultat = el('div', { class: 'motus-resultat apparition', hidden: true });
   const illustration = creerIllustrationMotus();
   const jeu = el(
     'div',
@@ -108,104 +109,115 @@ function demarrer(ctx) {
     return normaliserMot(saisie.value).slice(0, motCourant().secret.length);
   }
 
-  function dessinerGrille({ revelerDerniere = false } = {}) {
+  // La grille est créée une fois par mot : à chaque touche, seule la ligne en cours change, et
+  // une ligne validée se retourne une seule fois (elle n'est plus recréée par la touche suivante)
+  let lignes = [];
+  let cases = [];
+
+  function construireGrille() {
     const { secret } = motCourant();
-    const connues = lettresConnues(secret, essais);
-    const lignes = [];
-    for (let l = 0; l < NOMBRE_ESSAIS; l++) {
-      const essai = essais[l];
-      const enCours = !fini && l === essais.length;
-      const cases = [];
-      for (let i = 0; i < secret.length; i++) {
-        let lettre = '';
-        let classe = 'motus-case';
-        if (essai) {
-          lettre = essai.mot[i];
-          classe += ` motus-case--${essai.evaluation[i]}`;
-          if (revelerDerniere && l === essais.length - 1) classe += ' motus-case--revele';
-        } else if (enCours) {
-          const tape = proposition();
-          lettre = tape[i] ?? '';
-          if (!lettre && connues[i]) {
-            lettre = connues[i];
-            classe += ' motus-case--indice';
-          }
-        }
-        cases.push(el('span', { class: classe, role: 'gridcell', style: `--i:${i}` }, lettre));
-      }
-      const description = essai
-        ? `Essai ${l + 1} : ${[...essai.mot].map((c, i) => `${c} ${LIBELLES_ETAT[essai.evaluation[i]]}`).join(', ')}`
-        : `Essai ${l + 1}`;
-      lignes.push(
-        el(
-          'div',
-          {
-            class: `motus-ligne${enCours ? ' motus-ligne--active' : ''}`,
-            role: 'row',
-            'aria-label': description,
-          },
-          cases,
-        ),
-      );
-    }
+    cases = Array.from({ length: NOMBRE_ESSAIS }, () =>
+      Array.from({ length: secret.length }, (_, i) =>
+        el('span', { class: 'motus-case', role: 'gridcell', style: `--i:${i}` }),
+      ),
+    );
+    lignes = cases.map((ligne, l) =>
+      el('div', { class: 'motus-ligne', role: 'row', 'aria-label': `Essai ${l + 1}` }, ligne),
+    );
     remplir(grille, lignes);
     grille.style.setProperty('--colonnes', String(secret.length));
   }
 
+  function marquerLigneActive() {
+    lignes.forEach((ligne, l) => {
+      ligne.classList.toggle('motus-ligne--active', !fini && l === essais.length);
+    });
+  }
+
+  /** La ligne en cours : les lettres tapées, et en grisé celles déjà trouvées (indices). */
+  function dessinerSaisie() {
+    if (fini || essais.length >= NOMBRE_ESSAIS) return;
+    const tape = proposition();
+    const connues = lettresConnues(motCourant().secret, essais);
+    cases[essais.length].forEach((caseMotus, i) => {
+      const lettre = tape[i] ?? '';
+      const indice = !lettre && Boolean(connues[i]);
+      caseMotus.textContent = lettre || (indice ? connues[i] : '');
+      caseMotus.classList.toggle('motus-case--indice', indice);
+    });
+  }
+
+  /** Une ligne validée : ses lettres et leurs couleurs, retournées une à une. */
+  function revelerLigne(l) {
+    const { mot, evaluation } = essais[l];
+    cases[l].forEach((caseMotus, i) => {
+      caseMotus.textContent = mot[i];
+      caseMotus.className = `motus-case motus-case--${evaluation[i]} motus-case--revele`;
+    });
+    const detail = [...mot].map((c, i) => `${c} ${LIBELLES_ETAT[evaluation[i]]}`).join(', ');
+    lignes[l].setAttribute('aria-label', typographier(`Essai ${l + 1} : ${detail}`));
+  }
+
+  // Le clavier affiché, créé une fois : une proposition ne change que la couleur des touches
+  const touches = new Map();
+  remplir(
+    clavier,
+    RANGEES_CLAVIER.map((rangee, r) =>
+      el(
+        'div',
+        { class: 'motus-rangee' },
+        [...rangee].map((lettre) => {
+          const touche = el(
+            'button',
+            {
+              type: 'button',
+              class: 'motus-touche',
+              'aria-label': lettre,
+              onclick: () => {
+                saisie.value = proposition() + lettre;
+                surSaisie();
+                saisie.focus();
+              },
+            },
+            lettre,
+          );
+          touches.set(lettre, touche);
+          return touche;
+        }),
+        r === 2
+          ? el(
+              'button',
+              {
+                type: 'button',
+                class: 'motus-touche motus-touche--large',
+                'aria-label': 'Effacer une lettre',
+                onclick: () => {
+                  saisie.value = proposition().slice(0, -1);
+                  surSaisie();
+                  saisie.focus();
+                },
+              },
+              icone('delete-left'),
+            )
+          : null,
+      ),
+    ),
+  );
+
   function dessinerClavier() {
     const etats = etatClavier(essais);
-    const touche = (lettre) =>
-      el(
-        'button',
-        {
-          type: 'button',
-          class: `motus-touche${etats.has(lettre) ? ` motus-touche--${etats.get(lettre)}` : ''}`,
-          'aria-label': etats.has(lettre)
-            ? `${lettre}, ${LIBELLES_ETAT[etats.get(lettre)]}`
-            : lettre,
-          onclick: () => {
-            saisie.value = proposition() + lettre;
-            surSaisie();
-            saisie.focus();
-          },
-        },
-        lettre,
-      );
-    remplir(
-      clavier,
-      RANGEES_CLAVIER.map((rangee, r) =>
-        el(
-          'div',
-          { class: 'motus-rangee' },
-          [...rangee].map(touche),
-          r === 2
-            ? [
-                el(
-                  'button',
-                  {
-                    type: 'button',
-                    class: 'motus-touche motus-touche--large',
-                    'aria-label': 'Effacer une lettre',
-                    onclick: () => {
-                      saisie.value = proposition().slice(0, -1);
-                      surSaisie();
-                      saisie.focus();
-                    },
-                  },
-                  icone('delete-left'),
-                ),
-              ]
-            : null,
-        ),
-      ),
-    );
+    for (const [lettre, touche] of touches) {
+      const etat = etats.get(lettre);
+      touche.className = `motus-touche${etat ? ` motus-touche--${etat}` : ''}`;
+      touche.setAttribute('aria-label', etat ? `${lettre}, ${LIBELLES_ETAT[etat]}` : lettre);
+    }
   }
 
   function surSaisie() {
     const propre = proposition();
     if (saisie.value !== propre) saisie.value = propre;
     message.textContent = '';
-    dessinerGrille();
+    dessinerSaisie();
   }
 
   function preparerMot() {
@@ -221,7 +233,9 @@ function demarrer(ctx) {
     resultat.hidden = true;
     message.textContent = '';
     illustration.etat(null);
-    dessinerGrille();
+    construireGrille();
+    marquerLigneActive();
+    dessinerSaisie();
     dessinerClavier();
     saisie.focus();
     saisie.setSelectionRange(1, 1);
@@ -232,7 +246,7 @@ function demarrer(ctx) {
     const { secret, definition } = motCourant();
     formulaire.hidden = true;
     clavier.hidden = true;
-    dessinerGrille({ revelerDerniere: true });
+    marquerLigneActive();
     const dernier = indexMot === mots.length - 1;
     const suivant = el(
       'button',
@@ -272,7 +286,6 @@ function demarrer(ctx) {
       ),
     );
     resultat.hidden = false;
-    animer(resultat, 'apparition');
     if (trouve) {
       illustration.etat('trouve');
       illustration.reagir('fete');
@@ -295,29 +308,35 @@ function demarrer(ctx) {
     const probleme = verifierProposition(secret, mot);
     if (probleme) {
       remplir(message, probleme);
-      ctx.sons.erreur();
-      animer(grille.querySelector('.motus-ligne--active') ?? grille, 'secousse');
       saisie.focus();
+      animer(lignes[essais.length], 'secousse');
+      ctx.sons.erreur();
       return;
     }
     const evaluation = evaluer(secret, mot);
     essais.push({ mot, evaluation });
+    revelerLigne(essais.length - 1);
     // Une note par lettre, au rythme de l’animation qui retourne les cases
-    ctx.sons.motus.lettres(evaluation);
-    dessinerClavier();
+    const jouerLettres = () => ctx.sons.motus.lettres(evaluation);
     if (estTrouve(evaluation)) {
       terminerMot(true);
+      jouerLettres();
       return;
     }
     if (essais.length >= NOMBRE_ESSAIS) {
       terminerMot(false);
+      jouerLettres();
       return;
     }
+    // Le clavier ne sert plus quand le mot est fini (il est caché) : seulement ici
+    dessinerClavier();
     saisie.value = secret[0];
-    dessinerGrille({ revelerDerniere: true });
-    ctx.annoncer(grille.children[essais.length - 1].getAttribute('aria-label'));
+    marquerLigneActive();
+    dessinerSaisie();
+    ctx.annoncer(lignes[essais.length - 1].getAttribute('aria-label'));
     saisie.focus();
     saisie.setSelectionRange(1, 1);
+    jouerLettres();
   });
 
   preparerMot();

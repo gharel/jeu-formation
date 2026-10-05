@@ -446,10 +446,7 @@ export const sons = {
     },
     revele: () => cloche(N.la5, { volume: 0.14 }),
     ligne: () => fanfare(2),
-    bingo() {
-      fanfare(3);
-      sons.applaudissements(2.5);
-    },
+    // « Bingo ! » mène à l'écran de fin, qui a sa fanfare et ses applaudissements
   },
 
   // ---------- Le Coffre-fort : serrures, alarme ----------

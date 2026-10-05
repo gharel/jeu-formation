@@ -173,7 +173,8 @@ function demarrer(ctx) {
       { type: 'button', class: 'bouton bouton--discret', onclick: () => reveler('abandon') },
       'Révéler la réponse',
     );
-    const fin = el('div', { class: 'juste__fin', hidden: true });
+    // L'animation d'apparition se joue d'elle-même quand le bilan cesse d'être caché
+    const fin = el('div', { class: 'juste__fin apparition', hidden: true });
     const commandes = el(
       'div',
       { class: 'groupe-boutons groupe-boutons--centre' },
@@ -189,20 +190,17 @@ function demarrer(ctx) {
     };
     rafraichirJoueur();
 
+    /** La dernière proposition s'ajoute en tête de l'historique (sans refaire toute la liste). */
     function dessinerHistorique() {
-      remplir(
-        liste,
-        [...historique]
-          .reverse()
-          .map((h) =>
-            el(
-              'li',
-              { class: `juste__entree juste__entree--${h.resultat}` },
-              el('span', { class: 'juste__valeur' }, formaterNombre(h.valeur)),
-              h.joueur ? el('span', { class: 'juste__joueur' }, h.joueur) : null,
-              el('span', { class: 'juste__sens' }, icone(FLECHES[h.resultat]), h.resultat),
-            ),
-          ),
+      const h = historique.at(-1);
+      liste.prepend(
+        el(
+          'li',
+          { class: `juste__entree juste__entree--${h.resultat}` },
+          el('span', { class: 'juste__valeur' }, formaterNombre(h.valeur)),
+          h.joueur ? el('span', { class: 'juste__joueur' }, h.joueur) : null,
+          el('span', { class: 'juste__sens' }, icone(FLECHES[h.resultat]), h.resultat),
+        ),
       );
       borne.textContent = decrireFourchette(fourchette(historique), unite);
       compteur.textContent = historique.length
@@ -219,12 +217,10 @@ function demarrer(ctx) {
       commandes.hidden = true;
       verdict.hidden = true;
       tour.hidden = true;
-      remplir(erreur, '');
+      erreur.textContent = '';
       const trouve = raison === 'juste';
       const gagnant = trouve ? historique.at(-1)?.joueur : null;
-      illustration.reagir(trouve ? 'fete' : 'secousse');
       if (gagnant) ctx.scores.ajouter(gagnant, 1);
-      if (!trouve) ctx.sons.erreur();
       const reponse = `${formaterNombre(q.reponse)}${unite ? ` ${unite}` : ''}`;
       const titre = el(
         'p',
@@ -273,7 +269,12 @@ function demarrer(ctx) {
         ),
       );
       fin.hidden = false;
-      animer(fin, 'apparition');
+      // L'illustration et le son une fois le bilan affiché (au temps écoulé, le minuteur a déjà
+      // sonné la fin : pas de second son par-dessus)
+      if (trouve) illustration.etat('juste');
+      illustration.reagir(trouve ? 'fete' : 'secousse');
+      if (trouve) ctx.sons.juste.juste();
+      else if (raison === 'abandon') ctx.sons.erreur();
       ctx.annoncer(`${trouve ? 'Trouvé' : 'La réponse était'} : ${reponse}`);
       focaliser(titre);
     }
@@ -286,31 +287,32 @@ function demarrer(ctx) {
         animer(saisie, 'secousse');
         return;
       }
-      remplir(erreur, '');
+      erreur.textContent = '';
       const resultat = comparer(q.reponse, valeur, q.marge ?? 0);
       historique.push({ valeur, resultat, joueur: joueurCourant() });
       saisie.value = '';
+      dessinerHistorique();
+      if (resultat === 'juste') {
+        // Le verdict serait caché aussitôt par le bilan : on ne le dessine pas
+        reveler('juste');
+        return;
+      }
       remplir(
         verdict,
         el('span', { class: 'juste__fleche' }, icone(FLECHES[resultat])),
         MESSAGES[resultat],
       );
-      verdict.className = `juste__verdict juste__verdict--${resultat}`;
+      // Les classes du sens seulement : `apparition` doit rester pour qu'animer() la relance
+      verdict.classList.toggle('juste__verdict--plus', resultat === 'plus');
+      verdict.classList.toggle('juste__verdict--moins', resultat === 'moins');
       illustration.etat(resultat);
-      animer(verdict, 'apparition');
-      dessinerHistorique();
-      if (resultat === 'juste') {
-        ctx.sons.juste.juste();
-        reveler('juste');
-        return;
-      }
-      if (resultat === 'plus') ctx.sons.juste.plus();
-      else ctx.sons.juste.moins();
       if (avecTour) {
         indexJoueur = suivant(ctx.participants, indexJoueur);
         rafraichirJoueur();
       }
+      animer(verdict, 'apparition');
       saisie.focus();
+      ctx.sons.juste[resultat]();
     });
 
     remplir(

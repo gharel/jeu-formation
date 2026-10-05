@@ -308,7 +308,6 @@ describe('sons', () => {
       () => sons.bingo.tirage(),
       () => sons.bingo.revele(),
       () => sons.bingo.ligne(),
-      () => sons.bingo.bingo(),
       () => sons.coffre.erreur(),
       () => sons.coffre.indice(),
       () => sons.coffre.alarme(),

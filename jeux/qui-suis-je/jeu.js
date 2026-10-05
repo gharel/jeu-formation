@@ -1,5 +1,5 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, icone, animer, focaliser } from '../../assets/js/commun/ui.js';
+import { el, remplir, icone, focaliser } from '../../assets/js/commun/ui.js';
 import { creerMancheAPaliers } from '../../assets/js/commun/manche-paliers.js';
 import { elementsDeListe } from '../../assets/js/commun/contenu.js';
 import { schema, exemple } from './exemple.js';
@@ -25,7 +25,8 @@ function demarrer(ctx) {
       'aria-label': 'Indices',
       'aria-live': 'polite',
     });
-    const resultat = el('div', { class: 'qsj__resultat', hidden: true });
+    // L'animation d'apparition se joue d'elle-même quand le résultat cesse d'être caché
+    const resultat = el('div', { class: 'qsj__resultat apparition', hidden: true });
     let affiches = 0;
 
     function montrerIndices(n) {
@@ -47,12 +48,6 @@ function demarrer(ctx) {
       surFin({ trouve, prenom, points }) {
         ctx.zone.querySelector('.panneau')?.classList.add('manche-finie');
         montrerIndices(indices.length);
-        if (trouve) {
-          illustration.etat('trouve');
-          illustration.reagir('fete');
-        } else {
-          illustration.reagir('secousse');
-        }
         const dernier = index === mysteres.length - 1;
         const titre = el(
           'p',
@@ -100,7 +95,9 @@ function demarrer(ctx) {
           ),
         );
         resultat.hidden = false;
-        animer(resultat, 'apparition');
+        // L'illustration réagit une fois l'écran de réponse construit
+        if (trouve) illustration.etat('trouve');
+        illustration.reagir(trouve ? 'fete' : 'secousse');
         ctx.annoncer(`La réponse était : ${reponse}`);
         focaliser(titre);
       },

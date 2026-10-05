@@ -85,6 +85,29 @@ function demarrer(ctx) {
     const message = el('p', { class: 'ordre__message', 'aria-live': 'polite' });
     const actions = el('div', { class: 'actions-jeu' }, boutonVider, boutonVerifier);
 
+    // Les cartes de la pioche sont créées une fois : une carte posée se grise au lieu d'être
+    // recréée (au clavier, le focus n'est plus perdu à chaque carte)
+    const boutonsCartes = new Map(
+      cartes.map((carte) => [
+        carte,
+        el(
+          'button',
+          {
+            type: 'button',
+            class: 'ordre__carte',
+            'aria-label': `Carte ${carte.lettre} : ${carte.texte}`,
+            onclick: () => placer(carte),
+          },
+          el('span', { class: 'ordre__lettre', 'aria-hidden': 'true' }, carte.lettre),
+          el('span', { class: 'ordre__texte' }, carte.texte),
+        ),
+      ]),
+    );
+    remplir(
+      pioche,
+      [...boutonsCartes.values()].map((bouton) => el('li', {}, bouton)),
+    );
+
     const estPlacee = (carte) => emplacements.includes(carte);
     const cartesLibres = () =>
       cartes.filter((c) => !emplacements.some((e, i) => e === c && verrouilles.has(i)));
@@ -93,33 +116,20 @@ function demarrer(ctx) {
       const libre = emplacements.findIndex((e, i) => e === null && !verrouilles.has(i));
       if (libre === -1 || estPlacee(carte)) return;
       emplacements[libre] = carte;
-      ctx.sons.ordre.carte();
       dessiner();
+      // La carte posée se désactive : le focus passe à la suivante, ou à « Vérifier »
+      if (document.activeElement === boutonsCartes.get(carte)) {
+        ([...boutonsCartes.values()].find((b) => !b.disabled) ?? boutonVerifier).focus();
+      }
+      ctx.sons.ordre.carte();
     }
 
     function dessiner() {
-      surtitre.textContent = `Procédure ${index + 1} sur ${procedures.length} · Essai ${Math.min(essai, essaisMax)} sur ${essaisMax}`;
-      remplir(
-        pioche,
-        cartes.map((carte) =>
-          el(
-            'li',
-            {},
-            el(
-              'button',
-              {
-                type: 'button',
-                class: `ordre__carte${estPlacee(carte) ? ' ordre__carte--placee' : ''}`,
-                disabled: terminee || estPlacee(carte),
-                'aria-label': `Carte ${carte.lettre} : ${carte.texte}`,
-                onclick: () => placer(carte),
-              },
-              el('span', { class: 'ordre__lettre', 'aria-hidden': 'true' }, carte.lettre),
-              el('span', { class: 'ordre__texte' }, carte.texte),
-            ),
-          ),
-        ),
-      );
+      surtitre.textContent = `Procédure ${index + 1} sur ${procedures.length} · Essai ${essai} sur ${essaisMax}`;
+      for (const [carte, bouton] of boutonsCartes) {
+        bouton.classList.toggle('ordre__carte--placee', estPlacee(carte));
+        bouton.disabled = terminee || estPlacee(carte);
+      }
       remplir(
         ordre,
         emplacements.map((carte, i) => {
@@ -137,6 +147,8 @@ function demarrer(ctx) {
                   onclick: () => {
                     emplacements[i] = null;
                     dessiner();
+                    // Le focus suit la carte, revenue dans la pioche
+                    boutonsCartes.get(carte).focus();
                   },
                 },
                 el('span', { class: 'ordre__lettre', 'aria-hidden': 'true' }, carte.lettre),
@@ -158,31 +170,33 @@ function demarrer(ctx) {
     function verifierOrdre() {
       const resultats = verifier(emplacements);
       const justes = resultats.filter(Boolean).length;
-      // Une note par étape bien placée, puis fanfare ou « eh-eh »
-      ctx.sons.ordre.verification(justes, emplacements.length);
       resultats.forEach((juste, i) => {
         if (juste) verrouilles.add(i);
         else emplacements[i] = null;
       });
+      // Une note par étape bien placée, puis fanfare ou « eh-eh » : une fois la page à jour
+      const jouerVerification = () => ctx.sons.ordre.verification(justes, emplacements.length);
       if (justes === emplacements.length) {
+        reussir();
         illustration.etat('range');
         illustration.reagir('fete');
-        reussir();
+        jouerVerification();
         return;
+      }
+      if (essai >= essaisMax) {
+        echouer();
+      } else {
+        essai += 1;
+        remplir(
+          message,
+          `${justes} étape${justes > 1 ? 's' : ''} bien placée${justes > 1 ? 's' : ''} sur ${emplacements.length}. Les autres reviennent dans la pioche : essai ${essai} !`,
+        );
+        dessiner();
+        saisie.focus();
       }
       animer(ordre, 'secousse');
       illustration.reagir('secousse');
-      if (essai >= essaisMax) {
-        echouer();
-        return;
-      }
-      essai += 1;
-      remplir(
-        message,
-        `${justes} étape${justes > 1 ? 's' : ''} bien placée${justes > 1 ? 's' : ''} sur ${emplacements.length}. Les autres reviennent dans la pioche : essai ${essai} !`,
-      );
-      dessiner();
-      saisie.focus();
+      jouerVerification();
     }
 
     function conclure(texte, boutons, nomIcone) {

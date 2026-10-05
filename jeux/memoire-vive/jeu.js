@@ -133,6 +133,9 @@ function demarrer(ctx) {
       raccourci,
     );
 
+    const faces = cartes.map(() =>
+      el('span', { class: 'carte-memoire__face', 'aria-hidden': 'true' }),
+    );
     const boutons = cartes.map((carte, i) =>
       el(
         'button',
@@ -146,10 +149,12 @@ function demarrer(ctx) {
           'span',
           { class: 'carte-memoire__interieur' },
           el('span', { class: 'carte-memoire__dos', 'aria-hidden': 'true' }, repere(i, colonnes)),
-          el('span', { class: 'carte-memoire__face', 'aria-hidden': 'true' }),
+          faces[i],
         ),
       ),
     );
+    // L'état dessiné de chaque carte : à chaque clic, seules celles qui changent sont retouchées
+    const dessinees = cartes.map(() => '');
     remplir(grille, boutons);
 
     // Flèches du clavier : on se déplace de carte en carte, comme sur la grille projetée
@@ -176,24 +181,24 @@ function demarrer(ctx) {
         const { texte } = cartes[i];
         const trouvee = partie.estTrouvee(i);
         const visible = trouvee || visibles.includes(i);
+        const ratee = partie.phase === 'ratee' && visibles.includes(i);
+        const etat = `${visible}|${trouvee}|${ratee}`;
+        if (etat === dessinees[i]) return;
+        dessinees[i] = etat;
         const rep = repere(i, colonnes);
         bouton.classList.toggle('carte-memoire--visible', visible);
         bouton.classList.toggle('carte-memoire--trouvee', trouvee);
-        bouton.classList.toggle(
-          'carte-memoire--ratee',
-          partie.phase === 'ratee' && visibles.includes(i),
-        );
+        bouton.classList.toggle('carte-memoire--ratee', ratee);
         bouton.setAttribute('aria-disabled', String(visible));
         // Le texte n'est dans la page que si la carte est retournée
-        const face = bouton.querySelector('.carte-memoire__face');
         if (visible) {
           remplir(
-            face,
+            faces[i],
             trouvee ? el('span', { class: 'carte-memoire__coche' }, icone('check')) : null,
             el('span', { class: 'carte-memoire__texte' }, texte),
           );
         } else {
-          remplir(face);
+          remplir(faces[i]);
         }
         let nom = `Carte ${rep}, face cachée`;
         if (visible) nom = `Carte ${rep} : ${texte}${trouvee ? ', paire trouvée' : ''}`;
@@ -201,12 +206,17 @@ function demarrer(ctx) {
       });
     }
 
+    // Les boutons et l'aide ne changent qu'entre trois étapes : en jeu, cartes ratées, fin
+    let etapeDessinee = null;
     function dessinerCommandes() {
       remplir(
         compteur,
         `${partie.pairesTrouvees} paire${partie.pairesTrouvees > 1 ? 's' : ''} sur ${partie.nombreDePaires}`,
       );
       rafraichirTour();
+      const etape = partie.phase === 'finie' || partie.phase === 'ratee' ? partie.phase : 'jeu';
+      if (etape === etapeDessinee) return;
+      etapeDessinee = etape;
       if (partie.phase === 'finie') {
         touches = { entree: terminer };
         remplir(
@@ -265,7 +275,6 @@ function demarrer(ctx) {
       if (evenement?.detail > 0) plateau.focus();
       const resultat = partie.retourner(i);
       if (!resultat) return;
-      ctx.sons.memoire.retourner();
       remplir(explication);
       if (resultat === 'premiere') {
         remplir(message, 'Et la seconde carte ?');
@@ -274,7 +283,6 @@ function demarrer(ctx) {
         trouverPaire(cartes[i].paire);
       } else {
         coups += 1;
-        ctx.sons.memoire.ratee();
         joueur = joueurSuivant(participants, joueur);
         remplir(
           message,
@@ -283,13 +291,21 @@ function demarrer(ctx) {
         );
       }
       dessiner();
+      // Les animations et les sons une fois la page à jour
       if (resultat !== 'premiere') animer(message, 'apparition');
+      ctx.sons.memoire.retourner();
+      if (resultat === 'ratee') ctx.sons.memoire.ratee();
+      if (resultat === 'paire') {
+        const finie = partie.phase === 'finie';
+        illustration.reagir(finie ? 'fete' : 'hop');
+        // Dernière paire : la fanfare seule (elle couvrirait la cloche)
+        if (finie) ctx.sons.fanfare(3);
+        else ctx.sons.memoire.paire();
+      }
     }
 
     function trouverPaire(rang) {
-      ctx.sons.memoire.paire();
       illustration.progression(partie.pairesTrouvees, partie.nombreDePaires);
-      illustration.reagir(partie.phase === 'finie' ? 'fete' : 'hop');
       if (joueur) ctx.scores.ajouter(joueur, 1);
       const fini = partie.phase === 'finie';
       let texte = joueur ? `Paire trouvée par ${joueur} : 1 point !` : 'Paire trouvée !';
@@ -298,7 +314,6 @@ function demarrer(ctx) {
       remplir(message, icone('circle-check'), texte);
       remplir(explication, choisies[rang].explication || '');
       ctx.annoncer(`${texte} ${choisies[rang].explication || ''}`);
-      if (fini) ctx.sons.fanfare(3);
     }
 
     function cacher() {

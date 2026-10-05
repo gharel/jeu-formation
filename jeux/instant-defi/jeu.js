@@ -21,6 +21,8 @@ function demarrer(ctx) {
   let auTourDe = null;
   let minuteur = null;
   let actionPrincipale = null;
+  // Faux après « Quitter la partie » : une roue encore en train de tourner n'affiche rien
+  let enJeu = true;
   // Le même chronomètre passe de la roue au défi
   const illustration = creerIllustrationDefi();
 
@@ -58,6 +60,7 @@ function demarrer(ctx) {
       bouton.disabled = true;
       const index = entierEntre(0, restants.length - 1, ctx.hasard);
       await roue.tourner(index);
+      if (!enJeu) return;
       ctx.sons.ding();
       const defi = restants[index];
       restants = restants.filter((d) => d !== defi);
@@ -147,8 +150,6 @@ function demarrer(ctx) {
       minuteur.element.classList.add('chrono--compact');
       actionPrincipale = null;
       illustration.etat(null);
-      illustration.reagir(reussi ? 'fete' : 'secousse');
-      if (reussi) ctx.sons.succes();
       const message = reussi ? 'Défi réussi !' : 'Temps écoulé !';
       remplir(
         issue,
@@ -182,6 +183,9 @@ function demarrer(ctx) {
         suivant,
       );
       actionPrincipale = () => suivant.click();
+      // L'illustration et le son une fois l'issue affichée
+      illustration.reagir(reussi ? 'fete' : 'secousse');
+      if (reussi) ctx.sons.succes();
       ctx.annoncer(message);
     }
 
@@ -205,6 +209,7 @@ function demarrer(ctx) {
   afficherRoue();
 
   return () => {
+    enJeu = false;
     minuteur?.arreter();
     retirerClavier();
   };

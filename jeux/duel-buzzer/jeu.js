@@ -138,7 +138,11 @@ function demarrer(ctx) {
     const cotes = {};
     for (const cote of COTES) {
       const touche = TOUCHES[cote].toUpperCase();
-      const points = el('ol', { class: 'duel__points' });
+      // Les pastilles sont créées une fois : un point gagné colore la sienne
+      const pastilles = Array.from({ length: pointsVictoire }, () =>
+        el('li', { class: 'duel__point' }),
+      );
+      const points = el('ol', { class: 'duel__points' }, pastilles);
       // Buzzer à l'écran, pour la souris et le tactile (sur téléphone, pas de touche A ni L).
       // Il réagit dès l'appui (pointerdown) : le plus rapide gagne, pas celui qui relâche.
       // Le clic qui suit (ou Entrée sur le bouton) est refusé par la logique : déjà buzzé.
@@ -167,7 +171,7 @@ function demarrer(ctx) {
         el('p', { class: 'duel__nom' }, noms[cote]),
         points,
       );
-      cotes[cote] = { bloc, points };
+      cotes[cote] = { bloc, points, pastilles };
     }
 
     const surtitre = el('p', { class: 'panneau__surtitre' });
@@ -212,12 +216,9 @@ function demarrer(ctx) {
     function dessinerPoints() {
       const p = duel.points;
       for (const cote of COTES) {
-        remplir(
-          cotes[cote].points,
-          Array.from({ length: pointsVictoire }, (_, i) =>
-            el('li', { class: `duel__point${i < p[cote] ? ' duel__point--gagne' : ''}` }),
-          ),
-        );
+        cotes[cote].pastilles.forEach((pastille, i) => {
+          pastille.classList.toggle('duel__point--gagne', i < p[cote]);
+        });
         cotes[cote].points.setAttribute(
           'aria-label',
           `Points de ${noms[cote]} : ${p[cote]} sur ${pointsVictoire}`,
@@ -235,7 +236,8 @@ function demarrer(ctx) {
       reponse.hidden = false;
     }
 
-    function dessiner() {
+    /** `message` : le statut à afficher si la main passe à l'adversaire (sinon « X répond ! »). */
+    function dessiner(message = null) {
       dessinerPoints();
       illustration.etat(duel.phase === 'buzze' ? 'buzze' : null);
       // Les buzzers s'allument quand la question s'affiche
@@ -262,7 +264,7 @@ function demarrer(ctx) {
         actionEntree = null;
         remplir(actions, bouton('Personne ne sait', 'bouton--discret', passer));
       } else if (duel.phase === 'buzze') {
-        remplir(statut, `${noms[duel.main]} répond !`);
+        remplir(statut, message ?? `${noms[duel.main]} répond !`);
         actionEntree = () => valider(true);
         remplir(
           actions,
@@ -288,7 +290,6 @@ function demarrer(ctx) {
         const gagnant = noms[duel.vainqueur];
         remplir(statut, icone('trophy'), `${gagnant} gagne le duel !`);
         cotes[duel.vainqueur].bloc.classList.add('duel__joueur--vainqueur');
-        ctx.sons.duel.victoire();
         actionEntree = null;
         remplir(
           actions,
@@ -302,6 +303,8 @@ function demarrer(ctx) {
             ctx.terminer({ message: `${gagnant} remporte le dernier duel !` }),
           ),
         );
+        // La fanfare une fois l'écran construit
+        ctx.sons.duel.victoire();
         return;
       }
       const suite = derniere
@@ -330,26 +333,25 @@ function demarrer(ctx) {
 
     function buzz(cote) {
       if (!duel.buzzer(cote)) return;
-      ctx.sons.duel.buzz(cote);
       dessiner();
       animer(cotes[cote].bloc, 'duel__joueur--buzz');
+      ctx.sons.duel.buzz(cote);
     }
 
     function valider(bonne) {
       const cote = duel.main;
       const issue = duel.valider(bonne);
       if (issue === null) return;
-      illustration.reagir(issue === 'point' ? 'fete' : 'secousse');
-      if (issue === 'point') {
-        // La victoire a sa propre fanfare (dessinerFin)
-        if (!duel.vainqueur) ctx.sons.duel.bonne();
-        if (ctx.participants.includes(noms[cote])) ctx.scores.ajouter(noms[cote], 1);
-      } else {
-        ctx.sons.duel.mauvaise();
+      if (issue === 'point' && ctx.participants.includes(noms[cote])) {
+        ctx.scores.ajouter(noms[cote], 1);
       }
-      dessiner();
-      if (issue === 'main-adverse') remplir(statut, `Raté ! ${noms[autre(cote)]} peut répondre`);
+      dessiner(issue === 'main-adverse' ? `Raté ! ${noms[autre(cote)]} peut répondre` : null);
       if (issue === 'personne') remplir(statut, 'Raté des deux côtés : pas de point.');
+      // L'illustration et le son une fois le plateau à jour (la victoire a sa propre fanfare,
+      // jouée par dessinerFin)
+      illustration.reagir(issue === 'point' ? 'fete' : 'secousse');
+      if (issue !== 'point') ctx.sons.duel.mauvaise();
+      else if (!duel.vainqueur) ctx.sons.duel.bonne();
     }
 
     function passer() {

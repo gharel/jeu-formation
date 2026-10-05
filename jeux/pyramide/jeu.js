@@ -133,11 +133,27 @@ function demarrer(ctx) {
 
     const carton = el('div', { class: 'pyramide__carton' });
     const consigne = el('p', { class: 'pyramide__consigne' });
-    const etages = el('ol', {
-      class: 'pyramide__etages',
-      'aria-label': 'Points selon le nombre de mots d’indice',
+    // Les étages sont créés une fois par mot : leur changement d'état est animé par la
+    // transition de jeu.css (un étage recréé ne l'aurait jamais jouée)
+    const lignes = Array.from({ length: INDICES_MAX }, (_, i) => {
+      const numero = i + 1;
+      const etatLu = el('span', { class: 'visuellement-cache' });
+      const li = el(
+        'li',
+        { class: `pyramide__etage pyramide__etage--${numero}` },
+        el('span', { class: 'pyramide__nombre' }, pluriel(numero, 'mot')),
+        el('span', { class: 'pyramide__points' }, pluriel(pointsPourIndices(numero), 'point')),
+        etatLu,
+      );
+      return { numero, li, etatLu };
     });
-    const resultat = el('div', { class: 'pyramide__resultat', hidden: true });
+    const etages = el(
+      'ol',
+      { class: 'pyramide__etages', 'aria-label': 'Points selon le nombre de mots d’indice' },
+      lignes.map((l) => l.li),
+    );
+    // L'animation d'apparition se joue d'elle-même quand le résultat cesse d'être caché
+    const resultat = el('div', { class: 'pyramide__resultat apparition', hidden: true });
     const actions = el('div', { class: 'actions-jeu' });
     const raccourci = el('p', { class: 'raccourci' });
     const panneau = el(
@@ -206,9 +222,14 @@ function demarrer(ctx) {
       );
     }
 
+    // Le carton n'a que deux états : caché (dos à l'écran), puis le mot
+    let cartonCache = null;
     function dessinerCarton() {
-      carton.classList.toggle('pyramide__carton--cache', partie.phase === 'cache');
-      if (partie.phase === 'cache') {
+      const cache = partie.phase === 'cache';
+      if (cache === cartonCache) return;
+      cartonCache = cache;
+      carton.classList.toggle('pyramide__carton--cache', cache);
+      if (cache) {
         remplir(
           carton,
           el(
@@ -245,23 +266,13 @@ function demarrer(ctx) {
     const ETATS = { courant: 'en cours', passe: 'raté', gagne: 'trouvé', faute: 'faute' };
 
     function dessinerEtages() {
-      remplir(
-        etages,
-        Array.from({ length: INDICES_MAX }, (_, i) => {
-          const numero = i + 1;
-          const etat = etatEtage(numero);
-          return el(
-            'li',
-            {
-              class: `pyramide__etage pyramide__etage--${numero} pyramide__etage--${etat}`,
-              'aria-current': etat === 'courant' ? 'step' : null,
-            },
-            el('span', { class: 'pyramide__nombre' }, pluriel(numero, 'mot')),
-            el('span', { class: 'pyramide__points' }, pluriel(pointsPourIndices(numero), 'point')),
-            ETATS[etat] ? el('span', { class: 'visuellement-cache' }, ` (${ETATS[etat]})`) : null,
-          );
-        }),
-      );
+      for (const { numero, li, etatLu } of lignes) {
+        const etat = etatEtage(numero);
+        li.className = `pyramide__etage pyramide__etage--${numero} pyramide__etage--${etat}`;
+        if (etat === 'courant') li.setAttribute('aria-current', 'step');
+        else li.removeAttribute('aria-current');
+        etatLu.textContent = ETATS[etat] ? ` (${ETATS[etat]})` : '';
+      }
     }
 
     function dessinerActions() {
@@ -319,20 +330,16 @@ function demarrer(ctx) {
 
     function afficher() {
       if (!partie.afficher()) return;
-      ctx.sons.pyramide.etage(1);
       dessiner();
       animer(carton, 'apparition');
+      ctx.sons.pyramide.etage(1);
       ctx.annoncer(`Mot à faire deviner : ${mot}. 1er mot d’indice : 4 points en jeu.`);
     }
 
     function trouver() {
       const points = partie.trouver();
       if (points === null) return;
-      if (binome) {
-        ctx.scores.ajouter(maitre, points);
-        ctx.scores.ajouter(devineur, points);
-      }
-      ctx.sons.pyramide.trouve(points);
+      if (binome) ctx.scores.ajouterATous([maitre, devineur], points);
       conclure();
     }
 
@@ -340,13 +347,11 @@ function demarrer(ctx) {
       const issue = partie.rater();
       if (issue === null) return;
       if (issue === 'perdu') {
-        ctx.sons.pyramide.perdu();
         conclure();
         return;
       }
-      ctx.sons.pyramide.etage(partie.indice);
       dessiner();
-      animer(etages.children[partie.indice - 1], 'apparition');
+      ctx.sons.pyramide.etage(partie.indice);
       ctx.annoncer(
         `Raté. ${ordinal(partie.indice)} mot d’indice : ${pluriel(partie.points, 'point')} en jeu.`,
       );
@@ -354,13 +359,11 @@ function demarrer(ctx) {
 
     function faute() {
       if (!partie.faute()) return;
-      ctx.sons.pyramide.faute();
       conclure();
     }
 
     function conclure() {
       dessiner();
-      illustration.reagir(partie.issue === 'trouve' ? 'fete' : 'secousse');
       const { issue, indice, points } = partie;
       const verdict = el(
         'p',
@@ -393,9 +396,13 @@ function demarrer(ctx) {
         ),
       );
       resultat.hidden = false;
-      animer(resultat, 'apparition');
       ctx.annoncer(`${verdict.textContent} Le mot était : ${mot}.`);
       focaliser(verdict);
+      // L'illustration et le son une fois le résultat affiché
+      illustration.reagir(issue === 'trouve' ? 'fete' : 'secousse');
+      if (issue === 'trouve') ctx.sons.pyramide.trouve(points);
+      else if (issue === 'faute') ctx.sons.pyramide.faute();
+      else ctx.sons.pyramide.perdu();
     }
 
     function continuer() {

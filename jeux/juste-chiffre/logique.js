@@ -3,10 +3,10 @@
  */
 import { formaterNombre } from '../../assets/js/commun/nombres.js';
 
+/** Verdict d'une proposition fausse (une proposition juste mène directement au bilan). */
 export const MESSAGES = {
   plus: 'C’est plus !',
   moins: 'C’est moins !',
-  juste: 'Juste !',
 };
 
 /**

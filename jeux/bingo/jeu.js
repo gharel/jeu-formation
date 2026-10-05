@@ -137,7 +137,7 @@ function demarrer(ctx) {
     const actions = el('div', { class: 'actions-jeu' });
     const raccourci = el('p', { class: 'raccourci' });
     const historique = el('ol', { class: 'bingo__tires' });
-    const titreTires = el('h3', { class: 'bingo__titre-tires' });
+    const titreTires = el('h3', { class: 'bingo__titre-tires' }, 'Mots tirés (0)');
     const scene = el(
       'div',
       { class: 'panneau bingo__scene', tabindex: '-1' },
@@ -183,7 +183,6 @@ function demarrer(ctx) {
           : [icone('table-cells-large'), 'On joue la grille pleine'],
       );
       remplir(boule, n ? String(n) : icone('circle-question'));
-      boule.classList.toggle('bingo__boule--attente', !n);
 
       if (!courant) {
         definition.hidden = true;
@@ -242,17 +241,13 @@ function demarrer(ctx) {
         ),
       );
       remplir(actions, boutons);
+    }
 
-      const devoiles = motsDevoiles();
-      remplir(titreTires, `Mots tirés (${devoiles.length})`);
-      remplir(
-        historique,
-        [...devoiles]
-          .reverse()
-          .map((m, i) =>
-            el('li', { class: i === 0 ? 'bingo__tire bingo__tire--dernier' : 'bingo__tire' }, m),
-          ),
-      );
+    /** Un mot dévoilé rejoint la liste des mots tirés, en tête, sans refaire toute la liste. */
+    function ajouterAuxTires(texte) {
+      historique.firstElementChild?.classList.remove('bingo__tire--dernier');
+      historique.prepend(el('li', { class: 'bingo__tire bingo__tire--dernier' }, texte));
+      remplir(titreTires, `Mots tirés (${historique.children.length})`);
     }
 
     function tirer() {
@@ -260,21 +255,24 @@ function demarrer(ctx) {
       if (index === null) return;
       const { mot: m, definition: d } = mots[index];
       revele = !d;
-      ctx.sons.bingo.tirage();
-      illustration.melanger();
       remplir(message);
       dessiner();
+      if (revele) ajouterAuxTires(m);
+      // Les animations et le son une fois la page à jour
+      illustration.melanger();
       animer(boule, 'bingo__boule--roule');
       animer(revele ? mot : definition, 'apparition');
+      ctx.sons.bingo.tirage();
       ctx.annoncer(revele ? `Mot tiré : ${m}` : `Définition : ${d}`);
     }
 
     function devoiler() {
       if (revele) return;
       revele = true;
-      ctx.sons.bingo.revele();
       dessiner();
+      ajouterAuxTires(mots[partie.dernier].mot);
       animer(mot, 'apparition');
+      ctx.sons.bingo.revele();
       ctx.annoncer(`Le mot : ${mots[partie.dernier].mot}`);
     }
 
@@ -324,31 +322,33 @@ function demarrer(ctx) {
         animer(message, 'secousse');
         return;
       }
+      // L'annonce n'est plus celle du moment : rien à valider, aucun point à donner
+      if (!partie.valider(annonce)) return;
       const gagnants = await ctx.choisirPrenoms({
         titre: question,
         message: 'Cliquez sur les gagnants, puis Valider.',
         multiple: true,
       });
-      for (const prenom of gagnants) ctx.scores.ajouter(prenom, POINTS[annonce]);
-      if (!partie.valider(annonce)) return;
+      ctx.scores.ajouterATous(gagnants, POINTS[annonce]);
       const qui = gagnants.length ? ` pour ${gagnants.join(', ')}` : '';
       const gain = gagnants.length ? ` : +${pluriel(POINTS[annonce], 'point')}` : '';
       if (annonce === 'bingo') {
-        ctx.sons.bingo.bingo();
+        // L'écran de fin fête la victoire (fanfare et applaudissements) : pas deux fois
         ctx.terminer({
           message: `${cri}${qui}, au bout de ${pluriel(partie.tires.length, 'mot')}.`,
         });
         return;
       }
-      ctx.sons.bingo.ligne();
-      illustration.reagir('fete');
       remplir(
         message,
         icone('trophy'),
         `${cri}${qui}${gain}. On joue maintenant la grille pleine !`,
       );
       dessiner();
+      // L'illustration et le son une fois la page à jour
+      illustration.reagir('fete');
       animer(message, 'apparition');
+      ctx.sons.bingo.ligne();
     }
 
     remplir(

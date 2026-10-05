@@ -1,5 +1,5 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, icone, animer, focaliser } from '../../assets/js/commun/ui.js';
+import { el, remplir, icone, focaliser } from '../../assets/js/commun/ui.js';
 import { creerMancheAPaliers } from '../../assets/js/commun/manche-paliers.js';
 import { adresseImage } from '../../assets/js/commun/images.js';
 import { schema, exemple, transfert } from './exemple.js';
@@ -16,23 +16,45 @@ async function demarrer(ctx) {
   // La loupe balaie l'image pendant que les chiffres s'éteignent
   const illustration = creerIllustrationZoom();
 
+  // Chaque image est décodée à l'avance, pendant la manche précédente : une grande capture
+  // d'écran ne fige plus l'écran au moment de s'afficher
+  const pretes = new Map();
+  function preparerImage(i) {
+    if (i >= images.length || pretes.has(i)) return pretes.get(i);
+    const photo = el('img', {
+      class: 'zoom__image',
+      src: adresses[i] ?? '',
+      alt: 'Image mystère, très agrandie',
+      draggable: 'false',
+      decoding: 'async',
+    });
+    photo.decode().catch(() => {});
+    pretes.set(i, photo);
+    return photo;
+  }
+  // La première aussi, avant de commencer
+  await preparerImage(0)
+    ?.decode()
+    .catch(() => {});
+
   function afficherImage() {
     manche?.detruire();
     const { image, reponse, explication } = images[index];
-    const photo = el('img', {
-      class: 'zoom__image',
-      src: adresses[index] ?? '',
-      alt: 'Image mystère, très agrandie',
-      draggable: 'false',
-    });
+    const photo = preparerImage(index);
+    pretes.delete(index);
+    preparerImage(index + 1);
     photo.style.transformOrigin = origine(image.focus);
     const cadre = el('div', { class: 'zoom__cadre' }, photo);
-    photo.addEventListener('load', () => {
+    // Les proportions du cadre : tout de suite si l'image est prête, sinon à son chargement
+    const poserRatio = () => {
       if (photo.naturalWidth && photo.naturalHeight) {
         cadre.style.setProperty('--ratio', String(photo.naturalWidth / photo.naturalHeight));
       }
-    });
-    const resultat = el('div', { class: 'zoom__resultat', hidden: true });
+    };
+    if (photo.complete) poserRatio();
+    else photo.addEventListener('load', poserRatio, { once: true });
+    // L'animation d'apparition se joue d'elle-même quand le résultat cesse d'être caché
+    const resultat = el('div', { class: 'zoom__resultat apparition', hidden: true });
 
     function zoomer(valeur) {
       photo.style.transform = `scale(${echelle(valeur, { max })})`;
@@ -45,7 +67,6 @@ async function demarrer(ctx) {
       surEtat: (etat) => illustration.etat(etat === 'enCours' ? 'cherche' : null),
       surFin({ trouve, prenom, points }) {
         ctx.zone.querySelector('.panneau')?.classList.add('manche-finie');
-        illustration.reagir(trouve ? 'fete' : 'secousse');
         zoomer(0);
         photo.alt = `Image entière : ${reponse}`;
         const dernier = index === images.length - 1;
@@ -95,7 +116,8 @@ async function demarrer(ctx) {
           ),
         );
         resultat.hidden = false;
-        animer(resultat, 'apparition');
+        // L'illustration réagit une fois l'écran de réponse construit
+        illustration.reagir(trouve ? 'fete' : 'secousse');
         ctx.annoncer(`La réponse était : ${reponse}`);
         focaliser(titre);
       },
