@@ -50,7 +50,7 @@
   box-shadow: var(--ombre);
   transition:
     background-color 0.2s ease,
-    transform 0.2s ease;
+    box-shadow 0.2s ease;
 }
 
 /* Gros buzzer rond, avec la touche du clavier dessus. Éteint tant que la question n'est pas
@@ -133,11 +133,15 @@
   background: var(--jaune);
 }
 
+/* La carte ne grossit pas (elle occupe toute la hauteur : elle cacherait « Quitter la partie ») ;
+   un contour épais montre qui a la main */
 .duel__joueur--main {
   color: var(--sur-accent);
   background: var(--accent);
   border-color: var(--bleu-nuit);
-  transform: scale(1.04);
+  box-shadow:
+    0 0 0 5px var(--jaune),
+    var(--ombre);
 }
 
 .duel__joueur--main .duel__nom {
@@ -149,20 +153,17 @@
   border-color: var(--bleu-nuit);
 }
 
-.duel__joueur--buzz {
+/* Le buzz secoue le gros bouton rond, qui reste dans sa carte */
+.duel__joueur--buzz .duel__buzzer {
   animation: buzz 0.5s ease;
 }
 
 @keyframes buzz {
-  0%,
-  100% {
-    transform: scale(1.04);
-  }
   30% {
-    transform: scale(1.12) rotate(-2deg);
+    transform: scale(1.12) rotate(-6deg);
   }
   60% {
-    transform: scale(1.08) rotate(2deg);
+    transform: scale(1.06) rotate(5deg);
   }
 }
 
