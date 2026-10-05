@@ -81,6 +81,8 @@ img {
 .puce__retirer .icone,
 .intro__icone .icone,
 .carte-jeu__icone .icone,
+.carte-thematique__icone .icone,
+.apercu-jeu__icone .icone,
 .podium__medaille .icone {
   margin-inline-end: 0;
 }

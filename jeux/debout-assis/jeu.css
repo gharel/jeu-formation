@@ -69,6 +69,11 @@
   line-height: 1.1;
 }
 
+/* Icône seule, centrée dans la tuile : pas d'espace à droite */
+.debout__icone .icone {
+  margin: 0;
+}
+
 .debout__geste {
   font-size: clamp(1.2rem, 2vw, 1.6rem);
   font-weight: 900;
