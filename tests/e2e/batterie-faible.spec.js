@@ -85,3 +85,33 @@ test('R et F tapées comme lettres ne déclenchent ni la roue ni le plein écran
   await expect(page.getByRole('dialog')).toHaveCount(0);
   await expect(page.getByRole('button', { name: 'R, déjà proposée' })).toBeDisabled();
 });
+
+// Recréer le mot et le clavier à chaque lettre relançait l'animation de toutes les cases déjà
+// trouvées, et alourdissait l'écran de réussite (gel signalé sur un PC de salle)
+test('une lettre jouée met à jour les cases et les touches, sans les recréer', async ({ page }) => {
+  await ouvrirJeu(page, 'batterie-faible');
+  await lancerPartie(page);
+  // Mot 1 : CLAVIER. On marque la case du C et la touche A, qui doivent rester les mêmes
+  await page
+    .locator('.lettres__case')
+    .first()
+    .evaluate((c) => (c.dataset.temoin = 'case'));
+  await page.getByRole('button', { name: 'A', exact: true }).evaluate((t) => {
+    t.dataset.temoin = 'touche';
+  });
+  await taper(page, 'c');
+  await taper(page, 'a');
+  await taper(page, 'z');
+  await expect(page.locator('[data-temoin="case"]')).toHaveText('C');
+  await expect(page.locator('[data-temoin="case"]')).toHaveClass(/lettres__case--trouvee/);
+  await expect(page.locator('[data-temoin="touche"]')).toHaveClass(/lettres__touche--bonne/);
+  await expect(page.locator('[data-temoin="touche"]')).toBeDisabled();
+  await expect(page.getByRole('meter')).toHaveAttribute('aria-valuenow', '6');
+
+  // Le mot entier : les cases déjà trouvées restent, les autres se remplissent
+  await page.getByLabel('Quelqu’un pense avoir trouvé le mot entier ?').fill('clavier');
+  await page.getByRole('button', { name: 'Proposer' }).click();
+  await expect(page.locator('#cadre').getByText('Mot découvert !')).toBeVisible();
+  await expect(page.locator('[data-temoin="case"]')).toHaveText('C');
+  await expect(page.locator('.lettres__case--trouvee')).toHaveCount(7);
+});

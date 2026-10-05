@@ -16,25 +16,31 @@ import {
 const RANGEES_CLAVIER = ['AZERTYUIOP', 'QSDFGHJKLM', 'WXCVBN'];
 
 function creerBatterie(crans) {
-  const segments = el('div', { class: 'batterie__segments' });
+  // Les crans sont créés une fois : ils changent de couleur en douceur (transition de jeu.css)
+  const segments = Array.from({ length: crans }, () => el('span', { class: 'batterie__cran' }));
   const libelle = el('p', { class: 'batterie__libelle' });
   const element = el(
     'div',
     { class: 'batterie', role: 'meter', 'aria-valuemin': '0', 'aria-valuemax': String(crans) },
-    el('div', { class: 'batterie__corps' }, segments, el('span', { class: 'batterie__borne' })),
+    el(
+      'div',
+      { class: 'batterie__corps' },
+      el('div', { class: 'batterie__segments' }, segments),
+      el('span', { class: 'batterie__borne' }),
+    ),
     libelle,
   );
+  let affiches = null;
   return {
     element,
     afficher(restants) {
+      if (restants === affiches) return;
+      affiches = restants;
       const niveau = restants / crans;
       const etat = niveau > 0.5 ? 'pleine' : niveau > 0.25 ? 'moyenne' : 'faible';
-      remplir(
-        segments,
-        Array.from({ length: crans }, (_, i) =>
-          el('span', { class: `batterie__cran${i < restants ? ` batterie__cran--${etat}` : ''}` }),
-        ),
-      );
+      segments.forEach((segment, i) => {
+        segment.className = `batterie__cran${i < restants ? ` batterie__cran--${etat}` : ''}`;
+      });
       element.setAttribute('aria-valuenow', String(restants));
       element.setAttribute(
         'aria-label',
@@ -74,17 +80,53 @@ function demarrer(ctx) {
     };
     rafraichirTour();
 
-    const affichageMot = el('div', {
-      class: 'lettres__mot',
-      role: 'group',
-      'aria-label': 'Mot à découvrir',
+    // Les cases sont créées une fois par mot, puis seules celles qui changent sont modifiées :
+    // une case trouvée ne s'anime qu'une fois, à sa découverte
+    const casesMot = cases.map((c) => {
+      if (c.lettre) return el('span', { class: 'lettres__case' });
+      return c.affichage === ' '
+        ? el('span', { class: 'lettres__espace' })
+        : el('span', { class: 'lettres__signe' }, c.affichage);
     });
+    const affichageMot = el(
+      'div',
+      { class: 'lettres__mot', role: 'group', 'aria-label': 'Mot à découvrir' },
+      casesMot,
+    );
     const batterie = creerBatterie(crans);
     // Le téléphone suit sa batterie : il sourit, transpire, puis s'éteint
     const illustration = creerIllustrationBatterie();
     const ratees = el('p', { class: 'lettres__ratees' });
     const message = el('p', { class: 'lettres__message', 'aria-live': 'polite' });
-    const clavier = el('div', { class: 'lettres__clavier', 'aria-label': 'Clavier' });
+    // Le clavier aussi : une touche jouée change de couleur et se désactive
+    const touches = new Map();
+    const clavier = el(
+      'div',
+      { class: 'lettres__clavier', 'aria-label': 'Clavier' },
+      RANGEES_CLAVIER.map((rangee) =>
+        el(
+          'div',
+          { class: 'lettres__rangee' },
+          [...rangee].map((lettre) => {
+            const touche = el(
+              'button',
+              {
+                type: 'button',
+                class: 'lettres__touche',
+                'aria-label': lettre,
+                onclick: () => {
+                  jouer(lettre);
+                  saisie.focus();
+                },
+              },
+              lettre,
+            );
+            touches.set(lettre, touche);
+            return touche;
+          }),
+        ),
+      ),
+    );
     const saisie = el('input', {
       id: 'lettres-saisie',
       class: 'champ__controle lettres__saisie',
@@ -129,29 +171,18 @@ function demarrer(ctx) {
       clavier,
       formulaireMot,
     );
-    const resultat = el('div', { class: 'lettres__resultat', hidden: true });
+    // L'animation d'apparition se joue d'elle-même quand le résultat cesse d'être caché
+    const resultat = el('div', { class: 'lettres__resultat apparition', hidden: true });
 
     function dessinerMot(revele = false) {
-      remplir(
-        affichageMot,
-        cases.map((c) => {
-          if (!c.lettre) {
-            return el(
-              'span',
-              { class: c.affichage === ' ' ? 'lettres__espace' : 'lettres__signe' },
-              c.affichage === ' ' ? '' : c.affichage,
-            );
-          }
-          const trouvee = etat.proposees.includes(c.lettre);
-          return el(
-            'span',
-            {
-              class: `lettres__case${trouvee ? ' lettres__case--trouvee' : ''}${revele && !trouvee ? ' lettres__case--manquante' : ''}`,
-            },
-            trouvee || revele ? c.affichage : '',
-          );
-        }),
-      );
+      cases.forEach((c, i) => {
+        if (!c.lettre) return;
+        const trouvee = etat.proposees.includes(c.lettre);
+        const classe = `lettres__case${trouvee ? ' lettres__case--trouvee' : ''}${revele && !trouvee ? ' lettres__case--manquante' : ''}`;
+        if (casesMot[i].className === classe) return;
+        casesMot[i].className = classe;
+        casesMot[i].textContent = trouvee || revele ? c.affichage : '';
+      });
       const visibles = cases.map((c) =>
         !c.lettre ? c.affichage : etat.proposees.includes(c.lettre) || revele ? c.affichage : '_',
       );
@@ -159,33 +190,13 @@ function demarrer(ctx) {
     }
 
     function dessinerClavier() {
-      remplir(
-        clavier,
-        RANGEES_CLAVIER.map((rangee) =>
-          el(
-            'div',
-            { class: 'lettres__rangee' },
-            [...rangee].map((lettre) => {
-              const jouee = etat.proposees.includes(lettre);
-              const bonne = jouee && cases.some((c) => c.lettre === lettre);
-              return el(
-                'button',
-                {
-                  type: 'button',
-                  class: `lettres__touche${jouee ? (bonne ? ' lettres__touche--bonne' : ' lettres__touche--mauvaise') : ''}`,
-                  disabled: jouee || fini,
-                  'aria-label': jouee ? `${lettre}, déjà proposée` : lettre,
-                  onclick: () => {
-                    jouer(lettre);
-                    saisie.focus();
-                  },
-                },
-                lettre,
-              );
-            }),
-          ),
-        ),
-      );
+      for (const [lettre, touche] of touches) {
+        const jouee = etat.proposees.includes(lettre);
+        const bonne = jouee && cases.some((c) => c.lettre === lettre);
+        touche.className = `lettres__touche${jouee ? (bonne ? ' lettres__touche--bonne' : ' lettres__touche--mauvaise') : ''}`;
+        touche.disabled = jouee || fini;
+        touche.setAttribute('aria-label', jouee ? `${lettre}, déjà proposée` : lettre);
+      }
     }
 
     function dessinerEtat() {
@@ -196,9 +207,11 @@ function demarrer(ctx) {
       dessinerClavier();
     }
 
+    /** Mot découvert ou batterie à plat : affiche le résultat et renvoie true. */
     function verifierFin() {
       if (estDecouvert(cases, etat)) conclure(true);
       else if (batterieVide(etat, crans)) conclure(false);
+      return fini;
     }
 
     function jouer(saisieLettre) {
@@ -211,6 +224,9 @@ function demarrer(ctx) {
         return;
       }
       etat = coup.etat;
+      if (coup.resultat === 'mauvaise') animer(batterie.element, 'secousse');
+      // Le coup qui finit le mot passe directement au résultat : pas de dessin ni de son en double
+      if (verifierFin()) return;
       illustration.reagir(coup.resultat === 'bonne' ? 'hop' : 'secousse');
       if (coup.resultat === 'bonne') {
         ctx.sons.batterie.lettre(coup.occurrences);
@@ -218,11 +234,9 @@ function demarrer(ctx) {
       } else {
         ctx.sons.batterie.cran();
         remplir(message, `Pas de « ${coup.lettre} » : un cran de batterie en moins.`);
-        animer(batterie.element, 'secousse');
       }
       dessinerMot();
       dessinerEtat();
-      verifierFin();
     }
 
     function conclure(trouve) {
@@ -233,8 +247,6 @@ function demarrer(ctx) {
       dessinerMot(!trouve);
       dessinerEtat();
       illustration.reagir(trouve ? 'fete' : 'secousse');
-      if (trouve) ctx.sons.fanfare(3);
-      else ctx.sons.batterie.aPlat();
       const dernier = index === mots.length - 1;
       const titre = el(
         'p',
@@ -275,7 +287,9 @@ function demarrer(ctx) {
         ),
       );
       resultat.hidden = false;
-      animer(resultat, 'apparition');
+      // Les sons une fois l'écran construit
+      if (trouve) ctx.sons.fanfare(3);
+      else ctx.sons.batterie.aPlat();
       ctx.annoncer(`${trouve ? 'Mot découvert' : 'Batterie à plat'} : ${mot}`);
       focaliser(titre);
     }
@@ -291,16 +305,11 @@ function demarrer(ctx) {
       const essai = proposerMot(cases, etat, saisieMot.value);
       etat = essai.etat;
       saisieMot.value = '';
-      if (essai.juste) {
-        dessinerMot();
-        conclure(true);
-        return;
-      }
+      if (!essai.juste) animer(batterie.element, 'secousse');
+      if (verifierFin()) return;
       ctx.sons.batterie.cran();
       remplir(message, 'Ce n’est pas le bon mot : un cran de batterie en moins.');
-      animer(batterie.element, 'secousse');
       dessinerEtat();
-      verifierFin();
     });
 
     remplir(
