@@ -181,7 +181,13 @@ export function creerRoue(
   svg.append(disque, moyeu);
   const pointeur = document.createElement('div');
   pointeur.className = 'roue__pointeur';
-  conteneur.append(pointeur, svg);
+  // Le plateau rogne les coins du SVG qui tourne (vides : le disque est rond). Sans lui, une roue
+  // arrêtée en biais dépasse de son cadre dès que la page se remet en page : la fenêtre (ou la
+  // page) s'agrandit, et un ascenseur apparaît.
+  const plateau = document.createElement('div');
+  plateau.className = 'roue__plateau';
+  plateau.append(svg);
+  conteneur.append(pointeur, plateau);
 
   // C'est tout le SVG qui tourne, pas le groupe des segments : le navigateur fait alors tourner
   // l'image de la roue sans la redessiner à chaque image (le moyeu, rond, tourne sans que ça se

@@ -635,8 +635,14 @@
   box-shadow: 0 6px 14px rgb(14 16 39 / 25%);
 }
 
-.roue__svg {
+/* Rogne les coins du SVG tourné : une roue arrêtée en biais dépassait de son cadre et agrandissait
+   la fenêtre (un rognage rectangulaire ne coûte rien à l'animation) */
+.roue__plateau {
   position: relative;
+  overflow: hidden;
+}
+
+.roue__svg {
   display: block;
   width: 100%;
   height: auto;
@@ -667,10 +673,13 @@
 }
 
 .roue-resultat {
-  min-height: 3.5rem;
+  /* Une ligne réservée, vide pendant la rotation : la fenêtre garde sa hauteur (sinon elle
+     grandissait à chaque résultat, et son ascenseur apparaissait ou sautait) */
+  min-height: 1.2em;
   margin: 1rem 0 0.5rem;
   font-size: clamp(2rem, 4vw, 2.8rem);
   font-weight: 900;
+  line-height: 1.2;
   text-align: center;
   color: var(--bleu-nuit);
 }
@@ -679,12 +688,13 @@
   width: min(94vw, 560px);
 }
 
+/* La fenêtre tient dans l'écran sans ascenseur : la roue prend la hauteur laissée par le titre,
+   le résultat et les boutons (environ 20rem) */
 .dialogue--roue .roue {
-  width: min(100%, 420px, 50vh);
+  width: min(100%, 420px, 50vh, calc(92vh - 20rem));
 }
 
 .dialogue--roue .roue-resultat {
-  min-height: 3rem;
   margin: 0.5rem 0 0.25rem;
 }
 

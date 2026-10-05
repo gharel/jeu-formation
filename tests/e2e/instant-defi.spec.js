@@ -89,3 +89,25 @@ test('quitter la partie arrête le chrono', async ({ page }) => {
   await expect(page.locator('.chrono')).toHaveCount(0);
   expect(erreurs).toEqual([]);
 });
+
+test('la fenêtre de la roue garde sa taille au tirage, sans ascenseur', async ({ page }) => {
+  await ouvrirJeu(page, 'instant-defi', { prenoms: ['Ana', 'Bob', 'Chloé'] });
+  await lancerPartie(page);
+  await page.getByRole('button', { name: 'Désigner', exact: true }).click();
+  const dialogue = page.getByRole('dialog');
+  const taille = () =>
+    dialogue.evaluate((d) => ({
+      hauteur: d.scrollHeight,
+      hauteurVisible: d.clientHeight,
+      largeur: d.scrollWidth,
+      largeurVisible: d.clientWidth,
+    }));
+  const avant = await taille();
+  // Le prénom tiré s'affiche dans la ligne gardée pour lui : la fenêtre ne grandit pas
+  await dialogue.getByRole('button', { name: 'Lancer la roue' }).click();
+  await expect(dialogue.locator('.roue-resultat')).not.toBeEmpty();
+  const apres = await taille();
+  expect(apres).toEqual(avant);
+  expect(apres.hauteur).toBeLessThanOrEqual(apres.hauteurVisible);
+  expect(apres.largeur).toBeLessThanOrEqual(apres.largeurVisible);
+});
