@@ -120,3 +120,29 @@ test('Le Coffre-fort : temps écoulé, les réponses manquantes s’affichent', 
   await expect(manquantes).toHaveText(['La corbeille', '8', 'Le mot de passe', '1989']);
   expect(erreurs).toEqual([]);
 });
+
+// Le gestionnaire de l'indice continuait après le bilan et remplaçait la touche Entrée
+test('Le Coffre-fort : un indice qui vide le chrono mène au bilan, Entrée au classement', async ({
+  page,
+}) => {
+  const erreurs = surveillerErreurs(page);
+  await figerHorloge(page);
+  await ouvrirJeu(page, 'coffre-fort');
+  await arreterHorloge(page);
+  await page.getByRole('button', { name: /Préparer le contenu/ }).click();
+  await page.getByLabel('Temps pour ouvrir le coffre').fill('2');
+  await page.getByLabel('Prix d’un indice').fill('300');
+  await page.getByRole('button', { name: 'Enregistrer' }).click();
+  await lancerPartie(page);
+  const cadre = page.locator('#cadre');
+  await page.getByRole('button', { name: /Lancer le compte à rebours/ }).click();
+  await repondre(page, 'Esc');
+  await expect(cadre.getByText('Serrure 2 sur 5')).toBeVisible();
+
+  await page.getByRole('button', { name: /Indice/ }).click();
+  await expect(cadre.getByText('Temps écoulé !')).toBeVisible();
+  await expect(page.getByRole('timer')).toHaveText('0:00');
+  await page.keyboard.press('Enter');
+  await expect(page.getByRole('heading', { name: /Partie terminée/ })).toBeVisible();
+  expect(erreurs).toEqual([]);
+});

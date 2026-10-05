@@ -91,6 +91,12 @@
   animation: battement 0.8s ease-in-out infinite alternate;
 }
 
+/* En pause, tout s'immobilise : la serrure en cours et le chrono ne battent plus */
+.coffre--pause .coffre__serrure--courante,
+.coffre--pause .chrono__temps {
+  animation-play-state: paused;
+}
+
 .coffre__serrure--ouverte {
   color: var(--blanc);
   background: var(--succes);

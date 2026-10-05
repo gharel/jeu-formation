@@ -124,7 +124,13 @@ function demarrer(ctx) {
       coutIndiceMs: coutIndice * 1000,
     });
     let fini = false;
-    minuteur = creerMinuteur({ duree: dureeMinutes * 60, sons: ctx.sons, surFin: tempsEcoule });
+    // Temps écoulé : l'alarme du coffre seule, sans le son de fin du minuteur par-dessus
+    minuteur = creerMinuteur({
+      duree: dureeMinutes * 60,
+      sons: ctx.sons,
+      surFin: tempsEcoule,
+      sonFin: false,
+    });
 
     const serrures = el('ol', { class: 'coffre__serrures', 'aria-label': 'Serrures' });
     const ecart = el('p', { class: 'coffre__ecart', 'aria-hidden': 'true' });
@@ -249,11 +255,12 @@ function demarrer(ctx) {
       const juste = ouvre(proposition, enigmes[coffre.ouvertes].reponse);
       const issue = coffre.essayer(juste);
       if (issue === 'erreur') {
-        ctx.sons.coffre.erreur();
         if (penalite) {
           minuteur.ajuster(-penalite * 1000);
           montrerEcart(-penalite * 1000);
         }
+        // La pénalité a vidé le chrono : le bilan est déjà affiché, rien d'autre à faire
+        if (fini) return;
         remplir(
           message,
           el(
@@ -274,9 +281,11 @@ function demarrer(ctx) {
             'La réponse était bonne : ouvrir quand même',
           ),
         );
+        saisie.select();
+        // Les animations et le son une fois la page à jour
         illustration.reagir('secousse');
         animer(illustration.element, 'coffre-ill--molette');
-        saisie.select();
+        ctx.sons.coffre.erreur();
         return;
       }
       serrureOuverte(issue);
@@ -297,8 +306,6 @@ function demarrer(ctx) {
         coffreOuvert();
         return;
       }
-      ctx.sons.coffre.serrure();
-      illustration.reagir('hop');
       remplir(
         message,
         el(
@@ -310,6 +317,8 @@ function demarrer(ctx) {
       );
       ctx.annoncer(`Serrure ${coffre.ouvertes} ouverte. Serrure suivante.`);
       afficherEnigme();
+      illustration.reagir('hop');
+      ctx.sons.coffre.serrure();
     }
 
     function acheterIndice() {
@@ -319,14 +328,16 @@ function demarrer(ctx) {
         minuteur.ajuster(-prix);
         montrerEcart(-prix);
       }
-      ctx.sons.coffre.indice();
+      // L'indice a vidé le chrono : le bilan est affiché, et Entrée doit mener au classement
+      if (fini) return;
       remplir(indice, icone('lightbulb'), `Indice : ${enigmes[coffre.ouvertes].indice}`);
       indice.hidden = false;
-      animer(indice, 'apparition');
       // Le bouton « ouvrir quand même » n'a plus cours
       remplir(message);
       dessinerOutils();
       saisie.focus();
+      animer(indice, 'apparition');
+      ctx.sons.coffre.indice();
     }
 
     function basculerPause() {
@@ -353,13 +364,10 @@ function demarrer(ctx) {
     function coffreOuvert() {
       const restant = minuteur.restant();
       terminerCoffre();
-      ctx.sons.coffre.ouvert();
       const ancien = lire(cle);
       const record = estNouveauRecord(ancien, restant);
       if (record) ecrire(cle, restant);
-      panneau.classList.add('coffre--ouvert');
       illustration.etat('ouvert');
-      illustration.reagir('fete');
       afficherBilan(
         el('p', { class: 'coffre__titre-bilan' }, icone('unlock'), 'Coffre ouvert !'),
         el(
@@ -375,14 +383,15 @@ function demarrer(ctx) {
               `Le record reste à ${formaterDuree(ancien)} d’avance.`,
             ),
       );
+      // La fête et la fanfare une fois le bilan affiché
+      illustration.reagir('fete');
+      ctx.sons.coffre.ouvert();
       ctx.annoncer(`Coffre ouvert avec ${formaterDuree(restant)} d’avance !`);
     }
 
     function tempsEcoule() {
       if (fini) return;
       terminerCoffre();
-      ctx.sons.coffre.alarme();
-      illustration.reagir('secousse');
       const restantes = enigmes.slice(coffre.ouvertes);
       afficherBilan(
         el(
@@ -407,6 +416,8 @@ function demarrer(ctx) {
           ),
         ),
       );
+      illustration.reagir('secousse');
+      ctx.sons.coffre.alarme();
       ctx.annoncer('Temps écoulé : le coffre reste fermé.');
     }
 

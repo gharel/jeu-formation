@@ -34,9 +34,6 @@ export function creerCoffre({ nombre, penaliteMs = 30000, coutIndiceMs = 60000 }
   }
 
   return {
-    get nombre() {
-      return nombre;
-    },
     /** Serrures ouvertes, c'est aussi l'index de la serrure en cours. */
     get ouvertes() {
       return ouvertes;
