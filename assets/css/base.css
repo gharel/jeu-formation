@@ -141,6 +141,13 @@ img {
   background: var(--accent);
 }
 
+/* À gauche, le retour à l'accueil des mini-jeux ; à droite, le logo mène au site de Skazy
+   Formation (nouvel onglet : la partie en cours reste ouverte) */
+.bandeau__accueil {
+  flex: none;
+  text-decoration: none;
+}
+
 .bandeau__logo {
   flex: none;
   display: block;
@@ -150,6 +157,47 @@ img {
 .bandeau__logo img {
   width: 133px;
   height: auto;
+}
+
+/* Écran étroit : accueil, titre et logo sur la première ligne, les boutons en dessous */
+@media (max-width: 700px) {
+  .bandeau__logo {
+    order: 1;
+  }
+
+  .bandeau .bandeau__actions {
+    order: 2;
+    flex-basis: 100%;
+    justify-content: flex-start;
+  }
+
+  .bandeau .bandeau__actions:empty {
+    display: none;
+  }
+}
+
+@media (max-width: 640px) {
+  .bandeau {
+    gap: 0.75rem;
+  }
+
+  /* Sur téléphone, la maison suffit : le mot reste lu par les lecteurs d'écran */
+  .bandeau__accueil {
+    padding: 0.45rem 0.6rem;
+  }
+
+  .bandeau__accueil-texte {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .bandeau__logo img {
+    width: 84px;
+  }
 }
 
 .bandeau__titre {

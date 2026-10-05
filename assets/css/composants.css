@@ -17,10 +17,15 @@
   margin: 0 auto;
 }
 
+.heros__lien-logo {
+  display: inline-block;
+  margin-bottom: 2rem;
+  line-height: 0;
+}
+
 .heros__logo {
   width: 200px;
   height: auto;
-  margin-bottom: 2rem;
 }
 
 .heros h1 {

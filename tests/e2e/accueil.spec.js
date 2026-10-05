@@ -19,7 +19,11 @@ test('l’accueil présente un jeu par carte, avec un lien qui fonctionne', asyn
 
   await page.getByRole('link', { name: JEUX[0].titre }).click();
   await expect(page.getByRole('heading', { level: 1, name: JEUX[0].titre })).toBeVisible();
-  await page.getByRole('link', { name: /retour aux mini-jeux/ }).click();
+  // Bandeau : l'accueil à gauche, le logo à droite mène au site de Skazy Formation
+  const logo = page.getByRole('link', { name: 'Site de Skazy Formation (nouvel onglet)' });
+  await expect(logo).toHaveAttribute('href', 'https://formation.skazy.nc');
+  await expect(logo).toHaveAttribute('target', '_blank');
+  await page.getByRole('link', { name: 'Accueil', exact: true }).click();
   await expect(page.locator('.carte-jeu')).toHaveCount(JEUX.length);
   expect(erreurs).toEqual([]);
 });

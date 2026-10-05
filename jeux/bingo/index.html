@@ -21,16 +21,29 @@
   <body data-jeu="bingo" data-couleur="anis">
     <a class="lien-evitement" href="#cadre">Aller au jeu</a>
     <header class="bandeau">
-      <a class="bandeau__logo" href="../../">
+      <a
+        class="bouton-bandeau bandeau__accueil"
+        href="../../"
+        title="Retour à l’accueil des mini-jeux"
+      >
+        <i class="fa-solid fa-house icone" aria-hidden="true"></i>
+        <span class="bandeau__accueil-texte">Accueil</span>
+      </a>
+      <h1 class="bandeau__titre">Bingo</h1>
+      <div class="bandeau__actions" id="actions"></div>
+      <a
+        class="bandeau__logo"
+        href="https://formation.skazy.nc"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
         <img
           src="../../assets/img/logo-skazy-formation-blanc.svg"
-          alt="Skazy Formation&nbsp;: retour aux mini-jeux"
+          alt="Site de Skazy Formation (nouvel onglet)"
           width="133"
           height="44"
         />
       </a>
-      <h1 class="bandeau__titre">Bingo</h1>
-      <div class="bandeau__actions" id="actions"></div>
     </header>
     <main id="cadre" class="cadre" tabindex="-1">
       <noscript>Ce jeu a besoin de JavaScript pour fonctionner.</noscript>
