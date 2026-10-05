@@ -21,7 +21,8 @@ export const LONGUEUR_TITRE = 80;
 export const LONGUEUR_DESCRIPTION = 300;
 const CLE_SOURCES = 'sources-contenus';
 
-const texte = (valeur, longueur) =>
+/** Texte d'une ligne : espaces resserrés, longueur limitée ('' si ce n'est pas un texte). */
+export const texteCourt = (valeur, longueur) =>
   typeof valeur === 'string' ? valeur.replace(/\s+/g, ' ').trim().slice(0, longueur) : '';
 
 /** Fichier exporté : `contenus` = { slug: { reglages, elements } }. */
@@ -32,8 +33,8 @@ export function preparerJeuDeDonnees(
   return {
     format: FORMAT_DONNEES,
     version: VERSION_DONNEES,
-    titre: texte(titre, LONGUEUR_TITRE) || 'Mes contenus',
-    description: texte(description, LONGUEUR_DESCRIPTION),
+    titre: texteCourt(titre, LONGUEUR_TITRE) || 'Mes contenus',
+    description: texteCourt(description, LONGUEUR_DESCRIPTION),
     exporteLe: maintenant.toISOString(),
     jeux: contenus,
   };
@@ -51,6 +52,11 @@ export function lireJeuDeDonnees(contenuFichier, slugsConnus) {
   } catch {
     throw new Error('Ce fichier n’est pas un jeu de données valide (JSON illisible).');
   }
+  return lireDonnees(donnees, slugsConnus);
+}
+
+/** Comme lireJeuDeDonnees(), pour un JSON déjà lu (une thématique d'un fichier groupé). */
+export function lireDonnees(donnees, slugsConnus) {
   let jeuxBruts;
   if (donnees?.format === FORMAT_DONNEES) {
     jeuxBruts = donnees.jeux;
@@ -71,8 +77,8 @@ export function lireJeuDeDonnees(contenuFichier, slugsConnus) {
     throw new Error('Ce jeu de données ne contient le contenu d’aucun des mini-jeux.');
   }
   return {
-    titre: texte(donnees.titre, LONGUEUR_TITRE),
-    description: texte(donnees.description, LONGUEUR_DESCRIPTION),
+    titre: texteCourt(donnees.titre, LONGUEUR_TITRE),
+    description: texteCourt(donnees.description, LONGUEUR_DESCRIPTION),
     jeux,
     inconnus,
   };
@@ -94,7 +100,7 @@ export function lireSources() {
   if (!brut || typeof brut !== 'object' || Array.isArray(brut)) return {};
   return Object.fromEntries(
     Object.entries(brut)
-      .map(([slug, titre]) => [slug, texte(titre, LONGUEUR_TITRE)])
+      .map(([slug, titre]) => [slug, texteCourt(titre, LONGUEUR_TITRE)])
       .filter(([, titre]) => titre),
   );
 }
@@ -105,7 +111,7 @@ export function sourceDe(slug) {
 }
 
 export function noterSource(slug, titre) {
-  const propre = texte(titre, LONGUEUR_TITRE);
+  const propre = texteCourt(titre, LONGUEUR_TITRE);
   const sources = lireSources();
   if (propre) sources[slug] = propre;
   else delete sources[slug];

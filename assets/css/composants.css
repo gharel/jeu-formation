@@ -2522,6 +2522,96 @@
   padding: 0.45em 0.9em;
 }
 
+.carte-thematique__statut {
+  margin: 0.25rem 0 0;
+}
+
+/* Modifier, JSON, Supprimer : une ligne de petits boutons sous Charger et Aperçu */
+.carte-thematique__outils {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.carte-thematique .carte-thematique__outils .bouton {
+  padding: 0.3em 0.7em;
+  font-size: 0.9rem;
+}
+
+.bloc-thematiques__outils {
+  margin-top: 1rem;
+}
+
+/* Fenêtre d'une thématique : assez large pour les icônes sur deux lignes (elle tient en 1280 × 720) */
+.dialogue--fiche {
+  width: min(94vw, 760px);
+}
+
+.choix-icones__grille {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(2.7rem, 1fr));
+  gap: 0.35rem;
+}
+
+.choix-icone {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1;
+  font-size: 1.25rem;
+  color: var(--bleu-nuit);
+  background: var(--blanc);
+  border: 2px solid var(--bord);
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.choix-icone .icone {
+  margin: 0;
+}
+
+.choix-icone:has(input:checked) {
+  background: var(--accent-clair);
+  border-color: var(--bleu-nuit);
+}
+
+.choix-icone:has(input:focus-visible) {
+  outline: 3px solid var(--bleu);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) {
+  .choix-icone:hover {
+    background: var(--accent-clair);
+  }
+}
+
+/* Consultation d'une thématique : son nom, puis Modifier et Charger */
+.consultation__thematique {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1rem;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+  background: var(--fond);
+  border-radius: var(--rayon);
+}
+
+.consultation__thematique-textes {
+  flex: 1 1 16rem;
+}
+
+.consultation__thematique-titre {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--bleu-nuit);
+}
+
+.consultation__thematique .champ__aide {
+  margin: 0;
+}
+
 .bloc-consultation__choix {
   max-width: 32rem;
 }

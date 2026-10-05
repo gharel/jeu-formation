@@ -11,7 +11,7 @@ Un site statique de mini-jeux **projetés au vidéoprojecteur** pour casser la m
 - Chaque jeu a un écran d'accueil où l'on saisit les prénoms, avec une roue pour désigner quelqu'un.
 - Il n'y a ni serveur ni framework ni étape de build : HTML, CSS et JavaScript natifs (ES modules).
 - Le contenu de l'animateur est gardé dans le navigateur : localStorage pour le texte, IndexedDB pour les images.
-- Des thématiques prêtes à jouer (IA, Google Docs, Google Sheets, Microsoft 365, Facebook) se chargent dans tous les jeux depuis la page « Les contenus » ; le groupe et les contenus s'échangent en fichiers JSON.
+- Des thématiques prêtes à jouer (IA, Google Docs, Google Sheets, Microsoft 365, Facebook) se chargent dans tous les jeux depuis la page « Les contenus » ; l'animateur en crée, les modifie ou les supprime (gardées dans le navigateur). Le groupe, les contenus et les thématiques s'échangent en fichiers JSON.
 - La charte graphique est celle de Skazy Formation (https://formation.skazy.nc).
 
 ## Commandes
@@ -40,7 +40,7 @@ Les pages ne s'ouvrent pas en double-cliquant sur le fichier (`file://`), car le
 ```
 index.html                     Accueil : une carte par jeu (générée depuis assets/js/jeux.js), liens « Le groupe » et « Les contenus »
 groupe/index.html              Page « Le groupe » : nom, prénoms, infos, plan de salle, scores, fichier JSON (assets/js/groupe.js)
-contenus/index.html            Page « Les contenus » : thématiques, jeu de données JSON, consultation et modification (assets/js/contenus.js)
+contenus/index.html            Page « Les contenus » : thématiques (charger, créer, modifier, supprimer, JSON), jeu de données JSON, consultation et modification (assets/js/contenus.js)
 contenus/thematiques/*.json    Une thématique prête à jouer par fichier (jeu de données)
 assets/css/charte.css          Couleurs (et teintes ajoutées pour les jeux), police Georama, couleur de chaque jeu (data-couleur)
 assets/css/base.css            Mise en page, bandeau, boutons, formulaires, dialogues
@@ -52,6 +52,8 @@ assets/js/commun/
   editeur-contenu.js           Éditeur généré à partir du schéma de contenu du jeu
   contenu.js                   Schéma : valeurs par défaut, liste vide, nettoyage, validation, import/export, consultation
   jeux-de-donnees.js           Jeu de données (plusieurs jeux dans un fichier) : export, lecture, source de chaque contenu
+  catalogue-thematiques.js     Thématiques livrées + celles de l'animateur (stockage) : liste, création, copie modifiée, suppression, export groupé, import
+  fiche-thematique.js          Fenêtre « Créer / Modifier une thématique » : titre, description, icône, point de départ
   fichier-groupe.js            Le groupe en JSON : export lisible, import tolérant avec avertissements
   fichiers.js                  Téléchargement d'un JSON et nom du fichier (« skazy-groupe-mairie-2026-10-04.json »)
   participants.js              Liste des prénoms partagée entre les jeux (un homonyme est numéroté : « Marie 2 ») + une info par personne (passion, film…)
@@ -91,6 +93,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
   accueil.spec.js              Pour chaque jeu de jeux.js : lien, accueil, « Qui joue ? », éditeur masqué, axe
   contenu.spec.js              Export / import JSON d'un jeu, contenu d'exemple
   contenus.spec.js             Page Les contenus : thématique chargée, aperçu, export et import du jeu de données
+  thematiques.spec.js          Thématiques : créer, modifier, retirer un jeu, charger, supprimer, rétablir, export groupé et import
   mobile.spec.js               Téléphone tactile : pas de plein écran, icônes centrées, buzzers au doigt, plan au doigt
   groupe.spec.js               Page Groupe : placement (toucher, glisser, ordre), îlots, fenêtre Groupe en partie, fichier JSON
   joueurs.spec.js              Qui joue ? : tout le groupe, au clic, au hasard ; absences ; retardataire ajouté depuis le jeu
@@ -105,7 +108,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
 - **Sécurité.** Tout texte saisi ou importé passe par `el()` ou `textContent`, jamais par `innerHTML`. Un JSON importé passe par `nettoyerContenu()`, qui ne garde que les clés et les types prévus par le schéma.
 - **Mot de passe d'accès.** Il n'est jamais écrit en clair : ni dans le code, ni dans les tests, ni dans un message de commit. Seule son empreinte est dans `acces.js`. Les tests e2e ouvrent les pages déverrouillées (`storageState` dans `playwright.config.js`) ; `acces.spec.js` teste l'écran sans le mot de passe.
 - **Groupe.** Le nom, les prénoms, les infos, les absences, le plan et les scores passent par `groupe.js` (`creerGroupe()`), qui les garde cohérents avec la liste. Le prénom sert d'identifiant (unique, sans tenir compte des majuscules) : un homonyme reçoit un numéro (« Marie 2 ») par `ajouterPrenoms()`, qui dit aussi quel prénom a été retenu. Un fichier importé passe par `lireImportGroupe()` puis `groupe.remplacer()`. Un jeu ne voit que les joueurs choisis dans « Qui joue ? » (`ctx.participants`), parmi les présents ; jamais d'accès direct aux clés `participants`, `infos-participants`, `nom-groupe`, `plan-salle` ou `scores-groupe`. Un jeu donne ses points par `ctx.scores.ajouter()`, ou `ctx.scores.ajouterATous()` pour plusieurs personnes à la fois (une seule écriture) : ils vont aussi dans les scores du groupe (`groupe.ajouterPoints()`, relus dans le stockage avant chaque écriture), gardés d'un jeu à l'autre. Toute nouvelle page à publier doit être ajoutée à `.github/workflows/publier.yml` et à `validate:html`.
-- **Contenus et thématiques.** Le contenu d'un jeu est rangé sous `cleContenu(slug)` ; un jeu de données (thématique ou import) passe par `lireJeuDeDonnees()` puis `contenuDepuisDonnees()` (nettoyage avec le schéma du jeu, réglages de l'animateur gardés). La source affichée (« Google Sheets ») est notée par `noterSource()` et oubliée dès que l'animateur enregistre un contenu modifié.
+- **Contenus et thématiques.** Le contenu d'un jeu est rangé sous `cleContenu(slug)` ; un jeu de données (thématique ou import) passe par `lireJeuDeDonnees()` puis `contenuDepuisDonnees()` (nettoyage avec le schéma du jeu, réglages de l'animateur gardés). La source affichée (« Google Sheets ») est notée par `noterSource()` et oubliée dès que l'animateur enregistre un contenu modifié. Les thématiques de l'animateur passent par `catalogue-thematiques.js` (clé `thematiques`) : une thématique créée a un slug `perso-…`, une thématique livrée modifiée est une copie sous son propre slug (le fichier livré n'est jamais réécrit), une thématique livrée supprimée est seulement masquée. Une thématique ne garde que les questions des jeux sans image (ni réglages, ni Zoom mystère) ; tout import passe par `lireImportThematiques()` puis `associerImport()`, et le contenu de chaque jeu par `nettoyerContenu()`.
 - **Stockage.** On passe toujours par `stockage.js` (localStorage, clés préfixées par `skazy-jeux:`) ou `images.js` (IndexedDB), jamais d'appel direct. Les erreurs de stockage ne doivent jamais faire planter un jeu.
 - **Hasard.** On utilise `ctx.hasard` (ou `hasardDePage()`), pas `Math.random()` directement, pour que `?graine=N` rende les tests reproductibles.
 - **Raccourcis clavier.** On passe par `ecouterClavier()` : il ignore les touches pendant la saisie et quand un dialogue est ouvert. Il faut retirer l'écoute dans la fonction de nettoyage renvoyée par `demarrer()`. Touches réservées : `R` (roue) et `F` (plein écran). Tout ce qui se fait au clavier doit aussi se faire au doigt (un téléphone n'a pas de clavier) : un bouton à l'écran pour chaque touche. Les aides sur les touches vont dans un `.raccourci` (ligne d'aide) ou un `.aide-clavier` (« (Entrée) » dans un bouton) : `base.css` les masque sur téléphone, comme le bouton Plein écran.
@@ -130,7 +133,7 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
 
 ## Ajouter une thématique
 
-1. Ajouter l'entrée dans `assets/js/thematiques.js` (slug, titre, icône Font Awesome).
+1. Ajouter l'entrée dans `assets/js/thematiques.js` (slug, titre, icône Font Awesome). L'icône doit être dans `ICONES_THEMATIQUE` (`catalogue-thematiques.js`), le choix d'icône des thématiques de l'animateur. Une thématique créée sur la page « Les contenus » puis exportée (bouton « JSON ») donne un bon point de départ.
 2. Écrire `contenus/thematiques/<slug>.json` : `format: 'skazy-jeux-donnees'`, `version: 1`, le même `titre`, une `description`, et dans `jeux` le contenu de chaque jeu sans image (`{ elements: […] }`, sans `reglages` : ceux de l'animateur sont gardés). Chaque élément a toutes les clés de son schéma (`jeux/<slug>/exemple.js`), dans l'ordre, `""` pour un champ facultatif vide.
 3. Des faits stables et sûrs seulement (années, limites documentées), rien qui change chaque année (prix, nombre d'utilisateurs). Typographie : ’ « » …, et une espace ordinaire avant ? ! ; : (le site la rend insécable).
 4. `tests/unit/thematiques.test.js` vérifie le fichier : contenu complet et valide pour chaque jeu, rien de perdu au nettoyage, typographie, pas de doublon.

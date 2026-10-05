@@ -92,8 +92,9 @@ test('on consulte une thématique avant de la charger, puis on revient aux exemp
   await expect(page.getByRole('heading', { name: 'Consulter les questions' })).toBeFocused();
   const pyramide = apercuDe(page, 'pyramide');
   await expect(pyramide.locator('summary')).toContainText('12 mots prêts');
+  // Zoom mystère n'entre dans aucune thématique : il lui faut des captures d'écran
   await expect(apercuDe(page, 'zoom-mystere').locator('summary')).toContainText(
-    'Pas dans cette thématique',
+    'Pas dans les thématiques',
   );
   await pyramide.locator('summary').click();
   await expect(pyramide.locator('.apercu-element')).toHaveCount(12);
@@ -238,12 +239,21 @@ test('on modifie les questions d’un jeu sur place, depuis la consultation', as
   expect(erreurs).toEqual([]);
 });
 
-test('les thématiques et les exemples se consultent sans être modifiés', async ({ page }) => {
+test('les exemples se consultent sans être modifiés, une thématique se modifie', async ({
+  page,
+}) => {
   await ouvrirContenus(page);
-  await page.getByLabel('Afficher', { exact: true }).selectOption('facebook');
+  await page.getByLabel('Afficher', { exact: true }).selectOption('exemples');
   await apercuDe(page, 'motus').locator('summary').click();
   await expect(apercuDe(page, 'motus').getByRole('button', { name: /Modifier/ })).toHaveCount(0);
   await expect(
     apercuDe(page, 'motus').getByRole('link', { name: 'Ouvrir Motus numérique' }),
+  ).toBeVisible();
+  // Dans une thématique, on modifie ses questions (pas celles du jeu)
+  await page.getByLabel('Afficher', { exact: true }).selectOption('facebook');
+  await expect(
+    apercuDe(page, 'motus').getByRole('button', {
+      name: 'Modifier le contenu de Motus numérique dans la thématique',
+    }),
   ).toBeVisible();
 });

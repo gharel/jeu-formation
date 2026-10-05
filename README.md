@@ -67,10 +67,33 @@ Sur l'écran d'accueil de chaque jeu, on peut :
 La page **Les contenus** (bouton sur l'accueil, ou « Charger une thématique » dans chaque jeu) rassemble les questions de tous les jeux :
 
 - **5 thématiques prêtes à jouer**, chargées en un clic dans les 14 jeux sans image (Zoom mystère garde ses captures) : **Initiation à l'IA**, **Google Docs**, **Google Sheets**, **Microsoft 365** et **Facebook**. Les réglages de l'animateur (durées, points…) sont conservés. « Revenir aux exemples » remet le contenu livré avec les jeux ;
+- **vos propres thématiques** : « Créer une thématique » (titre, description, icône) part des contenus actuels, des exemples, d'une copie d'une thématique ou de questions vides ; ses questions se modifient ensuite jeu par jeu dans la consultation (« Modifier », « Retirer », « Ajouter à la thématique »), sans toucher aux jeux tant qu'on ne la charge pas. Une thématique livrée se modifie de la même façon (« Rétablir l'originale » annule) ou se supprime (« Rétablir les thématiques supprimées » la fait revenir). Tout est gardé dans ce navigateur ;
+- **les thématiques en JSON** : « JSON » sur une carte exporte une thématique, « Exporter toutes les thématiques » les écrit toutes dans un seul fichier, et « Importer des thématiques… » les recharge : le fichier groupé, ou plusieurs fichiers choisis d'un coup (une thématique déjà présente, de même nom ou de même identifiant, est remplacée ; les autres s'ajoutent) ;
 - **un jeu de données JSON** : « Exporter tous les contenus » écrit les questions des 15 jeux dans un seul fichier (avec un titre), « Importer un jeu de données… » le recharge. L'export d'un seul jeu s'importe aussi ici, et un jeu de données s'importe aussi dans un seul jeu (il en prend sa part) ;
-- **la consultation** des questions de chaque jeu, réponses floutées tant qu'on ne les affiche pas, et l'aperçu d'une thématique avant de la charger. Le bouton **Modifier** ouvre sur place l'éditeur du jeu (le même que dans le jeu) pour changer ses questions sans quitter la page.
+- **la consultation** des questions de chaque jeu, réponses floutées tant qu'on ne les affiche pas, et l'aperçu d'une thématique avant de la charger. Le bouton **Modifier** ouvre sur place l'éditeur du jeu (le même que dans le jeu) pour changer ses questions sans quitter la page : celles du jeu (contenus actuels) ou celles de la thématique affichée.
 
-Dans chaque jeu, une étiquette indique la thématique chargée (« Google Sheets ») ; elle disparaît dès que l'animateur retouche et enregistre le contenu. Les thématiques sont des fichiers JSON dans `contenus/thematiques/` : pour en ajouter une, voir [AGENTS.md](AGENTS.md).
+Dans chaque jeu, une étiquette indique la thématique chargée (« Google Sheets ») ; elle disparaît dès que l'animateur retouche et enregistre le contenu. Les thématiques livrées sont des fichiers JSON dans `contenus/thematiques/` : pour en ajouter une au site, voir [AGENTS.md](AGENTS.md).
+
+Fichier de toutes les thématiques (« Exporter toutes les thématiques ») :
+
+```json
+{
+  "format": "skazy-jeux-thematiques",
+  "version": 1,
+  "exporteLe": "2026-10-05T08:00:00.000Z",
+  "thematiques": [
+    {
+      "slug": "perso-excel-debutant",
+      "titre": "Excel débutant",
+      "description": "Les formules et les graphiques.",
+      "icone": "table-cells",
+      "jeux": { "motus": { "elements": [{ "mot": "CELLULE", "definition": "" }] } }
+    }
+  ]
+}
+```
+
+Une thématique seule (bouton « JSON ») est un jeu de données, avec en plus son `slug` et son `icone` : elle s'importe aussi dans « Importer un jeu de données… ».
 
 La touche `F` passe en plein écran (bouton masqué sur téléphone, où il ne sert à rien). Chaque jeu a son illustration, dessinée aux couleurs de la charte, qui réagit à la partie : la flèche se plante dans la cible, le téléphone transpire quand la batterie faiblit, la porte du coffre s'ouvre… Chaque jeu a aussi son habillage sonore façon jeu télévisé : notes des lettres de Motus, cloche des étages de Pyramide, gong du « Stop », buzzers du duel, tic-tac de la patate, cliquetis des serrures, cliquetis de la roue, fanfares et applaudissements. Ce sont des sons originaux générés par le navigateur, sans fichier ni droits d'auteur. Le bouton Son du bandeau les coupe.
 Les icônes viennent de Font Awesome Free, hébergé dans le projet (fonctionne hors ligne).

@@ -6,6 +6,7 @@ import { THEMES } from '../../assets/js/commun/participants.js';
 import { CONSIGNES } from '../../jeux/debout-assis/logique.js';
 import { DISPOSITIONS } from '../../assets/js/commun/salle.js';
 import { THEMATIQUES } from '../../assets/js/thematiques.js';
+import { ICONES_THEMATIQUE } from '../../assets/js/commun/catalogue-thematiques.js';
 
 // Vitest est lancé depuis la racine du projet
 const racine = process.cwd();
@@ -58,6 +59,7 @@ describe('icônes', () => {
       ...THEMES.map((t) => t.icone),
       ...DISPOSITIONS.map((d) => d.icone),
       ...THEMATIQUES.map((t) => t.icone),
+      ...ICONES_THEMATIQUE.map((i) => i.icone),
       ...Object.values(CONSIGNES).flatMap((c) => [c.vrai.icone, c.faux.icone]),
     ]);
     for (const fichier of sources) {
