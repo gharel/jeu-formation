@@ -19,12 +19,6 @@ export function consigne(nom) {
   return CONSIGNES[nom] ?? CONSIGNES.debout;
 }
 
-/** « Debout = VRAI · Assis = FAUX » */
-export function legende(nom) {
-  const c = consigne(nom);
-  return `${c.vrai.geste} = VRAI · ${c.faux.geste} = FAUX`;
-}
-
 /**
  * Mode survie : retire les éliminés. Si tout le monde s'est trompé, personne n'est éliminé
  * (sinon la partie s'arrêterait sans gagnant).

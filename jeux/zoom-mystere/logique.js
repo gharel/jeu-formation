@@ -3,17 +3,17 @@
  */
 
 export const ZOOMS = { fort: 16, moyen: 10, leger: 6 };
+const NOMBRE_PALIERS = 5;
 const ZOOM_DERNIER_PALIER = 1.6;
 
 /**
  * Agrandissement pour une valeur de palier : `max` à 5 points, 1,6 au dernier palier,
  * 1 (image entière) quand la manche est finie. Progression géométrique (dézoom régulier à l'œil).
  */
-export function echelle(valeur, { nombre = 5, max = ZOOMS.moyen, min = ZOOM_DERNIER_PALIER } = {}) {
+export function echelle(valeur, { max = ZOOMS.moyen } = {}) {
   if (valeur <= 0) return 1;
-  if (nombre <= 1) return max;
-  const avancement = (nombre - Math.min(valeur, nombre)) / (nombre - 1);
-  return max * (min / max) ** avancement;
+  const avancement = (NOMBRE_PALIERS - Math.min(valeur, NOMBRE_PALIERS)) / (NOMBRE_PALIERS - 1);
+  return max * (ZOOM_DERNIER_PALIER / max) ** avancement;
 }
 
 /** Point fixe du zoom en CSS (« 15.6% 12.3% »). */

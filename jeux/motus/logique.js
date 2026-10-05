@@ -4,8 +4,8 @@
 
 export const NOMBRE_MOTS = 5;
 export const NOMBRE_ESSAIS = 6;
-export const LONGUEUR_MIN = 4;
-export const LONGUEUR_MAX = 10;
+const LONGUEUR_MIN = 4;
+const LONGUEUR_MAX = 10;
 
 /** « Réseau » → « RESEAU », « cœur » → « COEUR ». Seules les lettres A à Z sont gardées. */
 export function normaliserMot(texte) {

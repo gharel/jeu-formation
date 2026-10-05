@@ -3,7 +3,7 @@
  * préparée par l'animateur (« … le menu pour enregistrer un fichier »).
  */
 
-export const DUREE_PAR_DEFAUT = 30;
+const DUREE_PAR_DEFAUT = 30;
 
 export const AMORCES = [
   { valeur: 'trouver30', texte: '30 secondes pour trouver…' },
@@ -22,13 +22,13 @@ export const OPTIONS_AMORCE = [
  * Durée du chrono lue dans le texte : « 30 secondes », « 45 s », « 1 minute », « 2 min »,
  * « 1 min 30 ». Sans durée lisible, on prend la valeur par défaut.
  */
-export function dureeDepuisAmorce(texte, defaut = DUREE_PAR_DEFAUT) {
+export function dureeDepuisAmorce(texte) {
   const t = String(texte ?? '').toLowerCase();
   const minutes = t.match(/(\d+)\s*(?:minutes?|min|mn)\b\s*(\d+)?/);
   if (minutes) return Number(minutes[1]) * 60 + Number(minutes[2] ?? 0);
   const secondes = t.match(/(\d+)\s*(?:s|sec|secondes?)\b/);
   if (secondes) return Number(secondes[1]);
-  return defaut;
+  return DUREE_PAR_DEFAUT;
 }
 
 /** Assemble le défi : « 30 secondes pour trouver » + « le menu… », sans les points de suspension. */

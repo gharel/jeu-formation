@@ -68,16 +68,8 @@
   min-width: 0;
 }
 
-.pyramide__suivi-texte .pyramide__verdict {
-  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
-}
-
 .pyramide__etages {
   order: 3;
-}
-
-.pyramide__resultat {
-  order: 4;
 }
 
 .pyramide .actions-jeu {
@@ -278,7 +270,7 @@
 
 .pyramide__verdict {
   margin: 0;
-  font-size: clamp(1.5rem, 3vw, 2.2rem);
+  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
   font-weight: 900;
   color: var(--bleu-nuit);
 }

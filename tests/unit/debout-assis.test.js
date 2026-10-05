@@ -1,17 +1,13 @@
 import { describe, it, expect } from 'vitest';
-import {
-  consigne,
-  legende,
-  appliquerEliminations,
-  gagnant,
-} from '../../jeux/debout-assis/logique.js';
+import { consigne, appliquerEliminations, gagnant } from '../../jeux/debout-assis/logique.js';
 import { schema, exemple } from '../../jeux/debout-assis/exemple.js';
 import { nettoyerContenu, validerContenu } from '../../assets/js/commun/contenu.js';
 
 describe('Debout ou assis ?', () => {
   it('donne la consigne debout ou main levée', () => {
-    expect(legende('debout')).toBe('Debout = VRAI · Assis = FAUX');
-    expect(legende('main')).toBe('Main levée = VRAI · Main baissée = FAUX');
+    const geste = (nom, sens) => consigne(nom)[sens].geste;
+    expect([geste('debout', 'vrai'), geste('debout', 'faux')]).toEqual(['Debout', 'Assis']);
+    expect([geste('main', 'vrai'), geste('main', 'faux')]).toEqual(['Main levée', 'Main baissée']);
     expect(consigne('inconnue')).toBe(consigne('debout'));
   });
 

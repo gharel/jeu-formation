@@ -57,9 +57,6 @@ export function creerManche(reponses, { erreursMax = 3 } = {}) {
     get erreurs() {
       return erreurs;
     },
-    get erreursMax() {
-      return erreursMax;
-    },
     get finie() {
       return issue !== null;
     },

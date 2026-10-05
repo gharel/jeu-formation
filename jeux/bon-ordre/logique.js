@@ -4,15 +4,15 @@
  */
 import { melanger } from '../../assets/js/commun/hasard.js';
 
-export const LETTRES = 'ABCDEFGH';
+const LETTRES = 'ABCDEFGH';
 export const ETAPES_MIN = 3;
 export const ETAPES_MAX = 7;
 
 /**
  * Cartes mélangées : [{ lettre: 'A', etape: 2 }, …] où `etape` est la position correcte.
- * On évite de tomber par hasard sur le bon ordre.
+ * On évite de tomber par hasard sur le bon ordre. `hasard` : ctx.hasard (?graine=).
  */
-export function creerCartes(nombre, hasard = Math.random) {
+export function creerCartes(nombre, hasard) {
   const positions = Array.from({ length: nombre }, (_, i) => i);
   let ordre = melanger(positions, hasard);
   for (let essai = 0; essai < 20 && nombre > 1 && ordre.every((p, i) => p === i); essai++) {
