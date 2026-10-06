@@ -23,8 +23,8 @@
           "definition": "La suite de diapositives que l’on projette en plein écran avec PowerPoint."
         },
         {
-          "mot": "SONDAGE",
-          "definition": "Ce que l’on crée avec Forms pour recueillir l’avis d’un groupe."
+          "mot": "TEAMS",
+          "definition": "L’application pour discuter, s’appeler et se réunir en visio entre collègues."
         }
       ]
     },
@@ -100,11 +100,11 @@
           "anecdote": "C’est 2 puissance 20. Avant Excel 2007, une feuille s’arrêtait à 65 536 lignes."
         },
         {
-          "question": "Combien de colonnes compte une feuille de calcul dans Excel ?",
-          "reponse": 16384,
-          "unite": "colonnes",
-          "marge": 10,
-          "anecdote": "C’est 2 puissance 14. Avant Excel 2007, une feuille s’arrêtait à 256 colonnes."
+          "question": "En quelle année Bill Gates et Paul Allen ont-ils fondé Microsoft ?",
+          "reponse": 1975,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "L’entreprise naît aux États-Unis. Son nom mêle « micro-ordinateur » et « software », logiciel en anglais."
         }
       ]
     },
@@ -210,7 +210,7 @@
     "qui-suis-je": {
       "elements": [
         {
-          "reponse": "Le tableur Excel",
+          "reponse": "Excel",
           "indices": [
             "Je suis né en 1985, d’abord sur les ordinateurs Macintosh.",
             "Je transforme vos chiffres en graphiques en quelques clics.",
@@ -220,7 +220,7 @@
           ]
         },
         {
-          "reponse": "L’application Teams",
+          "reponse": "Teams",
           "indices": [
             "J’ai remplacé Skype Entreprise dans les entreprises.",
             "Chez moi, on discute, on s’appelle et on travaille sur les mêmes fichiers.",
@@ -230,7 +230,7 @@
           ]
         },
         {
-          "reponse": "L’application Outlook",
+          "reponse": "Outlook",
           "indices": [
             "Je gère aussi vos contacts et vos tâches.",
             "Je peux vous rappeler un rendez-vous quelques minutes avant qu’il commence.",
@@ -240,7 +240,7 @@
           ]
         },
         {
-          "reponse": "Le mode Présentateur",
+          "reponse": "Mode Présentateur",
           "indices": [
             "Le public ne me voit jamais, et pourtant je suis là du début à la fin.",
             "J’affiche vos notes, que les spectateurs ne voient pas.",
@@ -250,7 +250,7 @@
           ]
         },
         {
-          "reponse": "La double authentification",
+          "reponse": "Double authentification",
           "indices": [
             "Je suis une protection en plus pour votre compte Microsoft.",
             "Même si quelqu’un vole votre mot de passe, je peux l’empêcher d’entrer.",
@@ -267,79 +267,74 @@
           "question": "Quel raccourci clavier enregistre le document en cours ?",
           "reponse": "Ctrl + S"
         },
-        {
-          "question": "Quel raccourci clavier lance l’impression ?",
-          "reponse": "Ctrl + P"
-        },
-        {
-          "question": "Dans Excel, quel raccourci écrit la date du jour dans une cellule ?",
-          "reponse": "Ctrl + ;"
-        },
+        { "question": "Quel raccourci clavier lance l’impression ?", "reponse": "Ctrl + P" },
         {
           "question": "Dans PowerPoint, quelle touche lance le diaporama depuis la première diapositive ?",
           "reponse": "F5"
-        },
-        {
-          "question": "Dans PowerPoint, quel raccourci lance le diaporama à partir de la diapositive affichée ?",
-          "reponse": "Maj + F5"
-        },
-        {
-          "question": "Comment s’appelle la toute dernière colonne d’une feuille Excel ?",
-          "reponse": "XFD"
-        },
-        {
-          "question": "Quelle application de Microsoft 365 est un bloc-notes numérique, organisé en sections et en pages ?",
-          "reponse": "OneNote"
-        },
-        {
-          "question": "Quelle application de Microsoft 365 sert à créer des sites d’équipe pour partager des documents ?",
-          "reponse": "SharePoint"
-        },
-        {
-          "question": "Quelle application de Microsoft 365 organise les tâches d’une équipe sur un tableau de cartes ?",
-          "reponse": "Planner"
         },
         {
           "question": "Dans Word, quel onglet du ruban contient les boutons Gras, Italique et Souligné ?",
           "reponse": "Accueil"
         },
         {
-          "question": "Quel caractère tape-t-on avant un nom pour mentionner un collègue dans un commentaire ?",
-          "reponse": "L’arobase @"
+          "question": "Dans Word, quel onglet du ruban permet d’ajouter une image ?",
+          "reponse": "Insertion"
         },
         {
-          "question": "En quelle année Office 365 a-t-il été renommé Microsoft 365 ?",
-          "reponse": "2020"
+          "question": "Quelle application de Microsoft 365 sert à envoyer et à recevoir des e-mails ?",
+          "reponse": "Outlook"
+        },
+        {
+          "question": "Quelle application de Microsoft 365 sert à se réunir en visio ?",
+          "reponse": "Teams"
+        },
+        {
+          "question": "Quelle application de Microsoft 365 est un bloc-notes numérique, organisé en sections et en pages ?",
+          "reponse": "OneNote"
+        },
+        {
+          "question": "Quelle application de Microsoft 365 sert à créer des questionnaires et des sondages ?",
+          "reponse": "Forms"
+        },
+        {
+          "question": "Comment s’appelle l’espace de stockage en ligne de Microsoft 365 ?",
+          "reponse": "OneDrive"
+        },
+        {
+          "question": "Comment s’appelle l’assistant d’IA de Microsoft 365 ?",
+          "reponse": "Copilot"
+        },
+        {
+          "question": "Quel caractère tape-t-on avant un nom pour mentionner un collègue dans un commentaire ?",
+          "reponse": "Arobase (@)"
         }
       ]
     },
     "pyramide": {
       "elements": [
         { "mot": "Word" },
+        { "mot": "Excel" },
         { "mot": "PowerPoint" },
+        { "mot": "Teams" },
+        { "mot": "Outlook" },
         { "mot": "Diapositive" },
         { "mot": "Cellule" },
-        { "mot": "Formule" },
         { "mot": "Calendrier" },
-        { "mot": "Copier-coller" },
-        { "mot": "Visioconférence" },
-        { "mot": "Pièce jointe" },
-        { "mot": "Graphique" },
-        { "mot": "Signature" },
-        { "mot": "Webcam" }
+        { "mot": "Webcam" },
+        { "mot": "Signature" }
       ]
     },
     "batterie-faible": {
       "elements": [
         {
-          "mot": "Traitement de texte",
+          "mot": "Tableur",
           "theme": "Les familles de logiciels",
-          "definition": "C’est la famille de Word : écrire, mettre en page et imprimer des documents."
+          "definition": "C’est la famille d’Excel : des lignes, des colonnes et des calculs faits à votre place."
         },
         {
-          "mot": "Mise en forme conditionnelle",
-          "theme": "Excel",
-          "definition": "Elle colore automatiquement les cellules selon des règles, par exemple en rouge sous zéro."
+          "mot": "Correcteur",
+          "theme": "Word",
+          "definition": "Il souligne en rouge les mots qu’il ne reconnaît pas."
         },
         {
           "mot": "Zone de texte",
@@ -352,9 +347,9 @@
           "definition": "Le dossier où arrivent vos nouveaux courriels."
         },
         {
-          "mot": "Copie carbone invisible",
+          "mot": "Pièce jointe",
           "theme": "Le courriel",
-          "definition": "C’est le sens de Cci : ces destinataires reçoivent le message sans que les autres le sachent."
+          "definition": "Le fichier envoyé avec un courriel, signalé par un trombone."
         },
         {
           "mot": "Lever la main",
@@ -362,14 +357,14 @@
           "definition": "Le bouton qui signale, pendant une réunion, que vous voulez prendre la parole."
         },
         {
-          "mot": "Lien de partage",
-          "theme": "Le partage",
-          "definition": "L’adresse à envoyer pour donner accès à un fichier, en lecture seule ou en modification."
+          "mot": "Partage",
+          "theme": "OneDrive",
+          "definition": "Donner accès à un fichier à un collègue, en lecture seule ou en modification."
         },
         {
-          "mot": "Correcteur orthographique",
-          "theme": "Word",
-          "definition": "Il souligne en rouge les mots qu’il ne reconnaît pas."
+          "mot": "Corbeille",
+          "theme": "OneDrive",
+          "definition": "Un fichier supprimé y reste un certain temps : on peut encore le restaurer."
         }
       ]
     },
@@ -418,14 +413,14 @@
           "explication": "La touche F7 marche dans Word, Excel et PowerPoint. Sur certains ordinateurs portables, il faut aussi appuyer sur la touche Fn."
         },
         {
-          "carteA": "F12",
-          "carteB": "Enregistrer sous",
-          "explication": "Pratique pour faire une copie d’un fichier sous un autre nom ou à un autre endroit, sans toucher à l’original."
+          "carteA": "Ctrl + N",
+          "carteB": "Nouveau document",
+          "explication": "N comme « new », nouveau en anglais : un document vierge s’ouvre, dans Word comme dans Excel ou PowerPoint."
         },
         {
-          "carteA": "Alt + Entrée",
-          "carteB": "Retour à la ligne dans une cellule",
-          "explication": "Dans Excel, la touche Entrée seule valide la cellule et descend d’une ligne : Alt + Entrée ajoute une ligne à l’intérieur."
+          "carteA": "Ctrl + A",
+          "carteB": "Tout sélectionner",
+          "explication": "A comme « all », tout en anglais : pratique pour changer d’un coup la police de tout un document."
         },
         {
           "carteA": "#####",
@@ -552,12 +547,12 @@
         },
         {
           "enigme": "On clique encore sur mon image pour enregistrer un document, alors que plus personne ne m’utilise depuis longtemps. Qui suis-je ?",
-          "reponse": "La disquette",
+          "reponse": "Disquette",
           "indice": "Carrée et en plastique, je rangeais vos fichiers bien avant les clés USB."
         },
         {
           "enigme": "Pendant vos congés, je réponds à votre place à chaque courriel reçu, pour annoncer la date de votre retour. Qui suis-je ?",
-          "reponse": "La réponse automatique / Le message d’absence / Le gestionnaire d’absence / Le répondeur",
+          "reponse": "Réponse automatique / Message d’absence / Gestionnaire d’absence / Répondeur",
           "indice": "On m’active dans Outlook avant de partir : ensuite, je réponds sans que vous ayez à lever le petit doigt."
         },
         {
@@ -566,9 +561,9 @@
           "indice": "Comme en mathématiques, Excel fait les multiplications avant les additions."
         },
         {
-          "enigme": "Dernière serrure : grâce à moi, Word écrit la même lettre à cent personnes et place tout seul le bon nom et la bonne adresse sur chacune, à partir d’une liste. Qui suis-je ?",
-          "reponse": "Le publipostage / Le mailing / La fusion et publipostage",
-          "indice": "Mon nom évoque la poste et les envois en grand nombre."
+          "enigme": "Dernière serrure : un code à quatre chiffres, l’année où Office 365 a pris le nom de Microsoft 365.",
+          "reponse": "2020 / deux mille vingt",
+          "indice": "Neuf ans après le lancement d’Office 365, en 2011."
         }
       ]
     },

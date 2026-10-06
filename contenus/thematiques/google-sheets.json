@@ -22,10 +22,7 @@
           "mot": "ONGLET",
           "definition": "En bas de l’écran, il permet de passer d’une feuille à l’autre du fichier."
         },
-        {
-          "mot": "PLAGE",
-          "definition": "Un groupe de cellules voisines, désigné par sa première et sa dernière cellule."
-        }
+        { "mot": "SOMME", "definition": "La fonction qui additionne toute une série de nombres." }
       ]
     },
     "instant-defi": {
@@ -43,7 +40,7 @@
         {
           "amorce": "expliquer20",
           "amorcePerso": "",
-          "fin": "… à quoi sert le signe $ dans une référence comme $A$1"
+          "fin": "… à quoi sert le signe = au début d’une formule"
         },
         {
           "amorce": "retrouver45",
@@ -126,9 +123,9 @@
           "explication": "Chacun voit les modifications des autres en direct, avec une couleur par personne."
         },
         {
-          "affirmation": "En français, on sépare les arguments d’une fonction par des virgules.",
+          "affirmation": "En français, on sépare les éléments d’une fonction par des virgules, comme =MAX(A1,B1).",
           "reponse": "faux",
-          "explication": "La virgule sert déjà aux décimales (3,5) : on sépare donc les arguments par des points-virgules."
+          "explication": "La virgule sert déjà aux décimales (3,5) : on les sépare donc par des points-virgules, =MAX(A1;B1)."
         },
         {
           "affirmation": "Un filtre supprime les lignes qui ne correspondent pas au critère choisi.",
@@ -156,9 +153,9 @@
           "explication": "Pendant la saisie de la formule, il suffit de cliquer sur l’autre onglet, puis sur la cellule voulue."
         },
         {
-          "affirmation": "Télécharger au format .csv garde toutes les feuilles (onglets) du fichier.",
-          "reponse": "faux",
-          "explication": "Le .csv ne contient que la feuille affichée, sans mise en forme ni graphique. Pour tout garder, choisissez .xlsx."
+          "affirmation": "On peut ouvrir et modifier un fichier Excel dans Google Sheets.",
+          "reponse": "vrai",
+          "explication": "Une fois le fichier importé dans Google Drive, on peut le modifier directement ou le convertir au format Google Sheets."
         }
       ]
     },
@@ -206,37 +203,37 @@
     "qui-suis-je": {
       "elements": [
         {
-          "reponse": "La fonction RECHERCHEV",
+          "reponse": "Signe égal",
           "indices": [
-            "Je relie deux tableaux grâce à une information commune, comme un code produit.",
-            "J’attends trois arguments, parfois quatre.",
-            "Je fouille la première colonne d’un tableau, de haut en bas.",
-            "Je renvoie ce qui se trouve sur la même ligne, dans la colonne demandée.",
-            "Mon nom veut dire que je cherche à la verticale."
+            "Je suis tout petit, mais sans moi, pas de calcul.",
+            "Sans moi, le tableur prend votre formule pour un simple texte.",
+            "Sur le clavier, je suis juste à gauche de la touche Retour arrière.",
+            "On me tape toujours en premier dans une formule.",
+            "En maths, je sépare le calcul de son résultat."
           ]
         },
         {
-          "reponse": "La mise en forme conditionnelle",
+          "reponse": "Filtre",
           "indices": [
-            "Je réagis aussitôt qu’une valeur change dans le tableau.",
-            "Je peux peindre toute une colonne en dégradé, du rouge au vert.",
-            "On me trouve dans le menu Format.",
-            "Je fais ressortir d’un coup d’œil les retards ou les records.",
-            "Je colore une cellule toute seule selon sa valeur, par exemple les notes sous 10 en rouge."
+            "Je ne supprime jamais rien : je cache seulement.",
+            "On me trouve dans le menu Données.",
+            "Une fois activé, j’ajoute un petit bouton en haut de chaque colonne.",
+            "Avec moi, on n’affiche que les lignes qui vous intéressent, par exemple une seule ville.",
+            "Comme une passoire, je ne laisse passer que ce que vous voulez."
           ]
         },
         {
-          "reponse": "Le tableau croisé dynamique",
+          "reponse": "Graphique",
           "indices": [
-            "Mon nom fait peur, pourtant je vous simplifie la vie.",
-            "Je résume des milliers de lignes sans que vous écriviez une seule formule.",
-            "On me crée depuis le menu Insertion, souvent dans une nouvelle feuille.",
-            "On range les informations dans mes zones Lignes, Colonnes et Valeurs.",
-            "Je croise deux informations, par exemple les ventes par vendeur et par mois."
+            "Je me mets à jour tout seul quand les chiffres changent.",
+            "On me crée depuis le menu Insertion.",
+            "J’ai souvent un titre et une légende.",
+            "Je peux être en barres, en courbe ou en camembert.",
+            "Je transforme vos chiffres en dessin."
           ]
         },
         {
-          "reponse": "L’historique des versions",
+          "reponse": "Historique des versions",
           "indices": [
             "Je me souviens de tout ce qui s’est passé dans le fichier.",
             "Je sais qui a modifié quoi, et à quel moment.",
@@ -246,7 +243,7 @@
           ]
         },
         {
-          "reponse": "La liste déroulante (ou menu déroulant)",
+          "reponse": "Liste déroulante",
           "indices": [
             "Je limite les fautes de frappe dans un tableau partagé.",
             "Grâce à moi, tout le monde écrit « Nouméa » de la même façon.",
@@ -260,9 +257,18 @@
     "duel-buzzer": {
       "elements": [
         {
-          "question": "Quel signe sépare la première et la dernière cellule d’une plage ?",
-          "reponse": "Les deux-points"
+          "question": "Quel signe tape-t-on toujours au début d’une formule ?",
+          "reponse": "Signe égal (=)"
         },
+        {
+          "question": "Quel signe sert à multiplier dans une formule ?",
+          "reponse": "Astérisque (*)"
+        },
+        {
+          "question": "Quel signe sépare la première et la dernière cellule d’une plage ?",
+          "reponse": "Deux-points (:)"
+        },
+        { "question": "Quelle fonction additionne des nombres ?", "reponse": "SOMME" },
         {
           "question": "Quelle fonction additionne des valeurs puis divise par leur nombre ?",
           "reponse": "MOYENNE"
@@ -272,30 +278,14 @@
           "reponse": "MIN et MAX"
         },
         {
-          "question": "Quelle fonction compte les cellules qui contiennent des nombres ?",
-          "reponse": "NB"
-        },
-        {
-          "question": "Quelle fonction compte uniquement les cellules qui respectent un critère ?",
-          "reponse": "NB.SI"
-        },
-        {
-          "question": "Quelle fonction affiche un résultat différent selon qu’une condition est vraie ou fausse ?",
-          "reponse": "SI"
-        },
-        {
           "question": "Dans quel menu se trouve la commande « Créer un filtre » ?",
           "reponse": "Données"
         },
-        {
-          "question": "Quel raccourci clavier insère un commentaire ?",
-          "reponse": "Ctrl + Alt + M"
-        },
+        { "question": "Comment s’appelle la cellule située colonne C, ligne 5 ?", "reponse": "C5" },
         {
           "question": "Quelle extension porte un fichier téléchargé au format Microsoft Excel ?",
           "reponse": ".xlsx"
         },
-        { "question": "Comment s’appelle la cellule située colonne C, ligne 5 ?", "reponse": "C5" },
         {
           "question": "Dans quel service de Google les fichiers Google Sheets sont-ils rangés ?",
           "reponse": "Google Drive"
@@ -303,6 +293,10 @@
         {
           "question": "Quel rôle faut-il donner à une personne pour qu’elle puisse modifier la feuille ?",
           "reponse": "Éditeur"
+        },
+        {
+          "question": "Quelle courte adresse taper dans le navigateur pour créer une nouvelle feuille de calcul ?",
+          "reponse": "sheets.new"
         }
       ]
     },
@@ -310,29 +304,22 @@
       "elements": [
         { "mot": "Ligne" },
         { "mot": "Tableur" },
-        { "mot": "Camembert" },
-        { "mot": "Pourcentage" },
-        { "mot": "Imprimer" },
-        { "mot": "Signe égal" },
-        { "mot": "Parenthèse" },
-        { "mot": "Copier-coller" },
-        { "mot": "Feuille de calcul" },
+        { "mot": "Calcul" },
         { "mot": "Total" },
+        { "mot": "Pourcentage" },
+        { "mot": "Camembert" },
+        { "mot": "Parenthèse" },
         { "mot": "Date" },
-        { "mot": "Case à cocher" }
+        { "mot": "Budget" },
+        { "mot": "Excel" }
       ]
     },
     "batterie-faible": {
       "elements": [
         {
-          "mot": "Barre de formule",
-          "theme": "L’écran",
-          "definition": "La zone au-dessus du tableau qui montre le vrai contenu de la cellule, formule comprise."
-        },
-        {
-          "mot": "Référence relative",
-          "theme": "Les formules",
-          "definition": "Une adresse de cellule qui s’adapte quand on recopie la formule : A1 devient A2 une ligne plus bas."
+          "mot": "Feuille",
+          "theme": "Le fichier",
+          "definition": "Chaque page d’un fichier Google Sheets, avec son onglet en bas de l’écran."
         },
         {
           "mot": "Fusionner",
@@ -340,29 +327,34 @@
           "definition": "Réunir plusieurs cellules voisines en une seule, souvent pour centrer un titre."
         },
         {
-          "mot": "Paramètres régionaux",
-          "theme": "Les réglages du fichier",
-          "definition": "Ils fixent le format des dates, la devise et le séparateur décimal : Fichier, puis Paramètres."
+          "mot": "Bordure",
+          "theme": "La mise en forme",
+          "definition": "Le trait qu’on ajoute autour d’une cellule ou d’un tableau pour bien le délimiter."
         },
         {
-          "mot": "Supprimer les doublons",
-          "theme": "Les données",
-          "definition": "Une commande du menu Données qui retire les lignes en double d’un tableau."
-        },
-        {
-          "mot": "Collaborateur",
-          "theme": "Le partage",
-          "definition": "Une personne avec qui vous partagez la feuille et qui travaille dessus avec vous."
-        },
-        {
-          "mot": "Argument",
+          "mot": "Moyenne",
           "theme": "Les fonctions",
-          "definition": "Chaque information donnée à une fonction, entre ses parenthèses : la plage à additionner pour SOMME, par exemple."
+          "definition": "Le total divisé par le nombre de valeurs : =MOYENNE(B2:B10) la calcule pour vous."
+        },
+        {
+          "mot": "Multiplier",
+          "theme": "Les calculs",
+          "definition": "Dans une formule, on multiplie avec l’étoile : =A1*2 donne le double de A1."
         },
         {
           "mot": "Ordre croissant",
           "theme": "Le tri",
           "definition": "Du plus petit au plus grand, ou de A à Z pour du texte."
+        },
+        {
+          "mot": "Devise",
+          "theme": "Les formats de nombre",
+          "definition": "Le format qui affiche un nombre comme un prix, avec le symbole de la monnaie."
+        },
+        {
+          "mot": "Collaborateur",
+          "theme": "Le partage",
+          "definition": "Une personne avec qui vous partagez la feuille et qui travaille dessus avec vous."
         }
       ]
     },
@@ -378,7 +370,7 @@
         },
         {
           "consigne": "Citez une fonction de Google Sheets, avec son nom en français",
-          "idees": "SOMME, MOYENNE, MIN, MAX, NB, NBVAL, SI, NB.SI, SOMME.SI, RECHERCHEV, ARRONDI, AUJOURDHUI, MAJUSCULE, MINUSCULE, CONCATENER, ET, OU…"
+          "idees": "SOMME, MOYENNE, MIN, MAX, NB, NBVAL, SI, ARRONDI, AUJOURDHUI, MAINTENANT, MAJUSCULE, MINUSCULE…"
         },
         {
           "consigne": "Citez une action qu’on peut faire sur une ligne ou une colonne",
@@ -386,7 +378,7 @@
         },
         {
           "consigne": "Citez un signe ou un symbole qu’on peut taper dans une formule",
-          "idees": "« = » pour commencer, « + », « - », « * » pour multiplier, « / » pour diviser, « ^ » pour une puissance, les parenthèses, « : » pour une plage, « ; » entre les arguments, « $ » pour bloquer une référence, « & » pour assembler des textes, « < » et « > » pour comparer, « % »…"
+          "idees": "« = » pour commencer, « + » pour additionner, « - » pour soustraire, « * » pour multiplier, « / » pour diviser, les parenthèses, « : » pour une plage, « ; » entre les éléments d’une fonction, « % » pour un pourcentage, « < » et « > » pour comparer…"
         },
         {
           "consigne": "Citez quelque chose qu’un tableur fait mieux qu’un cahier et un stylo",
@@ -401,19 +393,29 @@
     "memoire-vive": {
       "elements": [
         {
-          "carteA": "Ctrl + Maj + V",
-          "carteB": "Coller les valeurs seulement",
-          "explication": "Seul le résultat est collé, sans la formule ni la mise en forme : il restera fixe, même si les cellules de départ changent."
-        },
-        {
-          "carteA": "$A$1",
-          "carteB": "Référence absolue",
-          "explication": "Les $ bloquent la colonne et la ligne : recopiée ailleurs, la formule vise toujours A1. Pendant la saisie, la touche F4 les ajoute pour vous."
-        },
-        {
           "carteA": "=AUJOURDHUI()",
           "carteB": "La date du jour",
           "explication": "Ses parenthèses restent vides : elle n’a besoin d’aucune information. Et demain, elle affichera toute seule la date de demain."
+        },
+        {
+          "carteA": "=SOMME(A1:A5)",
+          "carteB": "Total des cellules A1 à A5",
+          "explication": "Les deux-points veulent dire « jusqu’à » : la formule additionne A1, A2, A3, A4 et A5."
+        },
+        {
+          "carteA": "*",
+          "carteB": "Multiplier",
+          "explication": "Dans une formule, l’étoile remplace le signe ×, absent du clavier : =A1*3 donne le triple de A1."
+        },
+        {
+          "carteA": "/",
+          "carteB": "Diviser",
+          "explication": "La barre oblique remplace le signe ÷ : =A1/2 donne la moitié de A1."
+        },
+        {
+          "carteA": "Bouton %",
+          "carteB": "Afficher en pourcentage",
+          "explication": "La cellule qui contient 0,25 affiche alors 25 % : seul l’affichage change."
         },
         {
           "carteA": "Ctrl + D",
@@ -421,19 +423,9 @@
           "explication": "D comme « down », vers le bas en anglais. Sélectionnez la cellule modèle et celles du dessous, puis Ctrl + D : tout se remplit d’un coup."
         },
         {
-          "carteA": "NBVAL",
-          "carteB": "Compte les cellules non vides",
-          "explication": "Contrairement à NB, qui ne compte que les nombres, NBVAL compte aussi les textes : pratique pour savoir combien de noms contient une liste."
-        },
-        {
-          "carteA": "#N/A",
-          "carteB": "Valeur introuvable",
-          "explication": "RECHERCHEV l’affiche quand elle ne trouve pas la valeur cherchée : vérifiez l’orthographe et les espaces en trop."
-        },
-        {
           "carteA": "Ctrl + H",
           "carteB": "Rechercher et remplacer",
-          "explication": "Pratique pour corriger d’un coup un nom mal écrit dans tout le tableau, et même dans toutes les feuilles du fichier."
+          "explication": "Pratique pour corriger d’un coup un nom mal écrit dans tout le tableau."
         },
         {
           "carteA": "MAJUSCULE",
@@ -441,14 +433,14 @@
           "explication": "=MAJUSCULE(A2) transforme « Dupont » en « DUPONT ». Sa cousine MINUSCULE fait l’inverse."
         },
         {
-          "carteA": "=ARRONDI(A1;2)",
-          "carteB": "Garde deux chiffres après la virgule",
-          "explication": "Avec 3,14159 en A1, on obtient 3,14. Avec 0 à la place du 2, le résultat devient un nombre entier : 3."
+          "carteA": "Poignée de recopie",
+          "carteB": "Petit carré en bas à droite de la cellule",
+          "explication": "Tirez-le vers le bas : la formule ou la série (lundi, mardi…) se recopie dans les cellules suivantes."
         },
         {
-          "carteA": "Protéger une plage",
-          "carteB": "Empêcher les autres de modifier des cellules",
-          "explication": "Seules les personnes que vous choisissez pourront y toucher : idéal pour mettre à l’abri les formules d’un tableau partagé."
+          "carteA": "Entrée",
+          "carteB": "Valider et descendre d’une cellule",
+          "explication": "Et la touche Tabulation valide en passant à la cellule de droite : pratique pour remplir un tableau ligne par ligne."
         }
       ]
     },
@@ -480,11 +472,11 @@
         },
         {
           "mot": "Fonction",
-          "definition": "Un calcul tout prêt qu’on appelle par son nom, comme NB.SI ou RECHERCHEV."
+          "definition": "Un calcul tout prêt qu’on appelle par son nom, comme SOMME ou MOYENNE."
         },
         {
           "mot": "Référence",
-          "definition": "L’adresse qui indique à un calcul où chercher une valeur : elle peut être relative, absolue ou mixte."
+          "definition": "L’adresse d’une cellule, comme B4, qu’on utilise dans une formule."
         },
         {
           "mot": "Filtre",
@@ -515,8 +507,8 @@
           "definition": "Un chiffre placé à droite de la virgule : deux boutons permettent d’en afficher plus ou moins."
         },
         {
-          "mot": "Bordure",
-          "definition": "Le trait qu’on ajoute autour d’une case ou d’un tableau pour bien le délimiter."
+          "mot": "Partager",
+          "definition": "Inviter d’autres personnes à voir ou à modifier la feuille, en choisissant leur rôle."
         },
         {
           "mot": "Propriétaire",
@@ -540,7 +532,7 @@
       "elements": [
         {
           "enigme": "Je suis une petite sieste, mais aussi la fonction qui additionne toute une colonne de nombres. Qui suis-je ?",
-          "reponse": "SOMME / La fonction SOMME / SUM",
+          "reponse": "SOMME / Fonction SOMME / SUM",
           "indice": "On m’utilise pour calculer un total. Mon nom compte cinq lettres."
         },
         {
@@ -555,7 +547,7 @@
         },
         {
           "enigme": "Je suis une fonction aux parenthèses toujours vides. J’affiche la date et l’heure de l’instant présent, et je me mets à jour dès que la feuille change. Qui suis-je ?",
-          "reponse": "MAINTENANT / La fonction MAINTENANT / NOW",
+          "reponse": "MAINTENANT / Fonction MAINTENANT / NOW",
           "indice": "Mon nom est un mot de tous les jours : le contraire de « plus tard »."
         },
         {

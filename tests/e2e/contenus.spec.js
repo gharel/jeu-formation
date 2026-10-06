@@ -91,14 +91,19 @@ test('on consulte une thématique avant de la charger, puis on revient aux exemp
   await page.getByRole('button', { name: 'Aperçu de Facebook' }).click();
   await expect(page.getByLabel('Afficher', { exact: true })).toHaveValue('facebook');
   await expect(page.getByRole('heading', { name: 'Consulter les questions' })).toBeFocused();
+  // Le nombre de mots vient du fichier de la thématique, pour suivre ses retouches
+  const facebook = JSON.parse(
+    await readFile(new URL('../../contenus/thematiques/facebook.json', import.meta.url), 'utf8'),
+  );
+  const mots = facebook.jeux.pyramide.elements.length;
   const pyramide = apercuDe(page, 'pyramide');
-  await expect(pyramide.locator('summary')).toContainText('12 mots prêts');
+  await expect(pyramide.locator('summary')).toContainText(`${mots} mots prêts`);
   // Zoom mystère n'entre dans aucune thématique : il lui faut des captures d'écran
   await expect(apercuDe(page, 'zoom-mystere').locator('summary')).toContainText(
     'Pas dans les thématiques',
   );
   await pyramide.locator('summary').click();
-  await expect(pyramide.locator('.apercu-element')).toHaveCount(12);
+  await expect(pyramide.locator('.apercu-element')).toHaveCount(mots);
   // L'aperçu ne charge rien
   await page.getByLabel('Afficher', { exact: true }).selectOption('actuel');
   await expect(pyramide.locator('summary .etiquette')).toHaveText('contenu d’exemple');

@@ -8,21 +8,18 @@
       "elements": [
         {
           "mot": "POLICE",
-          "definition": "Le style des lettres du texte, comme Verdana ou Times New Roman."
+          "definition": "Le style des lettres du texte, comme Arial ou Times New Roman."
         },
         {
           "mot": "PUCE",
           "definition": "Le petit symbole placé devant chaque élément d’une liste."
         },
         {
-          "mot": "MODÈLE",
-          "definition": "Un document tout prêt (CV, lettre, rapport…) qu’il suffit de compléter."
-        },
-        {
           "mot": "MARGE",
           "definition": "L’espace blanc laissé autour du texte, sur les bords de la page."
         },
-        { "mot": "ÉDITEUR", "definition": "Le rôle de partage qui permet de modifier le document." }
+        { "mot": "DRIVE", "definition": "Le service de Google où sont rangés tous vos documents." },
+        { "mot": "PARTAGER", "definition": "Donner accès au document à d’autres personnes." }
       ]
     },
     "instant-defi": {
@@ -45,7 +42,7 @@
         {
           "amorce": "retrouver45",
           "amorcePerso": "",
-          "fin": "… le raccourci qui affiche tous les raccourcis clavier, en fouillant le menu Aide"
+          "fin": "… l’endroit où l’on change la police et la taille du texte"
         },
         {
           "amorce": "surprise",
@@ -62,11 +59,11 @@
     "juste-chiffre": {
       "elements": [
         {
-          "question": "En quelle année Google a-t-il racheté Writely, l’ancêtre de Google Docs ?",
-          "reponse": 2006,
-          "unite": "",
+          "question": "Combien de rôles différents peut-on donner à une personne avec qui l’on partage un document ?",
+          "reponse": 3,
+          "unite": "rôles",
           "marge": 0,
-          "anecdote": "Writely, lancé en 2005 par une petite start-up américaine, est devenu Google Docs après ce rachat."
+          "anecdote": "Lecteur, commentateur ou éditeur : donnez le plus petit rôle qui suffit."
         },
         {
           "question": "En quelle année Google Drive a-t-il été lancé ?",
@@ -133,9 +130,9 @@
           "explication": "Tout dépend du rôle choisi au moment du partage : lecteur, commentateur ou éditeur."
         },
         {
-          "affirmation": "Le raccourci Ctrl + Maj + V colle un texte sans sa mise en forme d’origine.",
+          "affirmation": "Google Docs peut souligner les fautes d’orthographe pendant que vous tapez.",
           "reponse": "vrai",
-          "explication": "Pratique pour coller un texte copié sur un site web sans ses couleurs ni ses polices."
+          "explication": "Un clic droit sur le mot souligné propose une correction."
         },
         {
           "affirmation": "Google Docs peut ouvrir et modifier un fichier Word (.docx).",
@@ -206,7 +203,7 @@
     "qui-suis-je": {
       "elements": [
         {
-          "reponse": "Le mode Suggestion",
+          "reponse": "Mode Suggestion",
           "indices": [
             "Je permets de proposer des changements sans rien imposer.",
             "Avec moi, le texte ajouté apparaît en couleur et le texte supprimé est barré.",
@@ -216,7 +213,7 @@
           ]
         },
         {
-          "reponse": "L’historique des versions",
+          "reponse": "Historique des versions",
           "indices": [
             "Je garde la mémoire du document depuis sa création.",
             "Je sais qui a écrit quoi, et à quel moment.",
@@ -226,7 +223,7 @@
           ]
         },
         {
-          "reponse": "La saisie vocale",
+          "reponse": "Saisie vocale",
           "indices": [
             "Je vous évite de taper au clavier.",
             "J’ai besoin d’un micro pour fonctionner.",
@@ -236,7 +233,7 @@
           ]
         },
         {
-          "reponse": "Le lien de partage",
+          "reponse": "Lien de partage",
           "indices": [
             "Je suis une longue suite de lettres et de chiffres, plutôt illisible.",
             "On peut m’envoyer par e-mail, par SMS ou sur une messagerie.",
@@ -246,7 +243,7 @@
           ]
         },
         {
-          "reponse": "La table des matières",
+          "reponse": "Table des matières",
           "indices": [
             "Je me place souvent tout au début d’un long document.",
             "Je ne fonctionne bien que si vos titres ont le bon style.",
@@ -259,69 +256,67 @@
     },
     "duel-buzzer": {
       "elements": [
+        { "question": "Quel raccourci met le texte sélectionné en gras ?", "reponse": "Ctrl + B" },
+        { "question": "Quel raccourci annule la dernière action ?", "reponse": "Ctrl + Z" },
+        { "question": "Quel raccourci cherche un mot dans le document ?", "reponse": "Ctrl + F" },
         {
           "question": "Quel raccourci insère un lien sur le texte sélectionné ?",
           "reponse": "Ctrl + K"
         },
-        { "question": "Quel raccourci centre le paragraphe ?", "reponse": "Ctrl + Maj + E" },
-        { "question": "Quel raccourci crée une liste numérotée ?", "reponse": "Ctrl + Maj + 7" },
         {
-          "question": "Quel raccourci affiche le nombre de mots du document ?",
-          "reponse": "Ctrl + Maj + C"
+          "question": "Dans quel menu se trouve la commande « Télécharger » ?",
+          "reponse": "Fichier"
         },
         {
-          "question": "Dans quel menu peut-on mettre le texte sur deux colonnes ?",
-          "reponse": "Format"
-        },
-        {
-          "question": "Quel raccourci applique le style « Titre 1 » ?",
-          "reponse": "Ctrl + Alt + 1"
-        },
-        { "question": "Quel raccourci ajoute un commentaire ?", "reponse": "Ctrl + Alt + M" },
-        {
-          "question": "Quelle courte adresse taper dans le navigateur pour créer tout de suite un nouveau document ?",
-          "reponse": "docs.new"
-        },
-        {
-          "question": "Quel rôle de partage permet seulement de lire le document, sans le commenter ?",
-          "reponse": "Lecteur"
+          "question": "Dans quel menu ajoute-t-on une image ou un tableau ?",
+          "reponse": "Insertion"
         },
         {
           "question": "Dans quel menu se trouve la vérification orthographique ?",
           "reponse": "Outils"
         },
         {
-          "question": "Quel raccourci ouvre la fenêtre « Rechercher et remplacer » ?",
-          "reponse": "Ctrl + H"
+          "question": "Dans quel service de Google sont rangés vos documents ?",
+          "reponse": "Google Drive"
+        },
+        {
+          "question": "Quel rôle de partage permet seulement de lire le document ?",
+          "reponse": "Lecteur"
+        },
+        {
+          "question": "Quel rôle de partage permet de modifier le document ?",
+          "reponse": "Éditeur"
+        },
+        {
+          "question": "Quelle courte adresse taper dans le navigateur pour créer un nouveau document ?",
+          "reponse": "docs.new"
         },
         {
           "question": "Quel bouton, en haut à droite, sert à inviter d’autres personnes dans le document ?",
-          "reponse": "« Partager »"
+          "reponse": "Partager"
         }
       ]
     },
     "pyramide": {
       "elements": [
-        { "mot": "Imprimer" },
-        { "mot": "Italique" },
         { "mot": "Gras" },
-        { "mot": "Travail d’équipe" },
+        { "mot": "Italique" },
+        { "mot": "Police" },
         { "mot": "Paragraphe" },
         { "mot": "Majuscule" },
-        { "mot": "Annuler" },
-        { "mot": "Curseur" },
+        { "mot": "Imprimer" },
+        { "mot": "Commentaire" },
         { "mot": "Brouillon" },
-        { "mot": "Lettre de motivation" },
-        { "mot": "Note de bas de page" },
+        { "mot": "Drive" },
         { "mot": "Gmail" }
       ]
     },
     "batterie-faible": {
       "elements": [
         {
-          "mot": "Document sans titre",
+          "mot": "Modèle",
           "theme": "Créer un document",
-          "definition": "Le nom donné d’office à tout nouveau document : pensez à le renommer !"
+          "definition": "Un document tout prêt, comme un CV ou une lettre, qu’il suffit de compléter."
         },
         {
           "mot": "Propriétaire",
@@ -329,24 +324,14 @@
           "definition": "La personne qui a créé le document ; elle peut transférer ce rôle à quelqu’un d’autre."
         },
         {
+          "mot": "Commentateur",
+          "theme": "Le partage",
+          "definition": "Le rôle qui permet de laisser des remarques, sans modifier le texte."
+        },
+        {
           "mot": "Orthographe",
           "theme": "Les vérifications",
           "definition": "Google Docs souligne les fautes ; un clic droit sur le mot souligné propose des corrections."
-        },
-        {
-          "mot": "Saut de page",
-          "theme": "La mise en page",
-          "definition": "Avec Ctrl + Entrée, la suite du texte commence sur une nouvelle page."
-        },
-        {
-          "mot": "Hors connexion",
-          "theme": "Travailler sans Internet",
-          "definition": "À activer à l’avance : vos modifications seront synchronisées au retour d’Internet."
-        },
-        {
-          "mot": "Google Drive",
-          "theme": "Le stockage en ligne",
-          "definition": "L’espace en ligne où sont rangés tous vos documents Google Docs."
         },
         {
           "mot": "Interligne",
@@ -354,9 +339,19 @@
           "definition": "L’espace entre les lignes d’un paragraphe : simple, 1,15, 1,5 ou double."
         },
         {
-          "mot": "Effacer la mise en forme",
-          "theme": "Le menu Format",
-          "definition": "Elle retire le gras, les couleurs et les tailles pour revenir au texte de base."
+          "mot": "Alignement",
+          "theme": "Le paragraphe",
+          "definition": "À gauche, centré, à droite ou justifié : la place du texte entre les marges."
+        },
+        {
+          "mot": "Saut de page",
+          "theme": "La mise en page",
+          "definition": "Avec Ctrl + Entrée, la suite du texte commence sur une nouvelle page."
+        },
+        {
+          "mot": "Télécharger",
+          "theme": "Le menu Fichier",
+          "definition": "Récupérer une copie du document sur l’ordinateur, en PDF ou au format Word."
         }
       ]
     },
@@ -400,34 +395,29 @@
           "explication": "B comme « bold », gras en anglais. Un second Ctrl + B retire le gras."
         },
         {
+          "carteA": "Ctrl + I",
+          "carteB": "Mettre en italique",
+          "explication": "I comme « italic » : les lettres penchent vers la droite."
+        },
+        {
           "carteA": "Ctrl + U",
           "carteB": "Souligner",
           "explication": "U comme « underline », souligner en anglais. Avec modération : un texte souligné ressemble à un lien."
         },
         {
-          "carteA": "Alt + Maj + 5",
-          "carteB": "Barrer le texte",
-          "explication": "Pratique pour rayer une idée abandonnée sans l’effacer : elle reste lisible."
+          "carteA": "Ctrl + Z",
+          "carteB": "Annuler",
+          "explication": "Le raccourci qui sauve : il annule la dernière action. Ctrl + Y la rétablit."
         },
         {
-          "carteA": "Ctrl + Maj + 8",
-          "carteB": "Liste à puces",
-          "explication": "Autre astuce : en début de ligne, un astérisque suivi d’une espace lance aussi une liste à puces."
+          "carteA": "Ctrl + P",
+          "carteB": "Imprimer",
+          "explication": "P comme « print », imprimer en anglais."
         },
         {
-          "carteA": "Rouleau de peinture",
-          "carteB": "Reproduire la mise en forme",
-          "explication": "Sélectionnez le texte modèle, cliquez sur le rouleau, puis sélectionnez le texte à transformer. Un double-clic sur le rouleau permet de l’appliquer plusieurs fois."
-        },
-        {
-          "carteA": "Filigrane",
-          "carteB": "Texte ou image en fond de chaque page",
-          "explication": "Menu Insertion, puis Filigrane : idéal pour marquer « Brouillon » ou « Confidentiel » sur toutes les pages."
-        },
-        {
-          "carteA": "Caractères spéciaux",
-          "carteB": "Insérer €, ½ ou une flèche",
-          "explication": "Menu Insertion : on peut même dessiner le symbole cherché à la souris, et Google Docs propose ceux qui lui ressemblent."
+          "carteA": "Ctrl + F",
+          "carteB": "Rechercher un mot",
+          "explication": "F comme « find », trouver en anglais : le mot est surligné partout dans le document."
         },
         {
           "carteA": "Commentateur",
@@ -435,14 +425,19 @@
           "explication": "Le rôle idéal pour une relecture : ses propositions de changement arrivent en mode Suggestion."
         },
         {
+          "carteA": "Éditeur",
+          "carteB": "Peut modifier le document",
+          "explication": "Le rôle le plus ouvert : à donner seulement aux personnes qui doivent vraiment écrire dans le document."
+        },
+        {
           "carteA": ".docx",
           "carteB": "Format des fichiers Word",
           "explication": "Fichier, puis Télécharger, puis Microsoft Word : pour un correspondant qui n’utilise pas Google Docs."
         },
         {
-          "carteA": "Traduire le document",
-          "carteB": "Une copie dans une autre langue",
-          "explication": "Dans le menu Outils : la traduction arrive dans un nouveau document, et l’original reste intact."
+          "carteA": ".pdf",
+          "carteB": "Format qui fige la mise en page",
+          "explication": "Fichier, puis Télécharger, puis Document PDF : idéal pour envoyer un document terminé."
         }
       ]
     },
@@ -461,10 +456,6 @@
           "definition": "Un nom précédé d’un @ : la personne visée est prévenue par e-mail."
         },
         {
-          "mot": "Historique des versions",
-          "definition": "Il garde chaque modification, avec son auteur et sa date, et permet de restaurer un état passé du document."
-        },
-        {
           "mot": "Partager",
           "definition": "Ouvrir l’accès au document à d’autres personnes, en choisissant leur rôle."
         },
@@ -473,56 +464,57 @@
           "definition": "Le rôle le plus limité : il permet de consulter le document, sans commenter ni modifier."
         },
         {
-          "mot": "Saisie vocale",
-          "definition": "Elle transforme ce que vous dites au micro en texte écrit."
+          "mot": "Version",
+          "definition": "Un état passé du document, qu’on retrouve dans l’historique et qu’on peut restaurer."
         },
         {
-          "mot": "Télécharger",
-          "definition": "Récupérer le document sur son ordinateur, dans le format de son choix."
+          "mot": "Dictée",
+          "definition": "Vous parlez au micro, et Google Docs écrit à votre place."
         },
         {
-          "mot": "PDF",
-          "definition": "Le format qui fige la mise en page : idéal pour envoyer un document terminé."
+          "mot": "Curseur",
+          "definition": "La petite barre qui clignote là où le texte va s’écrire."
         },
         {
-          "mot": "Table des matières",
-          "definition": "Le sommaire cliquable d’un long document, souvent placé au début."
-        },
-        {
-          "mot": "En-tête",
-          "definition": "La zone en haut de chaque feuille, répétée d’une feuille à l’autre."
-        },
-        {
-          "mot": "Pied de page",
-          "definition": "La zone tout en bas de chaque feuille, où l’on met souvent la numérotation."
+          "mot": "Titre",
+          "definition": "Un style qui fait ressortir le début d’une partie, et qui alimente la table des matières."
         },
         {
           "mot": "Tableau",
           "definition": "Des lignes et des colonnes pour ranger des informations."
         },
         {
+          "mot": "Image",
+          "definition": "Une photo ou un dessin qu’on ajoute depuis le menu Insertion."
+        },
+        {
           "mot": "Lien",
           "definition": "Un texte souvent bleu et souligné, qui mène vers un site web ou un autre document."
+        },
+        {
+          "mot": "En-tête",
+          "definition": "La zone en haut de chaque page, répétée d’une page à l’autre."
+        },
+        {
+          "mot": "Pied de page",
+          "definition": "La zone tout en bas de chaque page, où l’on met souvent la numérotation."
         },
         {
           "mot": "Surlignage",
           "definition": "Une couleur de fond posée derrière un mot, comme avec un feutre fluo."
         },
         {
-          "mot": "Exposant",
-          "definition": "Un texte plus petit et surélevé, comme le 2 de m²."
-        },
-        {
           "mot": "Justifier",
           "definition": "Aligner le texte à la fois sur le bord gauche et sur le bord droit."
         },
+        { "mot": "Paysage", "definition": "L’orientation d’une page plus large que haute." },
         {
-          "mot": "Paysage",
-          "definition": "L’orientation d’une feuille plus large que haute."
+          "mot": "Copier",
+          "definition": "Garder en mémoire un passage sélectionné, pour le coller ailleurs : Ctrl + C."
         },
         {
-          "mot": "Liste de contrôle",
-          "definition": "Des éléments précédés d’une case, qu’on coche une fois la tâche faite."
+          "mot": "Coller",
+          "definition": "Faire apparaître le passage copié à l’endroit du curseur : Ctrl + V."
         },
         {
           "mot": "Zoom",
@@ -545,17 +537,17 @@
         {
           "enigme": "Mon premier sert à demander de quelle façon. Mon second, c’est garder le silence. Mon tout s’affiche dans la marge pour donner son avis sans toucher au texte.",
           "reponse": "Commentaire",
-          "indice": "On l’ajoute avec Ctrl + Alt + M."
+          "indice": "On le voit dans la marge, à droite du texte."
         },
         {
-          "enigme": "Le mot de passe se cache dans les lettres de quatre raccourcis, dans cet ordre : copier (Ctrl + …), tout sélectionner (Ctrl + …), rechercher (Ctrl + …), puis centrer le texte (Ctrl + Maj + …).",
-          "reponse": "Café",
-          "indice": "Quatre lettres : de quoi faire une bonne pause !"
+          "enigme": "Je suis la petite barre qui clignote dans le texte, pour montrer où vont s’écrire les lettres. Qui suis-je ?",
+          "reponse": "Curseur",
+          "indice": "On me déplace avec les flèches du clavier, ou d’un clic de souris."
         },
         {
-          "enigme": "Dernière serrure : un code à deux chiffres. Le premier termine le raccourci de la liste à puces (Ctrl + Maj + …), le second celui de la liste numérotée.",
-          "reponse": "87 / quatre-vingt-sept",
-          "indice": "Testez Ctrl + Maj + un chiffre dans un document : ce sont deux chiffres qui se suivent."
+          "enigme": "Dernière serrure : un code à quatre chiffres, l’année où Google a lancé son traitement de texte en ligne, devenu Google Docs.",
+          "reponse": "2006 / deux mille six",
+          "indice": "Deux ans après la naissance de Gmail, lancé en 2004."
         }
       ]
     },

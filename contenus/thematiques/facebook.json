@@ -197,14 +197,13 @@
           ]
         },
         {
-          "titre": "Télécharger une copie de vos informations Facebook",
+          "titre": "Signaler une publication qui ressemble à une arnaque",
           "etapes": [
-            "Ouvrir « Paramètres et confidentialité », puis « Paramètres »",
-            "Aller dans l’Espace Comptes, rubrique « Vos informations et autorisations »",
-            "Choisir l’option pour télécharger ou exporter vos informations",
-            "Sélectionner ce que vous voulez récupérer, la période et le format",
-            "Valider la demande et patienter pendant la préparation du fichier",
-            "Télécharger le fichier quand Facebook vous prévient qu’il est prêt"
+            "Cliquer sur les trois points, en haut à droite de la publication",
+            "Choisir « Signaler la publication »",
+            "Choisir le motif, par exemple « Arnaque »",
+            "Valider le signalement",
+            "Bloquer l’auteur si besoin"
           ]
         }
       ]
@@ -212,7 +211,7 @@
     "qui-suis-je": {
       "elements": [
         {
-          "reponse": "La story",
+          "reponse": "Story",
           "indices": [
             "Snapchat m’a rendue célèbre, puis Facebook m’a adoptée.",
             "On me crée avec une photo, une courte vidéo ou un texte sur fond coloré.",
@@ -222,7 +221,7 @@
           ]
         },
         {
-          "reponse": "Le fil d’actualité",
+          "reponse": "Fil d’actualité",
           "indices": [
             "Je ne suis jamais tout à fait le même deux fois de suite.",
             "Un algorithme choisit l’ordre de ce que je vous montre.",
@@ -232,7 +231,7 @@
           ]
         },
         {
-          "reponse": "La photo de couverture",
+          "reponse": "Photo de couverture",
           "indices": [
             "Je suis une image, mais je ne montre pas forcément votre visage.",
             "Je suis très large et peu haute.",
@@ -242,7 +241,7 @@
           ]
         },
         {
-          "reponse": "Le Marketplace",
+          "reponse": "Marketplace",
           "indices": [
             "Je suis arrivé sur Facebook en 2016.",
             "On me consulte pour trouver un canapé, un vélo ou une voiture près de chez soi.",
@@ -252,7 +251,7 @@
           ]
         },
         {
-          "reponse": "La page professionnelle",
+          "reponse": "Page professionnelle",
           "indices": [
             "Je publie comme un profil, mais je ne suis pas une personne.",
             "On ne devient pas mon ami : on s’abonne à moi.",
@@ -275,60 +274,58 @@
         },
         {
           "question": "Citez une application qui appartient, comme Facebook, à la société Meta.",
-          "reponse": "Instagram ou WhatsApp, par exemple"
+          "reponse": "Instagram ou WhatsApp"
         },
         {
           "question": "Quel symbole tape-t-on avant le prénom d’un ami pour le mentionner dans un commentaire ?",
-          "reponse": "L’arobase @"
+          "reponse": "Arobase (@)"
         },
         {
           "question": "Quel raccourci permet d’aller à la ligne dans un commentaire, sans l’envoyer ?",
           "reponse": "Maj + Entrée"
         },
         {
-          "question": "Que signifie l’icône de deux silhouettes à côté de la date d’une publication ?",
-          "reponse": "Elle est réservée aux amis de son auteur"
+          "question": "Quelle audience indique l’icône de deux silhouettes, à côté de la date d’une publication ?",
+          "reponse": "Amis"
         },
         {
           "question": "Comment appelle-t-on la personne qui gère un groupe Facebook ?",
-          "reponse": "L’administrateur (ou admin)"
+          "reponse": "Administrateur"
         },
         {
           "question": "Dans quel menu, sous votre photo de profil en haut à droite, trouve-t-on les paramètres ?",
           "reponse": "Paramètres et confidentialité"
         },
         {
-          "question": "Comment s’appelle la liste de tout ce que vous avez fait sur Facebook : J’aime, commentaires, publications… ?",
-          "reponse": "L’historique personnel"
+          "question": "Comment s’appelle le bouton en forme de pouce levé, sous une publication ?",
+          "reponse": "J’aime"
         },
         {
           "question": "Comment appelle-t-on le fait de se faire passer pour quelqu’un d’autre en copiant son profil ?",
-          "reponse": "L’usurpation d’identité"
+          "reponse": "Usurpation d’identité"
         },
         {
           "question": "Quel symbole place-t-on devant un mot-clé pour en faire un hashtag ?",
-          "reponse": "Le dièse #"
+          "reponse": "Dièse (#)"
         },
         {
           "question": "Que faut-il vérifier avant de partager une information étonnante ?",
-          "reponse": "Sa source : d’où elle vient et si elle est fiable"
+          "reponse": "Sa source"
         }
       ]
     },
     "pyramide": {
       "elements": [
         { "mot": "J’aime" },
-        { "mot": "Demande d’ami" },
+        { "mot": "Ami" },
         { "mot": "Notification" },
         { "mot": "Anniversaire" },
         { "mot": "Publicité" },
-        { "mot": "Vidéo en direct" },
-        { "mot": "Mot de passe" },
-        { "mot": "Piratage" },
-        { "mot": "Fausse information" },
-        { "mot": "Album photo" },
         { "mot": "Selfie" },
-        { "mot": "Émoji" }
+        { "mot": "Émoji" },
+        { "mot": "Photo" },
+        { "mot": "Piratage" },
+        { "mot": "Rumeur" }
       ]
     },
     "batterie-faible": {
@@ -349,14 +346,14 @@
           "definition": "Un faux message qui imite un service connu pour vous voler vos codes ou votre argent."
         },
         {
-          "mot": "Groupe public",
+          "mot": "Membre",
           "theme": "Les groupes",
-          "definition": "Tout le monde peut y voir les membres et les publications, même sans en faire partie."
+          "definition": "Une personne qui a rejoint un groupe : elle peut y lire et y publier."
         },
         {
-          "mot": "Alerte de connexion",
+          "mot": "Mot de passe",
           "theme": "La sécurité",
-          "definition": "Un message qui vous prévient quand quelqu’un se connecte à votre compte depuis un appareil inconnu."
+          "definition": "Long, unique et jamais partagé : la première protection de votre compte."
         },
         {
           "mot": "Appel vidéo",
@@ -455,7 +452,7 @@
           "explication": "Un escroc reprend son nom et ses photos pour piéger ses proches. Une nouvelle invitation d’un ami déjà dans votre liste ? Méfiance !"
         },
         {
-          "carteA": "Authentification à deux facteurs",
+          "carteA": "Double authentification",
           "carteB": "Un code en plus du mot de passe",
           "explication": "Même s’il a volé votre mot de passe, un pirate ne peut pas entrer sans ce code, reçu par SMS ou dans une application."
         }
@@ -524,12 +521,12 @@
           "definition": "L’espace de Facebook où des particuliers achètent et vendent des objets d’occasion près de chez eux."
         },
         {
-          "mot": "Capture d’écran",
-          "definition": "Une photo de ce qui s’affiche sur votre téléphone ou votre ordinateur : un message privé peut ainsi circuler."
+          "mot": "Capture",
+          "definition": "Une photo de ce qui s’affiche à l’écran : un message privé peut ainsi circuler."
         },
         {
-          "mot": "Faux concours",
-          "definition": "Une publication qui fait miroiter un cadeau à gagner, mais qui sert surtout à récolter vos données."
+          "mot": "Concours",
+          "definition": "Un cadeau à gagner en partageant et en commentant : méfiance, beaucoup sont faux et récoltent vos données."
         },
         {
           "mot": "Signalement",
@@ -549,22 +546,22 @@
       "elements": [
         {
           "enigme": "On m’envoie à une personne que l’on connaît pour l’ajouter à ses contacts sur Facebook. Elle peut me confirmer ou me supprimer. Qui suis-je ?",
-          "reponse": "La demande d’ami / Demande d’amitié / Invitation / Invitation d’ami",
+          "reponse": "Demande d’ami / Demande d’amitié / Invitation / Invitation d’ami",
           "indice": "Mon nom contient le mot « ami »."
         },
         {
           "enigme": "Mon premier est le contraire d’« anti ». Mon second sert à coudre. Mon tout porte votre photo et votre nom sur Facebook. Qui suis-je ?",
-          "reponse": "Le profil",
+          "reponse": "Profil",
           "indice": "Mon premier est aussi le diminutif de « professionnel »."
         },
         {
           "enigme": "Mon premier pend au bout d’une ligne de pêche. Mon second se pratique à la piscine. Mon tout est une arnaque qui vous pousse à donner vos codes sur un faux site. Qui suis-je ?",
-          "reponse": "L’hameçonnage / Phishing",
+          "reponse": "Hameçonnage / Phishing",
           "indice": "Mon premier s’écrit avec un h au début et une cédille."
         },
         {
           "enigme": "Mon nom est un mot anglais qui veut dire « bobine », comme celle des anciens films. Sur Facebook, je suis une courte vidéo filmée en hauteur, et je ne disparais pas au bout de 24 heures. Qui suis-je ?",
-          "reponse": "Le reel",
+          "reponse": "Reel",
           "indice": "Je ressemble beaucoup aux vidéos de TikTok."
         },
         {
