@@ -7,8 +7,8 @@
     "motus": {
       "elements": [
         {
-          "mot": "ALGORITHME",
-          "definition": "Une suite d’instructions précises qui permet de résoudre un problème."
+          "mot": "MODELE",
+          "definition": "Un programme entraîné sur des données pour apprendre et prédire de façon autonome."
         },
         {
           "mot": "CHATBOT",
@@ -19,12 +19,12 @@
           "definition": "Les informations de départ qui aident l’IA à comprendre votre situation et votre besoin."
         },
         {
-          "mot": "BIAIS",
-          "definition": "Un déséquilibre dans les données qui rend les réponses d’une IA partiales ou injustes."
+          "mot": "HALLUCINER",
+          "definition": "Inventer avec assurance des faits totalement faux ou inexacts."
         },
         {
-          "mot": "SOURCE",
-          "definition": "L’origine d’une information : à vérifier dès qu’une IA avance un fait."
+          "mot": "CLAUDE",
+          "definition": "L’intelligence artificielle d’Anthropic."
         }
       ]
     },
@@ -93,11 +93,11 @@
           "anecdote": "Les pierres se posent sur ces intersections : le nombre de parties possibles est si grand que le go a longtemps résisté aux ordinateurs."
         },
         {
-          "question": "En mars 2016, le programme AlphaGo affronte le Sud-Coréen Lee Sedol, l’un des meilleurs joueurs de go du monde, en 5 parties. Combien en gagne-t-il ?",
+          "question": "En mars 2016, le programme AlphaGo affronte le Sud-Coréen Lee Sedol, l’un des meilleurs joueurs de go du monde. Combien en gagne-t-il ?",
           "reponse": 4,
           "unite": "parties",
           "marge": 0,
-          "anecdote": "Lee Sedol remporte la quatrième partie : la seule victoire humaine du match."
+          "anecdote": "Lee Sedol remporte la quatrième partie : la seule victoire humaine du match de 5 parties."
         },
         {
           "question": "En quelle année ChatGPT a-t-il été ouvert au grand public ?",
@@ -211,7 +211,7 @@
     "qui-suis-je": {
       "elements": [
         {
-          "reponse": "Le test de Turing",
+          "reponse": "Test de Turing",
           "indices": [
             "Au départ, on m’appelait « le jeu de l’imitation ».",
             "Je suis né en 1950, dans un article qui se demande si les machines peuvent penser.",
@@ -221,7 +221,7 @@
           ]
         },
         {
-          "reponse": "L’hallucination",
+          "reponse": "Hallucination",
           "indices": [
             "Je peux toucher n’importe quel assistant d’IA, même le plus récent.",
             "Je suis bien écrite et sûre de moi… et pourtant fausse.",
@@ -231,17 +231,17 @@
           ]
         },
         {
-          "reponse": "L’hypertrucage",
+          "reponse": "Injection de prompt",
           "indices": [
-            "Mon nom français est recommandé pour remplacer un mot anglais.",
-            "Je peux faire dire à une célébrité des paroles qu’elle n’a jamais prononcées.",
-            "On me trouve en vidéo, en photo ou même en enregistrement de voix.",
-            "Grâce à l’IA, je suis de plus en plus réaliste et difficile à repérer.",
-            "En anglais, on m’appelle « deepfake »."
+            "Je détourne la couche sémantique d’un système sans toucher à son code source.",
+            "J’exploite le fait qu’un modèle ne distingue pas les données des instructions.",
+            "Je force une IA à violer son système d’alignement et ses gardes-fous.",
+            "Directe ou indirecte, je masque des ordres malveillants dans un contexte textuel.",
+            "Je suis le piratage ciblant spécifiquement les consignes données aux LLM."
           ]
         },
         {
-          "reponse": "Le réseau de neurones",
+          "reponse": "Réseau de neurones",
           "indices": [
             "Mon idée est ancienne, mais il a fallu des ordinateurs puissants pour me rendre efficace.",
             "Je suis organisé en couches qui se transmettent des informations.",
@@ -251,7 +251,7 @@
           ]
         },
         {
-          "reponse": "Le prompt",
+          "reponse": "Prompt",
           "indices": [
             "Mon nom vient de l’anglais, et je peux être très court ou très long.",
             "Plus je suis précis, meilleur est le résultat.",
@@ -278,7 +278,7 @@
         },
         {
           "question": "Quelle entreprise française a créé l’assistant Le Chat ?",
-          "reponse": "Mistral AI"
+          "reponse": "Mistral"
         },
         {
           "question": "Quelle entreprise a créé l’assistant Claude ?",
@@ -301,7 +301,7 @@
           "reponse": "2001 : l’Odyssée de l’espace"
         },
         {
-          "question": "Dans quel film de 1984 Arnold Schwarzenegger joue-t-il une machine venue du futur ?",
+          "question": "Dans quel film, Arnold Schwarzenegger joue-t-il une machine venue du futur ?",
           "reponse": "Terminator"
         },
         {
@@ -309,24 +309,22 @@
           "reponse": "DeepL"
         },
         {
-          "question": "Quel verbe désigne le fait de redire sa demande autrement pour obtenir une meilleure réponse ?",
-          "reponse": "Reformuler"
+          "question": "Comment appelle-t-on une IA qui peut effectuer des actions ?",
+          "reponse": "Un agent"
         }
       ]
     },
     "pyramide": {
       "elements": [
-        { "mot": "Robot" },
-        { "mot": "Cerveau" },
-        { "mot": "Ordinateur" },
-        { "mot": "Voiture autonome" },
-        { "mot": "Reconnaissance faciale" },
-        { "mot": "Traduction" },
-        { "mot": "Science-fiction" },
-        { "mot": "Assistant vocal" },
-        { "mot": "Photo truquée" },
-        { "mot": "Vie privée" },
-        { "mot": "Question" },
+        { "mot": "Chatbot" },
+        { "mot": "Token" },
+        { "mot": "Modèle" },
+        { "mot": "Projet" },
+        { "mot": "Gemini" },
+        { "mot": "Connecteur" },
+        { "mot": "Skill" },
+        { "mot": "Copilot" },
+        { "mot": "Prompt" },
         { "mot": "ChatGPT" }
       ]
     },
@@ -338,7 +336,7 @@
           "definition": "La capacité d’un programme à réaliser des tâches qui demandent d’habitude l’intelligence humaine."
         },
         {
-          "mot": "Apprentissage automatique",
+          "mot": "Apprentissage",
           "theme": "Le fonctionnement",
           "definition": "La méthode qui permet à un programme de s’améliorer à partir d’exemples, sans qu’on lui écrive chaque règle."
         },
@@ -353,24 +351,24 @@
           "definition": "Une IA qui crée un contenu nouveau : texte, image, son ou vidéo."
         },
         {
-          "mot": "Générateur d’images",
+          "mot": "Génération",
           "theme": "Les outils",
-          "definition": "Un outil d’IA qui crée une image à partir d’une description écrite."
+          "definition": "La création automatique d’un texte, d’une image ou d’un son par l’IA à partir de votre demande."
         },
         {
-          "mot": "Droit d’auteur",
-          "theme": "Le cadre légal",
-          "definition": "Il protège les créations originales : méfiez-vous d’un contenu généré qui imite une œuvre existante."
+          "mot": "Assistant",
+          "theme": "Les outils",
+          "definition": "Un programme d’IA conçu pour vous accompagner au quotidien dans vos recherches et la réalisation de vos tâches."
         },
         {
-          "mot": "Confidentialité",
+          "mot": "Sécurité",
           "theme": "Les bons réflexes",
-          "definition": "Ne confiez jamais à une IA un mot de passe, des données de santé ou des informations sur vos clients."
+          "definition": "Le réflexe de ne jamais partager de mots de passe ni d’informations confidentielles avec une IA."
         },
         {
-          "mot": "Esprit critique",
+          "mot": "Vérification",
           "theme": "Les bons réflexes",
-          "definition": "Le réflexe indispensable face à une réponse d’IA : douter, vérifier, recouper."
+          "definition": "L’étape essentielle qui consiste à contrôler la justesse des réponses de l’IA avant de les utiliser."
         }
       ]
     },
@@ -387,10 +385,6 @@
         {
           "consigne": "Citez un métier ou un secteur d’activité qui utilise déjà l’IA",
           "idees": "La médecine (lecture des radios), la banque (repérage des fraudes), l’assurance, la traduction, le journalisme, le service client, le commerce en ligne, l’agriculture, la météo, les transports, la logistique, l’industrie, la sécurité, l’enseignement, le cinéma, les jeux vidéo, la recherche scientifique…"
-        },
-        {
-          "consigne": "Citez une fonction de votre téléphone qui fait appel à l’IA",
-          "idees": "Le déverrouillage par le visage, l’assistant vocal, la dictée vocale, la saisie prédictive, le correcteur automatique, le mode portrait, la retouche automatique des photos, la recherche dans ses photos (« plage », « chien »…), la traduction instantanée, les sous-titres automatiques, le filtrage des appels indésirables, la reconnaissance des plantes…"
         },
         {
           "consigne": "Citez une forme de réponse qu’on peut demander à une IA",
@@ -414,34 +408,34 @@
           "explication": "LLM, pour « large language model » : c’est le moteur des chatbots comme ChatGPT ou Le Chat, qui a appris à écrire en lisant d’immenses quantités de textes."
         },
         {
-          "carteA": "ELIZA",
-          "carteB": "Chatbot pionnier des années 1960",
-          "explication": "Présenté en 1966 par Joseph Weizenbaum, au MIT, ce programme imitait un psychothérapeute en reprenant vos phrases sous forme de questions."
+          "carteA": "ChatGPT",
+          "carteB": "Chatbot d’OpenAI",
+          "explication": "Une des IA les plus utilisées au monde, sortie en novembre 2022."
         },
         {
-          "carteA": "Saisie prédictive",
-          "carteB": "Propose des mots pendant qu’on tape",
-          "explication": "Le clavier du téléphone devine le mot le plus probable : les chatbots reposent sur la même idée, à une tout autre échelle."
+          "carteA": "Prompt",
+          "carteB": "La consigne posée à l’IA",
+          "explication": "C’est le texte que vous tapez pour guider l’IA : plus votre prompt est clair et précis, meilleure sera la réponse."
         },
         {
-          "carteA": "Filtre antispam",
-          "carteB": "Trie les courriels indésirables",
-          "explication": "Il a appris à repérer les messages douteux grâce à de très nombreux exemples : jetez quand même un œil de temps en temps au dossier des indésirables."
+          "carteA": "Hallucination",
+          "carteB": "Une fausse information inventée",
+          "explication": "Quand elle manque de repères, l’IA peut affirmer des choses totalement fausses de manière très convaincante : il faut toujours vérifier !"
         },
         {
-          "carteA": "Recommandation",
-          "carteB": "Vidéos ou achats proposés selon vos goûts",
-          "explication": "YouTube, Netflix ou les sites marchands s’appuient sur l’IA pour vous proposer ce qui ressemble à ce que vous avez déjà regardé ou acheté."
+          "carteA": "Gemini",
+          "carteB": "L’IA de Google",
+          "explication": "C’est un modèle d’IA capable de discuter, rédiger des textes, analyser des documents ou vous aider à résoudre un problème."
         },
         {
-          "carteA": "Reconnaissance vocale",
-          "carteB": "Transforme la parole en texte",
-          "explication": "C’est elle qui permet de dicter un message à son téléphone ou d’afficher les sous-titres automatiques d’une vidéo."
+          "carteA": "IA générative",
+          "carteB": "Une IA qui crée du contenu (texte, image, son)",
+          "explication": "Plutôt que de simplement chercher des réponses existantes sur le web, elle invente de nouvelles phrases, des dessins ou de la musique."
         },
         {
-          "carteA": "Synthèse vocale",
-          "carteB": "Lit un texte à voix haute",
-          "explication": "Les voix de synthèse sont de plus en plus naturelles : une aide précieuse pour les personnes malvoyantes, ou pour écouter un article en marchant."
+          "carteA": "IA multimodale",
+          "carteB": "Une IA capable de combiner texte, image et son",
+          "explication": "Elle ne se contente pas de lire : vous pouvez lui montrer une photo de votre frigo pour qu’elle vous donne une idée de recette !"
         },
         {
           "carteA": "OCR",
@@ -463,84 +457,84 @@
     "bingo": {
       "elements": [
         {
-          "mot": "Algorithme",
-          "definition": "Une recette pour l’ordinateur : une série d’étapes à suivre, dans l’ordre, pour arriver à un résultat."
-        },
-        {
-          "mot": "Chatbot",
-          "definition": "On lui pose une question par écrit, dans une fenêtre de discussion, et il répond aussitôt."
-        },
-        {
           "mot": "Prompt",
-          "definition": "En français, on parle de requête ou d’instruction : c’est le message que vous adressez à une IA."
+          "definition": "Le message ou la consigne que vous donnez à une IA pour qu’elle génère une réponse."
         },
         {
-          "mot": "Hallucination",
-          "definition": "Une erreur typique des IA : une information inventée de toutes pièces, mais présentée comme une certitude."
+          "mot": "Gemini",
+          "definition": "L’intelligence artificielle de Google, capable de comprendre et traiter du texte, des images, du code et du son."
+        },
+        {
+          "mot": "Claude",
+          "definition": "L’intelligence artificielle d’Anthropic, particulièrement performante pour la rédaction, l’analyse et la réflexion complexe."
+        },
+        {
+          "mot": "Instruction",
+          "definition": "Une règle précise donnée à l’IA pour définir son rôle, son ton ou la façon dont elle doit répondre."
         },
         {
           "mot": "Biais",
-          "definition": "Une préférence injuste, héritée d’exemples mal équilibrés : une IA imagine, par exemple, un médecin toujours sous les traits d’un homme."
+          "definition": "Un préjugé ou une idée reçue reproduite par l’IA à cause d’exemples déséquilibrés dans ses données d’apprentissage."
         },
         {
-          "mot": "Robot",
-          "definition": "Une machine programmée pour bouger et agir seule, comme le bras articulé d’une chaîne de montage."
+          "mot": "Skill",
+          "definition": "Une compétence ou une fonction spécifique ajoutée à une IA pour lui permettre d’exécuter une tâche précise."
         },
         {
-          "mot": "Assistant vocal",
-          "definition": "On lui parle pour poser une question ou donner un ordre, en commençant par « Dis Siri » ou « Alexa »."
+          "mot": "Connecteur",
+          "definition": "Un lien technique qui relie l’IA à un autre outil, comme un agenda, un fichier ou un service en ligne."
         },
         {
-          "mot": "Reconnaissance faciale",
-          "definition": "Elle identifie une personne grâce aux traits de son visage, par exemple pour déverrouiller un téléphone."
+          "mot": "Algorithme",
+          "definition": "La suite d’étapes logiques que suit la machine pour traiter l’information et résoudre un problème."
         },
         {
-          "mot": "Traduction automatique",
-          "definition": "Passer d’une langue à l’autre en un clic, avec un outil comme DeepL."
+          "mot": "Chatbot",
+          "definition": "Un programme informatique avec lequel on dialogue par écrit dans une fenêtre de discussion."
         },
         {
-          "mot": "Voiture autonome",
-          "definition": "Un véhicule qui se conduit tout seul, sans personne au volant."
+          "mot": "Hallucination",
+          "definition": "Une erreur où l’IA invente une fausse information en la présentant comme une vérité absolue."
         },
         {
-          "mot": "Données personnelles",
-          "definition": "Nom, adresse, date de naissance, numéro de téléphone : tout ce qui permet de vous identifier."
-        },
-        {
-          "mot": "Consentement",
-          "definition": "L’accord qu’il faut demander à quelqu’un avant de publier sa photo ou d’imiter sa voix."
-        },
-        {
-          "mot": "Transparence",
-          "definition": "Le fait d’indiquer clairement qu’on s’est servi d’une IA pour créer un texte, une image ou une vidéo."
-        },
-        {
-          "mot": "Plagiat",
-          "definition": "Présenter comme le sien le travail d’un autre, par exemple en recopiant un texte sans citer son auteur."
-        },
-        {
-          "mot": "Brouillon",
-          "definition": "Une première version, à relire et à retravailler : c’est ainsi qu’il faut voir un texte écrit par une IA."
-        },
-        {
-          "mot": "Résumé",
-          "definition": "La version courte d’un long texte, qui n’en garde que l’essentiel."
-        },
-        {
-          "mot": "Probabilité",
-          "definition": "La chance qu’une chose arrive, d’une sur deux à une sur mille : une IA s’en sert pour choisir chaque mot de sa réponse."
-        },
-        {
-          "mot": "Asimov",
-          "definition": "L’écrivain de science-fiction qui a imaginé les trois lois de la robotique, dans les années 1940."
+          "mot": "Données",
+          "definition": "Les milliers de textes, d’images et d’informations utilisés pour former et nourrir une IA."
         },
         {
           "mot": "Multimodal",
-          "definition": "Se dit d’une IA qui comprend à la fois le texte, les images et le son : on peut lui montrer une photo."
+          "definition": "La capacité d’une IA à travailler avec plusieurs formes de contenus en même temps : texte, image, audio et vidéo."
         },
         {
-          "mot": "Mot-clé",
-          "definition": "Les quelques termes qu’on tape pour chercher sur Internet ; à une IA, on écrit plutôt des phrases entières."
+          "mot": "Agent",
+          "definition": "Une IA autonome capable de réaliser plusieurs actions à la suite pour accomplir un objectif global."
+        },
+        {
+          "mot": "Contexte",
+          "definition": "L’ensemble des informations fournies à l’IA au cours de la discussion pour l’aider à mieux répondre."
+        },
+        {
+          "mot": "Token",
+          "definition": "Un morceau de mot ou de texte que l’IA utilise pour lire, calculer et générer son langage."
+        },
+        {
+          "mot": "Entraînement",
+          "definition": "La phase initiale pendant laquelle l’IA analyse d’immenses quantités de données pour apprendre à raisonner."
+        },
+        {
+          "mot": "Transparence",
+          "definition": "Le fait d’indiquer clairement qu’un texte, un visuel ou un son a été produit par une IA."
+        },
+        {
+          "mot": "LLM",
+          "definition": "Grand modèle de langage entraîné sur des milliards de textes pour comprendre et écrire comme un humain."
+        },
+        {
+          "mot": "Température",
+          "definition": "Le réglage qui contrôle le niveau de créativité et d’imprévisibilité de l’IA dans sa réponse."
+        },
+        {
+          "mot": "Fine-tuning",
+          "definition": "L’ajustement qui permet de spécialiser une IA générale pour un domaine ou un métier très précis."
         }
       ]
     },
@@ -557,19 +551,19 @@
           "indice": "Mon nom est un sigle anglais qui commence par « cap », et dont le T veut dire Turing."
         },
         {
-          "enigme": "HAL 9000 est l’un des ordinateurs les plus célèbres du cinéma. Remplacez chaque lettre de HAL par la suivante dans l’alphabet : vous obtenez le nom d’une grande entreprise de l’informatique. Laquelle ?",
+          "enigme": "HAL 9000 est l’un des ordinateurs les plus célèbres du cinéma. Remplacez chaque lettre de HAL par une autre lettre : vous obtenez le nom d’une grande entreprise de l’informatique. Laquelle ?",
           "reponse": "IBM",
           "indice": "H devient I : il ne reste que deux lettres à trouver !"
         },
         {
-          "enigme": "Mon premier est une voiture, en plus court. Mon second met fin à une partie d’échecs. Mon tout imite les gestes d’un être vivant grâce à un mécanisme : on en fabriquait bien avant les ordinateurs.",
+          "enigme": "Mon premier est une voiture, en plus court. Mon second met fin à une partie d’échecs. Mon tout imite les gestes d’un être vivant : on en fabriquait bien avant les ordinateurs.",
           "reponse": "L’automate",
           "indice": "Au XVIIIe siècle, Jacques de Vaucanson en a construit un qui jouait de la flûte."
         },
         {
-          "enigme": "Dernière serrure : un code à quatre chiffres, l’année où le prix Nobel de physique a récompensé deux pionniers des réseaux de neurones, John Hopfield et Geoffrey Hinton.",
-          "reponse": "2024 / deux mille vingt-quatre",
-          "indice": "C’est l’année des Jeux olympiques de Paris."
+          "enigme": "Dernière serrure : un code à quatre chiffres, l’année de lancement de l’assistant d’IA Claude développé par la société Anthropic.",
+          "reponse": "2023 / deux mille vingt-trois",
+          "indice": "C’est l’année qui a suivi immédiatement le lancement public de ChatGPT (fin 2022)."
         }
       ]
     },
