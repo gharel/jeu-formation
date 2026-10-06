@@ -30,6 +30,11 @@ export const THEMATIQUES = [
     titre: 'Facebook',
     icone: 'thumbs-up',
   },
+  {
+    slug: 'cybersecurite',
+    titre: 'Cybersécurité',
+    icone: 'shield-halved',
+  },
 ];
 
 /** Chemin du fichier d'une thématique, depuis la racine du site. */

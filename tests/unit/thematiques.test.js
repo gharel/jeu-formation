@@ -25,13 +25,14 @@ describe('liste des thématiques', () => {
     expect(fichiers).toEqual(slugs.map((s) => `${s}.json`).sort());
   });
 
-  it('propose les cinq thématiques prévues', () => {
+  it('propose les six thématiques prévues', () => {
     expect(THEMATIQUES.map((t) => t.titre)).toEqual([
       'Initiation à l’IA',
       'Google Docs',
       'Google Sheets',
       'Microsoft 365',
       'Facebook',
+      'Cybersécurité',
     ]);
     expect(trouverThematique('facebook').icone).toBe('thumbs-up');
     expect(trouverThematique('inconnue')).toBeNull();

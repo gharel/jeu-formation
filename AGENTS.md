@@ -11,7 +11,7 @@ Un site statique de mini-jeux **projetés au vidéoprojecteur** pour casser la m
 - Chaque jeu a un écran d'accueil où l'on saisit les prénoms, avec une roue pour désigner quelqu'un.
 - Il n'y a ni serveur ni framework ni étape de build : HTML, CSS et JavaScript natifs (ES modules).
 - Le contenu de l'animateur est gardé dans le navigateur : localStorage pour le texte, IndexedDB pour les images.
-- Des thématiques prêtes à jouer (IA, Google Docs, Google Sheets, Microsoft 365, Facebook) se chargent dans tous les jeux depuis la page « Les contenus » ; l'animateur en crée, les modifie ou les supprime (gardées dans le navigateur). Le groupe, les contenus et les thématiques s'échangent en fichiers JSON.
+- Des thématiques prêtes à jouer (IA, Google Docs, Google Sheets, Microsoft 365, Facebook, cybersécurité) se chargent dans tous les jeux depuis la page « Les contenus » ; l'animateur en crée, les modifie ou les supprime (gardées dans le navigateur). Le groupe, les contenus et les thématiques s'échangent en fichiers JSON.
 - La charte graphique est celle de Skazy Formation (https://formation.skazy.nc).
 
 ## Commandes

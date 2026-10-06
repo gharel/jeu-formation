@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
 import { readFile, writeFile } from 'node:fs/promises';
 import { JEUX } from '../../assets/js/jeux.js';
+import { THEMATIQUES } from '../../assets/js/thematiques.js';
 import { surveillerErreurs, ouvrirJeu, lancerPartie, verifierAccessibilite } from './outils.js';
 
 // Les thématiques remplissent tous les jeux, sauf Zoom mystère (il lui faut des captures d'écran)
@@ -22,8 +23,8 @@ test('depuis l’accueil, on charge une thématique dans tous les jeux', async (
   await page.getByRole('link', { name: 'Les contenus' }).first().click();
   await expect(page).toHaveURL(/\/contenus\/$/);
   await expect(page.getByRole('heading', { name: 'Thématiques prêtes à jouer' })).toBeVisible();
-  // Les 5 thématiques et les exemples, avec la description lue dans leur fichier
-  await expect(page.locator('.carte-thematique')).toHaveCount(6);
+  // Les thématiques livrées et les exemples, avec la description lue dans leur fichier
+  await expect(page.locator('.carte-thematique')).toHaveCount(THEMATIQUES.length + 1);
   await expect(page.locator('[data-thematique="google-sheets"]')).toContainText('tableur');
   await expect(page.locator('[data-thematique="google-sheets"]')).toContainText(
     `${JEUX_SANS_IMAGE} jeux, sans Zoom mystère`,
