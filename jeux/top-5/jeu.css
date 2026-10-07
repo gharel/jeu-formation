@@ -258,7 +258,29 @@
 
 @media (max-width: 860px) {
   .top5__plateau {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Téléphone : la réponse garde toute la ligne à côté de son rang et de ses points ; « Attribuer »
+   (ou le prénom du gagnant) passe dessous, au lieu de la hacher lettre par lettre */
+@media (max-width: 480px) {
+  .top5__case:not(.top5__case--cachee) {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    gap: 0.3rem 0.6rem;
+    border-radius: var(--rayon);
+  }
+
+  .top5__reponse {
+    overflow-wrap: break-word;
+  }
+
+  .top5__attribuer,
+  .top5__gagnant {
+    grid-row: 2;
+    grid-column: 2 / -1;
+    justify-self: start;
   }
 }
 

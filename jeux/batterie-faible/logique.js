@@ -32,6 +32,19 @@ export function decouper(texte) {
   );
 }
 
+/**
+ * Les mots de l'expression, en numéros de cases : « Clé USB » → [[0, 1, 2], [4, 5, 6]]. Un mot
+ * reste entier sur sa ligne ; l'expression ne passe à la ligne qu'entre deux mots.
+ */
+export function motsDeCases(cases) {
+  const mots = [[]];
+  cases.forEach((c, i) => {
+    if (c.affichage === ' ') mots.push([]);
+    else mots.at(-1).push(i);
+  });
+  return mots.filter((mot) => mot.length);
+}
+
 /** Vérifie un mot préparé par l'animateur (message ou null). */
 export function validerMot(texte) {
   if (!String(texte ?? '').trim()) return null;

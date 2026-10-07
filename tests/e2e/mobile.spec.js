@@ -6,11 +6,50 @@ import {
   lancerPartie,
   pointsDe,
   verifierAccessibilite,
+  verifierMiseEnPage,
 } from './outils.js';
 
 // Téléphone tactile (écran étroit, ni souris ni clavier), dans le Chromium des tests
 const telephone = { ...devices['Pixel 7'] };
 delete telephone.defaultBrowserType;
+
+// Petit téléphone : 360 px de large, le plus étroit des Android courants
+const petitTelephone = { ...telephone, viewport: { width: 360, height: 740 } };
+
+const DOUZE = [
+  'Ana',
+  'Marie-Christine',
+  'Bob',
+  'Jean-Baptiste',
+  'Chloé',
+  'Maximilien',
+  'Léa',
+  'Omar',
+  'Nina',
+  'Paul',
+  'Emma',
+  'Félix',
+];
+
+/** Met des valeurs dans le stockage du site (clés sans le préfixe skazy-jeux:). */
+async function preparerStockage(page, valeurs) {
+  await page.goto('/');
+  await page.evaluate((v) => {
+    for (const [cle, valeur] of Object.entries(v)) {
+      localStorage.setItem(`skazy-jeux:${cle}`, JSON.stringify(valeur));
+    }
+  }, valeurs);
+}
+
+/** Nombre de lignes occupées par le texte d'un élément. */
+function lignesDe(locator) {
+  return locator.evaluate((e) => {
+    const plage = document.createRange();
+    plage.selectNodeContents(e);
+    const hauts = [...plage.getClientRects()].filter((r) => r.width > 0).map((r) => r.top);
+    return new Set(hauts.map(Math.round)).size;
+  });
+}
 
 /** Écart (px) entre le centre d'une icône et celui de sa pastille. */
 function decentrage(page, pastille) {
@@ -153,6 +192,146 @@ test.describe('sur téléphone', () => {
     await expect(page.getByRole('dialog')).toHaveCount(0);
 
     await sansDefilementHorizontal(page);
+    await verifierAccessibilite(page);
+    expect(erreurs).toEqual([]);
+  });
+});
+
+test.describe('sur petit téléphone (360 px)', () => {
+  test.use(petitTelephone);
+
+  test('l’accueil : « Le groupe · 12 participants » ne laisse aucun mot seul sur sa ligne', async ({
+    page,
+  }) => {
+    const erreurs = surveillerErreurs(page);
+    await preparerStockage(page, { participants: DOUZE });
+    await page.reload();
+    await expect(page.getByRole('link', { name: 'Le groupe · 12 participants' })).toBeVisible();
+    // Le titre et les boutons tiennent, sans « Le » ni « 12 » seuls sur leur ligne
+    await verifierAccessibilite(page);
+    expect(erreurs).toEqual([]);
+  });
+
+  test('chaque jeu tient dans l’écran, de son accueil au début de la partie', async ({ page }) => {
+    test.slow();
+    const erreurs = surveillerErreurs(page);
+    for (const jeu of JEUX) {
+      await ouvrirJeu(page, jeu.slug, { prenoms: ['Ana', 'Jean-Baptiste', 'Chloé'] });
+      await verifierMiseEnPage(page);
+      await lancerPartie(page);
+      await verifierMiseEnPage(page);
+    }
+    expect(erreurs).toEqual([]);
+  });
+
+  test('les grands nombres restent dans leurs cadres : scores du groupe, Le Juste Chiffre', async ({
+    page,
+  }) => {
+    const erreurs = surveillerErreurs(page);
+    await preparerStockage(page, {
+      participants: DOUZE,
+      'scores-groupe': {
+        ana: { motus: 9999, pyramide: 9999 },
+        'jean-baptiste': { 'coffre-fort': 25, 'juste-chiffre': 999, correction: 4 },
+        'marie-christine': { correction: -9999 },
+      },
+      'juste-chiffre:contenu': {
+        reglages: { duree: 600, tourDeRole: true },
+        elements: [
+          {
+            question: 'Combien d’êtres humains vivent sur Terre ?',
+            reponse: 8123456789,
+            unite: 'habitants',
+            marge: 0,
+            anecdote: '',
+          },
+        ],
+      },
+    });
+
+    // Scores du groupe : « -9999 » tient dans son champ, le rang « 12. » dans sa colonne
+    await page.goto('/groupe/');
+    const scores = page.getByRole('list', { name: 'Scores du groupe' });
+    await expect(scores.getByLabel('Score de Marie-Christine')).toHaveValue('-9999');
+    await verifierMiseEnPage(page);
+    const rangs = await scores
+      .locator('.scores-groupe__rang')
+      .evaluateAll((liste) => liste.filter((r) => r.scrollWidth > r.clientWidth).length);
+    expect(rangs, 'un rang déborde de sa colonne').toBe(0);
+    // Le détail ne se coupe qu'entre deux jeux, jamais dans « Le Coffre-fort : 25 »
+    for (const morceau of await scores.locator('.scores-groupe__morceau').all()) {
+      expect(await lignesDe(morceau)).toBe(1);
+    }
+
+    // Le Juste Chiffre : des milliards dans la fourchette et l'historique
+    await ouvrirJeu(page, 'juste-chiffre');
+    await lancerPartie(page);
+    await page.getByRole('button', { name: /Afficher la question/ }).click();
+    const saisie = page.locator('#juste-saisie');
+    for (const nombre of ['1 000 000 000', '9 999 999 999', '8 200 000 000']) {
+      await saisie.fill(nombre);
+      // Le nombre tapé se lit en entier dans le champ
+      const entier = await saisie.evaluate((champ) => champ.scrollWidth <= champ.clientWidth);
+      expect(entier, `« ${nombre} » est coupé dans le champ`).toBe(true);
+      await saisie.press('Enter');
+    }
+    await expect(page.locator('.juste__entree')).toHaveCount(3);
+    await verifierMiseEnPage(page);
+    // Le prénom passe sous le nombre au lieu d'être coupé (« Jean- / Baptiste »)
+    for (const joueur of await page.locator('.juste__joueur').all()) {
+      expect(await lignesDe(joueur)).toBe(1);
+    }
+    expect(erreurs).toEqual([]);
+  });
+
+  test('Batterie faible : un long mot tient sur une ligne, une expression se coupe entre ses mots', async ({
+    page,
+  }) => {
+    const erreurs = surveillerErreurs(page);
+    await preparerStockage(page, {
+      'batterie-faible:contenu': {
+        reglages: { crans: 7 },
+        elements: [
+          { mot: 'Hameçonnage', theme: '', definition: '' },
+          { mot: 'Mot de passe', theme: '', definition: '' },
+        ],
+      },
+    });
+    await ouvrirJeu(page, 'batterie-faible');
+    await lancerPartie(page);
+    const hauts = () =>
+      page
+        .locator('.lettres__case')
+        .evaluateAll((cases) => cases.map((c) => Math.round(c.getBoundingClientRect().top)));
+    // Les 11 lettres d'« Hameçonnage » sur une seule ligne
+    expect(new Set(await hauts()).size).toBe(1);
+    await verifierMiseEnPage(page);
+
+    await page.locator('#lettres-mot').fill('Hameçonnage');
+    await page.locator('#lettres-mot').press('Enter');
+    await page.getByRole('button', { name: /Mot suivant/ }).click();
+    // « Mot de passe » : chaque mot reste entier sur sa ligne
+    await expect(page.locator('.lettres__case')).toHaveCount(10);
+    const lignes = await page
+      .locator('.lettres__groupe')
+      .evaluateAll((mots) =>
+        mots.map((m) => new Set([...m.children].map((c) => c.getBoundingClientRect().top)).size),
+      );
+    expect(lignes).toEqual([1, 1, 1]);
+    await verifierMiseEnPage(page);
+    expect(erreurs).toEqual([]);
+  });
+
+  test('Top 5 : une réponse trouvée reste lisible à côté de ses points', async ({ page }) => {
+    const erreurs = surveillerErreurs(page);
+    await ouvrirJeu(page, 'top-5', { prenoms: ['Ana', 'Bob'] });
+    await lancerPartie(page);
+    await page.getByLabel('Proposition du groupe').fill('Chrome');
+    await page.getByLabel('Proposition du groupe').press('Enter');
+    const reponse = page.locator('.top5__case--trouvee .top5__reponse');
+    await expect(reponse).toHaveText('Google Chrome');
+    // « Google Chrome » tient sur une ligne : « Attribuer » passe dessous
+    expect(await lignesDe(reponse)).toBe(1);
     await verifierAccessibilite(page);
     expect(erreurs).toEqual([]);
   });

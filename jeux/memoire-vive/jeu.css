@@ -18,8 +18,11 @@
   gap: 0.75rem;
 }
 
+/* Deux lignes : le nombre de cartes, puis le détail */
 .memoire-choix__option {
+  display: inline-flex;
   flex-direction: column;
+  align-items: center;
   gap: 0.15rem;
   min-width: 11rem;
 }

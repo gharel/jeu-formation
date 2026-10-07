@@ -12,11 +12,20 @@ const ESPACE_INSECABLE = '\u00a0';
  * - Une espace qui manque est ajoutée (« Prêts? » → « Prêts ? »), seulement en fin de mot :
  *   la ponctuation doit être suivie d'une espace ou finir le texte. Une adresse ou une heure
  *   (https://, page?id=2, 10:30) reste intacte.
+ * - Un nombre reste avec ce qui le suit : « 3 participants », « 10 % », « 1 000 000 » ne se
+ *   coupent pas en fin de ligne (sinon « 3 » restait seul au bout de la ligne).
+ * - Le point médian qui sépare deux infos (« Mot 1 sur 5 · 7 lettres ») finit sa ligne, il ne
+ *   la commence jamais.
+ * - « a-t-il », « va-t-on » ne se coupent pas aux tirets (« a-t- » en fin de ligne) : un liant
+ *   invisible (U+2060) les suit. Georama n'a pas de trait d'union insécable (U+2011).
  * L'espace fine (U+202F) n'est pas utilisée : trop étroite dans la police Georama, elle ne se
  * voyait pas.
  */
 export function typographier(texte) {
   return String(texte)
+    .replace(/(\d) (?=[\p{L}%]|\d{3}(?!\d))/gu, `$1${ESPACE_INSECABLE}`)
+    .replace(/ ·(?= )/g, `${ESPACE_INSECABLE}·`)
+    .replace(/(?<=\p{L})-t-(?=\p{L})/gu, '-\u2060t-\u2060')
     .replace(/[ \u202f]+([!?;:»])/g, `${ESPACE_INSECABLE}$1`)
     .replace(/([\p{L}\p{N}.…»])([!?;:]+)(?=[\s)»]|$)/gu, `$1${ESPACE_INSECABLE}$2`)
     .replace(/«[ \u202f]*(?=[^\s\u00a0])/g, `«${ESPACE_INSECABLE}`)
@@ -29,6 +38,14 @@ const ATTRIBUTS_TEXTE = new Set(['placeholder', 'title', 'aria-label']);
 function ajouterEnfants(noeud, enfants) {
   for (const enfant of enfants.flat(Infinity)) {
     if (enfant === null || enfant === undefined || enfant === false) continue;
+    // Une icône qui suit du texte (« Mot suivant », flèche) prend son écart à gauche
+    if (
+      enfant instanceof Element &&
+      enfant.classList.contains('icone') &&
+      noeud.textContent.trim()
+    ) {
+      enfant.classList.add('icone--apres');
+    }
     noeud.append(enfant instanceof Node ? enfant : document.createTextNode(typographier(enfant)));
   }
 }

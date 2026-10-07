@@ -72,7 +72,7 @@ test('Mémoire vive : on choisit le nombre de cartes et on retrouve toutes les p
   expect(total).toBe(4);
 
   await page.getByRole('button', { name: /Voir le classement/ }).click();
-  await expect(page.locator('#cadre').getByText(/4 paires trouvées en \d+ coups/)).toBeVisible();
+  await expect(page.locator('#cadre').getByText(/4\spaires trouvées en \d+\scoups/)).toBeVisible();
   expect(erreurs).toEqual([]);
 });
 

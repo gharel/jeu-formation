@@ -1,6 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   decouper,
+  motsDeCases,
   validerMot,
   etatInitial,
   jouerLettre,
@@ -24,6 +25,16 @@ describe('Batterie faible', () => {
     ]);
     expect(decouper('cœur').map((c) => c.lettre)).toEqual(['C', 'O', 'E', 'U', 'R']);
     expect(decouper('e-mail').map((c) => c.lettre)).toEqual(['E', null, 'M', 'A', 'I', 'L']);
+  });
+
+  it('regroupe les cases par mot, pour ne passer à la ligne qu’entre deux mots', () => {
+    expect(motsDeCases(decouper('Clé USB'))).toEqual([
+      [0, 1, 2],
+      [4, 5, 6],
+    ]);
+    // Le tiret et l'apostrophe restent dans leur mot
+    expect(motsDeCases(decouper('Wi-Fi'))).toEqual([[0, 1, 2, 3, 4]]);
+    expect(motsDeCases(decouper('Mot de passe')).map((m) => m.length)).toEqual([3, 2, 5]);
   });
 
   it('vérifie les mots préparés', () => {

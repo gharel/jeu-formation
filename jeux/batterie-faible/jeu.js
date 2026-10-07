@@ -6,6 +6,7 @@ import { schema, exemple } from './exemple.js';
 import { creerIllustrationBatterie } from './illustration.js';
 import {
   decouper,
+  motsDeCases,
   etatInitial,
   jouerLettre,
   proposerMot,
@@ -84,14 +85,26 @@ function demarrer(ctx) {
     // une case trouvée ne s'anime qu'une fois, à sa découverte
     const casesMot = cases.map((c) => {
       if (c.lettre) return el('span', { class: 'lettres__case' });
-      return c.affichage === ' '
-        ? el('span', { class: 'lettres__espace' })
-        : el('span', { class: 'lettres__signe' }, c.affichage);
+      return c.affichage === ' ' ? null : el('span', { class: 'lettres__signe' }, c.affichage);
     });
+    // Chaque mot reste entier sur sa ligne ; les cases rapetissent pour que le plus long tienne
+    // dans la largeur (téléphone)
+    const groupes = motsDeCases(cases);
     const affichageMot = el(
       'div',
-      { class: 'lettres__mot', role: 'group', 'aria-label': 'Mot à découvrir' },
-      casesMot,
+      {
+        class: 'lettres__mot',
+        role: 'group',
+        'aria-label': 'Mot à découvrir',
+        style: `--lettres: ${Math.max(...groupes.map((g) => g.length))}`,
+      },
+      groupes.map((g) =>
+        el(
+          'span',
+          { class: 'lettres__groupe' },
+          g.map((i) => casesMot[i]),
+        ),
+      ),
     );
     const batterie = creerBatterie(crans);
     // Le téléphone suit sa batterie : il sourit, transpire, puis s'éteint

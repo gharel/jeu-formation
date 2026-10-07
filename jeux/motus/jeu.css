@@ -187,11 +187,35 @@
 
 @media (max-width: 900px) {
   .motus-jeu {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     justify-items: center;
   }
+
+  .motus-droite {
+    width: 100%;
+  }
+
+  /* La grille tient dans le panneau : largeur de l'écran, moins les marges du cadre et du
+     panneau (4rem), la marge de la grille (20px) et les écarts entre les cases */
   .motus-grille {
-    --taille: min(3.4rem, calc((100vw - 4rem) / var(--colonnes, 8)));
+    --taille: min(
+      3.4rem,
+      calc((100vw - 4rem - 20px - (var(--colonnes, 8) - 1) * 6px) / var(--colonnes, 8))
+    );
+  }
+
+  .motus-case {
+    min-width: 0;
+    min-height: 0;
+  }
+}
+
+/* Téléphone : le mot tapé reste lisible en entier, jusqu'à 10 lettres (« Valider » passe sous le
+   champ, voir .champ__ligne) */
+@media (max-width: 480px) {
+  .motus-saisie {
+    font-size: 1.35rem;
+    letter-spacing: 0.15em;
   }
 }
 

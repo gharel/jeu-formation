@@ -31,7 +31,7 @@
 .heros h1 {
   max-width: 18ch;
   color: var(--blanc);
-  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  font-size: clamp(1.85rem, 5vw, 3.8rem);
   font-weight: 900;
 }
 
@@ -526,6 +526,19 @@
   color: var(--texte-doux);
 }
 
+/* Téléphone : « Étape 1 » au-dessus de son champ, qui garde toute la largeur pour le texte */
+@media (max-width: 480px) {
+  .liste-champ__ligne {
+    grid-template-columns: minmax(0, 1fr) auto;
+    row-gap: 0.15rem;
+  }
+
+  .liste-champ__numero {
+    grid-column: 1 / -1;
+    font-size: 0.9rem;
+  }
+}
+
 /* Réponses masquées : points à la place des lettres, flou sur le reste */
 .editeur--masque input.secret,
 .editeur--masque textarea.secret {
@@ -696,6 +709,15 @@
 
 .dialogue--roue .roue-resultat {
   margin: 0.5rem 0 0.25rem;
+}
+
+/* Téléphone : les deux boutons toujours l'un sous l'autre. Côte à côte, « Relancer » tenait sur
+   la ligne de « C'est parti ! » mais pas « Lancer la roue » : la fenêtre changeait de hauteur */
+@media (max-width: 480px) {
+  .dialogue--roue .dialogue__pied {
+    flex-direction: column;
+    align-items: stretch;
+  }
 }
 
 .grille-prenoms {
@@ -995,10 +1017,8 @@
   text-align: center;
 }
 
+/* Icône et texte à la suite, comme une phrase : sur deux lignes, l'icône reste avec le texte */
 .fin__scores a {
-  display: inline-flex;
-  gap: 0.4rem;
-  align-items: center;
   color: var(--bleu-nuit);
 }
 
@@ -1553,6 +1573,10 @@
   color: var(--texte-doux);
 }
 
+.scores-groupe__morceau {
+  white-space: nowrap;
+}
+
 .scores-groupe__commandes {
   display: flex;
   gap: 0.3rem;
@@ -1576,19 +1600,28 @@
   border-color: var(--bleu-nuit);
 }
 
+/* Le total tapé va jusqu'à −9999 : le champ s'élargit avec son nombre au lieu de le couper.
+   Sans field-sizing (Firefox, Safari), il a d'emblée la place de cinq caractères. */
 .champ__controle.scores-groupe__total {
-  width: 4.5rem;
+  width: calc(5ch + 2.2rem);
   padding-inline: 0.4rem;
   font-size: 1.2rem;
   font-weight: 900;
+  font-variant-numeric: tabular-nums;
   text-align: center;
 }
 
 @media (max-width: 640px) {
+  /* Le rang garde la place de deux chiffres (« 12. ») */
   .scores-groupe__ligne {
-    grid-template-columns: 1.6rem minmax(0, 1fr) auto;
+    grid-template-columns: 1.9rem minmax(0, 1fr) auto;
     gap: 0.5rem;
     padding-inline: 0.6rem;
+  }
+
+  .scores-groupe__rang {
+    font-size: 1rem;
+    white-space: nowrap;
   }
 
   .scores-groupe__bouton {
@@ -1597,7 +1630,53 @@
   }
 
   .champ__controle.scores-groupe__total {
-    width: 3.4rem;
+    width: calc(5ch + 0.8rem);
+  }
+}
+
+/* Téléphone : le détail (« Motus numérique : 3 · Correction : +1 ») passe sous le prénom et les
+   boutons, sur toute la largeur, au lieu d'être coupé dans une colonne étroite */
+@media (max-width: 480px) {
+  .scores-groupe__ligne {
+    grid-template-areas:
+      'rang prenom commandes'
+      '. detail detail';
+    row-gap: 0.2rem;
+  }
+
+  .scores-groupe__rang {
+    grid-area: rang;
+  }
+
+  .scores-groupe__qui {
+    display: contents;
+  }
+
+  .scores-groupe__prenom {
+    grid-area: prenom;
+  }
+
+  .scores-groupe__detail {
+    grid-area: detail;
+  }
+
+  .scores-groupe__commandes {
+    grid-area: commandes;
+  }
+}
+
+/* Avec field-sizing, le champ prend juste la largeur de son nombre */
+@supports (field-sizing: content) {
+  .champ__controle.scores-groupe__total {
+    field-sizing: content;
+    width: auto;
+    min-width: 4.5rem;
+  }
+
+  @media (max-width: 640px) {
+    .champ__controle.scores-groupe__total {
+      min-width: 3.4rem;
+    }
   }
 }
 
@@ -2339,11 +2418,12 @@
   box-shadow: var(--ombre);
 }
 
-/* Téléphone : trois segments égaux sur une ligne */
+/* Téléphone : trois segments sur une ligne, chacun à la largeur de son texte (« Tout le groupe »
+   ne passe à la ligne que s'il le faut vraiment) */
 @media (max-width: 600px) {
   .segments {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(3, auto);
     justify-self: stretch;
   }
 

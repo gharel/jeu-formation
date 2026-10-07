@@ -89,12 +89,12 @@ outils/dev.js                  Lance serve sur le port 4173 (refuse un port occu
 outils/empreinte-mot-de-passe.js  Saisie masquée d'un nouveau mot de passe → sel + empreinte pour acces.js
 tests/unit/                    Vitest (jsdom) : logique des jeux et modules communs
 tests/e2e/                     Playwright : parcours complets, accessibilité, aucune erreur console
-  outils.js                    ouvrirJeu (prépare le groupe dans le stockage), lancerPartie, pointsDe, verifierAccessibilite (axe + typographie)…
+  outils.js                    ouvrirJeu (prépare le groupe dans le stockage), lancerPartie, pointsDe, verifierAccessibilite (axe + typographie + mise en page), verifierMiseEnPage…
   accueil.spec.js              Pour chaque jeu de jeux.js : lien, accueil, « Qui joue ? », éditeur masqué, axe
   contenu.spec.js              Export / import JSON d'un jeu, contenu d'exemple
   contenus.spec.js             Page Les contenus : thématique chargée, aperçu, export et import du jeu de données
   thematiques.spec.js          Thématiques : créer, modifier, retirer un jeu, charger, supprimer, rétablir, export groupé et import
-  mobile.spec.js               Téléphone tactile : pas de plein écran, icônes centrées, buzzers au doigt, plan au doigt
+  mobile.spec.js               Téléphone tactile : pas de plein écran, icônes centrées, buzzers au doigt, plan au doigt ; petit téléphone (360 px) : chaque jeu tient, grands nombres, mots entiers
   groupe.spec.js               Page Groupe : placement (toucher, glisser, ordre), îlots, fenêtre Groupe en partie, fichier JSON
   joueurs.spec.js              Qui joue ? : tout le groupe, au clic, au hasard ; absences ; retardataire ajouté depuis le jeu
   scores.spec.js               Scores du groupe : points de deux jeux additionnés, autre onglet suivi, corrections, remise à zéro
@@ -128,8 +128,9 @@ tests/e2e/                     Playwright : parcours complets, accessibilité, a
 - **Contraste** : pas de texte blanc sur le vert, le jaune, le rose, l'orange, le bleu clair, le caramel ou l'anis. Sur ces fonds, le texte est en bleu nuit. Seuls `bleu-numerique`, `rouge`, `sapin`, `ardoise` et `prune` portent du texte blanc. Utiliser `var(--sur-accent)`.
 - **Formes** : boutons en pilule (`--rayon-pilule`), cartes arrondies à 15px (`--rayon`), ombres douces.
 - **Logo** : `assets/img/logo-skazy-formation-blanc.svg` sur fond sombre, `logo-skazy-formation.svg` sur fond clair. Ne pas le déformer ni le recolorer. Dans le bandeau des pages, la maison (« Accueil ») à gauche ramène aux mini-jeux ; le logo, à droite, mène au site https://formation.skazy.nc dans un nouvel onglet (la partie en cours reste ouverte), comme celui de l'accueil.
-- **Ton** : motivant, simple, en vouvoiement pour l'animateur. `el()` et `remplir()` ajoutent automatiquement une espace insécable avant `! ? ; :` et dans les guillemets « » (aussi dans `placeholder`, `title`, `aria-label`) : pas de `textContent` pour un texte qui peut contenir cette ponctuation. Dans le HTML, écrire `&nbsp;?`. L'espace fine (U+202F) ne se voit pas dans Georama : ne pas l'utiliser. `verifierAccessibilite` contrôle la typographie de chaque écran testé.
-- **Projection** : textes lisibles de loin. Vérifier en 1280×720 (vidéoprojecteur courant) et en 1920×1080, et sur téléphone (390 px de large) : pas de défilement horizontal.
+- **Ton** : motivant, simple, en vouvoiement pour l'animateur. `el()` et `remplir()` ajoutent automatiquement une espace insécable avant `! ? ; :` et dans les guillemets « » (aussi dans `placeholder`, `title`, `aria-label`), après un nombre suivi d'un mot ou de `%` (« 3 participants », « 1 000 000 ») et avant le point médian « · » : pas de `textContent` pour un texte qui peut contenir cette ponctuation ou un nombre. Dans le HTML, écrire `&nbsp;?`. L'espace fine (U+202F) ne se voit pas dans Georama : ne pas l'utiliser, ni le trait d'union insécable (U+2011), absent de la police (« a-t-il » reçoit un liant invisible, U+2060, pour ne pas se couper aux tirets). `verifierAccessibilite` contrôle la typographie de chaque écran testé.
+- **Retours à la ligne** : un titre (`h1`–`h3`, `label`, `legend`) s'équilibre sur ses lignes (`text-wrap: balance`), un paragraphe ne finit pas sur un mot seul (`text-wrap: pretty`). Un `.bouton` s'écrit comme une phrase (`inline-block`, pas de flex) : son libellé, un compte ou l'aide « (Entrée) » se suivent sur des lignes équilibrées au lieu de former des colonnes. Une icône ajoutée par `el()` après du texte reçoit `icone--apres` (écart à gauche). Un bouton qui doit empiler deux lignes (Mémoire vive) remet `display: inline-flex` lui-même. Une suite de lettres (Motus, Batterie faible) rapetisse ses cases pour que le mot le plus long tienne sur une ligne, plutôt que de laisser une lettre seule dessous.
+- **Projection** : textes lisibles de loin. Vérifier en 1280×720 (vidéoprojecteur courant) et en 1920×1080, et sur téléphone (360 et 390 px de large) : pas de défilement horizontal, aucun texte hors de son badge ou de son bouton, même avec un grand nombre (`verifierMiseEnPage`).
 
 ## Ajouter une thématique
 
@@ -162,10 +163,10 @@ Un nouveau mini-jeu sans image doit être ajouté à chaque thématique : le tes
   - pour chaque jeu, une partie complète avec l'attribution d'au moins un point et l'écran de fin ;
   - la préparation du contenu avec enregistrement ;
   - aucune erreur dans la console (`surveillerErreurs`) ;
-  - accessibilité sans violation grave ou critique (`verifierAccessibilite`).
+  - accessibilité sans violation grave ou critique (`verifierAccessibilite`), qui vérifie aussi la mise en page : aucun texte hors de son cadre, aucun nombre coupé dans un champ, aucun mot très court seul sur la ligne d'un bouton ou d'un titre (`verifierMiseEnPage`, à appeler seule sur téléphone).
 - `accueil.spec.js` vérifie automatiquement, pour chaque jeu de `jeux.js` : le lien, l'écran d'accueil, la liste de prénoms partagée, l'éditeur masqué et l'accessibilité.
 - **Jeu à minuterie** : `page.clock.install()` avant d'ouvrir la page, puis `page.clock.pauseAt()` fige le temps ; `page.clock.runFor()` le fait avancer d'un coup (pas d'attente réelle). axe-core a besoin de ses minuteries : relâcher l'horloge (`page.clock.resume()`) le temps de `verifierAccessibilite`, à un moment où aucun chrono du jeu ne tourne (voir `coffre-fort.spec.js`).
-- **Expressions régulières et typographie** : le site met une espace insécable avant `: ! ?` et dans les guillemets. Une chaîne passée à `getByText` est normalisée, pas une expression régulière : écrire `\s` (`/3 erreurs\s:\sla manche/`).
+- **Expressions régulières et typographie** : le site met une espace insécable avant `: ! ?`, dans les guillemets et après un nombre suivi d'un mot. Une chaîne passée à `getByText` est normalisée, pas une expression régulière : écrire `\s` (`/3\serreurs\s:\sla manche/`).
 - **Dans les tests e2e, cherchez les textes dans `#cadre`** : `page.locator('#cadre').getByText(…)`. La zone `#annonces` (lecteurs d'écran) répète certains messages, et `page.getByText` trouverait alors deux éléments selon le timing (test instable).
 
 ## Procédure obligatoire avant commit et push

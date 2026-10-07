@@ -138,8 +138,42 @@
   color: var(--texte-doux);
 }
 
+/* La flèche et « plus » / « moins » restent ensemble */
 .juste__sens {
   font-weight: 800;
+  white-space: nowrap;
+}
+
+/* Téléphone : les grands nombres (8 200 000 000) restent lisibles en entier */
+@media (max-width: 480px) {
+  /* Le champ a la place d'un nombre en milliards ; « Valider » passe dessous */
+  .champ__ligne > .juste__saisie {
+    flex-basis: 100%;
+    font-size: 1.6rem;
+  }
+
+  /* Dans l'historique, le prénom passe sous le nombre, en plus petit, au lieu d'être coupé
+     (« Jean- / Baptiste ») */
+  .juste__entree {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'valeur sens'
+      'joueur sens';
+    row-gap: 0;
+  }
+
+  .juste__valeur {
+    grid-area: valeur;
+  }
+
+  .juste__joueur {
+    grid-area: joueur;
+    font-size: 0.9rem;
+  }
+
+  .juste__sens {
+    grid-area: sens;
+  }
 }
 
 .juste__entree--juste {
@@ -167,7 +201,7 @@
 
 @media (max-width: 860px) {
   .juste__colonnes {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 }
 

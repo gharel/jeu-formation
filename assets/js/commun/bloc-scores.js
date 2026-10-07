@@ -24,16 +24,26 @@ function nombreSigne(n, plus = false) {
   return plus ? `+${n}` : String(n);
 }
 
-/** « Motus numérique : 3 · Correction : +1 » (le nombre reste avec son jeu), ou « Pas encore de point ». */
-export function decrireDetail(detail) {
+/** Le détail, jeu par jeu : [« Motus numérique : 3 », « Correction : +1 »]. */
+export function morceauxDetail(detail) {
+  return detail.map(({ source, points }) =>
+    source === CORRECTION
+      ? `Correction :\u00a0${nombreSigne(points, true)}`
+      : `${TITRES[source] ?? source} :\u00a0${nombreSigne(points)}`,
+  );
+}
+
+/**
+ * « Motus numérique : 3 · Correction : +1 », ou « Pas encore de point ». Chaque jeu reste d'un
+ * bloc (« Le Coffre-fort : 25 » ne se coupe pas au tiret) : la ligne ne passe à la ligne
+ * qu'après un « · ».
+ */
+function detailAffiche(detail) {
   if (!detail.length) return 'Pas encore de point';
-  return detail
-    .map(({ source, points }) =>
-      source === CORRECTION
-        ? `Correction :\u00a0${nombreSigne(points, true)}`
-        : `${TITRES[source] ?? source} :\u00a0${nombreSigne(points)}`,
-    )
-    .join(' · ');
+  return morceauxDetail(detail).map((morceau, i) => [
+    i ? '\u00a0· ' : null,
+    el('span', { class: 'scores-groupe__morceau' }, morceau),
+  ]);
 }
 
 export function creerBlocScores(groupe) {
@@ -95,7 +105,7 @@ export function creerBlocScores(groupe) {
         el(
           'span',
           { class: 'scores-groupe__detail' },
-          decrireDetail(detailDe(groupe.scores, prenom)),
+          detailAffiche(detailDe(groupe.scores, prenom)),
         ),
       ),
       el(

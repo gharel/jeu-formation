@@ -56,7 +56,7 @@ test('Le Coffre-fort : pénalité, réponse acceptée à la main, indice, coffre
   await expect(temps).toHaveText('9:00');
   await page.getByRole('button', { name: /La réponse était bonne/ }).click();
   await expect(temps).toHaveText('9:30');
-  await expect(cadre.getByText(/Serrure 1 ouverte\s! La réponse\s:\sÉchap/)).toBeVisible();
+  await expect(cadre.getByText(/Serrure 1\souverte\s! La réponse\s:\sÉchap/)).toBeVisible();
   await expect(cadre.getByText('Serrure 2 sur 5')).toBeVisible();
 
   // Un indice coûte une minute, une seule fois par serrure
@@ -75,7 +75,7 @@ test('Le Coffre-fort : pénalité, réponse acceptée à la main, indice, coffre
   await expect(temps).toHaveText('8:00');
   await repondre(page, '1989');
   await expect(cadre.getByText('Coffre ouvert !')).toBeVisible();
-  await expect(cadre.getByText(/Avec 8:00 d’avance, malgré 2 erreurs/)).toBeVisible();
+  await expect(cadre.getByText(/Avec 8:00\sd’avance, malgré 2\serreurs/)).toBeVisible();
   await expect(cadre.getByText('Nouveau record !')).toBeVisible();
   await verifierAccessibiliteHorloge(page);
 
@@ -88,7 +88,7 @@ test('Le Coffre-fort : pénalité, réponse acceptée à la main, indice, coffre
   // Rejouer : le record à battre s'affiche
   await page.getByRole('button', { name: 'Rejouer' }).click();
   await expect(
-    cadre.getByText(/Record à battre\s:\scoffre ouvert avec 8:00 d’avance/),
+    cadre.getByText(/Record à battre\s:\scoffre ouvert avec 8:00\sd’avance/),
   ).toBeVisible();
   expect(erreurs).toEqual([]);
 });

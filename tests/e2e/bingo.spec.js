@@ -35,9 +35,9 @@ test('Bingo : grilles, tirage avec définition, « Ligne ! » puis « Bingo ! »
     cadre.getByRole('list', { name: 'Les mots à recopier' }).getByRole('listitem'),
   ).toHaveCount(20);
   await page.getByRole('button', { name: 'Grille de 4 × 4' }).click();
-  await expect(cadre.getByText(/Recopiez-y 16 mots/)).toBeVisible();
+  await expect(cadre.getByText(/Recopiez-y 16\smots/)).toBeVisible();
   await page.getByRole('button', { name: 'Grille de 3 × 3' }).click();
-  await expect(cadre.getByText(/Recopiez-y 9 mots/)).toBeVisible();
+  await expect(cadre.getByText(/Recopiez-y 9\smots/)).toBeVisible();
   await verifierAccessibilite(page);
   await page.getByRole('button', { name: /Tout le monde est prêt/ }).click();
 

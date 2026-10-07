@@ -53,7 +53,7 @@ test('Top 5 : réponses retournées, erreurs, points attribués, question suivan
   // Deux erreurs de plus : la manche s'arrête et le reste se dévoile
   await page.getByRole('button', { name: 'Mauvaise réponse' }).click();
   await page.getByRole('button', { name: 'Mauvaise réponse' }).click();
-  await expect(cadre.getByText(/3 erreurs\s:\sla manche s’arrête/)).toBeVisible();
+  await expect(cadre.getByText(/3\serreurs\s:\sla manche s’arrête/)).toBeVisible();
   await expect(tableau).toContainText('Safari');
   await expect(tableau).toContainText('Opera');
   await expect(page.getByLabel('Proposition du groupe')).toBeHidden();
@@ -64,7 +64,7 @@ test('Top 5 : réponses retournées, erreurs, points attribués, question suivan
   for (const reponse of ['clé usb', 'souris', 'clavier', 'imprimante', 'disque dur']) {
     await proposer(page, reponse);
   }
-  await expect(cadre.getByText(/Les 5 réponses sont trouvées, bravo\s!/)).toBeVisible();
+  await expect(cadre.getByText(/Les 5\sréponses sont trouvées, bravo\s!/)).toBeVisible();
   await expect(cadre.locator('.top5__score')).toHaveText('15 points sur 15');
   expect(erreurs).toEqual([]);
 });

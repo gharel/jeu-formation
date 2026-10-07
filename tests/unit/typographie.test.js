@@ -7,7 +7,7 @@ const voir = (texte) => texte.replaceAll('\u00a0', '~');
 describe('typographie française', () => {
   it('rend insécable l’espace avant ! ? ; : (la ponctuation ne part plus seule à la ligne)', () => {
     expect(voir(typographier('Comment on joue ?'))).toBe('Comment on joue~?');
-    expect(voir(typographier('Durée : 5 min ; bravo !'))).toBe('Durée~: 5 min~; bravo~!');
+    expect(voir(typographier('Durée : 5 min ; bravo !'))).toBe('Durée~: 5~min~; bravo~!');
     // L'ancienne espace fine, trop étroite pour se voir, devient une espace insécable
     expect(voir(typographier('Prêts\u202f?'))).toBe('Prêts~?');
   });
@@ -25,6 +25,21 @@ describe('typographie française', () => {
     expect(typographier('Rendez-vous à 10:30')).toBe('Rendez-vous à 10:30');
     expect(voir(typographier('Bravo\u00a0!'))).toBe('Bravo~!');
     expect(voir(typographier(typographier('Qui ? « Moi » !')))).toBe('Qui~? «~Moi~»~!');
+  });
+
+  it('garde un nombre avec ce qui le suit : nom, unité, milliers', () => {
+    expect(voir(typographier('Le groupe · 3 participants'))).toBe('Le groupe~· 3~participants');
+    expect(voir(typographier('10 mots à faire deviner · 2 par binôme'))).toBe(
+      '10~mots à faire deviner~· 2~par binôme',
+    );
+    expect(voir(typographier('Marge de 10 %'))).toBe('Marge de 10~%');
+    expect(voir(typographier('1 000 000 habitants'))).toBe('1~000~000~habitants');
+    // « a-t- » ne reste pas en fin de ligne : un liant invisible (U+2060) suit les tirets
+    expect(typographier('Quand a-t-il été créé ?').replaceAll('\u2060', '^')).toBe(
+      'Quand a-^t-^il été créé' + '\u00a0?',
+    );
+    // Deux nombres qui ne forment pas un millier restent séparables
+    expect(voir(typographier('Les paliers 5 4 3 2 1'))).toBe('Les paliers 5 4 3 2 1');
   });
 
   it('met des espaces insécables dans les guillemets', () => {

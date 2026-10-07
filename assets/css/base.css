@@ -22,8 +22,11 @@ body {
   line-height: 1.5;
   color: var(--texte);
   background: var(--fond);
+  /* Un mot trop long pour la ligne (adresse, nom composé) passe à la ligne au lieu de déborder */
+  overflow-wrap: break-word;
 }
 
+/* Titres sur des lignes de longueur égale : jamais un mot seul sur la dernière ligne */
 h1,
 h2,
 h3 {
@@ -31,6 +34,21 @@ h3 {
   font-weight: 800;
   color: var(--bleu-nuit);
   margin: 0 0 0.5em;
+  text-wrap: balance;
+}
+
+h4,
+legend,
+label,
+summary {
+  text-wrap: balance;
+}
+
+/* Paragraphes : la dernière ligne garde au moins deux mots */
+p,
+li,
+dd {
+  text-wrap: pretty;
 }
 
 h2 {
@@ -73,9 +91,8 @@ img {
   margin-inline-end: 0.4em;
 }
 
-/* Pas d'espace dans un bouton (il a son propre écart), ni pour une icône seule dans sa pastille
-   (icône du jeu, médaille du podium) : l'espace à droite la décalerait vers la gauche */
-.bouton .icone,
+/* Pas d'espace dans un bouton du bandeau (il a son propre écart), ni pour une icône seule dans sa
+   pastille (icône du jeu, médaille du podium) : l'espace à droite la décalerait vers la gauche */
 .bouton-bandeau .icone,
 .bouton-icone .icone,
 .puce__retirer .icone,
@@ -90,10 +107,6 @@ img {
 /* Icône placée après le texte (flèche « suivant ») */
 .icone--apres {
   margin-inline: 0.4em 0;
-}
-
-.bouton .icone--apres {
-  margin-inline: 0;
 }
 
 .visuellement-cache {
@@ -295,11 +308,14 @@ img {
 
 /* ---------- Boutons ---------- */
 
+/* Le texte d'un bouton s'écrit comme une phrase (pas de flex) : quand il passe à la ligne, le
+   libellé, un compte (« · 3 participants ») et l'aide « (Entrée) » se suivent sur des lignes
+   équilibrées, au lieu de former des colonnes coupées chacune de leur côté */
 .bouton {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.35em;
+  display: inline-block;
+  vertical-align: middle;
+  text-align: center;
+  text-wrap: balance;
   font: inherit;
   font-weight: 800;
   line-height: 1.2;
@@ -313,6 +329,17 @@ img {
   transition:
     transform 0.1s ease,
     background-color 0.15s ease;
+}
+
+/* Icône du bouton : en ligne avec le texte, qu'elle ne quitte jamais (pas de coupure entre les
+   deux), avec l'écart qu'avait le flex */
+.bouton .icone {
+  display: inline;
+  margin-inline: 0 0.35em;
+}
+
+.bouton .icone--apres {
+  margin-inline: 0.35em 0;
 }
 
 /* Seulement avec une souris : sur écran tactile, le survol resterait collé au bouton touché
@@ -360,6 +387,14 @@ img {
 .bouton--grand {
   font-size: 1.25rem;
   padding: 0.75em 1.8em;
+}
+
+/* Téléphone : le grand bouton reste le plus visible, mais laisse de la place à son texte */
+@media (max-width: 480px) {
+  .bouton--grand {
+    font-size: 1.1rem;
+    padding: 0.7em 1.2em;
+  }
 }
 
 .bouton--succes {
@@ -470,6 +505,19 @@ textarea.champ__controle {
   display: flex;
   gap: 0.5rem;
   align-items: center;
+}
+
+/* Téléphone : le champ garde une largeur où l'on voit ce qu'on tape ; s'il n'y a pas la place,
+   le bouton (Valider, Essayer, Ajouter) passe dessous au lieu de l'écraser */
+@media (max-width: 480px) {
+  .champ__ligne {
+    flex-wrap: wrap;
+  }
+
+  .champ__ligne > .champ__controle {
+    flex: 1 1 11rem;
+    min-width: 0;
+  }
 }
 
 .champ__unite {

@@ -14,7 +14,7 @@ import {
   enregistrer,
 } from '../../assets/js/commun/scores-groupe.js';
 import { creerGroupe } from '../../assets/js/commun/groupe.js';
-import { decrireDetail } from '../../assets/js/commun/bloc-scores.js';
+import { morceauxDetail } from '../../assets/js/commun/bloc-scores.js';
 import { lire, ecrire } from '../../assets/js/commun/stockage.js';
 
 beforeEach(() => localStorage.clear());
@@ -84,13 +84,13 @@ describe('scores du groupe : fonctions pures', () => {
 
   it('décrit le détail avec le titre des jeux', () => {
     expect(
-      decrireDetail([
+      morceauxDetail([
         { source: 'motus', points: 3 },
         { source: 'duel-buzzer', points: -1 },
         { source: CORRECTION, points: 2 },
       ]),
-    ).toBe('Motus numérique :\u00a03 · Duel buzzer :\u00a0−1 · Correction :\u00a0+2');
-    expect(decrireDetail([])).toBe('Pas encore de point');
+    ).toEqual(['Motus numérique :\u00a03', 'Duel buzzer :\u00a0−1', 'Correction :\u00a0+2']);
+    expect(morceauxDetail([])).toEqual([]);
   });
 
   it('se garde dans le stockage, nettoyé à la lecture', () => {

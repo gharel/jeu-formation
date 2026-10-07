@@ -48,16 +48,13 @@ function carteJeu(jeu) {
 
 remplir(document.getElementById('grille-jeux'), JEUX.map(carteJeu));
 
-// « Le groupe · 8 participants » : la liste sert à tous les jeux
-const lienGroupe = document.getElementById('lien-groupe');
+// « Le groupe · 8 participants » : la liste sert à tous les jeux. Sur un écran étroit, la
+// seule coupure possible est après le point : « Le groupe · » puis « 8 participants »,
+// jamais « Le » ou « 8 » seuls sur leur ligne.
+const libelleGroupe = document.getElementById('libelle-groupe');
 const nombre = chargerParticipants().length;
-lienGroupe?.append(
-  el(
-    'span',
-    { class: 'heros__compte' },
-    ` · ${nombre ? `${nombre} participant${nombre > 1 ? 's' : ''}` : 'à saisir'}`,
-  ),
-);
+const compte = nombre ? `${nombre}\u00a0participant${nombre > 1 ? 's' : ''}` : 'à\u00a0saisir';
+libelleGroupe?.append(el('span', { class: 'heros__compte' }, `\u00a0· ${compte}`));
 
 const bouton = document.getElementById('jeu-hasard');
 const hasard = hasardDePage();
