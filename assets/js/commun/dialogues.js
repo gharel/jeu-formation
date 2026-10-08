@@ -86,94 +86,214 @@ export function confirmer({ titre, message, oui = 'Oui', non = 'Annuler' }) {
 }
 
 /**
- * Demande à l'animateur de cliquer un prénom (ou plusieurs avec `multiple`).
- * Résout avec la liste choisie ([] si personne). Sans participants, résout [] tout de suite.
+ * Demande à l'animateur qui a gagné : un prénom au clic (ou plusieurs avec `multiple`).
+ * Avec `plusieurs` (attribuer des points), un clic sur un prénom suffit toujours, mais la fenêtre
+ * propose aussi « Tout le monde » et « Plusieurs personnes », qui passe aux cases à cocher.
+ * `equipes` ([{ id, nom, membres }], membres parmi `prenoms`) : une équipe se choisit d'un clic,
+ * ses membres avec elle.
+ * Résout avec { prenoms, equipes } (les identifiants des équipes choisies), vides si personne.
+ * Sans participants, résout tout de suite.
  */
-export function choisirPrenoms({
+export function choisirGagnants({
   titre,
   message = '',
   prenoms,
   multiple = false,
+  plusieurs = false,
+  equipes = [],
   libelleAucun = 'Personne',
   preselection = [],
 }) {
-  if (!prenoms.length) return Promise.resolve([]);
+  const aucun = { prenoms: [], equipes: [] };
+  if (!prenoms.length) return Promise.resolve(aucun);
+  const enJeu = new Set(prenoms);
+  const equipesVisibles = equipes
+    .map((e) => ({ ...e, membres: e.membres.filter((m) => enJeu.has(m)) }))
+    .filter((e) => e.membres.length);
   return ouvrirDialogue({
     titre,
     classe: 'dialogue--prenoms',
-    valeurAnnulation: [],
+    valeurAnnulation: aucun,
     construire({ corps, pied, fermer }) {
       if (message) corps.append(el('p', { class: 'dialogue__message' }, message));
       const choisis = new Set(preselection);
+      const equipesChoisies = new Set();
+      let aCocher = multiple;
+      const outils = el('p', { class: 'dialogue__outils' });
       const grille = el('div', { class: 'grille-prenoms' });
-      if (multiple) {
-        corps.append(
+      const grilleEquipes = el('div', {
+        class: 'grille-equipes',
+        role: 'group',
+        'aria-labelledby': 'titre-equipes-gagnantes',
+      });
+      const resultat = () => ({
+        prenoms: prenoms.filter((p) => choisis.has(p)),
+        equipes: equipesVisibles.filter((e) => equipesChoisies.has(e.id)).map((e) => e.id),
+      });
+      const valider = el(
+        'button',
+        { type: 'button', class: 'bouton bouton--principal', onclick: () => fermer(resultat()) },
+        'Valider',
+      );
+
+      function dessinerCoches() {
+        for (const b of grille.children) {
+          b.setAttribute('aria-pressed', String(choisis.has(b.dataset.prenom)));
+        }
+        for (const b of grilleEquipes.children) {
+          b.setAttribute('aria-pressed', String(equipesChoisies.has(b.dataset.equipe)));
+        }
+      }
+
+      const toutCocher = el(
+        'button',
+        {
+          type: 'button',
+          class: 'bouton bouton--discret',
+          onclick: () => {
+            const tous = choisis.size < prenoms.length;
+            for (const p of prenoms) {
+              if (tous) choisis.add(p);
+              else choisis.delete(p);
+            }
+            if (!tous) equipesChoisies.clear();
+            dessinerCoches();
+          },
+        },
+        icone('users'),
+        'Tout le monde / personne',
+      );
+
+      function passerAuxCoches() {
+        aCocher = true;
+        dessinerCoches();
+        outils.before(
           el(
             'p',
-            { class: 'dialogue__outils' },
-            el(
-              'button',
-              {
-                type: 'button',
-                class: 'bouton bouton--discret',
-                onclick: () => {
-                  const tous = choisis.size < prenoms.length;
-                  for (const p of prenoms) {
-                    if (tous) choisis.add(p);
-                    else choisis.delete(p);
-                  }
-                  for (const b of grille.children) {
-                    b.setAttribute('aria-pressed', String(tous));
-                  }
-                },
-              },
-              icone('users'),
-              'Tout le monde / personne',
-            ),
+            { class: 'dialogue__message' },
+            equipesVisibles.length
+              ? 'Cliquez sur chaque équipe ou personne, puis Valider.'
+              : 'Cliquez sur chaque personne, puis Valider.',
           ),
         );
+        remplir(outils, toutCocher);
+        pied.append(valider);
+        (grilleEquipes.firstElementChild ?? grille.firstElementChild).focus();
       }
-      for (const prenom of prenoms) {
-        const bouton = el(
-          'button',
-          {
-            type: 'button',
-            class: 'puce-prenom',
-            'aria-pressed': multiple ? String(choisis.has(prenom)) : null,
-            onclick: () => {
-              if (!multiple) {
-                fermer([prenom]);
-                return;
-              }
-              if (choisis.has(prenom)) choisis.delete(prenom);
-              else choisis.add(prenom);
-              bouton.setAttribute('aria-pressed', String(choisis.has(prenom)));
-            },
-          },
-          multiple ? icone('check', { classe: 'puce-prenom__coche' }) : null,
-          prenom,
-        );
-        grille.append(bouton);
-      }
-      corps.append(grille);
-      pied.append(
-        el('button', { type: 'button', class: 'bouton', onclick: () => fermer([]) }, libelleAucun),
-      );
-      if (multiple) {
-        pied.append(
+
+      for (const equipe of equipesVisibles) {
+        grilleEquipes.append(
           el(
             'button',
             {
               type: 'button',
-              class: 'bouton bouton--principal',
-              onclick: () => fermer(prenoms.filter((p) => choisis.has(p))),
+              class: 'puce-equipe',
+              'data-equipe': equipe.id,
+              'aria-pressed': aCocher ? 'false' : null,
+              onclick: () => {
+                if (!aCocher) {
+                  fermer({ prenoms: [...equipe.membres], equipes: [equipe.id] });
+                  return;
+                }
+                const choisie = !equipesChoisies.has(equipe.id);
+                if (choisie) equipesChoisies.add(equipe.id);
+                else equipesChoisies.delete(equipe.id);
+                for (const membre of equipe.membres) {
+                  if (choisie) choisis.add(membre);
+                  else choisis.delete(membre);
+                }
+                dessinerCoches();
+              },
             },
-            'Valider',
+            el(
+              'span',
+              { class: 'puce-equipe__nom' },
+              icone('check', { classe: 'puce-prenom__coche' }),
+              icone('people-group'),
+              equipe.nom,
+            ),
+            el('span', { class: 'puce-equipe__membres' }, equipe.membres.join(', ')),
           ),
         );
       }
+
+      for (const prenom of prenoms) {
+        grille.append(
+          el(
+            'button',
+            {
+              type: 'button',
+              class: 'puce-prenom',
+              'data-prenom': prenom,
+              'aria-pressed': aCocher ? String(choisis.has(prenom)) : null,
+              onclick: () => {
+                if (!aCocher) {
+                  fermer({ prenoms: [prenom], equipes: [] });
+                  return;
+                }
+                if (choisis.has(prenom)) {
+                  choisis.delete(prenom);
+                  // Une équipe dont un membre manque n'est plus choisie en entier
+                  for (const e of equipesVisibles) {
+                    if (e.membres.includes(prenom)) equipesChoisies.delete(e.id);
+                  }
+                } else choisis.add(prenom);
+                dessinerCoches();
+              },
+            },
+            icone('check', { classe: 'puce-prenom__coche' }),
+            prenom,
+          ),
+        );
+      }
+      if (aCocher) outils.append(toutCocher);
+      else if (plusieurs && prenoms.length > 1) {
+        outils.append(
+          el(
+            'button',
+            {
+              type: 'button',
+              class: 'bouton bouton--discret',
+              onclick: () => fermer({ prenoms: [...prenoms], equipes: [] }),
+            },
+            icone('users'),
+            'Tout le monde',
+          ),
+          el(
+            'button',
+            { type: 'button', class: 'bouton bouton--discret', onclick: passerAuxCoches },
+            icone('list-check'),
+            'Plusieurs personnes',
+          ),
+        );
+      }
+      if (outils.childElementCount) corps.append(outils);
+      if (equipesVisibles.length) {
+        corps.append(
+          el('p', { id: 'titre-equipes-gagnantes', class: 'dialogue__sous-titre' }, 'Équipes'),
+          grilleEquipes,
+          el('p', { class: 'dialogue__sous-titre' }, 'Personnes'),
+        );
+      }
+      corps.append(grille);
+      pied.append(
+        el(
+          'button',
+          { type: 'button', class: 'bouton', onclick: () => fermer(aucun) },
+          libelleAucun,
+        ),
+      );
+      if (aCocher) pied.append(valider);
     },
   });
+}
+
+/**
+ * Demande à l'animateur de cliquer un prénom (ou plusieurs avec `multiple`), sans équipes.
+ * Résout avec la liste choisie ([] si personne).
+ */
+export async function choisirPrenoms(options) {
+  return (await choisirGagnants({ ...options, equipes: [] })).prenoms;
 }
 
 /**

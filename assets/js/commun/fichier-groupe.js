@@ -1,6 +1,7 @@
 /**
  * Le groupe dans un fichier JSON, lisible et modifiable à la main : nom, prénoms, infos,
- * absences, disposition de la salle, places et points. Fonctions pures (export et lecture d'un import).
+ * absences, disposition de la salle, places, équipes et points. Fonctions pures (export et lecture
+ * d'un import).
  *
  * {
  *   format: 'skazy-jeux-groupe', version: 1, exporteLe: '…',
@@ -13,11 +14,14 @@
  *       { prenom: 'Bob', absent: true },
  *       'Chloé',                                   // un prénom seul suffit
  *     ],
+ *     equipes: [                                   // facultatif
+ *       { nom: 'Les Bleus', membres: ['Ana', 'Chloé'], points: { motus: 2 } },
+ *     ],
  *   },
  * }
  * `nombreDePlaces: null` : la salle suit la taille du groupe. `place` : numéro affiché sur le plan.
  * À l'import, l'info peut être un simple texte (thème « Autre ») et les points un simple nombre
- * (gardé comme une correction de l'animateur).
+ * (gardé comme une correction de l'animateur), pour une personne comme pour une équipe.
  */
 import { FORMAT, FORMAT_DONNEES } from './contenu.js';
 import {
@@ -31,14 +35,24 @@ import {
 } from './participants.js';
 import { DISPOSITIONS, normaliserPlan, nombreDePlaces, placeDe } from './salle.js';
 import { CORRECTION, normaliserScores } from './scores-groupe.js';
+import { NOMBRE_EQUIPES_MAX, normaliserNomEquipe, normaliserScoresEquipes } from './equipes.js';
 
 export const FORMAT_GROUPE = 'skazy-jeux-groupe';
 export const VERSION_GROUPE = 1;
 
 /** Fichier du groupe : `groupe` a les mêmes propriétés que creerGroupe() (nom, participants…). */
 export function preparerExportGroupe(groupe, maintenant = new Date()) {
-  const { nom, participants, infos, absents, plan, scores = {} } = groupe;
-  return {
+  const {
+    nom,
+    participants,
+    infos,
+    absents,
+    plan,
+    scores = {},
+    equipes = [],
+    scoresEquipes = {},
+  } = groupe;
+  const fichier = {
     format: FORMAT_GROUPE,
     version: VERSION_GROUPE,
     exporteLe: maintenant.toISOString(),
@@ -58,6 +72,74 @@ export function preparerExportGroupe(groupe, maintenant = new Date()) {
       }),
     },
   };
+  if (equipes.length) {
+    fichier.groupe.equipes = equipes.map((equipe) => {
+      const entree = {
+        nom: equipe.nom,
+        membres: participants.filter((p) => equipe.membres.includes(p.toLocaleLowerCase('fr'))),
+      };
+      if (scoresEquipes[equipe.id]) entree.points = { ...scoresEquipes[equipe.id] };
+      return entree;
+    });
+  }
+  return fichier;
+}
+
+/** Points lus dans le fichier : un détail par jeu, ou un simple nombre (une correction). */
+function pointsLus(points) {
+  if (typeof points === 'number' || typeof points === 'string') return { [CORRECTION]: points };
+  if (points && typeof points === 'object') return points;
+  return null;
+}
+
+/**
+ * Équipes du fichier : chaque membre doit être dans le groupe, et dans une seule équipe.
+ * Renvoie { equipes, scoresEquipes } ; ce qui est ignoré va dans les avertissements.
+ */
+function lireEquipes(brut, participants, avertissements) {
+  const vide = { equipes: [], scoresEquipes: {} };
+  if (brut === undefined || brut === null) return vide;
+  if (!Array.isArray(brut)) {
+    avertissements.push('Équipes ignorées : une liste d’équipes est attendue.');
+    return vide;
+  }
+  const parCle = new Map(participants.map((p) => [p.toLocaleLowerCase('fr'), p]));
+  const placees = new Map();
+  const equipes = [];
+  const points = {};
+  for (const entree of brut) {
+    if (!entree || typeof entree !== 'object') continue;
+    if (equipes.length >= NOMBRE_EQUIPES_MAX) {
+      avertissements.push(`Seules les ${NOMBRE_EQUIPES_MAX} premières équipes sont gardées.`);
+      break;
+    }
+    const id = `e${equipes.length + 1}`;
+    const nom = normaliserNomEquipe(entree.nom) || `Équipe ${equipes.length + 1}`;
+    const membres = [];
+    for (const membre of Array.isArray(entree.membres) ? entree.membres : []) {
+      const saisi = normaliserPrenom(String(membre ?? ''));
+      if (!saisi) continue;
+      const cle = saisi.toLocaleLowerCase('fr');
+      if (!parCle.has(cle)) {
+        avertissements.push(
+          `« ${saisi} », dans ${nom}, n’est pas dans le groupe : ce nom est ignoré.`,
+        );
+        continue;
+      }
+      if (placees.has(cle)) {
+        avertissements.push(
+          `${parCle.get(cle)} est déjà dans ${placees.get(cle)} : pas aussi dans ${nom}.`,
+        );
+        continue;
+      }
+      placees.set(cle, nom);
+      membres.push(cle);
+    }
+    equipes.push({ id, nom, membres });
+    const lus = pointsLus(entree.points);
+    if (lus) points[id] = lus;
+  }
+  return { equipes, scoresEquipes: normaliserScoresEquipes(points, equipes) };
 }
 
 /** Nombre entier lu dans le fichier (numéro de place…) : 3 ou « 3 » ; null sinon. */
@@ -68,8 +150,8 @@ function numeroDePlace(valeur) {
 }
 
 /**
- * Lit un fichier de groupe. Renvoie { nom, participants, infos, absents, plan, scores,
- * avertissements } prêt pour groupe.remplacer(). Les avertissements disent ce qui a été changé ou
+ * Lit un fichier de groupe. Renvoie { nom, participants, infos, absents, plan, scores, equipes,
+ * scoresEquipes, avertissements } prêt pour groupe.remplacer(). Les avertissements disent ce qui a été changé ou
  * ignoré (homonyme numéroté, place inexistante ou déjà prise…). Lève une erreur au message
  * lisible si le fichier ne convient pas.
  */
@@ -121,11 +203,8 @@ export function lireImportGroupe(contenuFichier) {
       typeof entree.info === 'string' ? { theme: 'autre', texte: entree.info } : entree.info;
     if (info) infos = definirInfo(infos, prenom, info);
     if (entree.absent === true) absents.push(prenom.toLocaleLowerCase('fr'));
-    if (typeof entree.points === 'number' || typeof entree.points === 'string') {
-      points[prenom] = { [CORRECTION]: entree.points };
-    } else if (entree.points && typeof entree.points === 'object') {
-      points[prenom] = entree.points;
-    }
+    const lus = pointsLus(entree.points);
+    if (lus) points[prenom] = lus;
     if (entree.place !== undefined && entree.place !== null && entree.place !== '') {
       placesVoulues.push({ prenom, place: entree.place });
     }
@@ -166,6 +245,8 @@ export function lireImportGroupe(contenuFichier) {
     plan = { ...plan, places: { ...plan.places, [`p${numero}`]: prenom.toLocaleLowerCase('fr') } };
   }
 
+  const { equipes, scoresEquipes } = lireEquipes(source.equipes, participants, avertissements);
+
   return {
     nom: normaliserNom(source.nom),
     participants,
@@ -173,6 +254,8 @@ export function lireImportGroupe(contenuFichier) {
     absents,
     plan,
     scores: normaliserScores(points, participants),
+    equipes,
+    scoresEquipes,
     avertissements,
   };
 }

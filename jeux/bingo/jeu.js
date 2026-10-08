@@ -8,6 +8,7 @@ import {
   ecouterClavier,
 } from '../../assets/js/commun/ui.js';
 import { ouvrirDialogue } from '../../assets/js/commun/dialogues.js';
+import { decrireGagnants } from '../../assets/js/commun/points.js';
 import { schema, exemple } from './exemple.js';
 import { POINTS, cotesPossibles, trierMots, annoncePossible, creerPartie } from './logique.js';
 import { creerIllustrationBingo } from './illustration.js';
@@ -324,14 +325,14 @@ function demarrer(ctx) {
       }
       // L'annonce n'est plus celle du moment : rien à valider, aucun point à donner
       if (!partie.valider(annonce)) return;
-      const gagnants = await ctx.choisirPrenoms({
+      const gagnants = await ctx.choisirGagnants({
         titre: question,
         message: 'Cliquez sur les gagnants, puis Valider.',
         multiple: true,
       });
-      ctx.scores.ajouterATous(gagnants, POINTS[annonce]);
-      const qui = gagnants.length ? ` pour ${gagnants.join(', ')}` : '';
-      const gain = gagnants.length ? ` : +${pluriel(POINTS[annonce], 'point')}` : '';
+      ctx.scores.ajouterGagnants(gagnants, POINTS[annonce]);
+      const qui = gagnants.prenoms.length ? ` pour ${decrireGagnants(ctx, gagnants)}` : '';
+      const gain = gagnants.prenoms.length ? ` : +${pluriel(POINTS[annonce], 'point')}` : '';
       if (annonce === 'bingo') {
         // L'écran de fin fête la victoire (fanfare et applaudissements) : pas deux fois
         ctx.terminer({

@@ -50,6 +50,15 @@
   display: none;
 }
 
+/* « Voir la réponse » : la réponse prend la place de la question */
+.reponse-vue .zoom__question {
+  display: none;
+}
+
+.zoom__apercu .reponse-revelee__valeur {
+  font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+}
+
 .zoom__commandes .actions-jeu {
   flex-direction: column;
   align-items: stretch;

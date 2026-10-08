@@ -58,3 +58,55 @@ test('sans réponse, la manche se termine à zéro', async ({ page }) => {
   await page.getByRole('button', { name: 'Mystère suivant' }).click();
   await expect(page.locator('#cadre').getByText('Mystère 2 sur 5')).toBeVisible();
 });
+
+test('Voir la réponse : on juge la proposition, les points vont à plusieurs personnes', async ({
+  page,
+}) => {
+  const erreurs = surveillerErreurs(page);
+  await ouvrirJeu(page, 'qui-suis-je', { prenoms: ['Ana', 'Bob', 'Chloé'] });
+  await lancerPartie(page);
+  const cadre = page.locator('#cadre');
+
+  await page.getByRole('button', { name: 'Démarrer' }).click();
+  await page.getByRole('button', { name: /Stop/ }).click();
+  await page.getByRole('button', { name: 'Voir la réponse' }).click();
+  await expect(cadre.locator('.reponse-revelee')).toContainText('La souris');
+  // Tout le monde a vu la réponse : on ne reprend plus, on juge
+  await expect(page.getByRole('button', { name: /on reprend/ })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Bonne réponse' })).toBeFocused();
+  await verifierAccessibilite(page);
+
+  // Deux personnes ont trouvé ensemble
+  await page.getByRole('button', { name: 'Bonne réponse' }).click();
+  const dialogue = page.getByRole('dialog', { name: /Qui a trouvé/ });
+  await expect(dialogue.getByRole('button', { name: 'Tout le monde', exact: true })).toBeVisible();
+  await dialogue.getByRole('button', { name: 'Plusieurs personnes' }).click();
+  await dialogue.getByRole('button', { name: 'Ana', exact: true }).click();
+  await dialogue.getByRole('button', { name: 'Chloé', exact: true }).click();
+  await verifierAccessibilite(page);
+  await dialogue.getByRole('button', { name: 'Valider' }).click();
+  await expect(cadre.getByText('+5 points pour Ana et Chloé')).toBeVisible();
+  await expect(pointsDe(page, 'Ana')).toHaveText('5');
+  await expect(pointsDe(page, 'Chloé')).toHaveText('5');
+  await expect(pointsDe(page, 'Bob')).toHaveText('0');
+
+  // Mystère 2 : la réponse affichée montre que la proposition était fausse
+  await page.getByRole('button', { name: 'Mystère suivant' }).click();
+  await page.getByRole('button', { name: 'Démarrer' }).click();
+  await page.getByRole('button', { name: /Stop/ }).click();
+  await page.getByRole('button', { name: 'Voir la réponse' }).click();
+  await expect(cadre.locator('.reponse-revelee')).toContainText('Échap');
+  await page.getByRole('button', { name: 'Mauvaise réponse' }).click();
+  await expect(cadre.getByText('Personne n’a trouvé…')).toBeVisible();
+
+  // Mystère 3 : tout le monde a trouvé
+  await page.getByRole('button', { name: 'Mystère suivant' }).click();
+  await page.getByRole('button', { name: 'Démarrer' }).click();
+  await page.getByRole('button', { name: /Stop/ }).click();
+  await page.getByRole('button', { name: 'Bonne réponse' }).click();
+  await dialogue.getByRole('button', { name: 'Tout le monde', exact: true }).click();
+  await expect(cadre.getByText('+5 points pour tout le monde')).toBeVisible();
+  await expect(pointsDe(page, 'Bob')).toHaveText('5');
+  await expect(pointsDe(page, 'Ana')).toHaveText('10');
+  expect(erreurs).toEqual([]);
+});

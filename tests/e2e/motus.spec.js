@@ -54,7 +54,15 @@ test('une partie complète de Motus avec le contenu d’exemple', async ({ page 
     await proposer(page, mot);
     await expect(page.locator('#cadre').getByText('Trouvé !')).toBeVisible();
   }
-  await attribuerPoints(page, 'Bob');
+  // Tout le groupe a trouvé le dernier mot : un clic sur « Tout le monde »
+  await page.getByRole('button', { name: /Attribuer/ }).click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: 'Tout le monde', exact: true })
+    .click();
+  await expect(page.getByRole('button', { name: /pour tout le monde/ })).toBeDisabled();
+  await expect(pointsDe(page, 'Ana')).toHaveText('2');
+  await expect(pointsDe(page, 'Bob')).toHaveText('1');
   await page.getByRole('button', { name: 'Voir le classement' }).click();
 
   await expect(page.getByRole('heading', { name: /Partie terminée/ })).toBeVisible();

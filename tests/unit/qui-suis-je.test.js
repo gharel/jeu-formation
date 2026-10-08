@@ -22,13 +22,17 @@ describe('manche à paliers', () => {
   beforeEach(() => vi.useFakeTimers());
   afterEach(() => vi.useRealTimers());
 
-  function ctxFactice(prenomChoisi) {
+  /**
+   * `choisis` : les prénoms cliqués dans la fenêtre « Qui a trouvé ? » ([] : sans participants),
+   * `equipes` : les équipes cliquées.
+   */
+  function ctxFactice(choisis = [], equipes = []) {
     return {
-      participants: prenomChoisi ? ['Ana', 'Bob'] : [],
+      participants: choisis.length ? ['Ana', 'Bob', 'Chloé'] : [],
       sons, // vrais sons : sans AudioContext (jsdom), ils ne jouent rien
       annoncer() {},
-      scores: { ajouter: vi.fn() },
-      choisirPrenoms: vi.fn(async () => [prenomChoisi]),
+      scores: { ajouterGagnants: vi.fn() },
+      choisirGagnants: vi.fn(async () => ({ prenoms: choisis, equipes })),
     };
   }
 
@@ -39,7 +43,7 @@ describe('manche à paliers', () => {
   }
 
   it('fige les points au stop et les donne à la bonne réponse', async () => {
-    const ctx = ctxFactice('Bob');
+    const ctx = ctxFactice(['Bob']);
     const valeurs = [];
     const surFin = vi.fn();
     const manche = creerMancheAPaliers({
@@ -55,13 +59,75 @@ describe('manche à paliers', () => {
     expect(valeurs).toEqual([5, 4, 3]);
     await bouton(manche, 'Bonne réponse').click();
     await vi.runAllTimersAsync();
-    expect(ctx.scores.ajouter).toHaveBeenCalledWith('Bob', 3);
-    expect(surFin).toHaveBeenCalledWith({ trouve: true, prenom: 'Bob', points: 3 });
+    expect(ctx.choisirGagnants).toHaveBeenCalledWith(expect.objectContaining({ plusieurs: true }));
+    const gagnants = { prenoms: ['Bob'], equipes: [] };
+    expect(ctx.scores.ajouterGagnants).toHaveBeenCalledWith(gagnants, 3);
+    expect(surFin).toHaveBeenCalledWith({ trouve: true, gagnants, points: 3 });
+    manche.detruire();
+  });
+
+  it('donne les points à plusieurs personnes à la fois, ou à une équipe', async () => {
+    const ctx = ctxFactice(['Ana', 'Chloé'], ['e1']);
+    const surFin = vi.fn();
+    const manche = creerMancheAPaliers({ ctx, dureePalier: 2, surValeur() {}, surFin });
+    bouton(manche, 'Démarrer').click();
+    bouton(manche, 'Stop').click();
+    await bouton(manche, 'Bonne réponse').click();
+    await vi.runAllTimersAsync();
+    const gagnants = { prenoms: ['Ana', 'Chloé'], equipes: ['e1'] };
+    expect(ctx.scores.ajouterGagnants).toHaveBeenCalledWith(gagnants, 5);
+    expect(surFin).toHaveBeenCalledWith({ trouve: true, gagnants, points: 5 });
+    manche.detruire();
+  });
+
+  it('montre la réponse pendant la pause, puis la juge sans pouvoir reprendre', async () => {
+    const ctx = ctxFactice(['Ana']);
+    const surReponse = vi.fn();
+    const surFin = vi.fn();
+    const manche = creerMancheAPaliers({ ctx, dureePalier: 2, surValeur() {}, surReponse, surFin });
+    bouton(manche, 'Démarrer').click();
+    vi.advanceTimersByTime(2100);
+    bouton(manche, 'Stop').click();
+    bouton(manche, 'Voir la réponse').click();
+    expect(surReponse).toHaveBeenCalledTimes(1);
+    expect(bouton(manche, 'Voir la réponse')).toBeUndefined();
+    expect(bouton(manche, 'on reprend')).toBeUndefined();
+    // Le temps reste figé, Espace ne relance rien
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space' }));
+    vi.advanceTimersByTime(10000);
+    expect(surFin).not.toHaveBeenCalled();
+    bouton(manche, 'Mauvaise réponse').click();
+    expect(surFin).toHaveBeenCalledWith({ trouve: false });
+    expect(ctx.scores.ajouterGagnants).not.toHaveBeenCalled();
+    manche.detruire();
+  });
+
+  it('après la réponse affichée, la bonne réponse marque les points figés', async () => {
+    const ctx = ctxFactice(['Bob']);
+    const surFin = vi.fn();
+    const manche = creerMancheAPaliers({
+      ctx,
+      dureePalier: 2,
+      surValeur() {},
+      surReponse() {},
+      surFin,
+    });
+    bouton(manche, 'Démarrer').click();
+    vi.advanceTimersByTime(2100);
+    bouton(manche, 'Stop').click();
+    bouton(manche, 'Voir la réponse').click();
+    await bouton(manche, 'Bonne réponse').click();
+    await vi.runAllTimersAsync();
+    expect(surFin).toHaveBeenCalledWith({
+      trouve: true,
+      gagnants: { prenoms: ['Bob'], equipes: [] },
+      points: 4,
+    });
     manche.detruire();
   });
 
   it('reprend après une mauvaise réponse et finit à zéro sans gagnant', () => {
-    const ctx = ctxFactice(null);
+    const ctx = ctxFactice();
     const surFin = vi.fn();
     const manche = creerMancheAPaliers({ ctx, dureePalier: 1, surValeur() {}, surFin });
     bouton(manche, 'Démarrer').click();

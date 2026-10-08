@@ -1,6 +1,7 @@
 /**
  * Manche à paliers (Qui suis-je ?, Zoom mystère) : les chiffres 5 4 3 2 1 s'éteignent,
- * l'animateur appuie sur Stop quand quelqu'un répond, puis valide ou reprend.
+ * l'animateur appuie sur Stop quand quelqu'un répond, puis valide ou reprend. S'il doute, « Voir la
+ * réponse » l'affiche : il valide alors la proposition, ou la manche s'arrête sans point.
  * Espace : Démarrer → Stop → Reprendre.
  */
 import { el, remplir, icone, ecouterClavier } from './ui.js';
@@ -8,8 +9,10 @@ import { creerPaliers, creerAffichagePaliers } from './paliers.js';
 
 /**
  * `surValeur(valeur)` : appelé au départ et à chaque chiffre perdu (le jeu montre un indice,
- * dézoome…). `surFin({ trouve, prenom, points })` : la manche est finie, le jeu révèle la réponse.
- * `surEtat(etat)` (facultatif) : 'attente', 'enCours', 'pause' ou 'fini', à chaque changement
+ * dézoome…). `surFin({ trouve, gagnants, points })` : la manche est finie, le jeu révèle la réponse
+ * (`gagnants` : { prenoms, equipes }, qui a trouvé : une personne, plusieurs ou une équipe). `surReponse()` : le jeu affiche la réponse
+ * pendant la pause, pour que l'animateur juge la proposition.
+ * `surEtat(etat)` (facultatif) : 'attente', 'enCours', 'pause', 'revele' ou 'fini', à chaque changement
  * (l'illustration du jeu s'anime pendant que les chiffres s'éteignent).
  */
 export function creerMancheAPaliers({
@@ -18,6 +21,7 @@ export function creerMancheAPaliers({
   nombre = 5,
   surValeur,
   surFin,
+  surReponse,
   surEtat = null,
 }) {
   const affichage = creerAffichagePaliers(nombre);
@@ -66,15 +70,23 @@ export function creerMancheAPaliers({
       remplir(
         actions,
         bouton('check', 'Bonne réponse', 'bouton--succes', bonne),
+        bouton('eye', 'Voir la réponse', 'bouton--discret', voirReponse),
         bouton('xmark', 'Mauvaise réponse, on reprend', 'bouton--danger', reprendre),
+      );
+    } else if (etat === 'revele') {
+      remplir(
+        actions,
+        bouton('check', 'Bonne réponse', 'bouton--succes', bonne),
+        bouton('xmark', 'Mauvaise réponse', 'bouton--danger', mauvaise),
       );
     } else {
       remplir(actions);
     }
     surEtat?.(etat);
-    // En pause, le focus va sur « reprendre » : Espace reprend toujours, comme annoncé
+    // En pause, le focus va sur « reprendre » : Espace reprend toujours, comme annoncé.
+    // Réponse affichée : on ne peut plus reprendre, le focus va sur « Bonne réponse ».
     const boutons = actions.querySelectorAll('button');
-    boutons[boutons.length - 1]?.focus();
+    (etat === 'revele' ? boutons[0] : boutons[boutons.length - 1])?.focus();
   }
 
   function demarrer() {
@@ -91,6 +103,19 @@ export function creerMancheAPaliers({
     dessiner();
   }
 
+  // La réponse s'affiche : la proposition se juge, on ne reprend plus (tout le monde l'a vue)
+  function voirReponse() {
+    if (etat !== 'pause') return;
+    etat = 'revele';
+    surReponse();
+    dessiner();
+  }
+
+  function mauvaise() {
+    finir({ trouve: false });
+    ctx.sons.paliers.mauvaise();
+  }
+
   function reprendre() {
     etat = 'enCours';
     ctx.sons.paliers.mauvaise();
@@ -100,17 +125,17 @@ export function creerMancheAPaliers({
 
   async function bonne() {
     const points = paliers.valeur;
-    let prenom = null;
+    let gagnants = { prenoms: [], equipes: [] };
     if (ctx.participants.length) {
-      const [choisi] = await ctx.choisirPrenoms({
+      gagnants = await ctx.choisirGagnants({
         titre: `Qui a trouvé ? (${points} point${points > 1 ? 's' : ''})`,
         libelleAucun: 'Annuler',
+        plusieurs: true,
       });
-      if (!choisi) return;
-      prenom = choisi;
-      ctx.scores.ajouter(prenom, points);
+      if (!gagnants.prenoms.length) return;
+      ctx.scores.ajouterGagnants(gagnants, points);
     }
-    finir({ trouve: true, prenom, points });
+    finir({ trouve: true, gagnants, points });
     ctx.sons.paliers.bonne(points);
   }
 

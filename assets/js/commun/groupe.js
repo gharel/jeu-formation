@@ -1,13 +1,14 @@
 /**
  * Le groupe : son nom, les participants, une info par personne, les absences du jour, le plan
- * de salle et le score de chacun, partagés par toutes les pages (accueil, page « Le groupe »,
- * jeux). Les données passent par participants.js, salle.js et scores-groupe.js ; le plan, les
- * absences et les scores sont nettoyés dès que la liste change (personne retirée : place
- * libérée, points oubliés).
+ * de salle, les équipes et le score de chacun (et de chaque équipe), partagés par toutes les pages
+ * (accueil, page « Le groupe », jeux). Les données passent par participants.js, salle.js,
+ * equipes.js et scores-groupe.js ; le plan, les absences, les équipes et les scores sont nettoyés
+ * dès que la liste change (personne retirée : place libérée, équipe quittée, points oubliés).
  */
 import * as listeParticipants from './participants.js';
 import * as salle from './salle.js';
 import * as scoresGroupe from './scores-groupe.js';
+import * as listeEquipes from './equipes.js';
 import { el, icone } from './ui.js';
 
 export function creerGroupe() {
@@ -17,6 +18,8 @@ export function creerGroupe() {
   let absents = listeParticipants.chargerAbsents(participants);
   let plan = salle.charger(participants);
   let scores = scoresGroupe.charger(participants);
+  let equipes = listeEquipes.charger(participants);
+  let scoresEquipes = listeEquipes.chargerScores(equipes);
   const ecouteurs = new Set();
   const prevenir = () => {
     for (const ecouteur of ecouteurs) ecouteur();
@@ -45,6 +48,14 @@ export function creerGroupe() {
     get scores() {
       return scores;
     },
+    /** Les équipes : [{ id, nom, membres }] (voir equipes.js). */
+    get equipes() {
+      return equipes;
+    },
+    /** Points de chaque équipe, tous jeux confondus : { e1: { motus: 3 } }. */
+    get scoresEquipes() {
+      return scoresEquipes;
+    },
     /** Prénoms (en minuscules) des personnes absentes aujourd'hui. */
     get absents() {
       return absents;
@@ -71,12 +82,16 @@ export function creerGroupe() {
       absents = listeParticipants.garderAbsents(nouveau.absents ?? [], participants);
       plan = salle.nettoyerPlan(nouveau.plan, participants);
       scores = scoresGroupe.normaliserScores(nouveau.scores ?? {}, participants);
+      equipes = listeEquipes.normaliserEquipes(nouveau.equipes ?? [], participants);
+      scoresEquipes = listeEquipes.normaliserScoresEquipes(nouveau.scoresEquipes ?? {}, equipes);
       listeParticipants.enregistrerNom(nom);
       listeParticipants.enregistrer(participants);
       listeParticipants.enregistrerInfos(infos);
       listeParticipants.enregistrerAbsents(absents);
       salle.enregistrer(plan);
       scoresGroupe.enregistrer(scores);
+      listeEquipes.enregistrer(equipes);
+      listeEquipes.enregistrerScores(scoresEquipes);
       prevenir();
     },
 
@@ -91,7 +106,32 @@ export function creerGroupe() {
       salle.enregistrer(plan);
       scores = scoresGroupe.charger(participants);
       scoresGroupe.enregistrer(scores);
+      equipes = listeEquipes.normaliserEquipes(equipes, participants);
+      listeEquipes.enregistrer(equipes);
       prevenir();
+    },
+
+    /**
+     * Nouvelles équipes (composées, renommées, ajoutées, retirées) : les points d'une équipe
+     * retirée sont oubliés.
+     */
+    changerEquipes(nouvelles) {
+      equipes = listeEquipes.normaliserEquipes(nouvelles, participants);
+      listeEquipes.enregistrer(equipes);
+      scoresEquipes = listeEquipes.chargerScores(equipes);
+      listeEquipes.enregistrerScores(scoresEquipes);
+      prevenir();
+    },
+
+    /** Relit les équipes (composées sur la page « Le groupe », dans un autre onglet). */
+    rechargerEquipes() {
+      equipes = listeEquipes.charger(participants);
+      scoresEquipes = listeEquipes.chargerScores(equipes);
+    },
+
+    /** L'équipe d'une personne, ou null. */
+    equipeDe(prenom) {
+      return listeEquipes.equipeDe(equipes, prenom);
     },
 
     estAbsent(prenom) {
@@ -134,6 +174,26 @@ export function creerGroupe() {
       prevenirScores();
     },
 
+    /** Points gagnés (ou perdus) dans un jeu par une équipe ou plusieurs (leurs identifiants). */
+    ajouterPointsEquipes(ids, source, n) {
+      let nouveaux = listeEquipes.chargerScores(equipes);
+      for (const id of [].concat(ids)) {
+        if (equipes.some((e) => e.id === id)) {
+          nouveaux = scoresGroupe.ajouterPoints(nouveaux, id, source, n);
+        }
+      }
+      scoresEquipes = nouveaux;
+      listeEquipes.enregistrerScores(scoresEquipes);
+      prevenirScores();
+    },
+
+    /** L'animateur corrige le total d'une équipe. */
+    fixerTotalEquipe(id, total) {
+      scoresEquipes = scoresGroupe.fixerTotal(listeEquipes.chargerScores(equipes), id, total);
+      listeEquipes.enregistrerScores(scoresEquipes);
+      prevenirScores();
+    },
+
     /** L'animateur corrige le total d'une personne. */
     fixerTotal(prenom, total) {
       scores = scoresGroupe.fixerTotal(scoresGroupe.charger(participants), prenom, total);
@@ -143,13 +203,16 @@ export function creerGroupe() {
 
     reinitialiserScores() {
       scores = {};
+      scoresEquipes = {};
       scoresGroupe.enregistrer(scores);
+      listeEquipes.enregistrerScores(scoresEquipes);
       prevenirScores();
     },
 
     /** Relit les scores (changés par une autre page) et prévient les écouteurs. */
     rechargerScores() {
       scores = scoresGroupe.charger(participants);
+      scoresEquipes = listeEquipes.chargerScores(equipes);
       prevenirScores();
     },
 

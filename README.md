@@ -7,31 +7,34 @@ Chaque jeu dure de 5 à 15 minutes.
 
 ## Les jeux
 
-| Jeu               | Principe                                                                                          | À préparer                             |
-| ----------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------- |
-| Motus numérique   | Deviner 5 mots en 6 essais, lettres colorées                                                      | 5 mots (+ définitions)                 |
-| Instant défi      | La roue tire un défi éclair (« 30 secondes pour trouver… »), chrono                               | Les fins des défis                     |
-| Le Juste Chiffre  | « C'est plus ! », « C'est moins ! », minuteur réglable (30 s)                                     | Questions à réponse chiffrée           |
-| Debout ou assis ? | Vrai = debout, faux = assis (ou main levée), mode survie                                          | Affirmations vrai/faux                 |
-| Le Bon Ordre      | Remettre dans l'ordre les étapes d'une procédure, 3 essais                                        | Procédures de 3 à 7 étapes             |
-| Qui suis-je ?     | Indices progressifs, points qui fondent 5 4 3 2 1, Stop                                           | Mystères + 3 à 5 indices               |
-| Zoom mystère      | Capture très zoomée qui se dévoile, 5 4 3 2 1, Stop                                               | Captures collées (Ctrl+V) ou importées |
-| Duel buzzer       | Deux joueurs, touches A et L ou buzzers à l'écran (tactile), le plus rapide répond                | Questions + réponses                   |
-| Pyramide          | Par deux, faire deviner un mot en 1, 2, 3 ou 4 mots d'indice : 4, 3, 2 ou 1 point                 | Une liste de mots                      |
-| Batterie faible   | Proposer des lettres ; chaque erreur vide la batterie                                             | Mots ou courtes expressions            |
-| Patate chaude     | Une consigne « Citez… », une patate qui brûle au bout d'un temps caché, on la passe               | Consignes (+ idées de réponses)        |
-| Mémoire vive      | Retrouver les paires (« Ctrl + Z » et « Annuler ») ; de 8 à 24 cartes au choix                    | Paires de cartes (+ explication)       |
-| Bingo             | Chacun remplit sa grille ; le jeu tire les mots : « Ligne ! », puis « Bingo ! »                   | Mots (définitions facultatives)        |
-| Le Coffre-fort    | Des énigmes pour ouvrir les serrures avant la fin du chrono ; erreurs et indices coûtent du temps | Énigmes, réponses, indices             |
-| Top 5             | Trouver les 5 réponses cachées, de la plus attendue (5 points) à la moins (1 point)               | Questions « Citez… » + 5 réponses      |
+| Jeu               | Principe                                                                                                                             | À préparer                             |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------- |
+| Motus numérique   | Deviner 5 mots en 6 essais, lettres colorées                                                                                         | 5 mots (+ définitions)                 |
+| Instant défi      | La roue tire un défi éclair (« 30 secondes pour trouver… »), chrono                                                                  | Les fins des défis                     |
+| Le Juste Chiffre  | « C'est plus ! », « C'est moins ! », minuteur réglable (30 s)                                                                        | Questions à réponse chiffrée           |
+| Debout ou assis ? | Vrai = debout, faux = assis (ou main levée), mode survie                                                                             | Affirmations vrai/faux                 |
+| Le Bon Ordre      | Remettre dans l'ordre les étapes d'une procédure, 3 essais                                                                           | Procédures de 3 à 7 étapes             |
+| Qui suis-je ?     | Indices progressifs, points qui fondent 5 4 3 2 1, Stop, « Voir la réponse » en cas de doute                                         | Mystères + 3 à 5 indices               |
+| Zoom mystère      | Capture très zoomée qui se dévoile, 5 4 3 2 1, Stop, « Voir la réponse » en cas de doute                                             | Captures collées (Ctrl+V) ou importées |
+| Duel buzzer       | Deux joueurs, touches A et L ou buzzers à l'écran (tactile), le plus rapide répond                                                   | Questions + réponses                   |
+| Pyramide          | Par deux, faire deviner un mot en 1, 2, 3 ou 4 mots d'indice : 4, 3, 2 ou 1 point                                                    | Une liste de mots                      |
+| Batterie faible   | Proposer des lettres ; chaque erreur vide la batterie                                                                                | Mots ou courtes expressions            |
+| Patate chaude     | Une consigne « Citez… », une patate qui brûle au bout d'un temps caché, on la passe                                                  | Consignes (+ idées de réponses)        |
+| Mémoire vive      | Retrouver les paires (« Ctrl + Z » et « Annuler ») ; de 8 à 24 cartes au choix                                                       | Paires de cartes (+ explication)       |
+| Bingo             | Chacun remplit sa grille ; le jeu tire les mots : « Ligne ! », puis « Bingo ! »                                                      | Mots (définitions facultatives)        |
+| Le Coffre-fort    | Des énigmes pour ouvrir les serrures avant la fin du chrono ; erreurs et indices coûtent du temps ; un seul mot de la réponse suffit | Énigmes, réponses, indices             |
+| Top 5             | Trouver les 5 réponses cachées, de la plus attendue (5 points) à la moins (1 point) ; un seul mot de la réponse suffit               | Questions « Citez… » + 5 réponses      |
+
+Pour attribuer des points, un clic sur un prénom suffit ; « Tout le monde » les donne à tous les joueurs d'un coup, « Plusieurs personnes » permet d'en cocher plusieurs, et une équipe (voir la page Le groupe) se choisit d'un clic. Les réponses tapées (Top 5, Le Coffre-fort) tolèrent majuscules, accents, article, pluriel, petites fautes de frappe, et un seul mot de la réponse suffit (« passe » pour « Mot de passe ») ; un mot commun à plusieurs réponses du Top 5 (« Google ») fait demander de préciser, sans compter d'erreur.
 
 La page **Le groupe** (bouton sur l'accueil) rassemble les participants :
 
 - leurs **prénoms**, avec une **info** facultative sur chacun : sa passion, son film ou son dessert préféré… Deux personnes du même prénom ? La deuxième reçoit un numéro (« Marie 2 »), qui la distingue partout : points, roue, plan, infos (on peut aussi écrire « Marie D. ») ;
 - un **plan de salle** pour retenir qui est assis où : en U, salle de classe, îlots ou réunion. Le plan prévoit autant de places que de participants (12 au plus), et l'on peut en saisir jusqu'à 30. On place chacun en touchant une place, en faisant glisser son prénom (souris ou doigt), ou d'un coup avec « Placer dans l'ordre » ou « Mélanger » ;
-- les **scores** : les points gagnés dans tous les jeux s'additionnent d'un jeu à l'autre (et d'un jour à l'autre), avec le classement du groupe et le détail par jeu (« Motus numérique : 3 · Pyramide : 2 »). On corrige un score avec − et + ou en tapant le total, et « Remettre les scores à zéro » repart de rien. Chaque jeu garde son propre tableau des points pendant la partie ; en fin de partie, un lien mène aux scores du groupe. Quitter une partie en cours ne retire pas les points déjà gagnés.
+- des **équipes** : formées au hasard parmi les présents (de 2 à 8 équipes, de même taille à une personne près) ou à la main, et renommées (« Les Bleus »). Un clic sur une personne la change d'équipe. En partie, la fenêtre « Qui a trouvé ? » propose chaque équipe : ses points vont à l'équipe (une fois) et à chacun de ses membres. Le tableau de la partie montre les points des équipes, et la fin de partie leur classement ;
+- les **scores** : les points gagnés dans tous les jeux s'additionnent d'un jeu à l'autre (et d'un jour à l'autre), avec le classement des équipes, celui des participants et le détail par jeu (« Motus numérique : 3 · Pyramide : 2 »). On corrige un score avec − et + ou en tapant le total, et « Remettre les scores à zéro » repart de rien. Chaque jeu garde son propre tableau des points pendant la partie ; en fin de partie, un lien mène aux scores du groupe. Quitter une partie en cours ne retire pas les points déjà gagnés.
 
-Tout le groupe s'**exporte en un fichier JSON** (bouton « Exporter le groupe ») : son nom (facultatif, « Google Sheets, mairie »), les prénoms, les infos, les absences, la disposition de la salle, les places et les points. « Importer un groupe… » le recharge, pour reprendre une formation sur plusieurs jours ou préparer le groupe à l'avance. Le fichier se lit et s'écrit à la main :
+Tout le groupe s'**exporte en un fichier JSON** (bouton « Exporter le groupe ») : son nom (facultatif, « Google Sheets, mairie »), les prénoms, les infos, les absences, la disposition de la salle, les places, les équipes et les points. « Importer un groupe… » le recharge, pour reprendre une formation sur plusieurs jours ou préparer le groupe à l'avance. Le fichier se lit et s'écrit à la main :
 
 ```json
 {
@@ -49,12 +52,13 @@ Tout le groupe s'**exporte en un fichier JSON** (bouton « Exporter le groupe »
       },
       { "prenom": "Bob", "absent": true },
       "Chloé"
-    ]
+    ],
+    "equipes": [{ "nom": "Les Bleus", "membres": ["Ana", "Chloé"], "points": { "motus": 2 } }]
   }
 }
 ```
 
-`disposition` : `u`, `classe`, `ilots` ou `cercle` (réunion). `nombreDePlaces: null` : la salle suit la taille du groupe. `place` : le numéro affiché sur le plan. `theme` de l'info : `passion`, `loisir`, `film`, `musique`, `dessert`, `plat`, `voyage`, `animal` ou `autre` (une info en simple texte prend le thème « Autre »). `points` : les points par jeu (le slug du jeu, `correction` pour une correction à la main), ou un simple nombre. À l'import, ce qui ne peut pas s'appliquer (doublon, place inexistante ou déjà prise) est signalé.
+`disposition` : `u`, `classe`, `ilots` ou `cercle` (réunion). `nombreDePlaces: null` : la salle suit la taille du groupe. `place` : le numéro affiché sur le plan. `theme` de l'info : `passion`, `loisir`, `film`, `musique`, `dessert`, `plat`, `voyage`, `animal` ou `autre` (une info en simple texte prend le thème « Autre »). `points` : les points par jeu (le slug du jeu, `correction` pour une correction à la main), ou un simple nombre, pour une personne comme pour une équipe. `equipes` est facultatif ; chaque membre est un prénom du groupe, dans une seule équipe. À l'import, ce qui ne peut pas s'appliquer (doublon, place inexistante ou déjà prise, membre inconnu) est signalé.
 
 Une personne absente un jour se marque d'un clic sur la page Groupe : elle reste dans le groupe et sur le plan, mais ne joue pas et la roue ne la tire pas. Pendant une partie, le bouton **Groupe** du bandeau réaffiche le plan, les prénoms et les infos, et la roue indique la place de la personne désignée.
 

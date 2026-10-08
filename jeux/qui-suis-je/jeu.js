@@ -1,6 +1,7 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
 import { el, remplir, icone, focaliser } from '../../assets/js/commun/ui.js';
 import { creerMancheAPaliers } from '../../assets/js/commun/manche-paliers.js';
+import { decrireGagnants } from '../../assets/js/commun/points.js';
 import { elementsDeListe } from '../../assets/js/commun/contenu.js';
 import { schema, exemple } from './exemple.js';
 import { indicesVisibles } from './logique.js';
@@ -41,11 +42,28 @@ function demarrer(ctx) {
       );
     }
 
+    const blocReponse = () =>
+      el(
+        'div',
+        { class: 'reponse-revelee' },
+        el('p', { class: 'panneau__surtitre' }, 'Je suis…'),
+        el('p', { class: 'reponse-revelee__valeur' }, reponse),
+      );
+
+    // « Voir la réponse », pendant la pause : l'animateur juge la proposition
+    function montrerReponse() {
+      remplir(resultat, blocReponse());
+      resultat.hidden = false;
+      ctx.zone.querySelector('.panneau')?.classList.add('reponse-vue');
+      ctx.annoncer(`La réponse est : ${reponse}`);
+    }
+
     manche = creerMancheAPaliers({
       ctx,
       dureePalier: ctx.reglages.dureePalier,
       surValeur: (valeur) => montrerIndices(indicesVisibles(valeur, indices.length)),
-      surFin({ trouve, prenom, points }) {
+      surReponse: montrerReponse,
+      surFin({ trouve, gagnants, points }) {
         ctx.zone.querySelector('.panneau')?.classList.add('manche-finie');
         montrerIndices(indices.length);
         const dernier = index === mysteres.length - 1;
@@ -59,18 +77,13 @@ function demarrer(ctx) {
         remplir(
           resultat,
           titre,
-          el(
-            'div',
-            { class: 'reponse-revelee' },
-            el('p', { class: 'panneau__surtitre' }, 'Je suis…'),
-            el('p', { class: 'reponse-revelee__valeur' }, reponse),
-          ),
-          prenom
+          blocReponse(),
+          gagnants?.prenoms.length
             ? el(
                 'p',
                 { class: 'qsj__gain' },
                 icone('check'),
-                `+${points} point${points > 1 ? 's' : ''} pour ${prenom}`,
+                `+${points} point${points > 1 ? 's' : ''} pour ${decrireGagnants(ctx, gagnants)}`,
               )
             : null,
           el(
@@ -130,8 +143,8 @@ monterJeu({
   regles: [
     'Avant la séance, préparez des mystères (un logiciel, un terme, une touche…) avec 3 à 5 indices.',
     'Les chiffres 5 4 3 2 1 s’éteignent un à un : à chaque fois, un nouvel indice apparaît.',
-    'Quelqu’un lève la main ? Appuyez sur Stop (Espace) : le temps se fige pendant sa réponse.',
-    'Bonne réponse : la personne gagne les points encore allumés. Plus on tarde, moins on marque !',
+    'Quelqu’un lève la main ? Appuyez sur Stop (Espace) : le temps se fige pendant sa réponse. Un doute ? « Voir la réponse » l’affiche.',
+    'Bonne réponse : les points encore allumés vont à qui a trouvé, une ou plusieurs personnes. Plus on tarde, moins on marque !',
   ],
   demarrer,
 });

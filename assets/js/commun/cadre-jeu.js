@@ -27,8 +27,9 @@ import {
   pleinEcranDisponible,
   focaliser,
 } from './ui.js';
-import { choisirPrenoms, confirmer, designerAvecRoue } from './dialogues.js';
+import { choisirGagnants, choisirPrenoms, confirmer, designerAvecRoue } from './dialogues.js';
 import { creerGroupe, etiquetteInfo } from './groupe.js';
+import { membresParmi } from './equipes.js';
 import { creerBlocJoueurs } from './bloc-joueurs.js';
 import { selectionParDefaut, joueursDeLaPartie } from './joueurs.js';
 import { ouvrirGroupe } from './plan-salle.js';
@@ -65,6 +66,7 @@ export function monterJeu(config) {
   const joueurs = () => joueursDeLaPartie(groupe.presents, selection);
   let mettreAJourLancer = () => {};
   let joueursEnJeu = [];
+  let equipesEnJeu = [];
   const tirage = creerTirage(joueurs(), {
     equitable: lire('roue-equitable', true) !== false,
     hasard,
@@ -550,28 +552,45 @@ export function monterJeu(config) {
     arreterPartie();
     // Les joueurs du moment : ceux choisis dans « Qui joue ? », présents aujourd'hui
     joueursEnJeu = joueurs();
+    // Les équipes du groupe (composées peut-être dans un autre onglet), réduites aux joueurs
+    groupe.rechargerEquipes();
+    equipesEnJeu = groupe.equipes
+      .map((e) => ({ id: e.id, nom: e.nom, membres: membresParmi(e, joueursEnJeu) }))
+      .filter((e) => e.membres.length);
     const tableau = el('ul', { class: 'tableau-points', 'aria-label': 'Points' });
+    const tableauEquipes = el('ul', {
+      class: 'tableau-points tableau-points--equipes',
+      'aria-label': 'Points des équipes',
+    });
     // Chaque point gagné part aussi dans le score du groupe, gardé d'un jeu à l'autre
     const scores = creerScores(joueursEnJeu, {
+      equipes: equipesEnJeu,
       surChangement: dessinerPoints,
       surAjout: (prenoms, n) => groupe.ajouterPoints(prenoms, slug, n),
+      surAjoutEquipes: (ids, n) => groupe.ajouterPointsEquipes(ids, slug, n),
     });
+    /** Une pastille du tableau : nom et points, en jaune pour qui mène. */
+    function pastille(nom, points, meilleur, equipe = false) {
+      return el(
+        'li',
+        {
+          class: `tableau-points__entree${equipe ? ' tableau-points__entree--equipe' : ''}${points > 0 && points === meilleur ? ' tableau-points__entree--tete' : ''}`,
+        },
+        equipe ? icone('people-group') : null,
+        el('span', { class: 'tableau-points__prenom' }, nom),
+        el('span', { class: 'tableau-points__valeur' }, String(points)),
+      );
+    }
     function dessinerPoints() {
-      const classement = scores.classement();
-      const meilleur = classement[0]?.points ?? 0;
+      const meilleur = scores.classement()[0]?.points ?? 0;
       remplir(
         tableau,
-        joueursEnJeu.map((prenom) => {
-          const points = scores.valeur(prenom);
-          return el(
-            'li',
-            {
-              class: `tableau-points__entree${points > 0 && points === meilleur ? ' tableau-points__entree--tete' : ''}`,
-            },
-            el('span', { class: 'tableau-points__prenom' }, prenom),
-            el('span', { class: 'tableau-points__valeur' }, String(points)),
-          );
-        }),
+        joueursEnJeu.map((prenom) => pastille(prenom, scores.valeur(prenom), meilleur)),
+      );
+      const meilleureEquipe = scores.classementEquipes()[0]?.points ?? 0;
+      remplir(
+        tableauEquipes,
+        equipesEnJeu.map((e) => pastille(e.nom, scores.valeurEquipe(e.id), meilleureEquipe, true)),
       );
     }
     dessinerPoints();
@@ -604,7 +623,14 @@ export function monterJeu(config) {
           icone('arrow-left'),
           'Quitter la partie',
         ),
-        joueursEnJeu.length ? tableau : null,
+        joueursEnJeu.length
+          ? el(
+              'div',
+              { class: 'ecran-jeu__points' },
+              equipesEnJeu.length ? tableauEquipes : null,
+              tableau,
+            )
+          : null,
       ),
       zone,
     );
@@ -617,6 +643,8 @@ export function monterJeu(config) {
       reglages: structuredClone(contenu.reglages),
       elements: structuredClone(contenu.elements),
       participants: [...joueursEnJeu],
+      // Les équipes en jeu : [{ id, nom, membres }] (membres parmi les joueurs)
+      equipes: structuredClone(equipesEnJeu),
       scores,
       hasard,
       sons,
@@ -627,6 +655,9 @@ export function monterJeu(config) {
         ecouteDesignation = fonction;
       },
       choisirPrenoms: (options) => choisirPrenoms({ prenoms: joueursEnJeu, ...options }),
+      // Pour attribuer des points : une personne, plusieurs, tout le monde ou une équipe
+      choisirGagnants: (options) =>
+        choisirGagnants({ prenoms: joueursEnJeu, equipes: equipesEnJeu, ...options }),
       terminer: (options) => afficherFin(scores, options),
     };
     const nettoyage = await demarrer(ctx);
@@ -676,6 +707,26 @@ export function monterJeu(config) {
           ),
         )
       : null;
+    const classementEquipes = scores.classementEquipes();
+    const equipes = classementEquipes.some((e) => e.points > 0)
+      ? el(
+          'ol',
+          { class: 'fin__equipes', 'aria-label': 'Classement des équipes' },
+          classementEquipes.map((e) =>
+            el(
+              'li',
+              { class: `fin__equipe${e.rang === 1 ? ' fin__equipe--tete' : ''}` },
+              icone(e.rang === 1 ? 'trophy' : 'people-group'),
+              el('span', { class: 'fin__equipe-nom' }, e.nom),
+              el(
+                'span',
+                { class: 'fin__equipe-points' },
+                `${e.points} pt${e.points > 1 ? 's' : ''}`,
+              ),
+            ),
+          ),
+        )
+      : null;
     afficherEcran(
       'ecran-fin',
       el(
@@ -685,6 +736,7 @@ export function monterJeu(config) {
       ),
       titre,
       message ? el('p', { class: 'fin__message' }, message) : null,
+      equipes,
       // Podium et classement : côte à côte sur grand écran (tout tient en 1280 × 720)
       el(
         'div',

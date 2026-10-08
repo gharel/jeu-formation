@@ -1,5 +1,6 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
 import { el, remplir, icone, animer, ecouterClavier } from '../../assets/js/commun/ui.js';
+import { decrireGagnants } from '../../assets/js/commun/points.js';
 import { schema, exemple } from './exemple.js';
 import { POINTS_PAR_QUESTION, pointsDuRang, reponseAffichee, creerManche } from './logique.js';
 import { creerIllustrationTop5 } from './illustration.js';
@@ -24,7 +25,7 @@ function demarrer(ctx) {
     const manche = creerManche(reponses, { erreursMax });
     illustration.etat(null);
     const derniere = index === questions.length - 1;
-    // Qui a trouvé chaque réponse (rang → prénom), pour lui donner les points
+    // Qui a trouvé chaque réponse (rang → gagnants), pour leur donner les points
     const attribues = new Map();
     touches = {};
 
@@ -104,7 +105,11 @@ function demarrer(ctx) {
           let gagnant = null;
           if (trouvee && avecPrenoms) {
             gagnant = attribues.has(rang)
-              ? el('span', { class: 'top5__gagnant' }, `+${valeur} ${attribues.get(rang)}`)
+              ? el(
+                  'span',
+                  { class: 'top5__gagnant' },
+                  `+${valeur} pour ${decrireGagnants(ctx, attribues.get(rang), 2)}`,
+                )
               : el(
                   'button',
                   {
@@ -279,13 +284,14 @@ function demarrer(ctx) {
     }
 
     async function attribuer(rang) {
-      const [prenom] = await ctx.choisirPrenoms({
+      const gagnants = await ctx.choisirGagnants({
         titre: `Qui a trouvé « ${reponseAffichee(reponses[rang])} » ?`,
         message: `${points(pointsDuRang(rang))} pour cette réponse.`,
+        plusieurs: true,
       });
-      if (!prenom || attribues.has(rang)) return;
-      attribues.set(rang, prenom);
-      ctx.scores.ajouter(prenom, pointsDuRang(rang));
+      if (!gagnants.prenoms.length || attribues.has(rang)) return;
+      attribues.set(rang, gagnants);
+      ctx.scores.ajouterGagnants(gagnants, pointsDuRang(rang));
       ctx.sons.ding();
       dessinerTableau();
       if (!manche.finie) saisie.focus();
@@ -335,7 +341,7 @@ monterJeu({
   regles: [
     'Avant la séance, préparez des questions « Citez… » et leurs 5 réponses, de la plus attendue à la moins attendue.',
     'Le groupe propose des réponses à l’oral, vous les tapez : une réponse du top 5 se retourne au tableau. Un seul de ses mots suffit (« passe » pour « Mot de passe »).',
-    'La plus attendue rapporte 5 points, la moins attendue 1 point : attribuez-les à qui l’a trouvée.',
+    'La plus attendue rapporte 5 points, la moins attendue 1 point : attribuez-les à qui l’a trouvée (une personne, plusieurs ou tout le monde).',
     'Une proposition absente du tableau est une erreur. Au bout de 3 erreurs (réglable), la manche s’arrête et le reste se dévoile.',
   ],
   demarrer,

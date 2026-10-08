@@ -650,7 +650,9 @@ textarea.champ__controle {
 
 .dialogue__outils {
   display: flex;
+  flex-wrap: wrap;
   justify-content: flex-end;
+  gap: 0.5rem;
 }
 
 .dialogue__pied {

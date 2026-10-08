@@ -1,12 +1,13 @@
 /**
  * Page « Le groupe » : son nom, les prénoms et l'info de chacun, le plan de salle pour retenir
- * qui est assis où, et les scores de tous les jeux. Les données sont partagées avec tous les jeux (groupe.js), et tout
+ * qui est assis où, les équipes et les scores de tous les jeux. Les données sont partagées avec tous les jeux (groupe.js), et tout
  * le groupe s'exporte ou s'importe en un fichier JSON (fichier-groupe.js).
  */
 import { exigerAcces } from './commun/acces.js';
 import { creerGroupe } from './commun/groupe.js';
 import { creerBlocParticipants } from './commun/bloc-participants.js';
 import { creerBlocScores } from './commun/bloc-scores.js';
+import { creerBlocEquipes } from './commun/bloc-equipes.js';
 import { creerPlanSalle } from './commun/plan-salle.js';
 import { hasardDePage } from './commun/hasard.js';
 import { LONGUEUR_NOM } from './commun/participants.js';
@@ -106,7 +107,7 @@ function creerBlocFichier() {
       actuels &&
       !(await confirmer({
         titre: 'Remplacer le groupe ?',
-        message: `Les ${pluriel(actuels, 'participant')} actuels, leurs infos, le plan de salle et les scores seront remplacés par le groupe du fichier (${pluriel(lu.participants.length, 'participant')}).`,
+        message: `Les ${pluriel(actuels, 'participant')} actuels, leurs infos, le plan de salle, les équipes et les scores seront remplacés par le groupe du fichier (${pluriel(lu.participants.length, 'participant')}).`,
         oui: 'Remplacer',
       }))
     ) {
@@ -173,7 +174,7 @@ function creerBlocFichier() {
     el(
       'p',
       { class: 'champ__aide' },
-      'Le fichier JSON garde le nom, les prénoms, les infos, les absences, la disposition de la salle et les places. Exportez-le pour retrouver ce groupe à la prochaine séance, ou préparez-le à l’avance.',
+      'Le fichier JSON garde le nom, les prénoms, les infos, les absences, la disposition de la salle, les places, les équipes et les points. Exportez-le pour retrouver ce groupe à la prochaine séance, ou préparez-le à l’avance.',
     ),
     messages,
     erreurs,
@@ -218,6 +219,7 @@ remplir(
         plan.element,
       ),
     ),
+    creerBlocEquipes(groupe, { hasard: hasardDePage() }),
     creerBlocScores(groupe),
   ),
 );

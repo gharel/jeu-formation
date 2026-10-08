@@ -756,6 +756,61 @@
   display: inline-block;
 }
 
+.dialogue__sous-titre {
+  margin: 0.75rem 0 0.4rem;
+  font-weight: 800;
+  color: var(--bleu-nuit);
+}
+
+.grille-equipes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+  gap: 0.6rem;
+}
+
+.puce-equipe {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  align-items: center;
+  padding: 0.7rem 0.75rem;
+  font: inherit;
+  color: var(--bleu-nuit);
+  text-align: center;
+  background: var(--accent-clair);
+  border: 2px solid var(--bord);
+  border-radius: var(--rayon);
+  cursor: pointer;
+}
+
+.puce-equipe:hover {
+  border-color: var(--bleu-nuit);
+}
+
+.puce-equipe[aria-pressed='true'] {
+  color: var(--sur-accent);
+  background: var(--accent);
+  border-color: var(--bleu-nuit);
+}
+
+.puce-equipe__nom {
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.puce-equipe__nom .icone {
+  margin-right: 0.35rem;
+}
+
+.puce-equipe__membres {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.puce-equipe[aria-pressed='true'] .puce-prenom__coche {
+  display: inline-block;
+}
+
 /* ---------- Écran de jeu ---------- */
 
 .ecran-jeu__barre {
@@ -800,6 +855,45 @@
 .tableau-points__entree--tete .tableau-points__valeur {
   color: var(--bleu-nuit);
   background: var(--jaune);
+}
+
+.ecran-jeu__points {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.ecran-jeu__points .tableau-points {
+  justify-content: flex-end;
+}
+
+/* Sur grand écran, les points restent à côté de « Quitter la partie », sur deux lignes au plus
+   (équipes, puis personnes) : passer dessous coûterait une ligne de plus en 1280 × 720 */
+@media (min-width: 900px) {
+  .ecran-jeu__barre {
+    flex-wrap: nowrap;
+  }
+
+  .ecran-jeu__barre > .bouton {
+    flex: none;
+  }
+
+  .ecran-jeu__points {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}
+
+.tableau-points__entree--equipe {
+  font-weight: 800;
+  color: var(--sur-accent);
+  background: var(--accent);
+}
+
+.tableau-points__entree--equipe .icone {
+  margin-right: -0.1rem;
 }
 
 .zone-jeu {
@@ -870,8 +964,10 @@
   color: var(--texte-doux);
 }
 
-/* Manche terminée : on retire les aides devenues inutiles pour laisser la place au résultat */
-.manche-finie .raccourci {
+/* Manche terminée, ou réponse affichée (« Voir la réponse ») : on retire les aides devenues
+   inutiles pour laisser la place au résultat */
+.manche-finie .raccourci,
+.reponse-vue .raccourci {
   display: none;
 }
 
@@ -992,6 +1088,40 @@
 .fin__message {
   font-size: 1.3rem;
   font-weight: 700;
+}
+
+.fin__equipes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  justify-content: center;
+  margin: 1rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.fin__equipe {
+  display: inline-flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.4rem 0.5rem 0.4rem 1rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  background: var(--blanc);
+  border-radius: var(--rayon-pilule);
+  box-shadow: var(--ombre);
+}
+
+.fin__equipe-points {
+  padding: 0.1rem 0.6rem;
+  color: var(--blanc);
+  background: var(--bleu-nuit);
+  border-radius: var(--rayon-pilule);
+}
+
+.fin__equipe--tete .fin__equipe-points {
+  color: var(--bleu-nuit);
+  background: var(--jaune);
 }
 
 @media (min-width: 900px) {
@@ -1502,6 +1632,110 @@
     grid-template-columns: minmax(0, 1fr) minmax(0, 2fr);
     align-items: start;
   }
+}
+
+/* ---------- Équipes du groupe ---------- */
+
+.bloc-equipes {
+  margin: 1.5rem 0;
+}
+
+.bloc-equipes h3 {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0;
+}
+
+.bloc-equipes h3 .fa-solid {
+  color: var(--vert);
+}
+
+.bloc-equipes__former {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  align-items: flex-end;
+  margin: 1rem 0;
+}
+
+.bloc-equipes__former .champ {
+  margin: 0;
+}
+
+.bloc-equipes__etat {
+  margin: 0 0 1rem;
+  font-weight: 700;
+}
+
+.equipes {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+  gap: 1rem;
+  margin: 0 0 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.equipe {
+  padding: 0.9rem;
+  background: var(--fond);
+  border: 2px solid var(--bord);
+  border-radius: var(--rayon);
+}
+
+.equipe__entete {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.equipe__entete > .icone {
+  color: var(--vert-logo);
+}
+
+.equipe__nom.champ__controle {
+  flex: 1;
+  min-width: 0;
+  font-weight: 800;
+}
+
+.equipe__compte {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: var(--texte-doux);
+}
+
+.equipe__membres {
+  margin: 0;
+}
+
+.equipes__seuls .puces {
+  margin-top: 0.4rem;
+}
+
+/* Une personne d'une équipe : un bouton, qui la change d'équipe */
+.puce--bouton {
+  padding-right: 0.6rem;
+  font: inherit;
+  font-weight: 700;
+  color: var(--bleu-nuit);
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.puce--bouton:hover {
+  border-color: var(--bleu-nuit);
+}
+
+.puce__changer {
+  font-size: 0.8rem;
+  color: var(--texte-doux);
+}
+
+.bloc-scores__sous-titre {
+  margin: 1.25rem 0 0;
+  font-size: 1.1rem;
 }
 
 /* ---------- Scores du groupe (tous jeux confondus) ---------- */

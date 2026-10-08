@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { creerChrono, formaterDuree } from '../../assets/js/commun/chrono.js';
 import { valeurPalier, creerPaliers } from '../../assets/js/commun/paliers.js';
 import { creerScores, classer } from '../../assets/js/commun/scores.js';
+import { nommerGagnants } from '../../assets/js/commun/points.js';
 
 beforeEach(() => vi.useFakeTimers());
 afterEach(() => vi.useRealTimers());
@@ -164,5 +165,25 @@ describe('scores', () => {
     // Personne : rien à envoyer ni à redessiner
     scores.ajouterATous([], 1);
     expect(surChangement).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('gagnants d’un point', () => {
+  const groupe = ['Ana', 'Bob', 'Chloé', 'David', 'Emma'];
+
+  it('nomme une, deux ou trois personnes, puis les compte', () => {
+    expect(nommerGagnants(['Ana'], groupe)).toBe('Ana');
+    expect(nommerGagnants(['Ana', 'Bob'], groupe)).toBe('Ana et Bob');
+    expect(nommerGagnants(['Ana', 'Bob', 'Chloé'], groupe)).toBe('Ana, Bob et Chloé');
+    expect(nommerGagnants(['Ana', 'Bob', 'Chloé', 'David'], groupe)).toBe('4 personnes');
+    expect(nommerGagnants(['Ana', 'Bob', 'Chloé'], groupe, 2)).toBe('3 personnes');
+    expect(nommerGagnants([], groupe)).toBe('');
+  });
+
+  it('dit « tout le monde » quand tous les joueurs marquent', () => {
+    expect(nommerGagnants(groupe, groupe)).toBe('tout le monde');
+    expect(nommerGagnants(['Ana', 'Bob'], ['Ana', 'Bob'])).toBe('tout le monde');
+    // Seul joueur : son prénom
+    expect(nommerGagnants(['Ana'], ['Ana'])).toBe('Ana');
   });
 });

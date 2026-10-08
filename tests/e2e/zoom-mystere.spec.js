@@ -48,6 +48,34 @@ test('Zoom mystère : l’image se dézoome, Stop fige, la bonne réponse marque
   expect(erreurs).toEqual([]);
 });
 
+test('Voir la réponse : elle remplace la question, une mauvaise proposition finit sans point', async ({
+  page,
+}) => {
+  const erreurs = surveillerErreurs(page);
+  await ouvrirJeu(page, 'zoom-mystere', { prenoms: ['Ana', 'Bob'] });
+  await lancerPartie(page);
+  const cadre = page.locator('#cadre');
+  await expect(cadre.getByText('Image 1 sur 4')).toBeVisible();
+
+  await page.getByRole('button', { name: 'Démarrer' }).click();
+  await page.getByRole('button', { name: /Stop/ }).click();
+  await page.getByRole('button', { name: 'Voir la réponse' }).click();
+  await expect(cadre.locator('.reponse-revelee')).toHaveText(
+    'Le bouton Enregistrer (la disquette)',
+  );
+  await expect(cadre.getByRole('heading', { name: 'Qu’est-ce que c’est ?' })).toBeHidden();
+  await expect(page.getByRole('button', { name: /on reprend/ })).toHaveCount(0);
+  // Tout tient à l'écran (1280 × 720), sans défiler
+  await verifierAccessibilite(page);
+  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(720);
+
+  await page.getByRole('button', { name: 'Mauvaise réponse' }).click();
+  await expect(cadre.getByText('Personne n’a trouvé…')).toBeVisible();
+  await expect(cadre.locator('.reponse-revelee')).toHaveCount(1);
+  await expect(pointsDe(page, 'Ana')).toHaveText('0');
+  expect(erreurs).toEqual([]);
+});
+
 test('l’animateur importe ou colle une capture, la retrouve après rechargement', async ({
   page,
 }) => {
