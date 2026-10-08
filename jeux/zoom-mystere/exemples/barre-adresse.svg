@@ -13,7 +13,7 @@
 <path d='M122 68.5 L130 74 L122 79.5 z' fill='#666'/>
 <rect x='156' y='64' width='900' height='42' rx='21' fill='#f1f3f4'/>
 <rect x='178' y='84' width='18' height='14' rx='3' fill='#555'/>
-<path d='M181 84 v-5 a6 6 0 0 1 12 0 v5' fill='none' stroke='#555' stroke-width='3'/>
+<path d='M181 85 v-5 a6 6 0 0 1 12 0 v5' fill='none' stroke='#555' stroke-width='3'/>
 <text x='210' y='92' font-family='Segoe UI, Arial, sans-serif' font-size='19' fill='#555'>https://</text><text x='280' y='92' font-family='Segoe UI, Arial, sans-serif' font-size='19' fill='#111'>www.exemple.nc/formations/bureautique</text>
 <circle cx='1090' cy='85' r='4' fill='#666'/><circle cx='1110' cy='85' r='4' fill='#666'/><circle cx='1130' cy='85' r='4' fill='#666'/>
 <rect y='116' width='1200' height='2' fill='#dfe3e8'/>
