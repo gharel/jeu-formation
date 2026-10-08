@@ -9,15 +9,21 @@
 }
 
 .zoom__cadre {
+  --bord-cadre: 6px;
   position: relative;
   /* --ratio : largeur / hauteur de l'image, pour ne jamais la déformer. Sa hauteur grandit avec
      l'écran : 419 px au plus en 1280 × 720, 729 px en 1920 × 1080 */
-  width: min(100%, calc((86vh - 12.5rem) * var(--ratio, 1.6)));
-  aspect-ratio: var(--ratio, 1.6);
+  width: min(
+    100%,
+    calc((86vh - 12.5rem - 2 * var(--bord-cadre)) * var(--ratio, 1.6) + 2 * var(--bord-cadre))
+  );
+  /* « auto » : les proportions de l'image valent pour l'intérieur du cadre, bordure non comprise.
+     Sinon un SVG s'y logeait avec de fines bandes vides, que le zoom agrandissait */
+  aspect-ratio: auto var(--ratio, 1.6);
   margin: 0 auto;
   overflow: hidden;
   background: var(--bleu-nuit);
-  border: 6px solid var(--bleu-nuit);
+  border: var(--bord-cadre) solid var(--bleu-nuit);
   border-radius: var(--rayon);
 }
 
@@ -26,6 +32,8 @@
   width: 100%;
   height: 100%;
   object-fit: fill;
+  /* Agrandie depuis son coin : cadrage() la décale pour amener le détail au centre */
+  transform-origin: 0 0;
   transition:
     transform 0.9s ease-in-out,
     opacity 0.4s ease;

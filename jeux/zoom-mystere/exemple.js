@@ -69,12 +69,12 @@ export const exemple = {
         'Raccourci : Ctrl + S. La disquette a disparu des bureaux, mais pas des logiciels !',
     },
     {
-      image: { src: 'exemples/barre-adresse.svg', focus: { x: 0.156, y: 0.123 } },
+      image: { src: 'exemples/barre-adresse.svg', focus: { x: 0.156, y: 0.117 } },
       reponse: 'Le cadenas de la barre d’adresse',
       explication: 'Il indique une connexion chiffrée (https), pas forcément un site honnête.',
     },
     {
-      image: { src: 'exemples/clavier.svg', focus: { x: 0.763, y: 0.205 } },
+      image: { src: 'exemples/clavier.svg', focus: { x: 0.748, y: 0.2 } },
       reponse: 'La touche à / 0 / @ du clavier',
       explication: 'Alt Gr + à donne l’arobase @, indispensable pour écrire une adresse e-mail.',
     },

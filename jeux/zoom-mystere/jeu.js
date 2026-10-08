@@ -4,7 +4,7 @@ import { creerMancheAPaliers } from '../../assets/js/commun/manche-paliers.js';
 import { decrireGagnants } from '../../assets/js/commun/points.js';
 import { adresseImage } from '../../assets/js/commun/images.js';
 import { schema, exemple, transfert } from './exemple.js';
-import { ZOOMS, echelle, origine } from './logique.js';
+import { ZOOMS, echelle, cadrage } from './logique.js';
 import { creerIllustrationZoom } from './illustration.js';
 
 async function demarrer(ctx) {
@@ -44,7 +44,6 @@ async function demarrer(ctx) {
     const photo = preparerImage(index);
     pretes.delete(index);
     preparerImage(index + 1);
-    photo.style.transformOrigin = origine(image.focus);
     // Avant « Démarrer », un voile cache l'image : personne ne cherche avant le départ.
     // « Voir la réponse » la pose au bas de l'image : rien ne bouge à côté, « Cacher la réponse »
     // reste sous la souris.
@@ -70,8 +69,9 @@ async function demarrer(ctx) {
     // L'animation d'apparition se joue d'elle-même quand le résultat cesse d'être caché
     const resultat = el('div', { class: 'zoom__resultat apparition', hidden: true });
 
+    // Le détail choisi par l'animateur reste au centre du cadre à chaque palier
     function zoomer(valeur) {
-      photo.style.transform = `scale(${echelle(valeur, { max })})`;
+      photo.style.transform = cadrage(image.focus, echelle(valeur, { max }));
     }
     // Déjà zoomée sous le voile (5 points en jeu) : elle ne se dévoile pas entière en zoomant
     zoomer(5);

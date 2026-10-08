@@ -16,11 +16,25 @@ export function echelle(valeur, { max = ZOOMS.moyen } = {}) {
   return max * (ZOOM_DERNIER_PALIER / max) ** avancement;
 }
 
-/** Point fixe du zoom en CSS (« 15.6% 12.3% »). */
-export function origine(focus) {
-  const x = Math.min(1, Math.max(0, focus?.x ?? 0.5));
-  const y = Math.min(1, Math.max(0, focus?.y ?? 0.5));
-  return `${Math.round(x * 1000) / 10}% ${Math.round(y * 1000) / 10}%`;
+const entre0et1 = (v) => Math.min(1, Math.max(0, v ?? 0.5));
+
+/**
+ * Décalage de l'image agrandie (en part de sa taille) qui amène le détail `f` (0 à 1) au centre du
+ * cadre. Près d'un bord, l'image s'arrête au bord du cadre : le détail s'en rapproche plutôt que de
+ * laisser voir du vide.
+ */
+export function decalage(f, agrandissement) {
+  const auCentre = 0.5 - agrandissement * entre0et1(f);
+  return Math.min(0, Math.max(1 - agrandissement, auCentre));
+}
+
+/**
+ * Transformation CSS de l'image (point fixe en haut à gauche) : agrandie de `agrandissement`, le
+ * détail choisi au centre du cadre (« translate(-40.5%, -6.15%) scale(10) »).
+ */
+export function cadrage(focus, agrandissement) {
+  const pourcent = (f) => `${Math.round(decalage(f, agrandissement) * 10000) / 100 || 0}%`;
+  return `translate(${pourcent(focus?.x)}, ${pourcent(focus?.y)}) scale(${agrandissement})`;
 }
 
 /** Identifiants d'images IndexedDB utilisés par un contenu (pour supprimer les autres). */

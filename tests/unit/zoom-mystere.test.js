@@ -1,6 +1,6 @@
 import 'fake-indexeddb/auto';
 import { describe, it, expect } from 'vitest';
-import { echelle, origine, idsImages, ZOOMS } from '../../jeux/zoom-mystere/logique.js';
+import { echelle, decalage, cadrage, idsImages, ZOOMS } from '../../jeux/zoom-mystere/logique.js';
 import { schema, exemple } from '../../jeux/zoom-mystere/exemple.js';
 import { nettoyerContenu, validerContenu } from '../../assets/js/commun/contenu.js';
 import {
@@ -25,10 +25,23 @@ describe('Zoom mystère', () => {
     expect(echelle(5, { max: ZOOMS.fort })).toBe(16);
   });
 
-  it('place le point fixe du zoom sur le détail choisi', () => {
-    expect(origine({ x: 0.156, y: 0.123 })).toBe('15.6% 12.3%');
-    expect(origine(undefined)).toBe('50% 50%');
-    expect(origine({ x: 2, y: -1 })).toBe('100% 0%');
+  it('amène le détail choisi au centre du cadre', () => {
+    // Le détail (0,4) agrandi 10 fois arrive à 0,5 : décalage + 10 × 0,4 = 0,5
+    expect(decalage(0.4, 10)).toBeCloseTo(-3.5);
+    expect(decalage(0.4, 10) + 10 * 0.4).toBeCloseTo(0.5);
+    expect(cadrage({ x: 0.4, y: 0.5 }, 10)).toBe('translate(-350%, -450%) scale(10)');
+    expect(cadrage(undefined, 2)).toBe('translate(-50%, -50%) scale(2)');
+  });
+
+  it('près d’un bord, l’image ne laisse jamais voir le fond du cadre', () => {
+    // La disquette, tout à gauche (4,5 %) : l'image reste calée sur le bord gauche
+    expect(decalage(0.045, 10)).toBe(0);
+    expect(decalage(0.98, 10)).toBe(-9);
+    // Hors de l'image : ramené au bord
+    expect(decalage(2, 10)).toBe(-9);
+    expect(decalage(-1, 10)).toBe(0);
+    // Image entière à la fin de la manche : aucun décalage
+    expect(cadrage({ x: 0.763, y: 0.205 }, 1)).toBe('translate(0%, 0%) scale(1)');
   });
 
   it('a un exemple valide avec des images d’exemple', () => {
