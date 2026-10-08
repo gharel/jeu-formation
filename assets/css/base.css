@@ -136,6 +136,60 @@ img {
   top: 1rem;
 }
 
+/* ---------- Signature des outils Skazy Formation ---------- */
+
+/* La même dans chaque outil : logo │ pastille (le favicon de l'outil) et nom. Sa taille de police
+   règle l'ensemble : pour 17 px, un logo de 36 px de haut, une pastille de 28 px, un filet de
+   24 px, 16 px de part et d'autre du filet et 10 px entre la pastille et le nom. */
+.signature {
+  display: flex;
+  align-items: center;
+  gap: calc(16em / 17);
+  font-size: 1.0625rem;
+}
+
+.signature__logo {
+  flex: none;
+  display: block;
+  line-height: 0;
+}
+
+.signature__logo img {
+  width: auto;
+  max-width: none;
+  height: calc(36em / 17);
+}
+
+.signature__outil {
+  display: flex;
+  align-items: center;
+  margin: 0;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--blanc);
+  white-space: nowrap;
+}
+
+/* Le filet, à égale distance du logo et de la pastille */
+.signature__outil::before {
+  content: '';
+  flex: none;
+  width: 1px;
+  height: calc(24em / 17);
+  margin-inline-end: calc(16em / 17);
+  background: var(--filet-sombre);
+}
+
+.signature__pastille {
+  flex: none;
+  width: calc(28em / 17);
+  height: calc(28em / 17);
+}
+
+.signature__nom {
+  margin-inline-start: calc(10em / 17);
+}
+
 /* ---------- Bandeau ---------- */
 
 .bandeau {
@@ -157,27 +211,36 @@ img {
   background: var(--accent);
 }
 
-/* À gauche, le retour à l'accueil des mini-jeux ; à droite, le logo mène au site de Skazy
-   Formation (nouvel onglet : la partie en cours reste ouverte) */
+/* À gauche, le retour à l'accueil des mini-jeux ; à droite, la signature, dont le logo mène au
+   site de Skazy Formation (nouvel onglet : la partie en cours reste ouverte) */
 .bandeau__accueil {
   flex: none;
   text-decoration: none;
 }
 
-.bandeau__logo {
+.bandeau__signature {
   flex: none;
-  display: block;
-  line-height: 0;
 }
 
-.bandeau__logo img {
-  width: 133px;
-  height: auto;
+/* Moins de place (vidéoprojecteur en 1024 × 768) : le nom « Mini-jeux » cède la place au titre et
+   aux boutons, la pastille reste ; logo de 32 px de haut */
+@media (max-width: 1200px) {
+  .bandeau {
+    gap: 1rem;
+  }
+
+  .bandeau__signature {
+    font-size: 0.9375rem;
+  }
+
+  .bandeau__signature .signature__nom {
+    display: none;
+  }
 }
 
-/* Écran étroit : accueil, titre et logo sur la première ligne, les boutons en dessous */
+/* Écran étroit : accueil, titre et signature sur la première ligne, les boutons en dessous */
 @media (max-width: 700px) {
-  .bandeau__logo {
+  .bandeau__signature {
     order: 1;
   }
 
@@ -211,8 +274,14 @@ img {
     white-space: nowrap;
   }
 
-  .bandeau__logo img {
-    width: 84px;
+  /* Logo de 28 px de haut, pastille de 22 px, filet plus proche */
+  .bandeau__signature {
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+  }
+
+  .bandeau__signature .signature__outil::before {
+    margin-inline-end: 0.5rem;
   }
 }
 

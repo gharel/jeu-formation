@@ -68,6 +68,8 @@
   --fond: #f7f7f7;
   --blanc: #ffffff;
   --bord: #d8d8d8;
+  /* Filet clair et discret sur le bleu nuit (signature du bandeau et de l'accueil) */
+  --filet-sombre: rgb(255 255 255 / 30%);
   --gris: #6c757d;
 
   /* États */

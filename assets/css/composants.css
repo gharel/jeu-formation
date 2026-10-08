@@ -17,15 +17,10 @@
   margin: 0 auto;
 }
 
-.heros__lien-logo {
-  display: inline-block;
+/* Signature en grand (voir base.css) : logo de 55 px de haut, pastille de 43 px, nom de 26 px */
+.heros__signature {
   margin-bottom: 2rem;
-  line-height: 0;
-}
-
-.heros__logo {
-  width: 200px;
-  height: auto;
+  font-size: clamp(1.25rem, 2.2vw, 1.625rem);
 }
 
 .heros h1 {
@@ -1617,11 +1612,12 @@
     top: auto;
     bottom: -24px;
   }
+  /* À droite du titre, pas contre le nom « Mini-jeux » de la signature */
   .points-deco span:nth-child(4) {
     width: 18px;
     height: 18px;
-    right: 22%;
-    top: 20px;
+    right: 8%;
+    top: 7.5rem;
   }
   .points-deco span:nth-child(5) {
     display: none;

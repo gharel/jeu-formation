@@ -104,6 +104,8 @@ Une thématique seule (bouton « JSON ») est un jeu de données, avec en plus s
 La touche `F` passe en plein écran (bouton masqué sur téléphone, où il ne sert à rien). Chaque jeu a son illustration, dessinée aux couleurs de la charte, qui réagit à la partie : la flèche se plante dans la cible, le téléphone transpire quand la batterie faiblit, la porte du coffre s'ouvre… Chaque jeu a aussi son habillage sonore façon jeu télévisé : notes des lettres de Motus, cloche des étages de Pyramide, gong du « Stop », buzzers du duel, tic-tac de la patate, cliquetis des serrures, cliquetis de la roue, fanfares et applaudissements. Ce sont des sons originaux générés par le navigateur, sans fichier ni droits d'auteur. Le bouton Son du bandeau les coupe.
 Les icônes viennent de Font Awesome Free, hébergé dans le projet (fonctionne hors ligne).
 
+Chaque outil Skazy Formation a sa couleur de l'arc-en-ciel, dans cet ordre : Quiz rouge, Mini-jeux orange, Vigie jaune, Atelier d’exercices IA vert, Comprendre l'IA bleu, Prompthèque violet. Le favicon (un dé blanc sur un dégradé orange) sert aussi de pastille dans le bandeau : logo Skazy Formation, filet, pastille, « Mini-jeux ». Titre d'onglet : « Page · Mini-jeux · Skazy Formation » (« Motus numérique · Mini-jeux · Skazy Formation »).
+
 ## Utiliser les jeux
 
 En ligne : **https://gharel.github.io/jeu-formation/**
