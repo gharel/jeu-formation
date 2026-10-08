@@ -233,6 +233,17 @@ function demarrer(ctx) {
       const texte = saisie.value.trim();
       const resultat = manche.proposer(texte);
       if (!resultat || resultat.resultat === 'vide') return;
+      if (resultat.resultat === 'ambigu') {
+        // On garde la saisie : il suffit de la compléter
+        remplir(
+          message,
+          icone('circle-question'),
+          `« ${texte} » se trouve dans plusieurs réponses : précisez.`,
+        );
+        animer(message, 'secousse');
+        saisie.select();
+        return;
+      }
       saisie.value = '';
       if (resultat.resultat === 'trouvee') trouver(resultat.rang);
       else if (resultat.resultat === 'deja') {
@@ -323,7 +334,7 @@ monterJeu({
   exemple,
   regles: [
     'Avant la séance, préparez des questions « Citez… » et leurs 5 réponses, de la plus attendue à la moins attendue.',
-    'Le groupe propose des réponses à l’oral, vous les tapez : une réponse du top 5 se retourne au tableau.',
+    'Le groupe propose des réponses à l’oral, vous les tapez : une réponse du top 5 se retourne au tableau. Un seul de ses mots suffit (« passe » pour « Mot de passe »).',
     'La plus attendue rapporte 5 points, la moins attendue 1 point : attribuez-les à qui l’a trouvée.',
     'Une proposition absente du tableau est une erreur. Au bout de 3 erreurs (réglable), la manche s’arrête et le reste se dévoile.',
   ],

@@ -55,7 +55,7 @@ export const schema = {
         secret: true,
         longueurMax: 120,
         exemple: 'Ex. : Échap / Esc',
-        aide: 'Plusieurs réponses acceptées ? Séparez-les par « / ». Majuscules, accents et petites fautes de frappe sont pardonnés, mais pas les chiffres.',
+        aide: 'Plusieurs réponses acceptées ? Séparez-les par « / ». Majuscules, accents et petites fautes de frappe sont pardonnés, mais pas les chiffres. Un seul mot de la réponse suffit : « passe » ouvre « Mot de passe ».',
       },
       {
         cle: 'indice',

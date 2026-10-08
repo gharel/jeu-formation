@@ -34,6 +34,22 @@ describe('Top 5', () => {
     expect(manche.erreurs).toBe(0);
   });
 
+  it('retourne une réponse à l’un de ses mots, demande de préciser un mot ambigu', () => {
+    const outils = ['Google Docs', 'Google Sheets', 'Mot de passe', 'Wi-Fi', 'Gmail'];
+    const manche = creerManche(outils);
+    expect(manche.proposer('passe')).toEqual({ resultat: 'trouvee', rang: 2 });
+    // « Google » est dans deux réponses : ni trouvée ni erreur
+    expect(manche.proposer('google')).toEqual({ resultat: 'ambigu', rang: -1 });
+    expect(manche.erreurs).toBe(0);
+    expect(manche.proposer('sheets')).toEqual({ resultat: 'trouvee', rang: 1 });
+    expect(manche.proposer('google')).toEqual({ resultat: 'ambigu', rang: -1 });
+    expect(manche.proposer('google docs')).toEqual({ resultat: 'trouvee', rang: 0 });
+    // Toutes les réponses de ce mot sont au tableau : déjà trouvée
+    expect(manche.proposer('google')).toEqual({ resultat: 'deja', rang: 0 });
+    expect(manche.proposer('mot')).toEqual({ resultat: 'deja', rang: 2 });
+    expect(manche.erreurs).toBe(0);
+  });
+
   it('s’arrête au bout des erreurs permises', () => {
     const manche = creerManche(reseaux, { erreursMax: 2 });
     expect(manche.proposer('Snapchat')).toEqual({ resultat: 'erreur', rang: -1 });

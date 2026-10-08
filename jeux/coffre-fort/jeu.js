@@ -463,7 +463,7 @@ monterJeu({
   exemple,
   regles: [
     'Avant la séance, préparez de 3 à 8 énigmes : chacune ferme une serrure du coffre.',
-    'Lancez le compte à rebours : tout le groupe cherche ensemble et vous donne sa réponse, que vous tapez. Majuscules, accents et petites fautes de frappe sont pardonnés.',
+    'Lancez le compte à rebours : tout le groupe cherche ensemble et vous donne sa réponse, que vous tapez. Majuscules, accents et petites fautes de frappe sont pardonnés, et un seul mot de la réponse suffit.',
     'Bonne réponse : la serrure s’ouvre. Mauvaise réponse : le chrono perd du temps. Un indice aussi.',
     'Toutes les serrures ouvertes avant la fin : le coffre s’ouvre ! Le temps restant devient le record à battre.',
   ],

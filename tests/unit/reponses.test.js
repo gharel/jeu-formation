@@ -5,6 +5,8 @@ import {
   fautesPermises,
   variantes,
   reponseAffichee,
+  motsSignificatifs,
+  chercherReponses,
   trouverReponse,
   estBonneReponse,
 } from '../../assets/js/commun/reponses.js';
@@ -82,5 +84,53 @@ describe('réponses tapées par l’animateur', () => {
     expect(trouverReponse('partage', ['Partager', 'Partage'])).toBe(1);
     expect(trouverReponse('partager', ['Partager', 'Partage'])).toBe(0);
     expect(trouverReponse('tableur', ['Tableau', 'Tableur'])).toBe(1);
+  });
+
+  it('garde les mots qui portent le sens d’une réponse', () => {
+    expect(motsSignificatifs('Le mot de passe')).toEqual(['mot', 'passe']);
+    expect(motsSignificatifs('Un ami d’école')).toEqual(['ami', 'ecole']);
+    expect(motsSignificatifs('Les mots de passe')).toEqual(['mot', 'passe']);
+    // Un mot composé reste entier, une lettre seule ne compte pas
+    expect(motsSignificatifs('Pare-feu')).toEqual(['parefeu']);
+    expect(motsSignificatifs('Ctrl + C')).toEqual(['ctrl']);
+    expect(motsSignificatifs('Windows 11')).toEqual(['window', '11']);
+    // Un nombre écrit en lettres : aucun de ses mots ne suffit
+    expect(motsSignificatifs('deux mille douze')).toEqual([]);
+    expect(motsSignificatifs('quatre-vingt-six')).toEqual([]);
+    expect(motsSignificatifs('pas de')).toEqual([]);
+  });
+
+  it('reconnaît une réponse à l’un de ses mots', () => {
+    expect(estBonneReponse('passe', 'Mot de passe')).toBe(true);
+    expect(estBonneReponse('mot', 'Le mot de passe')).toBe(true);
+    expect(estBonneReponse('Mots', 'Le mot de passe')).toBe(true);
+    expect(estBonneReponse('deux facteurs', 'Authentification à deux facteurs')).toBe(true);
+    expect(estBonneReponse('autentification', 'Double authentification')).toBe(true);
+    expect(estBonneReponse('Teams', 'Microsoft Teams')).toBe(true);
+    expect(estBonneReponse('firewall', 'Pare-feu / Firewall')).toBe(true);
+    // Un petit mot, un morceau de mot composé ou une lettre seule ne suffisent pas
+    expect(estBonneReponse('de', 'Mot de passe')).toBe(false);
+    expect(estBonneReponse('feu', 'Pare-feu')).toBe(false);
+    expect(estBonneReponse('c', 'Ctrl + C')).toBe(false);
+    // Tous les mots tapés doivent être dans la réponse
+    expect(estBonneReponse('passe partout', 'Mot de passe')).toBe(false);
+    // Un morceau de nombre non plus, mais le nombre entier oui
+    expect(estBonneReponse('mille', '2012 / deux mille douze')).toBe(false);
+    expect(estBonneReponse('douze', '2012 / deux mille douze')).toBe(false);
+    expect(estBonneReponse('deux mille douze', '2012 / deux mille douze')).toBe(true);
+    expect(estBonneReponse('20', '2012')).toBe(false);
+  });
+
+  it('préfère la réponse dite en entier et repère un mot commun à plusieurs réponses', () => {
+    const suite = ['Google Docs', 'Google Sheets / Sheets', 'Gmail', 'Mot de passe', 'Le mot clé'];
+    expect(chercherReponses('google', suite)).toEqual({ entiere: -1, partielles: [0, 1] });
+    expect(trouverReponse('google', suite)).toBe(-1);
+    expect(trouverReponse('docs', suite)).toBe(0);
+    expect(trouverReponse('google sheet', suite)).toBe(1);
+    expect(trouverReponse('passe', suite)).toBe(3);
+    expect(chercherReponses('mot', suite)).toEqual({ entiere: -1, partielles: [3, 4] });
+    // La réponse entière l'emporte sur les mots d'une autre
+    expect(chercherReponses('Sheets', suite)).toEqual({ entiere: 1, partielles: [] });
+    expect(chercherReponses('', suite)).toEqual({ entiere: -1, partielles: [] });
   });
 });

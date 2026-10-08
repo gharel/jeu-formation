@@ -6,9 +6,9 @@
  * Pas de sondage : c'est l'animateur qui classe les réponses en préparant le jeu.
  */
 import {
+  chercherReponses,
   normaliserReponse,
   reponseAffichee,
-  trouverReponse,
 } from '../../assets/js/commun/reponses.js';
 
 export const NOMBRE_REPONSES = 5;
@@ -34,7 +34,8 @@ export function validerQuestion({ reponses = [] } = {}) {
 
 /**
  * Une manche. `proposer(texte)` renvoie { resultat, rang } avec resultat : 'trouvee', 'deja'
- * (déjà retournée), 'erreur' ou 'vide' ; null si la manche est finie.
+ * (déjà retournée), 'ambigu' (un mot commun à plusieurs réponses : « Google » pour « Google Docs »
+ * et « Google Sheets », ni trouvé ni erreur), 'erreur' ou 'vide' ; null si la manche est finie.
  */
 export function creerManche(reponses, { erreursMax = 3 } = {}) {
   const trouvees = new Set();
@@ -74,10 +75,13 @@ export function creerManche(reponses, { erreursMax = 3 } = {}) {
     proposer(texte) {
       if (issue) return null;
       if (!normaliserReponse(texte)) return { resultat: 'vide', rang: -1 };
-      const rang = trouverReponse(texte, reponses);
-      if (rang === -1) return erreur();
-      if (trouvees.has(rang)) return { resultat: 'deja', rang };
-      return trouver(rang);
+      const { entiere, partielles } = chercherReponses(texte, reponses);
+      const rangs = entiere === -1 ? partielles : [entiere];
+      if (!rangs.length) return erreur();
+      const restantes = rangs.filter((rang) => !trouvees.has(rang));
+      if (!restantes.length) return { resultat: 'deja', rang: rangs[0] };
+      if (rangs.length > 1) return { resultat: 'ambigu', rang: -1 };
+      return trouver(rangs[0]);
     },
     /** L'animateur retourne une case à la main : la réponse a été dite autrement. */
     reveler(rang) {

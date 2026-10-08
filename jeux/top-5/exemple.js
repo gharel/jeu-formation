@@ -44,7 +44,7 @@ export const schema = {
           'Ex. : LinkedIn',
           'Ex. : X / Twitter',
         ],
-        aide: 'De la plus attendue (réponse 1 : 5 points) à la moins attendue (réponse 5 : 1 point). Plusieurs façons de dire la même réponse ? Séparez-les par « / ».',
+        aide: 'De la plus attendue (réponse 1 : 5 points) à la moins attendue (réponse 5 : 1 point). Plusieurs façons de dire la même réponse ? Séparez-les par « / ». Pendant la partie, un seul de ses mots suffit (« passe » pour « Mot de passe »).',
       },
     ],
     valider: validerQuestion,
