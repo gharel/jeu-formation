@@ -281,6 +281,26 @@ img {
   font-size: 0.95rem;
 }
 
+.pied p {
+  margin: 0;
+}
+
+.pied p + p {
+  margin-top: 0.5rem;
+}
+
+/* Mention de droits (copyright) de toutes les pages */
+.pied__mentions {
+  max-width: 60rem;
+  margin-inline: auto;
+  font-size: 0.85rem;
+}
+
+/* En partie, l'écran tient en 1280 × 720 sans défiler : le pied de page s'efface */
+body:has(.ecran-jeu) .pied {
+  display: none;
+}
+
 .carte {
   background: var(--blanc);
   border-radius: var(--rayon);

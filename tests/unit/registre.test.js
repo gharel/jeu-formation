@@ -70,3 +70,26 @@ describe('liste des jeux', () => {
     });
   });
 });
+
+describe('pages publiées', () => {
+  const pages = [
+    'index.html',
+    'groupe/index.html',
+    'contenus/index.html',
+    ...JEUX.map((jeu) => `jeux/${jeu.slug}/index.html`),
+  ];
+
+  it.each(pages)(
+    '%s : pas d’indexation par les moteurs de recherche, mention © en pied de page',
+    (page) => {
+      const html = readFileSync(racine + page, 'utf8');
+      expect(html).toContain('<meta name="robots" content="noindex, nofollow" />');
+      // Prettier peut couper la phrase en plusieurs lignes
+      const texte = html.replace(/\s+/g, ' ');
+      expect(texte).toContain('<footer class="pied">');
+      expect(texte).toContain(
+        '&copy; Skazy Formation&nbsp;· Usage réservé aux stagiaires de Skazy Formation&nbsp;: reproduction et réutilisation dans une autre formation interdites sans accord écrit.',
+      );
+    },
+  );
+});
