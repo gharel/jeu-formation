@@ -189,6 +189,8 @@ function demarrer(ctx) {
       ctx.annoncer(message);
     }
 
+    // L'issue (« Défi réussi ! ») se pose à côté du chrono arrêté, sur la même ligne : les
+    // boutons ne bougent pas quand le défi se termine
     remplir(
       ctx.zone,
       el(
@@ -197,8 +199,7 @@ function demarrer(ctx) {
         el('p', { class: 'panneau__surtitre' }, `Défi ${defi.numero}`),
         tour,
         enonce,
-        el('div', { class: 'defi__compte' }, illustration.element, minuteur.element),
-        issue,
+        el('div', { class: 'defi__compte' }, illustration.element, minuteur.element, issue),
         actions,
       ),
     );

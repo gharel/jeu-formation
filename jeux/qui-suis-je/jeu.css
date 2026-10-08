@@ -4,8 +4,8 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem clamp(1rem, 3vw, 2.5rem);
-  margin-bottom: 0.75rem;
+  gap: var(--air-serre) clamp(1rem, 3vw, 3rem);
+  margin-bottom: var(--air);
 }
 
 .qsj__haut .paliers {
@@ -21,11 +21,17 @@
   font-size: clamp(2rem, 4vw, 3rem);
 }
 
+/* La case de « Qui suis-je ? », où se pose la réponse vue pendant la pause : sur deux lignes au
+   besoin, pour rester à côté des chiffres */
+.qsj__case {
+  max-width: min(22rem, 100%);
+}
+
 /* Manche finie : les indices à gauche, la réponse à droite, sans faire défiler l'écran */
 .manche-finie .qsj__corps {
   display: grid;
   grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
-  gap: clamp(1rem, 3vw, 2rem);
+  gap: var(--air) clamp(1rem, 3vw, 3rem);
   align-items: center;
 }
 
@@ -45,8 +51,8 @@
 
 .qsj__indices {
   display: grid;
-  gap: 0.4rem;
-  max-width: 52rem;
+  gap: var(--air-serre);
+  max-width: 56rem;
   margin: 0 auto;
   padding: 0;
   list-style: none;
@@ -56,11 +62,12 @@
 .qsj__indice {
   counter-increment: indice;
   display: flex;
-  gap: 0.75rem;
+  gap: 1rem;
   align-items: baseline;
-  padding: 0.4rem 1rem;
-  font-size: clamp(1.1rem, 1.8vw, 1.5rem);
+  padding: var(--case-v) var(--case-h);
+  font-size: clamp(1.1rem, min(1.8vw, 3.1vh), 1.75rem);
   font-weight: 700;
+  line-height: 1.35;
   text-align: left;
   background: var(--fond);
   border-radius: 12px;
@@ -71,9 +78,9 @@
   flex: none;
   display: grid;
   place-items: center;
-  width: 1.8rem;
-  height: 1.8rem;
-  font-size: 0.9em;
+  width: 1.85em;
+  height: 1.85em;
+  font-size: 0.8em;
   font-weight: 900;
   color: var(--sur-accent);
   background: var(--accent);
@@ -84,15 +91,28 @@
   background: var(--accent-clair);
 }
 
+/* Avant « Démarrer » : la place du premier indice, encore vide */
+.qsj__attente {
+  max-width: 56rem;
+  margin: 0 auto;
+  padding: calc(var(--case-v) - 2px) var(--case-h);
+  font-size: clamp(1.1rem, min(1.8vw, 3.1vh), 1.75rem);
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--texte-doux);
+  border: 2px dashed var(--bord);
+  border-radius: 12px;
+}
+
 .qsj__verdict {
-  margin: 1.25rem 0 0.25rem;
+  margin: var(--air) 0 var(--air-serre);
   font-size: clamp(1.8rem, 3.5vw, 2.6rem);
   font-weight: 900;
   color: var(--bleu-nuit);
 }
 
 .qsj__gain {
-  margin: 0.75rem 0 0;
+  margin: var(--air-serre) 0 0;
   font-size: 1.3rem;
   font-weight: 800;
   color: var(--succes);

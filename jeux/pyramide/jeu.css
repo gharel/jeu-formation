@@ -1,12 +1,21 @@
+/* Les écarts (--air, --air-serre) et les marges des cases (--case-v, --case-h) viennent de
+   .ecran-jeu : ils grandissent avec la hauteur de l'écran, comme les textes ci-dessous.
+   Compact en 1280 × 720, très aéré en 1920 × 1080. */
+
 /* ---------- Choix du binôme ---------- */
+
+.pyramide-choix .panneau__texte {
+  margin: 0;
+  font-size: clamp(1.6rem, min(3.2vw, 5.7vh), 3.6rem);
+}
 
 .pyramide-choix .pyramide__choix {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: flex-end;
-  gap: 1rem 1.5rem;
-  margin: 1rem 0;
+  gap: var(--air-serre) clamp(1rem, 2vw, 2rem);
+  margin: var(--air) 0 var(--air-serre);
   text-align: left;
 }
 
@@ -17,8 +26,25 @@
 
 .pyramide__erreur {
   min-height: 1.2em;
+  margin: 0;
   font-weight: 800;
   color: var(--erreur);
+}
+
+.pyramide-choix .champ__aide {
+  margin: var(--air-serre) 0 0;
+  font-size: clamp(0.92rem, 2vh, 1.25rem);
+}
+
+/* Écran large : le choix du binôme occupe la hauteur de l'écran, son contenu au milieu (il ne
+   change pas de hauteur : la place du message d'erreur est réservée) */
+@media (min-width: 900px) {
+  .pyramide-choix {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: var(--hauteur-jeu);
+  }
 }
 
 /* ---------- Partie : le mot à gauche, la pyramide à droite (empilés sur écran étroit) ---------- */
@@ -28,18 +54,22 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 0.5rem 1rem;
-  margin-bottom: 1rem;
+  gap: var(--air-serre) clamp(1rem, 2vw, 2rem);
+  margin-bottom: var(--air);
 }
 
 .pyramide__entete > * {
   margin: 0;
 }
 
+.pyramide__entete .au-tour-de {
+  font-size: clamp(1.1rem, min(1.5vw, 2.6vh), 1.6rem);
+}
+
 .pyramide__plateau {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--air-serre);
 }
 
 /* Sur écran étroit, la pyramide vient juste sous le mot, avant le résultat et les boutons */
@@ -57,11 +87,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.75rem, 2vw, 1.25rem);
+  gap: clamp(0.75rem, 2vw, 2rem);
 }
 
 .pyramide__suivi .illustration {
-  --taille: clamp(4rem, min(8vw, 13vh), 6.5rem);
+  --taille: clamp(4rem, min(8vw, 13vh), 9rem);
 }
 
 .pyramide__suivi-texte {
@@ -72,28 +102,31 @@
   order: 3;
 }
 
-.pyramide .actions-jeu {
-  margin-top: 1.25rem;
-}
-
 @media (min-width: 900px) {
   .pyramide__plateau {
     display: grid;
     grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
     align-items: center;
-    gap: clamp(1.5rem, 4vw, 3rem);
+    gap: var(--air) clamp(1.5rem, 4vw, 4rem);
   }
 
   .pyramide__infos {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: var(--air);
+  }
+
+  .pyramide__plateau .pyramide__etage {
+    min-height: clamp(3rem, 14vh - 2.7rem, 6.75rem);
   }
 }
 
-/* Le mot, ou l'alerte « dos à l'écran » tant qu'il est caché */
+/* Le mot, ou l'alerte « dos à l'écran » tant qu'il est caché. Le mot grandit avec l'écran, mais
+   reste assez petit pour qu'un mot de 12 lettres (« Notification ») tienne sur une ligne : 13.5cqi,
+   une part de la largeur du carton. */
 .pyramide__carton {
-  padding: clamp(1rem, 2.5vw, 1.75rem);
+  container-type: inline-size;
+  padding: clamp(1rem, min(2.5vw, 3.9vh), 2.75rem);
   background: var(--accent-clair);
   border: 3px solid var(--bleu-nuit);
   border-radius: var(--rayon);
@@ -106,7 +139,7 @@
 
 .pyramide__carton-titre {
   margin: 0;
-  font-size: 1rem;
+  font-size: clamp(1rem, 2.2vh, 1.4rem);
   font-weight: 800;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -114,8 +147,8 @@
 }
 
 .pyramide__mot {
-  margin: 0.25rem 0 0;
-  font-size: clamp(2.2rem, 5.5vw, 5.5rem);
+  margin: var(--air-serre) 0 0;
+  font-size: clamp(2.2rem, min(5.5vw, 9.8vh, 13.5cqi), 7rem);
   font-weight: 900;
   line-height: 1.1;
   text-transform: uppercase;
@@ -125,7 +158,7 @@
 
 .pyramide__alerte {
   margin: 0;
-  font-size: clamp(1.5rem, 3.2vw, 2.4rem);
+  font-size: clamp(1.5rem, min(3.2vw, 5.6vh), 3.2rem);
   font-weight: 900;
   line-height: 1.2;
   color: var(--blanc);
@@ -136,14 +169,16 @@
 }
 
 .pyramide__alerte-aide {
-  margin: 0.5rem 0 0;
+  margin: var(--air-serre) 0 0;
+  font-size: clamp(1.1rem, min(1.6vw, 2.8vh), 1.6rem);
   font-weight: 600;
+  line-height: 1.4;
   color: var(--ciel-clair);
 }
 
 .pyramide__consigne {
   margin: 0;
-  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-size: clamp(1.2rem, min(2vw, 3.5vh), 2.2rem);
   font-weight: 800;
   color: var(--bleu-nuit);
 }
@@ -152,11 +187,13 @@
   display: none;
 }
 
-/* Quatre étages : 1 mot d'indice au sommet (4 points), 4 mots à la base (1 point) */
+/* Quatre étages : 1 mot d'indice au sommet (4 points), 4 mots à la base (1 point). Ils
+   grandissent avec la hauteur de l'écran, à côté du mot : 58 px en 1280 × 720, 108 px en 1920 × 1080.
+   Sous le mot (écran étroit), ils restent bas. */
 .pyramide__etages {
   display: grid;
   justify-items: center;
-  gap: 0.5rem;
+  gap: var(--air-serre);
   width: 100%;
   margin: 0;
   padding: 0;
@@ -167,10 +204,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
+  gap: clamp(0.6rem, 1.4vh, 1rem);
   min-width: max-content;
   min-height: clamp(3rem, 8vh, 4.5rem);
-  padding: 0.35rem 0.9rem;
+  padding: var(--case-v) var(--case-h);
   background: var(--fond);
   border: 3px dashed var(--bord);
   border-radius: var(--rayon);
@@ -196,15 +233,15 @@
 }
 
 .pyramide__nombre {
-  font-size: clamp(1.15rem, 2.2vw, 2.1rem);
+  font-size: clamp(1.15rem, min(2.2vw, 3.9vh), 2.9rem);
   font-weight: 900;
   color: var(--bleu-nuit);
 }
 
 .pyramide__points {
   flex: none;
-  padding: 0.1rem 0.65rem;
-  font-size: clamp(0.95rem, 1.1vw, 1.25rem);
+  padding: 0.1em 0.65em;
+  font-size: clamp(0.95rem, min(1.1vw, 2.1vh), 1.6rem);
   font-weight: 900;
   color: var(--blanc);
   background: var(--bleu-nuit);
@@ -270,20 +307,22 @@
 
 .pyramide__verdict {
   margin: 0;
-  font-size: clamp(1.4rem, 2.4vw, 2.1rem);
+  font-size: clamp(1.4rem, min(2.4vw, 4.3vh), 2.2rem);
   font-weight: 900;
+  line-height: 1.2;
   color: var(--bleu-nuit);
 }
 
 .pyramide__gain {
-  margin: 0.3rem 0 0;
-  font-size: 1.2rem;
+  margin: var(--air-serre) 0 0;
+  font-size: clamp(1.1rem, min(1.6vw, 2.8vh), 1.5rem);
   font-weight: 800;
   color: var(--succes);
 }
 
 .pyramide__retour {
-  margin: 0.3rem 0 0;
+  margin: var(--air-serre) 0 0;
+  font-size: clamp(1rem, min(1.4vw, 2.5vh), 1.4rem);
   font-weight: 700;
   color: var(--texte-doux);
 }

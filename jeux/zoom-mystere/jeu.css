@@ -1,14 +1,18 @@
+/* L'image à gauche, aussi large que possible ; à droite, une colonne juste assez large pour les
+   chiffres et les boutons (400 px en 1280 × 720, 485 px en 1920 × 1080). Les deux colonnes partent
+   du haut : un bouton ajouté ou retiré ne fait bouger ni l'image ni les autres boutons. */
 .zoom__colonnes {
   display: grid;
-  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
-  gap: clamp(1rem, 3vw, 2rem);
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr) clamp(21rem, 13.75vw + 13.8rem, 32rem);
+  gap: var(--air) clamp(1.5rem, 3vw, 3.5rem);
+  align-items: start;
 }
 
 .zoom__cadre {
   position: relative;
-  /* --ratio : largeur / hauteur de l'image, pour ne jamais la déformer */
-  width: min(100%, calc(60vh * var(--ratio, 1.6)));
+  /* --ratio : largeur / hauteur de l'image, pour ne jamais la déformer. Sa hauteur grandit avec
+     l'écran : 419 px au plus en 1280 × 720, 729 px en 1920 × 1080 */
+  width: min(100%, calc((86vh - 12.5rem) * var(--ratio, 1.6)));
   aspect-ratio: var(--ratio, 1.6);
   margin: 0 auto;
   overflow: hidden;
@@ -22,63 +26,105 @@
   width: 100%;
   height: 100%;
   object-fit: fill;
-  transition: transform 0.9s ease-in-out;
+  transition:
+    transform 0.9s ease-in-out,
+    opacity 0.4s ease;
   user-select: none;
 }
 
-.zoom__commandes .illustration {
-  --taille: clamp(4.5rem, min(8vw, 14vh), 7rem);
-  margin: 0 auto 0.75rem;
+/* Avant « Démarrer » : l'image, déjà zoomée, reste cachée sous un grand point d'interrogation */
+.zoom__voile {
+  position: absolute;
+  inset: 0;
+  display: none;
+  place-items: center;
+  font-size: clamp(3rem, 9vw, 7rem);
+  color: var(--blanc);
+  opacity: 0.4;
 }
 
+.zoom__cadre--attente .zoom__voile {
+  display: grid;
+}
+
+.zoom__cadre--attente .zoom__image {
+  opacity: 0;
+}
+
+/* La loupe, les chiffres, la question et les boutons grandissent avec la hauteur de l'écran :
+   compacts en 1280 × 720, très aérés en 1920 × 1080 */
+.zoom__commandes .illustration {
+  --taille: clamp(4.5rem, min(8vw, 14vh), 9.5rem);
+  margin: 0 auto var(--air-serre);
+}
+
+/* Les cinq chiffres tiennent sur une ligne de la colonne de droite */
 .zoom__commandes .paliers {
-  margin-bottom: 1rem;
+  gap: clamp(0.5rem, 1.6vh, 1rem);
+  margin-bottom: var(--air);
 }
 
 .zoom__commandes .paliers__chiffre {
-  width: clamp(2.8rem, 5vw, 4.2rem);
-  font-size: clamp(1.6rem, 3vw, 2.5rem);
+  width: clamp(2.8rem, min(5vw, 8.9vh), 5rem);
+  font-size: clamp(1.6rem, min(3vw, 5.3vh), 2.9rem);
 }
 
 .zoom__question {
   margin: 0;
-  font-size: clamp(1.6rem, 3vw, 2.4rem);
+  font-size: clamp(1.6rem, min(3vw, 5.3vh), 2.9rem);
 }
 
 .manche-finie .zoom__question,
-.manche-finie .zoom__commandes .paliers {
+.manche-finie .zoom__commandes .paliers,
+.zoom .actions-jeu:empty {
   display: none;
 }
 
-/* « Voir la réponse » : la réponse prend la place de la question */
-.reponse-vue .zoom__question {
-  display: none;
+/* « Voir la réponse » : la réponse se pose au bas de l'image, rien ne bouge à côté */
+.zoom__apercu {
+  position: absolute;
+  inset: auto var(--air-serre) var(--air-serre);
+  visibility: hidden;
+  box-shadow: var(--ombre-forte);
 }
 
-.zoom__apercu .reponse-revelee__valeur {
-  font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+.zoom__cadre--reponse .zoom__apercu {
+  visibility: visible;
+}
+
+/* Sur téléphone, l'image est petite : la réponse en laisse voir une partie */
+.zoom__apercu .reponse-apercu__valeur {
+  font-size: clamp(1.1rem, min(2.6vw, 4.6vh), 2.2rem);
 }
 
 .zoom__commandes .actions-jeu {
   flex-direction: column;
   align-items: stretch;
-  margin-top: 1rem;
 }
 
 .zoom__verdict {
-  margin: 0.5rem 0 0.25rem;
-  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  margin: 0;
+  font-size: clamp(1.6rem, min(2.6vw, 4.6vh), 2.3rem);
   font-weight: 900;
+  line-height: 1.2;
   color: var(--bleu-nuit);
 }
 
 .zoom__resultat .reponse-revelee__valeur {
-  font-size: clamp(1.3rem, 2.4vw, 1.9rem);
+  font-size: clamp(1.3rem, min(2.4vw, 4.2vh), 2.2rem);
+  line-height: 1.2;
+}
+
+/* L'explication, sous la réponse */
+.zoom__resultat .reponse-revelee p:not(.reponse-revelee__valeur) {
+  margin: var(--air-serre) 0 0;
+  font-size: clamp(1.05rem, min(1.6vw, 2.9vh), 1.65rem);
+  line-height: 1.4;
 }
 
 .zoom__gain {
-  margin: 0.75rem 0 0;
-  font-size: 1.2rem;
+  margin: var(--air-serre) 0 0;
+  font-size: clamp(1.1rem, min(1.6vw, 2.8vh), 1.45rem);
   font-weight: 800;
   color: var(--succes);
 }
@@ -86,6 +132,14 @@
 @media (max-width: 900px) {
   .zoom__colonnes {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Écran large : le panneau occupe la hauteur de l'écran, même avec une image très large (son
+   contenu reste en haut : rien ne bouge d'un moment à l'autre de la manche) */
+@media (min-width: 901px) {
+  .zoom {
+    min-height: var(--hauteur-jeu);
   }
 }
 

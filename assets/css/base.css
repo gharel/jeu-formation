@@ -282,7 +282,7 @@ img {
 }
 
 .pied p {
-  margin: 0;
+  margin-block: 0;
 }
 
 .pied p + p {
@@ -305,14 +305,14 @@ body:has(.ecran-jeu) .pied {
   background: var(--blanc);
   border-radius: var(--rayon);
   box-shadow: var(--ombre);
-  padding: clamp(1rem, 2vw, 1.75rem);
+  padding: clamp(1.1rem, 2.4vw, 2.25rem);
 }
 
 .colonnes {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr));
-  gap: 1.5rem;
-  margin: 1.5rem 0;
+  gap: clamp(1.25rem, 2.4vw, 2.25rem);
+  margin: clamp(1.25rem, 2.4vw, 2.25rem) 0;
 }
 
 .groupe-boutons {
@@ -407,6 +407,14 @@ body:has(.ecran-jeu) .pied {
 .bouton--grand {
   font-size: 1.25rem;
   padding: 0.75em 1.8em;
+}
+
+/* En partie, au vidéoprojecteur : les grands boutons grandissent avec la hauteur de l'écran, comme
+   le reste (1.25rem en 1280 × 720, environ 1.55rem en 1920 × 1080) */
+@media (min-width: 481px) {
+  .ecran-jeu .bouton--grand {
+    font-size: clamp(1.25rem, 2.3vh, 1.6rem);
+  }
 }
 
 /* Téléphone : le grand bouton reste le plus visible, mais laisse de la place à son texte */
@@ -510,6 +518,45 @@ fieldset.champ {
 
 .champ__controle:focus {
   border-color: var(--bleu);
+}
+
+/* Listes de choix (passion, nombre d'équipes, duellistes…) : une pilule comme les boutons voisins,
+   en gras, avec un chevron dessiné et un survol, pour qu'on voie d'un coup d'œil qu'elle s'ouvre */
+select.champ__controle {
+  appearance: none;
+  /* La largeur de son contenu : une pilule étirée sur toute la ligne pour « Vrai » se lit mal */
+  width: auto;
+  min-width: min(100%, 12rem);
+  max-width: 100%;
+  padding: 0.55rem 2.6rem 0.55rem 1.1rem;
+  font-weight: 700;
+  color: var(--bleu-nuit);
+  background-color: var(--blanc);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M3.5 6 8 10.5 12.5 6' fill='none' stroke='%230E1027' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.95rem center;
+  background-size: 0.95rem;
+  border-radius: var(--rayon-pilule);
+  box-shadow: var(--ombre);
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+select.champ__controle:hover {
+  border-color: var(--bleu-nuit);
+  background-color: var(--fond);
+}
+
+select.champ__controle:focus {
+  border-color: var(--bleu-nuit);
+}
+
+select.champ__controle:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
 }
 
 .champ__controle--nombre {

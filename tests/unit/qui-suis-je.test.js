@@ -42,6 +42,23 @@ describe('manche à paliers', () => {
     );
   }
 
+  it('ne montre rien avant Démarrer : le premier indice arrive au départ', () => {
+    const valeurs = [];
+    const manche = creerMancheAPaliers({
+      ctx: ctxFactice(),
+      dureePalier: 2,
+      surValeur: (v) => valeurs.push(v),
+      surFin() {},
+    });
+    expect(valeurs).toEqual([]);
+    expect(manche.paliers.getAttribute('aria-label')).toBe('Points en jeu : 5');
+    vi.advanceTimersByTime(10000);
+    expect(valeurs).toEqual([]);
+    bouton(manche, 'Démarrer').click();
+    expect(valeurs).toEqual([5]);
+    manche.detruire();
+  });
+
   it('fige les points au stop et les donne à la bonne réponse', async () => {
     const ctx = ctxFactice(['Bob']);
     const valeurs = [];
@@ -89,16 +106,51 @@ describe('manche à paliers', () => {
     vi.advanceTimersByTime(2100);
     bouton(manche, 'Stop').click();
     bouton(manche, 'Voir la réponse').click();
-    expect(surReponse).toHaveBeenCalledTimes(1);
+    expect(surReponse).toHaveBeenCalledWith(true);
     expect(bouton(manche, 'Voir la réponse')).toBeUndefined();
     expect(bouton(manche, 'on reprend')).toBeUndefined();
-    // Le temps reste figé, Espace ne relance rien
-    document.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space' }));
     vi.advanceTimersByTime(10000);
     expect(surFin).not.toHaveBeenCalled();
     bouton(manche, 'Mauvaise réponse').click();
     expect(surFin).toHaveBeenCalledWith({ trouve: false });
     expect(ctx.scores.ajouterGagnants).not.toHaveBeenCalled();
+    manche.detruire();
+  });
+
+  it('cache la réponse aussitôt (bouton ou Espace) : la manche peut reprendre', () => {
+    const ctx = ctxFactice();
+    const valeurs = [];
+    const surReponse = vi.fn();
+    const surFin = vi.fn();
+    const manche = creerMancheAPaliers({
+      ctx,
+      dureePalier: 2,
+      surValeur: (v) => valeurs.push(v),
+      surReponse,
+      surFin,
+    });
+    bouton(manche, 'Démarrer').click();
+    bouton(manche, 'Stop').click();
+    // « Cacher la réponse » prend la place de « Voir la réponse », avec le focus
+    bouton(manche, 'Voir la réponse').click();
+    const cacher = bouton(manche, 'Cacher la réponse');
+    expect(manche.actions.querySelectorAll('button')[1]).toBe(cacher);
+    cacher.click();
+    expect(surReponse).toHaveBeenLastCalledWith(false);
+    expect(bouton(manche, 'Cacher la réponse')).toBeUndefined();
+    expect(bouton(manche, 'Voir la réponse')).toBeDefined();
+    // Espace aussi la cache, sans relancer le temps
+    bouton(manche, 'Voir la réponse').click();
+    document.dispatchEvent(new KeyboardEvent('keydown', { key: ' ', code: 'Space' }));
+    expect(surReponse).toHaveBeenCalledTimes(4);
+    expect(surReponse).toHaveBeenLastCalledWith(false);
+    vi.advanceTimersByTime(10000);
+    expect(valeurs).toEqual([5]);
+    // Réponse cachée : on reprend, les chiffres s'éteignent de nouveau
+    bouton(manche, 'on reprend').click();
+    vi.advanceTimersByTime(2100);
+    expect(valeurs).toEqual([5, 4]);
+    expect(surFin).not.toHaveBeenCalled();
     manche.detruire();
   });
 

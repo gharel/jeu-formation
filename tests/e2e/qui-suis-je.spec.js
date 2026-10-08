@@ -19,12 +19,17 @@ test('Qui suis-je : les points fondent, Stop fige, la bonne réponse marque', as
   await paliersCourts(page);
   await lancerPartie(page);
 
+  // Aucun indice avant « Démarrer » : seulement sa place
   const indices = page.getByRole('list', { name: 'Indices' }).getByRole('listitem');
-  await expect(indices).toHaveCount(1);
+  const attente = page.locator('#cadre').getByText('Le premier indice apparaît au démarrage.');
+  await expect(indices).toHaveCount(0);
+  await expect(attente).toBeVisible();
   await expect(page.getByRole('list', { name: 'Points en jeu : 5' })).toBeVisible();
   await verifierAccessibilite(page);
 
   await page.getByRole('button', { name: 'Démarrer' }).click();
+  await expect(indices).toHaveCount(1);
+  await expect(attente).toHaveCount(0);
   await expect(indices).toHaveCount(2, { timeout: 4000 });
   await expect(page.getByRole('list', { name: 'Points en jeu : 4' })).toBeVisible();
 
@@ -69,12 +74,33 @@ test('Voir la réponse : on juge la proposition, les points vont à plusieurs pe
 
   await page.getByRole('button', { name: 'Démarrer' }).click();
   await page.getByRole('button', { name: /Stop/ }).click();
-  await page.getByRole('button', { name: 'Voir la réponse' }).click();
-  await expect(cadre.locator('.reponse-revelee')).toContainText('La souris');
-  // Tout le monde a vu la réponse : on ne reprend plus, on juge
+  // La réponse se pose à la place de « Qui suis-je ? » : rien ne bouge
+  const apercu = cadre.locator('.reponse-apercu');
+  const titre = cadre.getByRole('heading', { name: 'Qui suis-je ?', exact: true });
+  const voir = page.getByRole('button', { name: 'Voir la réponse' });
+  await expect(apercu).toBeHidden();
+  const { x, y, width, height } = await voir.boundingBox();
+  await voir.click();
+  await expect(apercu).toBeVisible();
+  await expect(apercu).toContainText('La souris');
+  await expect(titre).toBeHidden();
+  // Réponse affichée : on ne reprend plus, on juge… ou on la cache aussitôt
   await expect(page.getByRole('button', { name: /on reprend/ })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Bonne réponse' })).toBeFocused();
+  await expect(page.getByRole('button', { name: 'Cacher la réponse' })).toBeFocused();
   await verifierAccessibilite(page);
+  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(720);
+  // Un second clic au même endroit la cache : on peut reprendre
+  await page.mouse.click(x + width / 2, y + height / 2);
+  await expect(apercu).toBeHidden();
+  await expect(titre).toBeVisible();
+  await expect(page.getByRole('button', { name: /on reprend/ })).toBeVisible();
+  // Espace aussi
+  await voir.click();
+  await expect(apercu).toBeVisible();
+  await page.keyboard.press('Space');
+  await expect(apercu).toBeHidden();
+  await voir.click();
+  await expect(apercu).toBeVisible();
 
   // Deux personnes ont trouvé ensemble
   await page.getByRole('button', { name: 'Bonne réponse' }).click();
@@ -95,9 +121,11 @@ test('Voir la réponse : on juge la proposition, les points vont à plusieurs pe
   await page.getByRole('button', { name: 'Démarrer' }).click();
   await page.getByRole('button', { name: /Stop/ }).click();
   await page.getByRole('button', { name: 'Voir la réponse' }).click();
-  await expect(cadre.locator('.reponse-revelee')).toContainText('Échap');
+  await expect(apercu).toContainText('Échap');
   await page.getByRole('button', { name: 'Mauvaise réponse' }).click();
   await expect(cadre.getByText('Personne n’a trouvé…')).toBeVisible();
+  await expect(apercu).toBeHidden();
+  await expect(cadre.locator('.reponse-revelee')).toContainText('Échap');
 
   // Mystère 3 : tout le monde a trouvé
   await page.getByRole('button', { name: 'Mystère suivant' }).click();

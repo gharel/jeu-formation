@@ -26,11 +26,19 @@ function demarrer(ctx) {
       'aria-label': 'Indices',
       'aria-live': 'polite',
     });
+    // Avant « Démarrer », aucun indice : seulement sa place, pour que l'écran ne saute pas
+    const attente = el(
+      'p',
+      { class: 'qsj__attente' },
+      icone('lightbulb'),
+      'Le premier indice apparaît au démarrage.',
+    );
     // L'animation d'apparition se joue d'elle-même quand le résultat cesse d'être caché
     const resultat = el('div', { class: 'qsj__resultat apparition', hidden: true });
     let affiches = 0;
 
     function montrerIndices(n) {
+      if (n > 0) attente.remove();
       while (affiches < n) {
         const li = el('li', { class: 'qsj__indice apparition' }, indices[affiches]);
         liste.append(li);
@@ -50,12 +58,31 @@ function demarrer(ctx) {
         el('p', { class: 'reponse-revelee__valeur' }, reponse),
       );
 
-    // « Voir la réponse », pendant la pause : l'animateur juge la proposition
-    function montrerReponse() {
-      remplir(resultat, blocReponse());
-      resultat.hidden = false;
-      ctx.zone.querySelector('.panneau')?.classList.add('reponse-vue');
-      ctx.annoncer(`La réponse est : ${reponse}`);
+    // « Voir la réponse », pendant la pause : la réponse se pose à la place de « Qui suis-je ? »,
+    // dans la même case (case-reponse), et l'animateur juge la proposition, ou la recache.
+    // Le numéro du mystère est au-dessus de la question, à côté des chiffres : une ligne de gagnée
+    // pour les cinq indices
+    const caseQuestion = el(
+      'div',
+      { class: 'case-reponse qsj__case' },
+      el(
+        'div',
+        { class: 'qsj__titre' },
+        el('p', { class: 'panneau__surtitre' }, `Mystère ${index + 1} sur ${mysteres.length}`),
+        el('h3', { class: 'panneau__texte qsj__question' }, 'Qui suis-je ?'),
+      ),
+      el(
+        'div',
+        { class: 'reponse-apercu' },
+        el('p', { class: 'panneau__surtitre' }, 'Je suis…'),
+        el('p', { class: 'reponse-apercu__valeur' }, reponse),
+      ),
+    );
+
+    function montrerReponse(visible) {
+      caseQuestion.classList.toggle('case-reponse--vue', visible);
+      ctx.zone.querySelector('.panneau')?.classList.toggle('reponse-vue', visible);
+      if (visible) ctx.annoncer(`La réponse est : ${reponse}`);
     }
 
     manche = creerMancheAPaliers({
@@ -64,6 +91,7 @@ function demarrer(ctx) {
       surValeur: (valeur) => montrerIndices(indicesVisibles(valeur, indices.length)),
       surReponse: montrerReponse,
       surFin({ trouve, gagnants, points }) {
+        montrerReponse(false);
         ctx.zone.querySelector('.panneau')?.classList.add('manche-finie');
         montrerIndices(indices.length);
         const dernier = index === mysteres.length - 1;
@@ -116,15 +144,13 @@ function demarrer(ctx) {
       },
     });
 
-    const question = el('h3', { class: 'panneau__texte qsj__question' }, 'Qui suis-je ?');
     remplir(
       ctx.zone,
       el(
         'div',
         { class: 'panneau qsj' },
-        el('p', { class: 'panneau__surtitre' }, `Mystère ${index + 1} sur ${mysteres.length}`),
-        el('div', { class: 'qsj__haut' }, illustration.element, manche.paliers, question),
-        el('div', { class: 'qsj__corps' }, liste, resultat),
+        el('div', { class: 'qsj__haut' }, illustration.element, manche.paliers, caseQuestion),
+        el('div', { class: 'qsj__corps' }, attente, liste, resultat),
         manche.actions,
         el('p', { class: 'raccourci' }, el('kbd', {}, 'Espace'), ' : démarrer, stop, reprendre'),
       ),
@@ -142,8 +168,8 @@ monterJeu({
   exemple,
   regles: [
     'Avant la séance, préparez des mystères (un logiciel, un terme, une touche…) avec 3 à 5 indices.',
-    'Les chiffres 5 4 3 2 1 s’éteignent un à un : à chaque fois, un nouvel indice apparaît.',
-    'Quelqu’un lève la main ? Appuyez sur Stop (Espace) : le temps se fige pendant sa réponse. Un doute ? « Voir la réponse » l’affiche.',
+    'Démarrer affiche le premier indice. Les chiffres 5 4 3 2 1 s’éteignent un à un : à chaque fois, un nouvel indice apparaît.',
+    'Quelqu’un lève la main ? Appuyez sur Stop (Espace) : le temps se fige pendant sa réponse. Un doute ? « Voir la réponse » l’affiche, « Cacher la réponse » la retire.',
     'Bonne réponse : les points encore allumés vont à qui a trouvé, une ou plusieurs personnes. Plus on tarde, moins on marque !',
   ],
   demarrer,

@@ -158,8 +158,9 @@ function demarrer(ctx) {
           },
           onclick: () => {
             buzz(cote);
-            // Le focus revient au plateau : Entrée et Retour arrière restent actifs
-            plateau.focus();
+            // Le focus revient au plateau : Entrée et Retour arrière restent actifs. Sans faire
+            // défiler l'écran (téléphone) : le buzzer reste sous le doigt
+            plateau.focus({ preventScroll: true });
           },
         },
         el('span', { class: 'duel__touche', 'aria-hidden': 'true' }, touche),
@@ -176,6 +177,10 @@ function demarrer(ctx) {
 
     const surtitre = el('p', { class: 'panneau__surtitre' });
     const question = el('p', { class: 'duel__question' });
+    // « Voir la réponse », pendant qu'un joueur répond : la réponse se pose sur la question, dans la
+    // même case (case-reponse) ; rien ne bouge, « Cacher la réponse » reste sous la souris
+    const apercu = el('div', { class: 'reponse-apercu' });
+    const caseQuestion = el('div', { class: 'case-reponse' }, question, apercu);
     const statut = el('p', { class: 'duel__statut', 'aria-live': 'assertive' });
     const reponse = el('div', { class: 'reponse-revelee duel__reponse', hidden: true });
     const actions = el('div', { class: 'actions-jeu' });
@@ -188,7 +193,7 @@ function demarrer(ctx) {
         { class: 'duel__centre' },
         illustration.element,
         surtitre,
-        question,
+        caseQuestion,
         statut,
         reponse,
         actions,
@@ -205,8 +210,9 @@ function demarrer(ctx) {
           class: `bouton bouton--grand ${classe}`,
           onclick: () => {
             action();
-            // Le focus revient au plateau : A, L, Entrée et Retour arrière restent actifs
-            plateau.focus();
+            // Le focus revient au plateau : A, L, Entrée et Retour arrière restent actifs. Sans faire
+            // défiler l'écran (téléphone) : « Cacher la réponse » reste sous le doigt
+            plateau.focus({ preventScroll: true });
           },
         },
         texte,
@@ -236,9 +242,24 @@ function demarrer(ctx) {
       reponse.hidden = false;
     }
 
+    function boutonApercu() {
+      const libelle = () =>
+        caseQuestion.classList.contains('case-reponse--vue')
+          ? [icone('eye-slash'), 'Cacher la réponse']
+          : [icone('eye'), 'Voir la réponse'];
+      const b = bouton(libelle(), 'bouton--discret', () => {
+        caseQuestion.classList.toggle('case-reponse--vue');
+        remplir(b, libelle());
+      });
+      return b;
+    }
+
     /** `message` : le statut à afficher si la main passe à l'adversaire (sinon « X répond ! »). */
     function dessiner(message = null) {
       dessinerPoints();
+      // La main change (ou la question) : la réponse vue par l'animateur se cache
+      caseQuestion.classList.remove('case-reponse--vue');
+      remplir(apercu);
       illustration.etat(duel.phase === 'buzze' ? 'buzze' : null);
       // Les buzzers s'allument quand la question s'affiche
       plateau.classList.toggle('duel--ouvert', duel.phase === 'ouvert');
@@ -264,6 +285,11 @@ function demarrer(ctx) {
         actionEntree = null;
         remplir(actions, bouton('Personne ne sait', 'bouton--discret', passer));
       } else if (duel.phase === 'buzze') {
+        remplir(
+          apercu,
+          el('p', { class: 'panneau__surtitre' }, 'Réponse'),
+          el('p', { class: 'reponse-apercu__valeur' }, questions[indexQuestion].reponse),
+        );
         remplir(statut, message ?? `${noms[duel.main]} répond !`);
         actionEntree = () => valider(true);
         remplir(
@@ -276,7 +302,7 @@ function demarrer(ctx) {
             'bouton--danger',
             () => valider(false),
           ),
-          bouton([icone('eye'), 'Voir la réponse'], 'bouton--discret', montrerReponse),
+          boutonApercu(),
         );
       } else {
         dessinerFin();

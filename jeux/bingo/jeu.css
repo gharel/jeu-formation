@@ -1,19 +1,30 @@
 /* ---------- Préparation des grilles ---------- */
 
+.bingo-prep .panneau__texte {
+  margin: 0 0 var(--air-serre);
+  font-size: clamp(1.6rem, min(3.2vw, 5.6vh), 3rem);
+}
+
 .bingo-prep__haut {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(1rem, 3vw, 2rem);
-  max-width: 52rem;
-  margin: 0 auto 1.25rem;
+  gap: clamp(1rem, 3vw, 3rem);
+  max-width: 64rem;
+  margin: 0 auto var(--air);
   text-align: left;
 }
 
 .bingo-prep__consigne {
-  margin: 0 0 0.75rem;
+  margin: 0 0 var(--air-serre);
+  font-size: clamp(1.1rem, min(1.5vw, 2.6vh), 1.6rem);
   font-weight: 700;
+  line-height: 1.4;
   color: var(--bleu-nuit);
+}
+
+.bingo-prep__choix .bouton {
+  font-size: clamp(1rem, min(1.4vw, 2.3vh), 1.4rem);
 }
 
 /* Une grille vide, comme celle à tracer sur papier */
@@ -22,7 +33,7 @@
   display: grid;
   grid-template-columns: repeat(var(--cote, 3), 1fr);
   gap: 3px;
-  width: clamp(5rem, 9vw, 7rem);
+  width: clamp(5rem, min(9vw, 15vh), 9rem);
   aspect-ratio: 1;
   padding: 3px;
   background: var(--bleu-nuit);
@@ -36,18 +47,20 @@
 
 .bingo-prep__mots {
   columns: 5 11rem;
-  column-gap: 1.5rem;
-  max-width: 64rem;
+  column-gap: clamp(1rem, 2vw, 2.5rem);
+  max-width: 80rem;
   margin: 0 auto;
   padding: 0;
   list-style: none;
   text-align: left;
 }
 
+/* Des étiquettes qui grandissent avec la hauteur de l'écran : serrées en 1280 × 720 pour tenir
+   sans défiler, aérées en 1920 × 1080 */
 .bingo-prep__mots li {
-  padding: 0.15rem 0.6rem;
-  margin-bottom: 0.35rem;
-  font-size: clamp(1.05rem, 1.6vw, 1.45rem);
+  padding: clamp(0.15rem, 1.6vh - 0.6rem, 0.6rem) clamp(0.6rem, 1.8vh - 0.5rem, 1.1rem);
+  margin-bottom: clamp(0.35rem, 1.6vh - 0.55rem, 0.9rem);
+  font-size: clamp(1.05rem, min(1.6vw, 2.8vh), 1.75rem);
   font-weight: 800;
   color: var(--bleu-nuit);
   background: var(--accent-clair);
@@ -59,8 +72,8 @@
 
 .bingo {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) clamp(13rem, 20vw, 18rem);
-  gap: 1.25rem;
+  grid-template-columns: minmax(0, 1fr) clamp(13rem, 20vw, 22rem);
+  gap: clamp(1.25rem, 2vw, 2.5rem);
   align-items: start;
 }
 
@@ -69,7 +82,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem 1rem;
+  gap: var(--air-serre) 1rem;
 }
 
 .bingo__entete .panneau__surtitre,
@@ -82,21 +95,23 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.75rem, 2vw, 1.5rem);
-  margin: 0.5rem 0;
+  gap: clamp(0.75rem, 2vw, 2rem);
+  margin: var(--air) 0 var(--air-serre);
 }
 
+/* La sphère et la boule grandissent plus vite que l'écran : compactes en 1280 × 720, où une
+   définition peut prendre trois lignes, grandes en 1920 × 1080 */
 .bingo__tirage .illustration {
-  --taille: clamp(4.5rem, min(9vw, 15vh), 7.5rem);
+  --taille: clamp(4.5rem, min(9vw, 19.4vh - 50px), 10rem);
 }
 
 .bingo__boule {
   display: grid;
   place-items: center;
-  width: clamp(4.5rem, 11vh, 7rem);
+  width: clamp(4.5rem, 15.3vh - 35px, 8.5rem);
   aspect-ratio: 1;
   margin: 0;
-  font-size: clamp(1.6rem, 4vh, 2.6rem);
+  font-size: clamp(1.6rem, 4vh, 3.2rem);
   font-weight: 900;
   color: var(--sur-accent);
   background:
@@ -122,21 +137,38 @@
   }
 }
 
+/* La définition garde la place de deux lignes, centrées : d'un tirage à l'autre, le mot et les
+   boutons ne bougent pas sous la souris */
 .bingo__definition {
-  max-width: 50rem;
-  margin: 0 auto 0.5rem;
-  font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+  display: grid;
+  align-content: center;
+  max-width: 24em;
+  min-height: 2.5em;
+  margin: 0 auto var(--air);
+  font-size: clamp(1.4rem, min(2.6vw, 4.6vh), 2.75rem);
   font-weight: 700;
   line-height: 1.25;
   color: var(--bleu-nuit);
 }
 
+/* Un jeu avec définitions garde leur place avant le premier tirage, ou pour un mot qui n'en a
+   pas : le premier tirage ne déplace pas les boutons */
+.bingo__scene--definitions .bingo__definition[hidden] {
+  display: grid !important;
+  visibility: hidden;
+}
+
+/* Le mot, ou « Quel est ce mot ? » en plus petit dans une case de même hauteur : « Dévoiler le
+   mot » laisse « Mot suivant » à la même place */
 .bingo__mot {
+  --taille-mot: clamp(1.8rem, min(3.8vw, 6.6vh), 4.25rem);
   display: inline-block;
-  margin: 0.25rem 0 0;
-  padding: 0.3rem 1.2rem;
-  font-size: clamp(1.8rem, 3.8vw, 3.2rem);
+  vertical-align: top;
+  margin: 0;
+  padding: calc(var(--case-v) * 0.6) calc(var(--case-h) * 1.2);
+  font-size: var(--taille-mot);
   font-weight: 900;
+  line-height: 1.2;
   color: var(--bleu-nuit);
   background: var(--accent-clair);
   border: 3px solid var(--accent);
@@ -144,7 +176,8 @@
 }
 
 .bingo__mot--cache {
-  font-size: clamp(1.2rem, 2.2vw, 1.8rem);
+  font-size: clamp(1.2rem, min(2.2vw, 3.6vh), 2.4rem);
+  line-height: calc(var(--taille-mot) * 1.2);
   color: var(--texte-doux);
   background: var(--fond);
   border-style: dashed;
@@ -153,13 +186,14 @@
 
 .bingo__message {
   min-height: 1.5em;
-  margin: 0.75rem 0 0;
+  margin: var(--air-serre) 0 0;
+  font-size: clamp(1.1rem, min(1.5vw, 2.4vh), 1.6rem);
   font-weight: 800;
   color: var(--bleu-nuit);
 }
 
 .bingo__scene .actions-jeu {
-  margin-top: 0.75rem;
+  margin-top: var(--air);
 }
 
 .bingo__annonce {
@@ -168,27 +202,23 @@
 
 /* ---------- Mots tirés ---------- */
 
-.bingo__cote {
-  max-height: calc(100vh - 13rem);
-  overflow-y: auto;
-}
-
 .bingo__titre-tires {
-  margin: 0 0 0.75rem;
-  font-size: 1.15rem;
+  margin: 0 0 var(--air-serre);
+  font-size: clamp(1.15rem, min(1.6vw, 2.4vh), 1.6rem);
 }
 
 .bingo__tires {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: calc(var(--air-serre) * 0.6);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .bingo__tire {
-  padding: 0.25rem 0.6rem;
+  padding: calc(var(--case-v) * 0.5) calc(var(--case-h) * 0.6);
+  font-size: clamp(1.05rem, min(1.4vw, 2.3vh), 1.5rem);
   font-weight: 700;
   border-radius: 8px;
   background: var(--fond);
@@ -198,6 +228,16 @@
   font-weight: 900;
   color: var(--sur-accent);
   background: var(--accent);
+}
+
+/* Sur grand écran, la liste des mots tirés prend la hauteur de la scène (contain : sa longueur ne
+   compte pas) et défile au-delà */
+@media (min-width: 901px) {
+  .bingo__cote {
+    contain: size;
+    align-self: stretch;
+    overflow-y: auto;
+  }
 }
 
 /* ---------- Vérification d'une annonce (fenêtre) ---------- */
@@ -223,15 +263,23 @@
   .bingo {
     grid-template-columns: 1fr;
   }
-  .bingo__cote {
-    max-height: none;
-  }
 }
 
 @media (max-width: 600px) {
   .bingo-prep__haut {
     flex-direction: column;
     text-align: center;
+  }
+
+  /* Téléphone : les mots à recopier sur deux colonnes, pour les voir d'un coup d'œil */
+  .bingo-prep__mots {
+    columns: 2;
+    column-gap: 0.6rem;
+  }
+
+  /* Un très long mot se coupe plutôt que de sortir de son étiquette */
+  .bingo-prep__mots li {
+    overflow-wrap: break-word;
   }
 }
 

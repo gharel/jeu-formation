@@ -14,8 +14,8 @@ Chaque jeu dure de 5 à 15 minutes.
 | Le Juste Chiffre  | « C'est plus ! », « C'est moins ! », minuteur réglable (30 s)                                                                        | Questions à réponse chiffrée           |
 | Debout ou assis ? | Vrai = debout, faux = assis (ou main levée), mode survie                                                                             | Affirmations vrai/faux                 |
 | Le Bon Ordre      | Remettre dans l'ordre les étapes d'une procédure, 3 essais                                                                           | Procédures de 3 à 7 étapes             |
-| Qui suis-je ?     | Indices progressifs, points qui fondent 5 4 3 2 1, Stop, « Voir la réponse » en cas de doute                                         | Mystères + 3 à 5 indices               |
-| Zoom mystère      | Capture très zoomée qui se dévoile, 5 4 3 2 1, Stop, « Voir la réponse » en cas de doute                                             | Captures collées (Ctrl+V) ou importées |
+| Qui suis-je ?     | Indices progressifs (le premier au démarrage), points qui fondent 5 4 3 2 1, Stop, « Voir la réponse » en cas de doute               | Mystères + 3 à 5 indices               |
+| Zoom mystère      | Capture très zoomée, cachée jusqu'au démarrage, qui se dévoile, 5 4 3 2 1, Stop, « Voir la réponse » en cas de doute                 | Captures collées (Ctrl+V) ou importées |
 | Duel buzzer       | Deux joueurs, touches A et L ou buzzers à l'écran (tactile), le plus rapide répond                                                   | Questions + réponses                   |
 | Pyramide          | Par deux, faire deviner un mot en 1, 2, 3 ou 4 mots d'indice : 4, 3, 2 ou 1 point                                                    | Une liste de mots                      |
 | Batterie faible   | Proposer des lettres ; chaque erreur vide la batterie                                                                                | Mots ou courtes expressions            |
@@ -24,6 +24,8 @@ Chaque jeu dure de 5 à 15 minutes.
 | Bingo             | Chacun remplit sa grille ; le jeu tire les mots : « Ligne ! », puis « Bingo ! »                                                      | Mots (définitions facultatives)        |
 | Le Coffre-fort    | Des énigmes pour ouvrir les serrures avant la fin du chrono ; erreurs et indices coûtent du temps ; un seul mot de la réponse suffit | Énigmes, réponses, indices             |
 | Top 5             | Trouver les 5 réponses cachées, de la plus attendue (5 points) à la moins (1 point) ; un seul mot de la réponse suffit               | Questions « Citez… » + 5 réponses      |
+
+« Voir la réponse » (Qui suis-je ?, Zoom mystère, Duel buzzer) pose la réponse à la place de la question, ou sur l'image, sans rien déplacer : « Cacher la réponse », au même endroit, la retire aussitôt (Espace aussi dans Qui suis-je ? et Zoom mystère). Réponse cachée, la manche peut reprendre ; dans Duel buzzer, elle se cache d'elle-même quand la main passe à l'adversaire.
 
 Pour attribuer des points, un clic sur un prénom suffit ; « Tout le monde » les donne à tous les joueurs d'un coup, « Plusieurs personnes » permet d'en cocher plusieurs, et une équipe (voir la page Le groupe) se choisit d'un clic. Les réponses tapées (Top 5, Le Coffre-fort) tolèrent majuscules, accents, article, pluriel, petites fautes de frappe, et un seul mot de la réponse suffit (« passe » pour « Mot de passe ») ; un mot commun à plusieurs réponses du Top 5 (« Google ») fait demander de préciser, sans compter d'erreur.
 

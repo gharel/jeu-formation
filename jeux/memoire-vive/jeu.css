@@ -1,13 +1,23 @@
+/* Les écarts (--air, --air-serre) et les marges des cases (--case-v, --case-h) viennent de
+   .ecran-jeu : ils grandissent avec la hauteur de l'écran, comme les textes ci-dessous.
+   Compact en 1280 × 720, très aéré en 1920 × 1080. */
+
 /* ---------- Combien de cartes ? ---------- */
 
 .memoire-choix > .illustration {
-  --taille: clamp(9rem, min(20vw, 30vh), 14rem);
-  margin: 0 auto 0.75rem;
+  --taille: clamp(9rem, min(20vw, 30vh), 18rem);
+  margin: 0 auto var(--air-serre);
+}
+
+.memoire-choix .panneau__texte {
+  margin: 0;
+  font-size: clamp(1.6rem, min(3.2vw, 5.7vh), 3.6rem);
 }
 
 .memoire-choix__aide {
-  max-width: 46rem;
-  margin: 0 auto 1.25rem;
+  max-width: 50rem;
+  margin: var(--air-serre) auto var(--air);
+  font-size: clamp(1.1rem, min(1.5vw, 2.7vh), 1.6rem);
   color: var(--texte-doux);
 }
 
@@ -15,7 +25,7 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.75rem;
+  gap: var(--air-serre);
 }
 
 /* Deux lignes : le nombre de cartes, puis le détail */
@@ -24,7 +34,7 @@
   flex-direction: column;
   align-items: center;
   gap: 0.15rem;
-  min-width: 11rem;
+  min-width: 11em;
 }
 
 .memoire-choix__nombre {
@@ -37,26 +47,44 @@
   font-weight: 700;
 }
 
+/* Écran large : le choix occupe la hauteur de l'écran, son contenu au milieu (il ne change pas de
+   hauteur) ; les choix grandissent avec l'écran */
+@media (min-width: 900px) {
+  .memoire-choix {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: var(--hauteur-jeu);
+  }
+
+  .memoire-choix__option {
+    font-size: clamp(1.25rem, 2.6vh, 1.75rem);
+  }
+}
+
 /* ---------- Plateau ---------- */
 
 .memoire {
-  padding: clamp(0.75rem, 2vw, 1.5rem);
+  padding: clamp(0.75rem, min(2vw, 3.3vh), 2.25rem);
 }
 
+/* La barrette, le joueur, le compteur, et un bouton à droite. Assez haute pour ce bouton : il
+   apparaît (cartes ratées, fin) sans faire bouger la grille. */
 .memoire__entete {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
-  gap: 0.5rem 1rem;
-  min-height: 3rem;
+  gap: var(--air-serre) clamp(1rem, 2vw, 2rem);
+  min-height: 3.25rem;
+  font-size: clamp(1.1rem, min(1.5vw, 2.6vh), 1.6rem);
 }
 
 .memoire__infos {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.5rem 1rem;
+  gap: var(--air-serre) clamp(1rem, 2vw, 2rem);
 }
 
 .memoire__tour,
@@ -66,7 +94,7 @@
 
 /* La barrette de mémoire, en tête du plateau */
 .memoire__infos .illustration {
-  --taille: clamp(5.5rem, min(11vw, 17vh), 9rem);
+  --taille: clamp(5.5rem, min(11vw, 17vh), 11rem);
 }
 
 .memoire__compteur {
@@ -76,12 +104,16 @@
 
 .memoire__actions {
   display: flex;
-  gap: 0.5rem;
+  gap: var(--air-serre);
 }
 
+/* Le message du coup joué et l'explication de la paire : deux lignes réservées, pour que la grille
+   ne bouge pas */
 .memoire__messages {
-  min-height: 3.2em;
-  margin: 0.4rem 0 0.6rem;
+  min-height: 2.9em;
+  margin: var(--air-serre) 0;
+  font-size: clamp(1.1rem, min(1.5vw, 2.6vh), 1.75rem);
+  line-height: 1.35;
 }
 
 .memoire__message {
@@ -91,7 +123,7 @@
 }
 
 .memoire__explication {
-  margin: 0.15rem 0 0;
+  margin: 0.15em 0 0;
   font-size: 0.9em;
   color: var(--texte-doux);
 }
@@ -101,13 +133,16 @@
   display: grid;
   grid-template-columns: repeat(var(--colonnes), minmax(0, 1fr));
   grid-template-rows: repeat(var(--lignes), minmax(0, 1fr));
-  gap: clamp(0.4rem, 1vw, 0.8rem);
-  height: clamp(15rem, calc(100vh - 26rem), 48rem);
+  gap: var(--air-serre);
+  height: clamp(15rem, 66.7vh - 8.9rem, 48rem);
 }
 
 /* ---------- Une carte : un dos (son repère) et une face (son texte) ---------- */
 
+/* Les textes suivent la taille de la carte (unités cqw, cqh) : une grande carte (8 cartes,
+   1920 × 1080) a un grand texte, une petite carte (24 cartes, téléphone) un texte qui tient */
 .carte-memoire {
+  container-type: size;
   min-width: 0;
   min-height: 0;
   padding: 0;
@@ -137,13 +172,16 @@
   transform: rotateY(180deg);
 }
 
+/* --coche : la pastille d'une paire trouvée, à cheval sur le coin en haut à droite. La marge des
+   côtés est plus large que sa partie intérieure : elle ne cache jamais le texte. */
 .carte-memoire__dos,
 .carte-memoire__face {
+  --coche: clamp(1rem, 16cqh, 1.6rem);
   position: absolute;
   inset: 0;
   display: grid;
   place-items: center;
-  padding: 0.4rem;
+  padding: calc(var(--case-v) * 0.8) max(var(--case-h), calc(var(--coche) * 0.7 + 2px));
   border-radius: 12px;
   box-shadow: var(--ombre);
   backface-visibility: hidden;
@@ -151,7 +189,7 @@
 
 /* Le dos : le repère de la carte sur fond de barrette de mémoire */
 .carte-memoire__dos {
-  font-size: clamp(1.1rem, 2.4vw, 2.2rem);
+  font-size: clamp(1.1rem, min(14cqw, 40cqh), 3rem);
   font-weight: 900;
   letter-spacing: 0.04em;
   color: var(--sur-accent);
@@ -185,7 +223,7 @@
 }
 
 .carte-memoire__texte {
-  font-size: clamp(0.8rem, 1.5vw, 1.45rem);
+  font-size: clamp(0.8rem, min(8cqw, 22cqh), 1.75rem);
   font-weight: 800;
   line-height: 1.15;
   overflow-wrap: anywhere;
@@ -201,13 +239,13 @@
 
 .carte-memoire__coche {
   position: absolute;
-  top: 0.3rem;
-  right: 0.3rem;
+  top: calc(var(--coche) * -0.3);
+  right: calc(var(--coche) * -0.3);
   display: grid;
   place-items: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  font-size: 0.75rem;
+  width: var(--coche);
+  height: var(--coche);
+  font-size: calc(var(--coche) * 0.5);
   color: var(--blanc);
   background: var(--succes);
   border-radius: 50%;
@@ -217,17 +255,49 @@
   margin: 0;
 }
 
+/* Téléphone : des cartes étroites, le texte prend toute la place et les lignes de cartes sont
+   assez hautes pour un texte long (la page défile) */
 @media (max-width: 600px) {
-  .memoire__grille {
-    gap: 0.3rem;
+  /* En tête, sur trois lignes de hauteur fixe : la barrette et le compteur, le joueur (quelle que
+     soit la longueur de son prénom), puis le bouton (cacher les cartes, classement), dont la ligne
+     est réservée. La grille ne descend pas sous le doigt quand il apparaît. */
+  .memoire__infos {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    justify-items: start;
   }
+
+  .memoire__tour {
+    grid-row: 2;
+    grid-column: 1 / -1;
+  }
+
+  .memoire__actions {
+    flex-basis: 100%;
+    min-height: 2.9rem;
+  }
+
+  /* Le message et l'explication tiennent chacun sur deux lignes : quatre lignes réservées */
+  .memoire__messages {
+    min-height: 5.3em;
+  }
+
+  .memoire__grille {
+    grid-template-rows: repeat(var(--lignes), clamp(5rem, 30vw, 7.5rem));
+    gap: 0.3rem;
+    height: auto;
+  }
+
   .carte-memoire__dos,
   .carte-memoire__face {
+    --coche: 0.95rem;
     padding: 0.2rem;
     border-radius: 8px;
   }
+
   .carte-memoire__texte {
     font-size: 0.7rem;
+    line-height: 1.1;
   }
 }
 

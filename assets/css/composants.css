@@ -261,7 +261,7 @@
 
 .intro {
   display: flex;
-  gap: 1.5rem;
+  gap: clamp(1.25rem, 2.6vw, 2.5rem);
   align-items: flex-start;
   border-top: 6px solid var(--accent);
 }
@@ -279,17 +279,24 @@
 }
 
 .intro__accroche {
+  margin: 0 0 1.1rem;
   font-size: 1.2rem;
   font-weight: 600;
 }
 
 .regles {
-  margin: 0 0 0.75rem;
+  margin: 0 0 1.1rem;
   padding-left: 1.3rem;
+  line-height: 1.55;
 }
 
 .regles li {
-  margin-bottom: 0.3rem;
+  margin-bottom: 0.55rem;
+}
+
+.regles li::marker {
+  font-weight: 800;
+  color: var(--bleu-nuit);
 }
 
 .intro__duree {
@@ -386,6 +393,12 @@
 .ajout-prenom__info {
   flex-direction: column;
   align-items: stretch;
+}
+
+/* Thème puis info, l'un sous l'autre : sur téléphone, la base de largeur des champs (11rem)
+   deviendrait leur hauteur */
+.ajout-prenom__info > .champ__controle {
+  flex: none;
 }
 
 .ajout-prenom__theme {
@@ -813,13 +826,31 @@
 
 /* ---------- Écran de jeu ---------- */
 
+/* Respiration des écrans de jeu. Au vidéoprojecteur, les écarts grandissent avec la hauteur de
+   l'écran : très aérés en 1920 × 1080, et l'écran tient toujours en 1280 × 720 sans défiler. Sur
+   téléphone, ils suivent la largeur, pour garder la place au contenu. */
+.ecran-jeu,
+.ecran-fin {
+  /* Entre deux blocs : question, plateau, boutons */
+  --air: clamp(1rem, min(6vh - 1.5rem, 4.5vw), 3.5rem);
+  /* Entre deux éléments voisins : lignes d'une liste, cases, puces */
+  --air-serre: clamp(0.5rem, min(2.2vh - 0.4rem, 2.2vw), 1.25rem);
+  /* Dans une case de texte (indice, étape, réponse) : en haut et en bas, puis sur les côtés */
+  --case-v: clamp(0.45rem, min(2.2vh - 0.5rem, 2.4vw), 1.25rem);
+  --case-h: clamp(0.9rem, min(2.2vh, 3vw), 1.75rem);
+  /* Hauteur laissée au panneau du jeu sous le bandeau, la barre des points et les marges du cadre
+   (avec de quoi accueillir des points sur deux lignes) : un panneau qui la prend en min-height
+   occupe l'écran sans le faire défiler */
+  --hauteur-jeu: calc(93vh - 9.5rem);
+}
+
 .ecran-jeu__barre {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  margin-bottom: clamp(0.6rem, 1.6vh, 1.25rem);
+  margin-bottom: clamp(0.6rem, 3vh - 0.5rem, 1.75rem);
 }
 
 .tableau-points {
@@ -901,7 +932,7 @@
 }
 
 .panneau {
-  padding: clamp(1rem, min(3vw, 3.5vh), 2.5rem);
+  padding: clamp(1rem, min(3vw, 6vh - 1.25rem), 3.5rem);
   text-align: center;
   background: var(--blanc);
   border-radius: var(--rayon);
@@ -909,7 +940,7 @@
 }
 
 .panneau__surtitre {
-  margin: 0 0 0.5rem;
+  margin: 0 0 var(--air-serre, 0.5rem);
   font-size: 1rem;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -920,7 +951,7 @@
 .panneau__texte {
   font-size: clamp(1.6rem, 3.2vw, 2.8rem);
   font-weight: 800;
-  line-height: 1.2;
+  line-height: 1.25;
   color: var(--bleu-nuit);
 }
 
@@ -928,16 +959,16 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  margin: 0 0 1rem;
-  padding: 0.3rem 1rem;
+  margin: 0 0 var(--air-serre, 1rem);
+  padding: 0.35rem 1.1rem;
   font-weight: 800;
   border-radius: var(--rayon-pilule);
   background: var(--accent-clair);
 }
 
 .reponse-revelee {
-  margin: 1rem auto 0;
-  padding: 1rem 1.25rem;
+  margin: var(--air-serre, 1rem) auto 0;
+  padding: calc(var(--case-v, 0.75rem) * 1.25) var(--case-h, 1.25rem);
   max-width: 50rem;
   border-radius: var(--rayon);
   background: var(--accent-clair);
@@ -950,16 +981,57 @@
   color: var(--bleu-nuit);
 }
 
+/* « Voir la réponse » pendant une pause : la réponse se pose sur la question, dans la même case, qui
+   garde la taille de la plus grande des deux. Rien ne bouge : « Cacher la réponse » reste sous la
+   souris. */
+.case-reponse {
+  display: grid;
+  place-items: center;
+}
+
+.case-reponse > * {
+  grid-area: 1 / 1;
+}
+
+.case-reponse > .reponse-apercu,
+.case-reponse--vue > :not(.reponse-apercu) {
+  visibility: hidden;
+}
+
+.case-reponse--vue > .reponse-apercu {
+  visibility: visible;
+}
+
+.reponse-apercu {
+  padding: var(--case-v, 0.5rem) var(--case-h, 1.25rem);
+  text-align: center;
+  border-radius: var(--rayon);
+  background: var(--accent-clair);
+}
+
+.reponse-apercu .panneau__surtitre {
+  margin-bottom: 0.15rem;
+}
+
+.reponse-apercu__valeur {
+  margin: 0;
+  font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+  font-weight: 900;
+  line-height: 1.15;
+  color: var(--bleu-nuit);
+  text-wrap: balance;
+}
+
 .actions-jeu {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
+  gap: clamp(0.75rem, 1.6vh, 1.25rem);
+  margin-top: var(--air, 1.5rem);
 }
 
 .raccourci {
-  margin: 0.75rem 0 0;
+  margin: var(--air-serre, 0.75rem) 0 0;
   font-size: 0.95rem;
   color: var(--texte-doux);
 }
@@ -974,7 +1046,7 @@
 /* ---------- Chrono ---------- */
 
 .chrono {
-  margin: 1.5rem auto 0;
+  margin: var(--air, 1.5rem) auto 0;
   max-width: 40rem;
 }
 
@@ -1038,8 +1110,8 @@
 .paliers {
   display: flex;
   justify-content: center;
-  gap: clamp(0.5rem, 1.5vw, 1rem);
-  margin: 0 0 1.5rem;
+  gap: clamp(0.6rem, min(1.8vw, 2.6vh), 1.75rem);
+  margin: 0 0 var(--air, 1.5rem);
   padding: 0;
   list-style: none;
 }
@@ -1047,9 +1119,9 @@
 .paliers__chiffre {
   display: grid;
   place-items: center;
-  width: clamp(3.5rem, 8vw, 6rem);
+  width: clamp(3.5rem, min(8vw, 12vh), 7rem);
   aspect-ratio: 1;
-  font-size: clamp(2rem, 5vw, 3.6rem);
+  font-size: clamp(2rem, min(5vw, 7.2vh), 4.2rem);
   font-weight: 900;
   color: var(--sur-accent);
   background: var(--accent);
@@ -1082,11 +1154,13 @@
 }
 
 .fin__titre {
-  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  margin-bottom: var(--air-serre);
+  font-size: clamp(2.2rem, min(5vw, 7vh), 4.25rem);
 }
 
 .fin__message {
-  font-size: 1.3rem;
+  margin: 0 0 var(--air-serre);
+  font-size: clamp(1.15rem, min(2vw, 2.6vh), 1.6rem);
   font-weight: 700;
 }
 
@@ -1127,11 +1201,11 @@
 @media (min-width: 900px) {
   .fin__resultats--deux {
     display: grid;
-    grid-template-columns: auto minmax(18rem, 28rem);
-    gap: 3rem;
+    grid-template-columns: auto minmax(18rem, 34rem);
+    gap: clamp(2rem, 5vw, 6rem);
     align-items: center;
     justify-content: center;
-    margin: 1.5rem 0;
+    margin: var(--air) 0;
   }
 
   .fin__resultats--deux .podium,
@@ -1142,7 +1216,7 @@
 
 /* Lien vers les scores du groupe, sous les boutons de fin de partie */
 .fin__scores {
-  margin: 0.75rem 0 0;
+  margin: var(--air-serre) 0 0;
   font-weight: 700;
   text-align: center;
 }
@@ -1156,8 +1230,8 @@
   display: flex;
   justify-content: center;
   align-items: flex-end;
-  gap: 1rem;
-  margin: 2rem 0;
+  gap: clamp(0.6rem, 1.5vw, 1.5rem);
+  margin: var(--air) 0;
   padding: 0;
   list-style: none;
 }
@@ -1167,30 +1241,30 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  width: min(30vw, 200px);
-  padding: 1rem 0.5rem;
+  width: min(30vw, clamp(200px, 25vh, 290px));
+  padding: var(--case-h) 0.5rem;
   border-radius: var(--rayon) var(--rayon) 0 0;
   background: var(--accent-clair);
 }
 
 .podium__marche--1 {
   order: 2;
-  min-height: 220px;
+  min-height: clamp(220px, 30vh, 340px);
   background: var(--jaune);
 }
 
 .podium__marche--2 {
   order: 1;
-  min-height: 170px;
+  min-height: clamp(170px, 23vh, 260px);
 }
 
 .podium__marche--3 {
   order: 3;
-  min-height: 130px;
+  min-height: clamp(130px, 17.5vh, 200px);
 }
 
 .podium__medaille {
-  font-size: 2.6rem;
+  font-size: clamp(2.6rem, 5vh, 3.75rem);
   color: var(--bleu-nuit);
 }
 
@@ -1203,19 +1277,22 @@
 }
 
 .podium__prenom {
-  font-size: 1.4rem;
+  margin-top: 0.25rem;
+  font-size: clamp(1.4rem, 2.8vh, 2.1rem);
   font-weight: 900;
   color: var(--bleu-nuit);
   word-break: break-word;
 }
 
 .podium__points {
+  font-size: clamp(1rem, 2vh, 1.4rem);
   font-weight: 800;
 }
 
 .classement {
-  max-width: 32rem;
-  margin: 0 auto 2rem;
+  max-width: 34rem;
+  margin: 0 auto var(--air);
+  font-size: clamp(1rem, 2vh, 1.35rem);
   padding: 0;
   list-style: none;
   text-align: left;
@@ -1223,9 +1300,9 @@
 
 .classement__ligne {
   display: grid;
-  grid-template-columns: 2.5rem 1fr auto;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
+  grid-template-columns: 2.5em 1fr auto;
+  gap: 0.5rem 1rem;
+  padding: clamp(0.5rem, 1.4vh - 0.15rem, 0.9rem) 1rem;
   border-bottom: 1px solid var(--bord);
 }
 

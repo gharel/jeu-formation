@@ -139,9 +139,14 @@ function demarrer(ctx) {
     const raccourci = el('p', { class: 'raccourci' });
     const historique = el('ol', { class: 'bingo__tires' });
     const titreTires = el('h3', { class: 'bingo__titre-tires' }, 'Mots tirés (0)');
+    // Avec des définitions, leur place est gardée dès avant le premier tirage (jeu.css)
+    const avecDefinitions = mots.some((m) => m.definition);
     const scene = el(
       'div',
-      { class: 'panneau bingo__scene', tabindex: '-1' },
+      {
+        class: `panneau bingo__scene${avecDefinitions ? ' bingo__scene--definitions' : ''}`,
+        tabindex: '-1',
+      },
       el('div', { class: 'bingo__entete' }, compte, objectif),
       el('div', { class: 'bingo__tirage' }, illustration.element, boule),
       definition,

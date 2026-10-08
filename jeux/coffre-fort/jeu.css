@@ -1,30 +1,57 @@
+/* Respiration : les écarts, les cases et les textes grandissent avec la hauteur de l'écran
+   (--air, --air-serre, --case-v, --case-h, voir .ecran-jeu dans composants.css). En
+   1280 × 720, l'énigme avec son indice et une mauvaise réponse tient sans défiler ; en
+   1920 × 1080, le coffre, le chrono et l'énigme grandissent et occupent la hauteur. */
+.coffre-intro,
+.coffre {
+  /* Texte courant : règles, verdict, indice */
+  --coffre-texte: clamp(1.0625rem, 1.4vh + 0.45rem, 1.45rem);
+}
+
 /* ---------- Avant le compte à rebours ---------- */
 
 .coffre-intro > .illustration {
-  --taille: clamp(5.5rem, min(11vw, 18vh), 8.5rem);
-  margin: 0 auto 0.75rem;
+  --taille: clamp(5.5rem, min(11vw, 20vh), 13rem);
+  margin: 0 auto var(--air-serre);
 }
 
+.coffre-intro > .panneau__texte {
+  margin: 0 0 var(--air);
+  font-size: clamp(1.6rem, min(3.2vw, 5vh), 3.4rem);
+}
+
+/* Une règle par ligne, son icône en retrait : une règle sur deux lignes reste alignée */
 .coffre-intro__regles {
   display: grid;
-  gap: 0.5rem;
-  max-width: 42rem;
-  margin: 0 auto 1rem;
+  gap: var(--air-serre);
+  max-width: 40em;
+  margin: 0 auto var(--air);
   padding: 0;
   list-style: none;
   text-align: left;
+  font-size: var(--coffre-texte);
   font-weight: 700;
+  line-height: 1.35;
+}
+
+.coffre-intro__regles li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6em;
 }
 
 .coffre-intro__regles .icone {
+  flex: none;
   width: 1.4em;
+  margin: 0;
   color: var(--accent);
 }
 
 .coffre-intro__record {
   display: inline-block;
   margin: 0;
-  padding: 0.3rem 1rem;
+  padding: calc(var(--case-v) * 0.6) var(--case-h);
+  font-size: var(--coffre-texte);
   font-weight: 800;
   color: var(--bleu-nuit);
   background: var(--jaune-clair);
@@ -33,11 +60,13 @@
 
 /* ---------- Le coffre : la porte et le chrono à gauche, l'énigme à droite ---------- */
 
+/* Les deux colonnes partent du haut : quand un message ou l'indice apparaît, rien ne se
+   recentre, la saisie et les boutons restent sous la souris */
 .coffre {
   display: grid;
   grid-template-columns: minmax(14rem, 0.8fr) minmax(0, 1.6fr);
-  gap: clamp(1rem, 3vw, 2.5rem);
-  align-items: center;
+  gap: var(--air) clamp(1rem, 3vw, 3.5rem);
+  align-items: start;
   text-align: left;
 }
 
@@ -52,19 +81,19 @@
 .coffre__porte {
   display: grid;
   justify-items: center;
-  gap: 0.75rem;
+  gap: var(--air-serre);
   width: 100%;
 }
 
 .coffre__porte .illustration {
-  --taille: clamp(7rem, min(15vw, 26vh), 12rem);
+  --taille: clamp(7rem, min(15vw, 26vh), 16rem);
 }
 
 .coffre__serrures {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.4rem;
+  gap: calc(var(--air-serre) * 0.6);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -73,9 +102,9 @@
 .coffre__serrure {
   display: grid;
   place-items: center;
-  width: 2.4rem;
-  height: 2.4rem;
-  font-size: 1.15rem;
+  width: clamp(2.4rem, 4.4vh + 0.2rem, 3.2rem);
+  aspect-ratio: 1;
+  font-size: clamp(1.15rem, 2vh + 0.1rem, 1.5rem);
   color: var(--sur-accent);
   background: var(--accent);
   border-radius: 50%;
@@ -104,11 +133,16 @@
 
 .coffre .chrono {
   width: 100%;
-  margin-top: 0.75rem;
+  margin-top: var(--air-serre);
 }
 
 .coffre .chrono__temps {
-  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  font-size: clamp(2.5rem, min(6vw, 10vh), 7rem);
+}
+
+.coffre .chrono__barre {
+  height: clamp(14px, 1.6vh, 18px);
+  margin-top: var(--air-serre);
 }
 
 /* « −30 s » qui s'envole près du chrono */
@@ -117,7 +151,7 @@
   right: 0;
   bottom: 2.5rem;
   margin: 0;
-  font-size: 1.6rem;
+  font-size: clamp(1.6rem, 3vh, 2.2rem);
   font-weight: 900;
   color: var(--erreur);
   opacity: 0;
@@ -146,25 +180,59 @@
   }
 }
 
+/* L'énigme. En haut, sur une ligne : le numéro de la serrure, puis les boutons Indice et Pause.
+   Le verdict et l'indice qui apparaissent sous la saisie ne les font jamais bouger. */
+.coffre__zone-enigme {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: var(--air-serre);
+}
+
+.coffre__zone-enigme > * {
+  flex: 1 1 100%;
+}
+
+.coffre__zone-enigme > .panneau__surtitre {
+  flex: 1 1 auto;
+  order: -2;
+  margin: 0;
+}
+
+.coffre__outils {
+  flex: 0 1 auto;
+  order: -1;
+}
+
+/* « Pause » et « Reprendre » ont la même largeur : les boutons, calés à droite, ne bougent pas
+   quand on met en pause */
+.coffre__outils > .bouton:last-child {
+  min-width: 10.6em;
+}
+
 .coffre__enigme {
-  margin: 0 0 1rem;
-  font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+  margin: var(--air-serre) 0 var(--air);
+  font-size: clamp(1.4rem, min(2.6vw, 4.6vh), 2.8rem);
   font-weight: 800;
   line-height: 1.25;
 }
 
 .coffre__formulaire .champ__ligne {
-  max-width: 36rem;
+  max-width: 40rem;
 }
 
 .coffre__saisie {
-  font-size: 1.35rem;
+  font-size: clamp(1.25rem, 1.5vh + 0.55rem, 1.6rem);
   font-weight: 800;
+  line-height: 1.2;
 }
 
+/* Une ligne réservée au verdict, sous la saisie */
 .coffre__message {
-  min-height: 2.5rem;
-  margin-top: 0.75rem;
+  min-height: 1.35em;
+  margin-top: calc(var(--air) * 0.6);
+  font-size: var(--coffre-texte);
+  line-height: 1.35;
 }
 
 .coffre__verdict {
@@ -181,28 +249,26 @@
 }
 
 .coffre__accepter {
-  margin-top: 0.5rem;
-  font-size: 0.9rem;
+  margin-top: calc(var(--air-serre) * 0.6);
+  font-size: 0.8em;
 }
 
 .coffre__indice {
-  margin: 0.75rem 0 0;
-  padding: 0.6rem 0.9rem;
+  margin: calc(var(--air) * 0.6) 0 0;
+  padding: var(--case-v) var(--case-h);
+  font-size: var(--coffre-texte);
   font-weight: 700;
+  line-height: 1.35;
   color: var(--bleu-nuit);
   background: var(--jaune-clair);
   border-radius: 10px;
-}
-
-.coffre__outils {
-  margin-top: 1rem;
 }
 
 /* ---------- Bilan ---------- */
 
 .coffre__titre-bilan {
   margin: 0;
-  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-size: clamp(2.2rem, min(5vw, 7.5vh), 4.2rem);
   font-weight: 900;
   line-height: 1.1;
   color: var(--succes);
@@ -213,16 +279,17 @@
 }
 
 .coffre__detail-bilan {
-  margin: 0.5rem 0 0;
-  font-size: 1.15em;
+  margin: var(--air-serre) 0 0;
+  font-size: calc(var(--coffre-texte) * 1.1);
   font-weight: 700;
   color: var(--bleu-nuit);
 }
 
 .coffre__record {
   display: inline-block;
-  margin: 0.75rem 0 0;
-  padding: 0.3rem 1rem;
+  margin: var(--air-serre) 0 0;
+  padding: calc(var(--case-v) * 0.6) var(--case-h);
+  font-size: var(--coffre-texte);
   font-weight: 900;
   color: var(--bleu-nuit);
   background: var(--jaune);
@@ -230,12 +297,14 @@
 }
 
 .coffre__solutions {
-  margin: 1rem 0 0;
+  margin: var(--air) 0 0;
 }
 
 .coffre__solutions ul {
+  display: grid;
+  gap: calc(var(--air-serre) * 0.5);
   margin: 0;
-  padding-left: 1.2rem;
+  padding-left: 1.2em;
   font-weight: 800;
 }
 
@@ -246,6 +315,19 @@
 @media (max-width: 860px) {
   .coffre {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Téléphone : pas la place à côté du numéro de la serrure ; Indice et Pause passent sous
+   l'énigme, qu'ils ne coupent plus du numéro */
+@media (max-width: 480px) {
+  .coffre__outils {
+    order: 0;
+    margin-top: var(--air);
+  }
+
+  .coffre__outils > .bouton:last-child {
+    min-width: 0;
   }
 }
 

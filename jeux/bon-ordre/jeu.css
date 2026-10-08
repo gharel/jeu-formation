@@ -1,37 +1,62 @@
+/* Respiration : les écarts, les cartes et les textes grandissent avec la hauteur de l'écran
+   (--air, --air-serre, --case-v, --case-h, voir .ecran-jeu dans composants.css). En
+   1280 × 720, une procédure de 5 étapes et son résultat tiennent sans défiler ; en
+   1920 × 1080, tout s'aère et occupe la hauteur. */
+.ordre {
+  /* Texte d'une carte */
+  --ordre-police: clamp(1rem, min(1.45vw, 2.2vh + 0.1rem), 1.5rem);
+  /* Marge d'une carte en haut et en bas (et à gauche, autour de sa lettre) */
+  --ordre-case-v: calc(var(--case-v) - 0.25rem);
+  /* La lettre de la carte, qui donne sa hauteur à la carte */
+  --ordre-lettre: 1.75em;
+  /* Entre deux cartes d'une colonne */
+  --ordre-ecart: calc(var(--air-serre) * 0.75);
+}
+
+/* 6 ou 7 étapes : les cartes se resserrent pour que la procédure tienne toujours à l'écran */
+.ordre:has(.ordre__emplacement:nth-child(6)) {
+  --ordre-police: clamp(1rem, min(1.35vw, 1.9vh + 0.1rem), 1.4rem);
+  --ordre-case-v: calc(var(--case-v) * 0.35);
+  --ordre-ecart: calc(var(--air-serre) * 0.5);
+  --ordre-lettre: 1.6em;
+}
+
 /* Les cartes dessinées à côté du titre de la procédure */
 .ordre__entete {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.75rem, 2vw, 1.5rem);
-  margin-bottom: 0.5rem;
+  gap: clamp(0.75rem, 2vw, 1.75rem);
+  margin-bottom: var(--air);
   text-align: left;
 }
 
 .ordre__entete .illustration {
-  --taille: clamp(3.5rem, min(6.5vw, 10vh), 6rem);
+  --taille: clamp(3.5rem, min(6.5vw, 9vh), 6.5rem);
 }
 
 .ordre__entete .panneau__surtitre {
-  margin-bottom: 0.25rem;
+  margin-bottom: calc(var(--air-serre) * 0.4);
+  line-height: 1.25;
 }
 
 .ordre__titre {
   margin: 0;
-  font-size: clamp(1.5rem, 2.8vw, 2.3rem);
+  font-size: clamp(1.4rem, min(2.6vw, 3.6vh), 2.3rem);
 }
 
 .ordre__colonnes {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(1rem, 3vw, 2rem);
+  gap: var(--air) clamp(1rem, 3vw, 3rem);
   text-align: left;
 }
 
 .ordre__intertitre {
-  margin: 0 0 0.5rem;
-  font-size: 0.95rem;
+  margin: 0 0 calc(var(--air-serre) * 0.7);
+  font-size: clamp(0.95rem, 1.7vh, 1.15rem);
   font-weight: 800;
+  line-height: 1.25;
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--texte-doux);
@@ -40,23 +65,28 @@
 .ordre__pioche,
 .ordre__emplacements {
   display: grid;
-  gap: 0.4rem;
+  gap: var(--ordre-ecart);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+/* Une carte, posée ou non, et la place vide qui l'attend ont la même hauteur : poser une carte
+   ne décale rien. Cette hauteur vient de min-height ; une étape longue, sur deux lignes, garde une
+   marge plus fine en haut et en bas, pour que la liste tienne à l'écran. */
 .ordre__carte,
 .ordre__pose {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: 0.7em;
   width: 100%;
-  min-height: 2.45rem;
-  padding: 0.2rem 0.9rem 0.2rem 0.4rem;
+  min-height: calc(var(--ordre-lettre) + 2 * var(--ordre-case-v) + 4px);
+  padding: calc(var(--ordre-case-v) * 0.6) var(--case-h) calc(var(--ordre-case-v) * 0.6)
+    var(--ordre-case-v);
   font: inherit;
-  font-size: clamp(1rem, 1.4vw, 1.25rem);
+  font-size: var(--ordre-police);
   font-weight: 700;
+  line-height: 1.25;
   text-align: left;
   color: var(--bleu-nuit);
   background: var(--accent-clair);
@@ -80,12 +110,12 @@
   flex: none;
   display: grid;
   place-items: center;
-  width: 2rem;
-  height: 2rem;
+  width: var(--ordre-lettre);
+  height: var(--ordre-lettre);
   font-weight: 900;
   color: var(--blanc);
   background: var(--bleu-nuit);
-  border-radius: 8px;
+  border-radius: 0.45em;
 }
 
 .ordre__texte {
@@ -95,13 +125,13 @@
 .ordre__emplacement {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
+  gap: calc(var(--case-h) * 0.6);
 }
 
 .ordre__numero {
   flex: none;
-  width: 1.8rem;
-  font-size: 1.3rem;
+  width: 1.4em;
+  font-size: calc(var(--ordre-police) * 1.15);
   font-weight: 900;
   text-align: right;
   color: var(--texte-doux);
@@ -111,8 +141,9 @@
   flex: 1;
   display: flex;
   align-items: center;
-  min-height: 2.45rem;
-  padding: 0 1rem;
+  min-height: calc(var(--ordre-lettre) + 2 * var(--ordre-case-v) + 4px);
+  padding: 0 var(--case-h);
+  font-size: var(--ordre-police);
   color: var(--gris);
   border: 2px dashed var(--bord);
   border-radius: 12px;
@@ -133,7 +164,7 @@
 }
 
 .ordre__coche {
-  font-size: 1.4rem;
+  font-size: 1.15em;
   font-weight: 900;
   color: var(--succes);
 }
@@ -144,8 +175,8 @@
   flex-wrap: wrap;
   align-items: flex-start;
   justify-content: center;
-  gap: 0.75rem 1.5rem;
-  margin-top: 0.75rem;
+  gap: var(--air-serre) clamp(1rem, 2.5vw, 2.5rem);
+  margin-top: calc(var(--air) * 0.75);
 }
 
 /* Les boutons à la hauteur de la saisie, sous son libellé */
@@ -153,45 +184,67 @@
   margin-top: 1.9rem;
 }
 
+/* Procédure finie : la saisie s'efface, les boutons remontent à sa place */
+.ordre__formulaire[hidden] + .actions-jeu {
+  margin-top: 0;
+}
+
+/* Une erreur de saisie prend la place de l'aide, sous le champ : rien ne descend */
 .ordre__formulaire {
+  display: grid;
   flex: 1 1 22rem;
-  max-width: 32rem;
+  max-width: 40rem;
   text-align: left;
 }
 
+.ordre__formulaire > .champ__aide,
+.ordre__erreur {
+  grid-area: 3 / 1;
+  margin: 0.3rem 0 0;
+  font-size: clamp(0.92rem, 1.2vh + 0.4rem, 1.1rem);
+  line-height: 1.35;
+}
+
+.ordre__formulaire:has(.ordre__erreur:not(:empty)) > .champ__aide {
+  visibility: hidden;
+}
+
 .ordre__saisie {
-  font-size: 1.4rem;
+  font-size: clamp(1.25rem, 1.5vh + 0.55rem, 1.6rem);
   font-weight: 900;
+  line-height: 1.2;
   letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
 .ordre__erreur {
-  min-height: 1.2em;
-  margin: 0.4rem 0 0;
   font-weight: 800;
   color: var(--erreur);
 }
 
-/* Sans erreur, la ligne ne prend pas de place (elle reste lue par les lecteurs d'écran) */
-.ordre__erreur:empty {
-  min-height: 0;
-  margin: 0;
-}
-
 .ordre__message {
-  margin: 0.5rem 0 0;
+  margin: calc(var(--air-serre) * 0.75) 0 0;
+  font-size: clamp(1.0625rem, 1.2vh + 0.5rem, 1.35rem);
   font-weight: 700;
+  line-height: 1.35;
 }
 
 .ordre__fin {
   margin: 0;
-  font-size: clamp(1.6rem, 3vw, 2.3rem);
+  font-size: clamp(1.6rem, min(3vw, 4.4vh), 2.4rem);
   font-weight: 900;
   color: var(--bleu-nuit);
 }
 
+/* Téléphone, tablette : les colonnes s'empilent et la page défile ; les cartes gardent un peu
+   d'air, qui ne coûte plus la place de l'écran */
 @media (max-width: 860px) {
+  .ordre,
+  .ordre:has(.ordre__emplacement:nth-child(6)) {
+    --ordre-case-v: var(--case-v);
+    --ordre-ecart: var(--air-serre);
+  }
+
   .ordre__colonnes {
     grid-template-columns: 1fr;
   }

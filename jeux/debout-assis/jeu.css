@@ -1,14 +1,37 @@
+/* ---------- Avant la première affirmation ---------- */
+
+/* Le personnage à côté de « Tout le monde debout ! », puis les tuiles et le bouton */
+.debout:has(> .debout__depart) {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  column-gap: clamp(1rem, 3vw, 3rem);
+}
+
+.debout:has(> .debout__depart) > :not(.illustration, .debout__depart) {
+  flex-basis: 100%;
+}
+
 .debout > .illustration {
-  margin: 0 auto 0.5rem;
+  --taille: clamp(5.5rem, min(12vw, 20vh), 13rem);
 }
 
 .debout__depart {
-  font-size: clamp(2.2rem, 5vw, 3.8rem);
+  margin: 0;
+  font-size: clamp(2.2rem, min(5vw, 8vh), 5rem);
 }
 
+.debout__depart ~ .debout__tuiles {
+  margin-top: var(--air);
+}
+
+/* ---------- L'affirmation ---------- */
+
 .debout__affirmation {
-  max-width: 32ch;
-  margin: 0 auto 1rem;
+  max-width: min(100%, 27em);
+  margin: 0 auto calc(var(--air) * 1.25);
+  font-size: clamp(1.6rem, min(3.2vw, 5.2vh), 3.6rem);
 }
 
 /* Le personnage, les deux tuiles et le chrono (puis le verdict) sur une seule ligne */
@@ -17,7 +40,7 @@
   flex-wrap: wrap;
   align-items: center;
   justify-content: center;
-  gap: clamp(0.75rem, 2.5vw, 2rem);
+  gap: var(--air-serre) clamp(1rem, 3vw, 3.5rem);
 }
 
 .debout__scene .debout__tuiles {
@@ -25,11 +48,11 @@
 }
 
 .debout__scene .illustration {
-  --taille: clamp(5.5rem, min(13vw, 21vh), 10rem);
+  --taille: clamp(5.5rem, min(13vw, 20vh), 15rem);
 }
 
 .debout__minute {
-  min-width: min(100%, 15rem);
+  min-width: min(100%, clamp(15rem, 28vh, 24rem));
 }
 
 .debout__minute .chrono {
@@ -37,7 +60,7 @@
 }
 
 .debout__minute .chrono__temps {
-  font-size: clamp(2.6rem, 5.5vw, 4.5rem);
+  font-size: clamp(2.6rem, min(5.5vw, 9.5vh), 7rem);
 }
 
 .debout__minute .debout__verdict {
@@ -47,15 +70,16 @@
 .debout__tuiles {
   display: flex;
   justify-content: center;
-  gap: clamp(0.75rem, 3vw, 2rem);
-  margin: 0.5rem 0 0;
+  gap: clamp(0.75rem, 2.5vw, 2.5rem);
+  margin: 0;
 }
 
 .debout__tuile {
   display: grid;
   justify-items: center;
-  min-width: min(40vw, 15rem);
-  padding: 0.8rem 1.5rem;
+  gap: calc(var(--air-serre) / 3);
+  min-width: min(40vw, clamp(15rem, 25vh, 22rem));
+  padding: var(--case-v) var(--case-h);
   border: 3px solid var(--bord);
   border-radius: var(--rayon);
   background: var(--fond);
@@ -65,7 +89,7 @@
 }
 
 .debout__icone {
-  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-size: clamp(2.2rem, min(4vw, 6.2vh), 4.6rem);
   line-height: 1.1;
 }
 
@@ -75,13 +99,16 @@
 }
 
 .debout__geste {
-  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  font-size: clamp(1.2rem, min(2vw, 3.3vh), 2.4rem);
   font-weight: 900;
+  line-height: 1.25;
   color: var(--bleu-nuit);
 }
 
 .debout__sens {
+  font-size: clamp(1rem, min(1.4vw, 2.5vh), 1.6rem);
   font-weight: 800;
+  line-height: 1.25;
   color: var(--texte-doux);
 }
 
@@ -97,9 +124,9 @@
 
 .debout__verdict {
   display: inline-block;
-  margin: 0.75rem 0 0.25rem;
+  margin: var(--air-serre) 0 calc(var(--air-serre) / 2);
   padding: 0.05em 0.7em;
-  font-size: clamp(2rem, 4.5vw, 3.4rem);
+  font-size: clamp(2rem, min(4.5vw, 7.4vh), 5.4rem);
   font-weight: 900;
   letter-spacing: 0.05em;
   border-radius: var(--rayon);
@@ -115,33 +142,51 @@
 }
 
 .debout__bonne {
-  margin-bottom: 0.25rem;
-  font-size: 1.3rem;
+  margin: 0;
+  font-size: clamp(1.1rem, min(1.6vw, 2.7vh), 1.7rem);
   font-weight: 800;
 }
 
+/* L'explication, dans sa case sous la réponse */
 .debout__explication {
-  max-width: 50rem;
-  margin: 0 auto 0.5rem;
+  max-width: 58rem;
+  margin: calc(var(--air) * 0.75) auto 0;
+  padding: var(--case-v) var(--case-h);
+  font-size: clamp(1.05rem, min(1.6vw, 2.7vh), 1.7rem);
+  line-height: 1.45;
+  border-radius: var(--rayon);
+  background: var(--fond);
 }
 
 .debout__en-jeu {
-  margin: 0.75rem 0 0;
+  margin: var(--air-serre) 0 0;
+  font-size: clamp(1.05rem, min(1.6vw, 2.7vh), 1.6rem);
 }
 
 .debout__info {
-  margin: 0.75rem 0 0;
-  font-size: 1.3rem;
+  margin: var(--air-serre) 0 0;
+  font-size: clamp(1.2rem, min(1.8vw, 3vh), 1.8rem);
   font-weight: 800;
   color: var(--bleu-nuit);
 }
 
 .debout__info--gagnant {
-  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-size: clamp(1.6rem, min(3vw, 4.6vh), 3rem);
+  line-height: 1.25;
+}
+
+/* Le dernier en jeu est nommé juste au-dessus : la liste « En jeu (1) » serait redite */
+.debout__info--gagnant + .debout__en-jeu {
+  display: none;
 }
 
 .debout__regle {
-  margin-top: 1rem;
+  margin-top: var(--air);
+  font-size: clamp(0.95rem, min(1.4vw, 2.4vh), 1.4rem);
+}
+
+.debout__regle + .debout__en-jeu {
+  margin-top: var(--air-serre);
 }
 
 /* ---------- Illustration : un personnage et sa chaise ---------- */

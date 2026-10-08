@@ -1,10 +1,18 @@
+/* ---------- Choix des duellistes ---------- */
+
+/* Le titre grandit avec la hauteur de l'écran, comme le reste de l'écran de jeu */
+.duel-choix .panneau__texte {
+  margin: 0;
+  font-size: clamp(1.6rem, min(3.2vw, 5.7vh), 3.6rem);
+}
+
 .duel-choix .duel__choix {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
   align-items: flex-end;
-  gap: 1rem 1.5rem;
-  margin: 1rem 0;
+  gap: var(--air-serre) clamp(1rem, 2vw, 2rem);
+  margin: var(--air) 0 var(--air-serre);
   text-align: left;
 }
 
@@ -15,21 +23,31 @@
 
 .duel__contre {
   padding-bottom: 0.5rem;
-  font-size: 2rem;
+  font-size: clamp(2rem, 4.4vh, 3rem);
   font-weight: 900;
   color: var(--accent);
 }
 
 .duel__erreur {
   min-height: 1.2em;
+  margin: 0;
   font-weight: 800;
   color: var(--erreur);
 }
 
+.duel-choix .champ__aide {
+  margin: var(--air-serre) 0 0;
+  font-size: clamp(0.92rem, 2vh, 1.25rem);
+}
+
+/* ---------- Plateau : un joueur de chaque côté, la question au milieu ---------- */
+
+/* Les cartes des joueurs restent étroites : au milieu, « Bonne » et « Mauvaise » tiennent sur une
+   ligne, et l'écran tient en 1280 × 720 */
 .duel {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 2fr) minmax(0, 1fr);
-  gap: clamp(0.75rem, 2vw, 1.5rem);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 2.8fr) minmax(0, 1fr);
+  gap: clamp(0.75rem, 2vw, 1.75rem);
   align-items: stretch;
 }
 
@@ -41,8 +59,8 @@
   display: grid;
   align-content: center;
   justify-items: center;
-  gap: 0.75rem;
-  padding: 1.5rem 1rem;
+  gap: var(--air-serre);
+  padding: var(--air) var(--case-h);
   text-align: center;
   background: var(--blanc);
   border: 4px solid transparent;
@@ -59,7 +77,7 @@
   position: relative;
   display: grid;
   place-items: center;
-  width: clamp(5.5rem, 11vw, 8rem);
+  width: clamp(5.5rem, min(11vw, 17.8vh), 12rem);
   aspect-ratio: 1;
   padding: 0;
   font: inherit;
@@ -122,15 +140,20 @@
 }
 
 .duel__touche {
-  font-size: clamp(2.2rem, 4vw, 3.2rem);
+  font-size: clamp(2.2rem, min(4vw, 7vh), 4.8rem);
   font-weight: 900;
   line-height: 1;
 }
 
+/* La place de deux lignes, même pour un prénom court : les deux buzzers sont à la même hauteur */
 .duel__nom {
+  display: grid;
+  place-items: center;
+  min-height: 2.3em;
   margin: 0;
-  font-size: clamp(1.4rem, 2.6vw, 2.2rem);
+  font-size: clamp(1.4rem, min(2.6vw, 4.6vh), 3rem);
   font-weight: 900;
+  line-height: 1.15;
   color: var(--bleu-nuit);
   word-break: break-word;
 }
@@ -139,15 +162,15 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  gap: 0.4rem;
+  gap: clamp(0.4rem, 1vh, 0.75rem);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .duel__point {
-  width: 1.4rem;
-  height: 1.4rem;
+  width: clamp(1.4rem, 2.9vh, 2rem);
+  height: clamp(1.4rem, 2.9vh, 2rem);
   border: 3px solid var(--bleu-nuit);
   border-radius: 50%;
 }
@@ -191,7 +214,7 @@
 }
 
 .duel__centre {
-  padding: clamp(1rem, 2.5vw, 2rem);
+  padding: var(--air) clamp(1rem, 2.5vw, 2.5rem);
   text-align: center;
   background: var(--blanc);
   border-radius: var(--rayon);
@@ -201,13 +224,18 @@
 /* Le buzzer dessiné, en haut du plateau (et de l'écran de choix des duellistes) */
 .duel__centre .illustration,
 .duel-choix > .illustration {
-  --taille: clamp(4.5rem, min(9vw, 14vh), 7.5rem);
-  margin: 0 auto 0.5rem;
+  --taille: clamp(4.5rem, min(9vw, 12vh), 9.5rem);
+  margin: 0 auto var(--air-serre);
+}
+
+/* La case de la question, où se pose la réponse vue : elle garde sa place */
+.duel__centre .case-reponse {
+  margin: var(--air-serre) 0 0;
 }
 
 .duel__question {
-  margin: 0.5rem 0;
-  font-size: clamp(1.5rem, 2.8vw, 2.3rem);
+  margin: 0;
+  font-size: clamp(1.5rem, min(2.8vw, 4.4vh), 3rem);
   font-weight: 800;
   line-height: 1.25;
   color: var(--bleu-nuit);
@@ -219,14 +247,72 @@
 
 .duel__statut {
   min-height: 1.5em;
-  margin: 0.5rem 0;
-  font-size: clamp(1.2rem, 2vw, 1.6rem);
+  margin: var(--air-serre) 0 0;
+  font-size: clamp(1.2rem, min(2vw, 3.55vh), 2.3rem);
   font-weight: 900;
   color: var(--bleu-nuit);
 }
 
 .duel__reponse {
-  margin-top: 0.5rem;
+  margin-top: var(--air-serre);
+}
+
+.duel__reponse .reponse-revelee__valeur {
+  font-size: clamp(1.6rem, min(3vw, 4.6vh), 2.8rem);
+}
+
+/* La réponse vue pendant qu'un joueur répond, posée sur la question : pas plus haute qu'elle */
+.duel__centre .reponse-apercu__valeur {
+  font-size: clamp(1.3rem, min(2.4vw, 4.3vh), 2.9rem);
+}
+
+/* « Voir la réponse » et « Cacher la réponse » ont la même largeur : le bouton ne bouge pas sous
+   la souris quand son libellé change */
+.duel__centre .actions-jeu .bouton--discret {
+  min-width: 13.75em;
+}
+
+@media (max-width: 480px) {
+  .duel__centre .actions-jeu .bouton--discret {
+    min-width: 12.5em;
+  }
+}
+
+/* Écran large (vidéoprojecteur) : le plateau occupe la hauteur de l'écran, quel que soit le
+   moment de la manche. Les buzzers restent au milieu de leur carte, les boutons en bas de la
+   question : rien ne bouge quand la question, le buzz ou la réponse s'affichent. La hauteur
+   reprend celle du bandeau et de la barre des points (sur une ligne à partir de 900 px de large),
+   avec une marge (points sur deux lignes). */
+@media (min-width: 900px) {
+  .duel,
+  .duel-choix {
+    min-height: var(--hauteur-jeu);
+  }
+
+  /* Le choix des duellistes a la hauteur du plateau qui suit, son contenu au milieu (il ne change
+     pas de hauteur : la place du message d'erreur est réservée) */
+  .duel-choix {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+}
+
+@media (min-width: 801px) {
+  .duel__centre {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .duel__centre .actions-jeu {
+    margin-top: auto;
+    padding-top: var(--air);
+  }
+
+  .duel__reponse {
+    align-self: center;
+    width: 100%;
+  }
 }
 
 /* Écran étroit (téléphone, tablette) : la question en haut, les deux buzzers dessous, sous les doigts */

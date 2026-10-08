@@ -29,10 +29,15 @@ test('Zoom mystère : l’image se dézoome, Stop fige, la bonne réponse marque
 
   await expect(page.locator('#cadre').getByText('Image 1 sur 4')).toBeVisible();
   await expect(page.locator('.zoom__image')).toHaveJSProperty('complete', true);
+  // Avant « Démarrer », l'image, déjà zoomée, reste cachée sous le voile
   expect(await echelle(page)).toBeCloseTo(10, 0);
+  await expect(page.locator('.zoom__image')).toHaveCSS('opacity', '0');
+  await expect(page.locator('.zoom__voile')).toBeVisible();
   await verifierAccessibilite(page);
 
   await page.getByRole('button', { name: 'Démarrer' }).click();
+  await expect(page.locator('.zoom__voile')).toBeHidden();
+  await expect(page.locator('.zoom__image')).toHaveCSS('opacity', '1');
   await expect(page.getByRole('list', { name: 'Points en jeu : 4' })).toBeVisible({
     timeout: 4000,
   });
@@ -48,7 +53,7 @@ test('Zoom mystère : l’image se dézoome, Stop fige, la bonne réponse marque
   expect(erreurs).toEqual([]);
 });
 
-test('Voir la réponse : elle remplace la question, une mauvaise proposition finit sans point', async ({
+test('Voir la réponse : elle se pose sur l’image, se cache, une mauvaise proposition finit sans point', async ({
   page,
 }) => {
   const erreurs = surveillerErreurs(page);
@@ -59,18 +64,27 @@ test('Voir la réponse : elle remplace la question, une mauvaise proposition fin
 
   await page.getByRole('button', { name: 'Démarrer' }).click();
   await page.getByRole('button', { name: /Stop/ }).click();
-  await page.getByRole('button', { name: 'Voir la réponse' }).click();
-  await expect(cadre.locator('.reponse-revelee')).toHaveText(
-    'Le bouton Enregistrer (la disquette)',
-  );
-  await expect(cadre.getByRole('heading', { name: 'Qu’est-ce que c’est ?' })).toBeHidden();
+  const apercu = cadre.locator('.reponse-apercu');
+  const voir = page.getByRole('button', { name: 'Voir la réponse' });
+  await expect(apercu).toBeHidden();
+  const { x, y, width, height } = await voir.boundingBox();
+  await voir.click();
+  await expect(apercu).toBeVisible();
+  await expect(apercu).toHaveText('Le bouton Enregistrer (la disquette)');
   await expect(page.getByRole('button', { name: /on reprend/ })).toHaveCount(0);
   // Tout tient à l'écran (1280 × 720), sans défiler
   await verifierAccessibilite(page);
   expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(720);
 
+  // Un second clic au même endroit la cache aussitôt : on peut reprendre
+  await page.mouse.click(x + width / 2, y + height / 2);
+  await expect(apercu).toBeHidden();
+  await expect(page.getByRole('button', { name: /on reprend/ })).toBeVisible();
+  await voir.click();
+
   await page.getByRole('button', { name: 'Mauvaise réponse' }).click();
   await expect(cadre.getByText('Personne n’a trouvé…')).toBeVisible();
+  await expect(apercu).toBeHidden();
   await expect(cadre.locator('.reponse-revelee')).toHaveCount(1);
   await expect(pointsDe(page, 'Ana')).toHaveText('0');
   expect(erreurs).toEqual([]);

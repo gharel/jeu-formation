@@ -3,27 +3,45 @@
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
+  gap: var(--air-serre) 1rem;
+  margin-bottom: var(--air);
 }
 
+.motus-entete .panneau__surtitre,
 .motus-entete .au-tour-de {
   margin: 0;
 }
 
+/* La grille à gauche, la saisie et le clavier à droite. La largeur des cases se calcule sur celle
+   du jeu (unités cqi) : la colonne de droite garde toujours la place du clavier. */
 .motus-jeu {
+  --droite-min: clamp(28rem, 30vw, 36rem);
+  --entre-colonnes: clamp(1.5rem, 3vw, 3.5rem);
+  container-type: inline-size;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr);
-  gap: clamp(1rem, 3vw, 2.5rem);
+  gap: var(--air) var(--entre-colonnes);
   align-items: start;
   justify-content: center;
 }
 
+/* Les cases grandissent avec la hauteur de l'écran : la grille de 6 essais remplit le panneau en
+   1920 × 1080, et tient sans défiler en 1280 × 720 */
 .motus-grille {
-  --taille: min(5.5rem, 7.5vh, calc((100vw - 36rem) / var(--colonnes, 8)));
+  --ecart: clamp(6px, 0.9vh, 10px);
+  --marge: clamp(10px, 1.4vh, 16px);
+  --taille: min(
+    7rem,
+    10.4vh - 0.5rem,
+    (
+        100cqi - var(--droite-min) - var(--entre-colonnes) - 2 * var(--marge) -
+          (var(--colonnes, 8) - 1) * var(--ecart)
+      ) /
+      var(--colonnes, 8)
+  );
   display: grid;
-  gap: 6px;
-  padding: 10px;
+  gap: var(--ecart);
+  padding: var(--marge);
   background: var(--bleu-nuit);
   border-radius: var(--rayon);
 }
@@ -31,7 +49,7 @@
 .motus-ligne {
   display: grid;
   grid-template-columns: repeat(var(--colonnes, 8), var(--taille));
-  gap: 6px;
+  gap: var(--ecart);
 }
 
 .motus-case {
@@ -45,7 +63,7 @@
   font-weight: 900;
   color: var(--blanc);
   background: #1d2150;
-  border-radius: 8px;
+  border-radius: clamp(8px, 1.1vh, 12px);
   text-transform: uppercase;
 }
 
@@ -91,15 +109,15 @@
   text-align: left;
 }
 
-/* L'illustration à côté de la saisie : elle ne prend pas de hauteur en plus */
+/* Sur téléphone, l'illustration à côté de la saisie : elle ne prend pas de hauteur en plus */
 .motus-droite__haut {
   display: flex;
   align-items: flex-start;
-  gap: clamp(0.75rem, 2vw, 1.5rem);
+  gap: var(--case-h);
 }
 
 .motus-droite__haut .illustration {
-  --taille: clamp(4.5rem, min(9vw, 15vh), 8rem);
+  --taille: clamp(4.5rem, min(9vw, 15vh), 8.5rem);
 }
 
 .motus-droite__saisie {
@@ -107,42 +125,63 @@
   min-width: 0;
 }
 
+.motus-formulaire .champ__libelle {
+  margin-bottom: calc(var(--air-serre) * 0.75);
+  font-size: clamp(1.1rem, 2.4vh, 1.6rem);
+}
+
+.motus-formulaire .champ__ligne {
+  gap: var(--air-serre);
+}
+
+.motus-formulaire .bouton {
+  font-size: clamp(1.1rem, 2.4vh, 1.6rem);
+}
+
+.motus-formulaire .champ__aide {
+  margin-top: calc(var(--air-serre) * 0.75);
+  font-size: clamp(0.92rem, 1.9vh, 1.25rem);
+}
+
 .motus-saisie {
-  font-size: 1.6rem;
+  padding: calc(var(--case-v) * 0.7) calc(var(--case-h) * 0.75);
+  font-size: clamp(1.6rem, 3.4vh, 2.4rem);
   font-weight: 900;
-  letter-spacing: 0.25em;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
 }
 
 .motus-message {
   min-height: 1.6em;
-  margin: 0.5rem 0;
+  margin: var(--air-serre) 0;
+  font-size: clamp(1.1rem, 2.4vh, 1.6rem);
   font-weight: 800;
   color: var(--erreur);
 }
 
 .motus-clavier {
+  --ecart-touches: clamp(6px, 0.9vh, 10px);
   display: grid;
-  gap: 6px;
+  gap: var(--ecart-touches);
 }
 
 .motus-rangee {
   display: flex;
   justify-content: center;
-  gap: 6px;
+  gap: var(--ecart-touches);
 }
 
 .motus-touche {
   flex: 1;
-  max-width: 3rem;
-  min-height: 3rem;
+  max-width: clamp(3rem, 6vh, 4.5rem);
+  min-height: clamp(3rem, 6.6vh, 4.75rem);
   font: inherit;
-  font-size: 1.1rem;
+  font-size: clamp(1.1rem, 2.4vh, 1.65rem);
   font-weight: 800;
   color: var(--bleu-nuit);
   background: var(--fond);
   border: 1px solid var(--bord);
-  border-radius: 8px;
+  border-radius: clamp(8px, 1.1vh, 12px);
   cursor: pointer;
 }
 
@@ -151,7 +190,7 @@
 }
 
 .motus-touche--large {
-  max-width: 5rem;
+  max-width: clamp(5rem, 10vh, 7.5rem);
   flex: 1.6;
 }
 
@@ -171,7 +210,49 @@
   border-color: #4a4e72;
 }
 
+/* Sur grand écran, la colonne de droite prend la hauteur de la grille : la saisie en haut, sur
+   toute la largeur (un mot de 10 lettres tient dans le champ), le clavier en bas, à hauteur de la
+   dernière ligne, et l'illustration dans la place libre entre les deux. Rien ne bouge de tout le
+   mot. */
+@media (min-width: 901px) {
+  .motus-droite {
+    display: flex;
+    flex-direction: column;
+    align-self: stretch;
+  }
+
+  .motus-droite__haut {
+    display: contents;
+  }
+
+  .motus-droite__saisie {
+    order: -1;
+  }
+
+  .motus-droite__haut .illustration {
+    margin: auto;
+  }
+
+  .motus-clavier {
+    margin-top: var(--air-serre);
+  }
+
+  .motus-droite:has(> .motus-resultat:not([hidden])) .illustration {
+    margin: 0 auto;
+  }
+}
+
+/* Mot fini : la saisie s'efface, l'illustration se centre au-dessus du résultat */
+.motus-droite:has(> .motus-resultat:not([hidden])) .motus-droite__haut {
+  justify-content: center;
+}
+
+.motus-droite:has(> .motus-resultat:not([hidden])) .motus-droite__saisie {
+  display: none;
+}
+
 .motus-resultat {
+  margin-top: var(--air-serre);
   text-align: center;
 }
 
@@ -179,8 +260,15 @@
   margin-top: 0;
 }
 
+.motus-resultat .reponse-revelee p:not(.reponse-revelee__valeur) {
+  margin: calc(var(--air-serre) * 0.5) 0 0;
+  font-size: clamp(1.1rem, min(1.6vw, 2.6vh), 1.6rem);
+  line-height: 1.35;
+}
+
 .motus-resultat__titre {
-  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+  margin: 0 0 var(--air-serre);
+  font-size: clamp(1.8rem, min(3.5vw, 5.4vh), 3rem);
   font-weight: 900;
   color: var(--bleu-nuit);
 }
@@ -195,12 +283,11 @@
     width: 100%;
   }
 
-  /* La grille tient dans le panneau : largeur de l'écran, moins les marges du cadre et du
-     panneau (4rem), la marge de la grille (20px) et les écarts entre les cases */
+  /* La grille tient dans la largeur du jeu (100cqi), marges et écarts compris */
   .motus-grille {
     --taille: min(
       3.4rem,
-      calc((100vw - 4rem - 20px - (var(--colonnes, 8) - 1) * 6px) / var(--colonnes, 8))
+      (100cqi - 2 * var(--marge) - (var(--colonnes, 8) - 1) * var(--ecart)) / var(--colonnes, 8)
     );
   }
 
@@ -216,6 +303,10 @@
   .motus-saisie {
     font-size: 1.35rem;
     letter-spacing: 0.15em;
+  }
+
+  .motus-touche {
+    min-height: 3rem;
   }
 }
 

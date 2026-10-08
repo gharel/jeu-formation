@@ -1,17 +1,19 @@
 /**
- * Manche à paliers (Qui suis-je ?, Zoom mystère) : les chiffres 5 4 3 2 1 s'éteignent,
- * l'animateur appuie sur Stop quand quelqu'un répond, puis valide ou reprend. S'il doute, « Voir la
- * réponse » l'affiche : il valide alors la proposition, ou la manche s'arrête sans point.
- * Espace : Démarrer → Stop → Reprendre.
+ * Manche à paliers (Qui suis-je ?, Zoom mystère) : rien n'est montré avant « Démarrer », puis les
+ * chiffres 5 4 3 2 1 s'éteignent. L'animateur appuie sur Stop quand quelqu'un répond, puis valide ou
+ * reprend. S'il doute, « Voir la réponse » l'affiche : il valide alors la proposition, ou la manche
+ * s'arrête sans point. « Cacher la réponse », au même endroit, la retire aussitôt : on peut reprendre.
+ * Espace : Démarrer → Stop → Reprendre ; réponse affichée : la cacher.
  */
 import { el, remplir, icone, ecouterClavier } from './ui.js';
 import { creerPaliers, creerAffichagePaliers } from './paliers.js';
 
 /**
- * `surValeur(valeur)` : appelé au départ et à chaque chiffre perdu (le jeu montre un indice,
+ * `surValeur(valeur)` : appelé au démarrage, puis à chaque chiffre perdu (le jeu montre un indice,
  * dézoome…). `surFin({ trouve, gagnants, points })` : la manche est finie, le jeu révèle la réponse
- * (`gagnants` : { prenoms, equipes }, qui a trouvé : une personne, plusieurs ou une équipe). `surReponse()` : le jeu affiche la réponse
- * pendant la pause, pour que l'animateur juge la proposition.
+ * (`gagnants` : { prenoms, equipes }, qui a trouvé : une personne, plusieurs ou une équipe).
+ * `surReponse(visible)` : le jeu affiche la réponse pendant la pause, pour que l'animateur juge la
+ * proposition (`true`), ou la cache de nouveau (`false`).
  * `surEtat(etat)` (facultatif) : 'attente', 'enCours', 'pause', 'revele' ou 'fini', à chaque changement
  * (l'illustration du jeu s'anime pendant que les chiffres s'éteignent).
  */
@@ -77,6 +79,7 @@ export function creerMancheAPaliers({
       remplir(
         actions,
         bouton('check', 'Bonne réponse', 'bouton--succes', bonne),
+        bouton('eye-slash', 'Cacher la réponse', 'bouton--discret', cacherReponse),
         bouton('xmark', 'Mauvaise réponse', 'bouton--danger', mauvaise),
       );
     } else {
@@ -84,13 +87,17 @@ export function creerMancheAPaliers({
     }
     surEtat?.(etat);
     // En pause, le focus va sur « reprendre » : Espace reprend toujours, comme annoncé.
-    // Réponse affichée : on ne peut plus reprendre, le focus va sur « Bonne réponse ».
+    // Réponse affichée : le focus va sur « Cacher la réponse », à la place de « Voir la réponse » :
+    // Espace ou un second clic au même endroit la cache aussitôt. Sans faire défiler l'écran
+    // (téléphone) : le bouton touché reste sous le doigt.
     const boutons = actions.querySelectorAll('button');
-    (etat === 'revele' ? boutons[0] : boutons[boutons.length - 1])?.focus();
+    (etat === 'revele' ? boutons[1] : boutons[boutons.length - 1])?.focus({ preventScroll: true });
   }
 
+  // Le premier indice (ou l'image zoomée) n'apparaît qu'ici : personne ne cherche avant le départ
   function demarrer() {
     etat = 'enCours';
+    surValeur(nombre);
     paliers.demarrer();
     dessiner();
   }
@@ -103,11 +110,20 @@ export function creerMancheAPaliers({
     dessiner();
   }
 
-  // La réponse s'affiche : la proposition se juge, on ne reprend plus (tout le monde l'a vue)
+  // La réponse s'affiche : la proposition se juge, on ne reprend plus tant qu'elle est visible
   function voirReponse() {
     if (etat !== 'pause') return;
     etat = 'revele';
-    surReponse();
+    surReponse(true);
+    dessiner();
+  }
+
+  // Vue trop tôt, ou par erreur : elle disparaît, la manche reste en pause et peut reprendre
+  function cacherReponse() {
+    if (etat !== 'revele') return;
+    etat = 'pause';
+    surReponse(false);
+    ctx.annoncer('Réponse cachée.');
     dessiner();
   }
 
@@ -153,12 +169,12 @@ export function creerMancheAPaliers({
       if (etat === 'attente') demarrer();
       else if (etat === 'enCours') stop();
       else if (etat === 'pause') reprendre();
+      else if (etat === 'revele') cacherReponse();
     },
   });
 
   affichage.afficher(nombre);
   dessiner();
-  surValeur(nombre);
 
   return {
     paliers: affichage.element,

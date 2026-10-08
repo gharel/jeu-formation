@@ -45,7 +45,20 @@ async function demarrer(ctx) {
     pretes.delete(index);
     preparerImage(index + 1);
     photo.style.transformOrigin = origine(image.focus);
-    const cadre = el('div', { class: 'zoom__cadre' }, photo);
+    // Avant « Démarrer », un voile cache l'image : personne ne cherche avant le départ.
+    // « Voir la réponse » la pose au bas de l'image : rien ne bouge à côté, « Cacher la réponse »
+    // reste sous la souris.
+    const cadre = el(
+      'div',
+      { class: 'zoom__cadre' },
+      photo,
+      el('div', { class: 'zoom__voile', 'aria-hidden': 'true' }, icone('question')),
+      el(
+        'div',
+        { class: 'reponse-apercu zoom__apercu' },
+        el('p', { class: 'reponse-apercu__valeur' }, reponse),
+      ),
+    );
     // Les proportions du cadre : tout de suite si l'image est prête, sinon à son chargement
     const poserRatio = () => {
       if (photo.naturalWidth && photo.naturalHeight) {
@@ -56,34 +69,32 @@ async function demarrer(ctx) {
     else photo.addEventListener('load', poserRatio, { once: true });
     // L'animation d'apparition se joue d'elle-même quand le résultat cesse d'être caché
     const resultat = el('div', { class: 'zoom__resultat apparition', hidden: true });
-    // La réponse vue pendant la pause (« Voir la réponse »), à la place de la question
-    let apercu = null;
 
     function zoomer(valeur) {
       photo.style.transform = `scale(${echelle(valeur, { max })})`;
     }
+    // Déjà zoomée sous le voile (5 points en jeu) : elle ne se dévoile pas entière en zoomant
+    zoomer(5);
 
-    // « Voir la réponse », pendant la pause : l'animateur juge la proposition
-    function montrerReponse() {
-      apercu = el(
-        'div',
-        { class: 'reponse-revelee zoom__apercu apparition' },
-        el('p', { class: 'reponse-revelee__valeur' }, reponse),
-      );
-      manche.actions.before(apercu);
-      ctx.zone.querySelector('.panneau')?.classList.add('reponse-vue');
-      ctx.annoncer(`La réponse est : ${reponse}`);
+    // « Voir la réponse », pendant la pause : l'animateur juge la proposition, ou la recache
+    function montrerReponse(visible) {
+      cadre.classList.toggle('zoom__cadre--reponse', visible);
+      ctx.zone.querySelector('.panneau')?.classList.toggle('reponse-vue', visible);
+      if (visible) ctx.annoncer(`La réponse est : ${reponse}`);
     }
 
     manche = creerMancheAPaliers({
       ctx,
       dureePalier: ctx.reglages.dureePalier,
       surValeur: zoomer,
-      surEtat: (etat) => illustration.etat(etat === 'enCours' ? 'cherche' : null),
+      surEtat(etat) {
+        illustration.etat(etat === 'enCours' ? 'cherche' : null);
+        cadre.classList.toggle('zoom__cadre--attente', etat === 'attente');
+      },
       surReponse: montrerReponse,
       surFin({ trouve, gagnants, points }) {
+        montrerReponse(false);
         ctx.zone.querySelector('.panneau')?.classList.add('manche-finie');
-        apercu?.remove();
         zoomer(0);
         photo.alt = `Image entière : ${reponse}`;
         const dernier = index === images.length - 1;
@@ -181,8 +192,8 @@ monterJeu({
   exemple,
   regles: [
     'Avant la séance, collez vos captures d’écran (Ctrl + V) ou importez des images, et cliquez sur le détail à montrer.',
-    'L’image s’affiche très zoomée sur ce détail, puis se dézoome à chaque chiffre perdu : 5, 4, 3, 2, 1.',
-    'Quelqu’un pense avoir trouvé ? Stop (Espace) : l’image se fige pendant sa réponse. Un doute ? « Voir la réponse » l’affiche.',
+    'Démarrer affiche l’image, très zoomée sur ce détail. Elle se dézoome à chaque chiffre perdu : 5, 4, 3, 2, 1.',
+    'Quelqu’un pense avoir trouvé ? Stop (Espace) : l’image se fige pendant sa réponse. Un doute ? « Voir la réponse » l’affiche, « Cacher la réponse » la retire.',
     'Bonne réponse : les points encore allumés vont à qui a trouvé, une ou plusieurs personnes.',
   ],
   demarrer,

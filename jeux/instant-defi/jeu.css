@@ -1,58 +1,96 @@
+/* ---------- La roue des défis ---------- */
+
+/* La roue à gauche, le texte à droite. La roue grandit avec la hauteur de l'écran : environ
+   470 px en 1280 × 720, 700 px en 1920 × 1080 */
 .defi-roue {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  gap: clamp(1rem, 4vw, 3rem);
+  gap: var(--air) clamp(1rem, 4vw, 4rem);
   align-items: center;
 }
 
 .defi-roue__roue .roue {
-  width: min(100%, 460px, 62vh);
-}
-
-.defi-roue__texte .bouton {
-  margin-top: 1rem;
+  width: min(100%, 44rem, 65vh);
 }
 
 .defi-roue__texte .illustration {
-  margin: 0 auto 0.75rem;
+  --taille: clamp(5.5rem, min(12vw, 20vh), 13rem);
+  margin: 0 auto var(--air);
 }
 
-/* Le chronomètre dessiné à côté du compte à rebours */
-.defi__compte {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(1rem, 3vw, 2rem);
-  max-width: 46rem;
-  margin: 1.25rem auto 0;
-}
-
-.defi__compte .illustration {
-  --taille: clamp(4.5rem, min(10vw, 16vh), 8rem);
-}
-
-.defi__compte .chrono {
-  flex: 1;
+.defi-roue__texte .panneau__texte {
   margin: 0;
 }
 
-.defi__enonce {
-  max-width: 28ch;
-  margin: 0.5rem auto 0;
-  font-size: clamp(2rem, 4.2vw, 3.4rem);
-}
-
-.defi__message {
-  margin: 1rem 0 0;
-  font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-  font-weight: 900;
-  color: var(--bleu-nuit);
+.defi-roue__texte .bouton {
+  margin-top: var(--air);
 }
 
 @media (max-width: 800px) {
   .defi-roue {
     grid-template-columns: 1fr;
   }
+}
+
+/* ---------- Le défi ---------- */
+
+.defi__enonce {
+  max-width: min(100%, 22em);
+  margin: 0 auto;
+  font-size: clamp(1.75rem, min(4.2vw, 6.6vh), 4.6rem);
+  line-height: 1.2;
+}
+
+/* Le chronomètre dessiné, le compte à rebours, puis l'issue du défi (« Défi réussi ! ») à
+   côté du chrono arrêté : la ligne garde sa hauteur, les boutons ne bougent pas */
+.defi__compte {
+  /* Taille du compte à rebours ; la ligne garde la hauteur du chrono et de sa barre */
+  --temps: clamp(3rem, min(8vw, 14vh), 9rem);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--air-serre) clamp(1rem, 3vw, 3rem);
+  max-width: 64rem;
+  min-height: calc(var(--temps) + 0.75rem + 14px);
+  margin: calc(var(--air) * 1.5) auto 0;
+}
+
+.defi__compte .illustration {
+  --taille: clamp(4.5rem, min(11vw, 20vh), 13rem);
+}
+
+.defi__compte .chrono {
+  flex: 0 1 34rem;
+  margin: 0;
+}
+
+.defi__compte .chrono__temps {
+  font-size: var(--temps);
+}
+
+.defi__compte .chrono--compact {
+  flex: none;
+}
+
+.defi__compte .chrono--compact .chrono__temps {
+  font-size: clamp(1.6rem, min(3vw, 5vh), 3.2rem);
+}
+
+.defi__issue:empty {
+  display: none;
+}
+
+.defi__message {
+  margin: 0;
+  font-size: clamp(1.8rem, min(3.5vw, 5.6vh), 3.6rem);
+  font-weight: 900;
+  line-height: 1.2;
+  color: var(--bleu-nuit);
+}
+
+.defi .actions-jeu {
+  margin-top: calc(var(--air) * 1.5);
 }
 
 /* ---------- Illustration : un chronomètre ---------- */

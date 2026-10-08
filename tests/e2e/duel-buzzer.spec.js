@@ -49,8 +49,24 @@ test('Duel buzzer : faux départ refusé, buzz, main adverse, victoire', async (
   await page.keyboard.press('Enter');
   await page.keyboard.press('l');
   await expect(page.locator('#cadre').getByText('Bob répond !')).toBeVisible();
+  // L'animateur jette un œil à la réponse (sur la question), puis la cache au même endroit
+  const apercu = page.locator('#cadre .reponse-apercu');
+  const voir = page.getByRole('button', { name: 'Voir la réponse' });
+  await expect(apercu).toBeHidden();
+  const { x, y, width, height } = await voir.boundingBox();
+  await voir.click();
+  await expect(apercu).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Cacher la réponse' })).toBeVisible();
+  expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(720);
+  await page.mouse.click(x + width / 2, y + height / 2);
+  await expect(apercu).toBeHidden();
+  await voir.click();
+  await expect(apercu).toBeVisible();
+  // Bob se trompe : la réponse se cache avant qu'Ana réponde
   await page.keyboard.press('Backspace');
   await expect(page.locator('#cadre').getByText('Raté ! Ana peut répondre')).toBeVisible();
+  await expect(apercu).toBeHidden();
+  await expect(voir).toBeVisible();
   await page.getByRole('button', { name: 'Bonne (Entrée)' }).click();
   await expect(page.locator('#cadre').getByText('Ana gagne le duel !')).toBeVisible();
   await expect(pointsDe(page, 'Ana')).toHaveText('2');

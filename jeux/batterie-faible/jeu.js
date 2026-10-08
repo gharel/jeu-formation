@@ -88,7 +88,8 @@ function demarrer(ctx) {
       return c.affichage === ' ' ? null : el('span', { class: 'lettres__signe' }, c.affichage);
     });
     // Chaque mot reste entier sur sa ligne ; les cases rapetissent pour que le plus long tienne
-    // dans la largeur (téléphone)
+    // dans la largeur (téléphone), et sur grand écran pour que toute l'expression tienne sur une
+    // ligne (jeu.css)
     const groupes = motsDeCases(cases);
     const affichageMot = el(
       'div',
@@ -96,7 +97,7 @@ function demarrer(ctx) {
         class: 'lettres__mot',
         role: 'group',
         'aria-label': 'Mot à découvrir',
-        style: `--lettres: ${Math.max(...groupes.map((g) => g.length))}`,
+        style: `--lettres: ${Math.max(...groupes.map((g) => g.length))}; --cases: ${groupes.flat().length}; --groupes: ${groupes.length}`,
       },
       groupes.map((g) =>
         el(

@@ -1,6 +1,12 @@
 import { test, expect } from '@playwright/test';
 import { JEUX } from '../../assets/js/jeux.js';
-import { surveillerErreurs, verifierAccessibilite } from './outils.js';
+import {
+  surveillerErreurs,
+  verifierAccessibilite,
+  verifierMiseEnPage,
+  ouvrirJeu,
+  lancerPartie,
+} from './outils.js';
 
 test('l’accueil présente un jeu par carte, avec un lien qui fonctionne', async ({ page }) => {
   const erreurs = surveillerErreurs(page);
@@ -142,6 +148,30 @@ test.describe('chaque jeu', () => {
       await verifierAccessibilite(page);
       await page.getByRole('button', { name: 'Annuler' }).click();
       await expect(page.getByRole('heading', { name: 'Comment on joue ?' })).toBeVisible();
+      expect(erreurs).toEqual([]);
+    });
+  }
+});
+
+// Au vidéoprojecteur, l'écran de partie tient sans défiler : en 1280 × 720 (le plus courant), et
+// en 1920 × 1080 où les écarts grandissent avec la hauteur de l'écran
+test.describe('chaque écran de partie tient à l’écran', () => {
+  for (const jeu of JEUX) {
+    test(`${jeu.titre} : 1280 × 720 et 1920 × 1080, sans défiler`, async ({ page }) => {
+      const erreurs = surveillerErreurs(page);
+      await ouvrirJeu(page, jeu.slug, {
+        prenoms: ['Ana', 'Bob', 'Chloé', 'Jean-Baptiste', 'Marie', 'Léo'],
+      });
+      await lancerPartie(page);
+      for (const [width, height] of [
+        [1280, 720],
+        [1920, 1080],
+      ]) {
+        await page.setViewportSize({ width, height });
+        const hauteur = await page.evaluate(() => document.documentElement.scrollHeight);
+        expect(hauteur, `${jeu.slug} en ${width} × ${height}`).toBeLessThanOrEqual(height);
+        await verifierMiseEnPage(page);
+      }
       expect(erreurs).toEqual([]);
     });
   }
