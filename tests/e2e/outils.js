@@ -162,6 +162,22 @@ export async function verifierMiseEnPage(page) {
       if (sort) fautes.push(`${extrait(noeud.textContent)} sort de son cadre ${nom(cadre)}`);
     }
 
+    // Une icône seule dans son bouton ou sa pastille est centrée : l'écart prévu pour le texte
+    // qui la suit la décalerait vers la gauche
+    for (const icone of document.querySelectorAll('.icone')) {
+      const boite = icone.parentElement;
+      if (masque(icone) || boite.children.length !== 1 || boite.textContent.trim()) continue;
+      if (!aUnCadre(boite)) continue;
+      const i = icone.getBoundingClientRect();
+      const b = boite.getBoundingClientRect();
+      const ecart = (i.left + i.right - b.left - b.right) / 2;
+      if (Math.abs(ecart) > 1) {
+        fautes.push(
+          `l'icône ${nom(icone)} est décalée de ${ecart.toFixed(1)} px dans ${nom(boite)}`,
+        );
+      }
+    }
+
     for (const champ of document.querySelectorAll('input[type="number"]')) {
       if (!masque(champ) && champ.scrollWidth > champ.clientWidth) {
         fautes.push(`le nombre ${champ.value} est coupé dans son champ ${nom(champ)}`);

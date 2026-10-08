@@ -1899,6 +1899,9 @@
   place-items: center;
   width: 2.2rem;
   height: 2.2rem;
+  /* Sans le rembourrage du navigateur : l'icône, plus large que la place restante, se calait à
+     gauche et débordait à droite */
+  padding: 0;
   font: inherit;
   color: var(--bleu-nuit);
   background: var(--blanc);
@@ -1920,6 +1923,15 @@
   font-weight: 900;
   font-variant-numeric: tabular-nums;
   text-align: center;
+  /* Ni flèches haut / bas (les boutons − et + suffisent) : Chrome leur gardait une place à droite,
+     et le nombre n'était plus au centre */
+  appearance: textfield;
+}
+
+.champ__controle.scores-groupe__total::-webkit-inner-spin-button,
+.champ__controle.scores-groupe__total::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
 }
 
 @media (max-width: 640px) {

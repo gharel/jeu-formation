@@ -194,6 +194,11 @@
   flex: 1.6;
 }
 
+/* La touche Effacer n'a que son icône : sans l'écart prévu pour un texte, elle reste centrée */
+.motus-touche .icone {
+  margin-inline-end: 0;
+}
+
 .motus-touche--bien {
   background: var(--vert);
   border-color: var(--vert);
