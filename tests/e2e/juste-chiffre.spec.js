@@ -20,7 +20,7 @@ async function proposer(page, nombre) {
   await saisie.press('Enter');
 }
 
-test('Le Juste Chiffre : plus, moins, juste, avec tour de rôle', async ({ page }) => {
+test('Le Juste Chiffre : plus, moins, juste, une personne par question', async ({ page }) => {
   const erreurs = surveillerErreurs(page);
   await ouvrirJeu(page, 'juste-chiffre', { prenoms: ['Ana', 'Bob'] });
   await lancerPartie(page);
@@ -30,7 +30,7 @@ test('Le Juste Chiffre : plus, moins, juste, avec tour de rôle', async ({ page 
   await expect(
     page.locator('#cadre').getByText('30 secondes pour trouver le nombre'),
   ).toBeVisible();
-  await expect(page.locator('#cadre').getByText('Ana propose en premier')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Au tour de Ana')).toBeVisible();
   await expect(page.locator('.chrono__temps')).toHaveCount(0);
   await verifierAccessibilite(page);
   await page.keyboard.press('Enter');
@@ -42,7 +42,9 @@ test('Le Juste Chiffre : plus, moins, juste, avec tour de rôle', async ({ page 
 
   await proposer(page, '1 950');
   await expect(page.locator('.juste__verdict')).toContainText('C’est plus !');
-  await expect(page.getByLabel('Proposition de Bob')).toBeVisible();
+  // Ana garde la main jusqu'à la fin de la question
+  await expect(page.getByLabel('Proposition de Ana')).toBeFocused();
+  await expect(page.locator('#cadre').getByText('Au tour de Ana')).toBeVisible();
   await proposer(page, '2000');
   await expect(page.locator('.juste__verdict')).toContainText('C’est moins !');
   await expect(page.locator('.juste__fourchette')).toHaveText('Entre 1950 et 2000');
@@ -54,11 +56,13 @@ test('Le Juste Chiffre : plus, moins, juste, avec tour de rôle', async ({ page 
   await expect(page.locator('#cadre').getByText('+1 point pour Ana')).toBeVisible();
   await expect(pointsDe(page, 'Ana')).toHaveText('1');
 
-  // Question 2 : on révèle sans trouver
+  // Question 2 : la main passe à Bob ; on révèle sans trouver
   await page.getByRole('button', { name: 'Question suivante' }).click();
   await expect(page.locator('#cadre').getByText('Question 2 sur 5')).toBeVisible();
-  await expect(page.locator('#cadre').getByText('Bob propose en premier')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Au tour de Bob')).toBeVisible();
   await afficherQuestion(page);
+  await proposer(page, '1900');
+  await expect(page.getByLabel('Proposition de Bob')).toBeFocused();
   await page.getByRole('button', { name: 'Révéler la réponse' }).click();
   await expect(page.locator('.reponse-revelee')).toContainText('1992');
   await expect(pointsDe(page, 'Bob')).toHaveText('0');

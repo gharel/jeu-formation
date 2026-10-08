@@ -64,7 +64,7 @@ function demarrer(ctx) {
     rafraichirJoueur = () => {
       const joueur = joueurCourant();
       tour.hidden = !joueur;
-      remplir(tour, icone('microphone'), `${joueur} propose en premier`);
+      remplir(tour, icone('microphone'), `Au tour de ${joueur}`);
     };
     rafraichirJoueur();
     const lancer = () => {
@@ -306,10 +306,6 @@ function demarrer(ctx) {
       verdict.classList.toggle('juste__verdict--plus', resultat === 'plus');
       verdict.classList.toggle('juste__verdict--moins', resultat === 'moins');
       illustration.etat(resultat);
-      if (avecTour) {
-        indexJoueur = suivant(ctx.participants, indexJoueur);
-        rafraichirJoueur();
-      }
       animer(verdict, 'apparition');
       saisie.focus();
       ctx.sons.juste[resultat]();
@@ -364,7 +360,7 @@ monterJeu({
     'Avant la séance, préparez des questions dont la réponse est un nombre.',
     'Un participant propose un nombre à l’oral, vous le tapez : le jeu répond « c’est plus » ou « c’est moins ».',
     'Le minuteur (30 s par défaut) part quand vous affichez la question : à zéro, la réponse est révélée.',
-    'Celui ou celle qui trouve gagne 1 point. Le tour de rôle passe la main à chaque proposition.',
+    'Celui ou celle qui trouve gagne 1 point. La même personne propose jusqu’à la fin de la question, puis le tour de rôle passe la main.',
   ],
   demarrer,
 });

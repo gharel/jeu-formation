@@ -12,7 +12,7 @@ export const schema = {
     },
     {
       cle: 'tourDeRole',
-      libelle: 'Tour de rôle automatique : chaque proposition passe au participant suivant',
+      libelle: 'Tour de rôle automatique : chaque question passe au participant suivant',
       type: 'case',
       defaut: true,
     },
