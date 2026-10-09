@@ -52,8 +52,10 @@ import { adresseImage } from './commun/images.js';
 import { confirmer } from './commun/dialogues.js';
 import { ouvrirFicheThematique } from './commun/fiche-thematique.js';
 import { el, remplir, icone, focaliser, annoncer } from './commun/ui.js';
+import { creerHautDePage } from './commun/haut-de-page.js';
 
 await exigerAcces();
+creerHautDePage();
 
 /** Racine du site : les jeux et les thématiques s'y trouvent. */
 const RACINE = new URL('../../', import.meta.url);

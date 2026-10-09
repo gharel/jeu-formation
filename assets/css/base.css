@@ -101,7 +101,8 @@ img {
 .carte-jeu__icone .icone,
 .carte-thematique__icone .icone,
 .apercu-jeu__icone .icone,
-.podium__medaille .icone {
+.podium__medaille .icone,
+.haut-de-page .icone {
   margin-inline-end: 0;
 }
 
@@ -138,9 +139,11 @@ img {
 
 /* ---------- Signature des outils Skazy Formation ---------- */
 
-/* La même dans chaque outil : logo │ pastille (le favicon de l'outil) et nom. Sa taille de police
-   règle l'ensemble : pour 17 px, un logo de 36 px de haut, une pastille de 28 px, un filet de
-   24 px, 16 px de part et d'autre du filet et 10 px entre la pastille et le nom. */
+/* Commune aux outils Skazy Formation : le logo Skazy Formation (lien vers formation.skazy.nc, dans
+   un nouvel onglet), des filets, la pastille (le favicon de l'outil) et le nom « Mini-jeux », qui
+   forment un seul lien vers l'accueil des mini-jeux. Sa taille de police règle l'ensemble : pour
+   17 px, un logo de 36 px de haut, une pastille de 28 px, un filet de 24 px, 16 px entre les
+   éléments et 10 px entre la pastille et le nom. */
 .signature {
   display: flex;
   align-items: center;
@@ -160,24 +163,28 @@ img {
   height: calc(36em / 17);
 }
 
-.signature__outil {
-  display: flex;
-  align-items: center;
-  margin: 0;
-  font-weight: 700;
-  line-height: 1.2;
-  color: var(--blanc);
-  white-space: nowrap;
-}
-
-/* Le filet, à égale distance du logo et de la pastille */
-.signature__outil::before {
-  content: '';
+.signature__filet {
   flex: none;
   width: 1px;
   height: calc(24em / 17);
-  margin-inline-end: calc(16em / 17);
   background: var(--filet-sombre);
+}
+
+.signature__outil {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: calc(10em / 17);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--blanc);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.signature__outil:hover .signature__nom {
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
 }
 
 .signature__pastille {
@@ -186,12 +193,44 @@ img {
   height: calc(28em / 17);
 }
 
-.signature__nom {
-  margin-inline-start: calc(10em / 17);
+/* « Les outils » : la roue des outils Skazy Formation (26 px) et son nom, vers la page qui les
+   réunit, dans le même onglet. Une pilule claire au survol, comme les boutons du bandeau. Sur
+   téléphone, la roue seule : le nom reste lu par les lecteurs d'écran. */
+.lien-outils {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.25rem;
+  padding: 0.25rem 0.75rem 0.25rem 0.5rem;
+  font-size: 0.9375rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--blanc);
+  text-decoration: none;
+  white-space: nowrap;
+  border-radius: var(--rayon-pilule);
+}
+
+@media (hover: hover) {
+  .lien-outils:hover {
+    background: var(--survol-sombre);
+  }
+}
+
+.lien-outils__roue {
+  flex: none;
+  width: 1.625rem;
+  height: 1.625rem;
 }
 
 /* ---------- Bandeau ---------- */
 
+/* De gauche à droite : la maison « Accueil », un filet, la pastille et « Mini-jeux » (lien vers
+   l'accueil des mini-jeux), le titre de la page, ses boutons, puis « Les outils », un filet et le
+   logo Skazy Formation, toujours le dernier (nouvel onglet : la partie en cours reste ouverte).
+   Sur ordinateur, tout tient sur une ligne : le bandeau garde sa hauteur, et l'écran de partie
+   tient en 1280 × 720. */
 .bandeau {
   position: relative;
   display: flex;
@@ -211,78 +250,20 @@ img {
   background: var(--accent);
 }
 
-/* À gauche, le retour à l'accueil des mini-jeux ; à droite, la signature, dont le logo mène au
-   site de Skazy Formation (nouvel onglet : la partie en cours reste ouverte) */
 .bandeau__accueil {
   flex: none;
   text-decoration: none;
 }
 
+/* Le filet entre la maison et la pastille, un peu plus près d'elles que l'écart du bandeau */
+.bandeau__filet {
+  margin-inline: -0.25rem;
+}
+
+.bandeau__outil,
 .bandeau__signature {
   flex: none;
-}
-
-/* Moins de place (vidéoprojecteur en 1024 × 768) : le nom « Mini-jeux » cède la place au titre et
-   aux boutons, la pastille reste ; logo de 32 px de haut */
-@media (max-width: 1200px) {
-  .bandeau {
-    gap: 1rem;
-  }
-
-  .bandeau__signature {
-    font-size: 0.9375rem;
-  }
-
-  .bandeau__signature .signature__nom {
-    display: none;
-  }
-}
-
-/* Écran étroit : accueil, titre et signature sur la première ligne, les boutons en dessous */
-@media (max-width: 700px) {
-  .bandeau__signature {
-    order: 1;
-  }
-
-  .bandeau .bandeau__actions {
-    order: 2;
-    flex-basis: 100%;
-    justify-content: flex-start;
-  }
-
-  .bandeau .bandeau__actions:empty {
-    display: none;
-  }
-}
-
-@media (max-width: 640px) {
-  .bandeau {
-    gap: 0.75rem;
-  }
-
-  /* Sur téléphone, la maison suffit : le mot reste lu par les lecteurs d'écran */
-  .bandeau__accueil {
-    padding: 0.45rem 0.6rem;
-  }
-
-  .bandeau__accueil-texte {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-    white-space: nowrap;
-  }
-
-  /* Logo de 28 px de haut, pastille de 22 px, filet plus proche */
-  .bandeau__signature {
-    gap: 0.5rem;
-    font-size: 0.8125rem;
-  }
-
-  .bandeau__signature .signature__outil::before {
-    margin-inline-end: 0.5rem;
-  }
+  font-size: 1.0625rem;
 }
 
 .bandeau__titre {
@@ -307,6 +288,7 @@ img {
   font: inherit;
   font-size: 0.95rem;
   font-weight: 700;
+  white-space: nowrap;
   color: var(--blanc);
   background: rgb(255 255 255 / 10%);
   border: 1px solid rgb(255 255 255 / 35%);
@@ -321,6 +303,179 @@ img {
 
 .bouton-bandeau[aria-pressed='false'] {
   opacity: 0.75;
+}
+
+/* Portable, vidéoprojecteur en 1280 × 720 : « Les outils » se réduit à la roue (le nom reste lu par
+   les lecteurs d'écran) et les écarts se resserrent, pour que le titre tienne sur une ligne */
+@media (max-width: 1350px) {
+  .bandeau {
+    gap: 1rem;
+  }
+
+  .bouton-bandeau {
+    padding-inline: 0.75rem;
+  }
+
+  .bandeau .lien-outils {
+    padding: 0.3125rem;
+  }
+
+  .bandeau .lien-outils__texte {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* Moins de place (vidéoprojecteur en 1024 × 768) : le nom « Mini-jeux » cède la place au titre et
+   aux boutons (la pastille reste, le nom reste lu par les lecteurs d'écran), sans filet après la
+   maison ; logo de 32 px, écarts encore un peu resserrés */
+@media (max-width: 1200px) {
+  .bandeau {
+    gap: 0.75rem;
+  }
+
+  .bandeau__filet {
+    display: none;
+  }
+
+  .bouton-bandeau {
+    padding-inline: 0.65rem;
+  }
+
+  .bandeau__outil,
+  .bandeau__signature {
+    font-size: 0.9375rem;
+  }
+
+  .bandeau__signature {
+    gap: 0.75rem;
+  }
+
+  .bandeau__outil .signature__nom {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* Téléphone, sur trois lignes : la maison, la pastille, puis à droite la roue et le logo ; le
+   titre ; les boutons, sur une seule ligne */
+@media (max-width: 700px) {
+  .bandeau {
+    flex-wrap: wrap;
+    row-gap: 0.6rem;
+  }
+
+  .bandeau__signature {
+    order: 1;
+    margin-inline-start: auto;
+  }
+
+  .bandeau .bandeau__titre {
+    order: 2;
+    flex-basis: 100%;
+  }
+
+  .bandeau .bandeau__actions {
+    order: 3;
+    flex-basis: 100%;
+    justify-content: flex-start;
+  }
+
+  .bandeau .bandeau__actions:empty {
+    display: none;
+  }
+
+  /* La première ligne a la place du filet entre la maison et la pastille */
+  .bandeau__filet {
+    display: block;
+  }
+
+  /* La roue seule, avec une zone de toucher de 40 px qui déborde sur l'écart voisin */
+  .bandeau .lien-outils {
+    justify-content: center;
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    margin-inline: -0.4375rem;
+    padding: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .bandeau {
+    gap: 0.75rem;
+  }
+
+  /* Sur téléphone, la maison suffit : le mot reste lu par les lecteurs d'écran */
+  .bandeau__accueil {
+    padding: 0.45rem 0.6rem;
+  }
+
+  .bandeau__accueil-texte {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  /* Pastille de 24 px, logo de 30 px de haut */
+  .bandeau__outil {
+    font-size: calc(24rem / 28 * 17 / 16);
+  }
+
+  .bandeau__signature {
+    gap: 0.75rem;
+    font-size: calc(30rem / 36 * 17 / 16);
+  }
+
+  .bandeau .bandeau__signature .signature__filet {
+    height: 1.5rem;
+  }
+}
+
+/* Petit téléphone (360 px) : logo de 28 px ; les boutons, un peu plus petits, restent sur une
+   ligne, avec leur libellé entier */
+@media (max-width: 400px) {
+  .bandeau__signature {
+    font-size: calc(28rem / 36 * 17 / 16);
+  }
+
+  .bandeau__actions {
+    gap: 0.4rem;
+  }
+
+  .bandeau__actions .bouton-bandeau {
+    font-size: 0.875rem;
+    padding: 0.4rem 0.7rem;
+  }
+}
+
+/* Petit écran sans écran tactile (fenêtre étroite sur ordinateur) : le bouton Plein écran s'ajoute
+   aux autres ; Désigner se réduit à sa roue (son nom reste lu) et les boutons rapetissent encore un
+   peu, pour que les quatre tiennent sur une ligne, libellés entiers */
+@media (max-width: 400px) and (hover: hover), (max-width: 400px) and (pointer: fine) {
+  .bandeau__actions .bouton-bandeau {
+    font-size: 0.8125rem;
+    padding-inline: 0.6rem;
+  }
+
+  .bouton-bandeau__texte {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
 }
 
 /* ---------- Mise en page ---------- */
@@ -778,6 +933,74 @@ textarea.champ__controle {
   justify-content: flex-end;
   gap: 0.75rem;
   padding: 0 1.25rem 1.25rem;
+}
+
+/* ---------- Remonter en haut ---------- */
+
+/* Pages qui défilent (haut-de-page.js) : un bouton rond en bas à droite, qui apparaît en fondu
+   (opacité et déplacement seulement) après un écran et un peu plus de défilement. Caché, il ne
+   reçoit pas le focus (visibility). Jamais pendant une partie ni sur l'écran de fin. */
+.haut-de-page {
+  position: fixed;
+  right: 1.5rem;
+  bottom: calc(1.5rem + env(safe-area-inset-bottom, 0px));
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  padding: 0;
+  font: inherit;
+  font-size: 1.15rem;
+  color: var(--blanc);
+  background: var(--succes);
+  border: 0;
+  border-radius: 50%;
+  box-shadow: var(--ombre-forte);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.75rem);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0s linear 0.2s;
+}
+
+.haut-de-page--visible {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0s;
+}
+
+@media (hover: hover) {
+  .haut-de-page:hover {
+    background: var(--bleu-nuit);
+  }
+}
+
+/* La barre Annuler / Enregistrer, collée en bas de l'écran pendant la préparation, lui laisse sa
+   place à droite : le bouton passe par-dessus la barre, jamais sur Enregistrer */
+body:has(> .haut-de-page:not([hidden])) .barre-actions {
+  padding-inline-end: 4rem;
+}
+
+/* Tout en bas de la page, il ne cache pas le pied de page (mentions, bouton Verrouiller) */
+body:has(> .haut-de-page:not([hidden])) .pied {
+  padding-bottom: 5rem;
+}
+
+@media (max-width: 640px) {
+  .haut-de-page {
+    right: 1rem;
+    bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+    width: 2.75rem;
+    height: 2.75rem;
+  }
 }
 
 /* Téléphone tactile (petit écran, ni souris ni clavier) : on retire le plein écran, qui n'apporte

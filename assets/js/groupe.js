@@ -24,8 +24,10 @@ import {
   pleinEcranDisponible,
   annoncer,
 } from './commun/ui.js';
+import { creerHautDePage } from './commun/haut-de-page.js';
 
 await exigerAcces();
+creerHautDePage();
 
 const groupe = creerGroupe();
 const plan = creerPlanSalle(groupe, { modifiable: true, hasard: hasardDePage() });

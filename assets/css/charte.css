@@ -70,6 +70,8 @@
   --bord: #d8d8d8;
   /* Filet clair et discret sur le bleu nuit (signature du bandeau et de l'accueil) */
   --filet-sombre: rgb(255 255 255 / 30%);
+  /* Pilule claire au survol d'un lien sur le bleu nuit (« Les outils ») */
+  --survol-sombre: rgb(255 255 255 / 15%);
   --gris: #6c757d;
 
   /* États */

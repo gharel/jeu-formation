@@ -47,6 +47,7 @@ import { sourceDe, oublierSource } from './jeux-de-donnees.js';
 import { telechargerJson, nomDeFichier } from './fichiers.js';
 import { creerEditeur } from './editeur-contenu.js';
 import { exigerAcces } from './acces.js';
+import { creerHautDePage } from './haut-de-page.js';
 
 // Chaque jeu importe ce module : aucun jeu ne démarre avant le mot de passe.
 await exigerAcces();
@@ -75,10 +76,14 @@ export function monterJeu(config) {
   let nettoyerPartie = null;
   let ecouteDesignation = null;
   let editeur = null;
+  // « Remonter en haut » : sur l'accueil du jeu et la préparation, jamais pendant la partie
+  const hautDePage = creerHautDePage();
 
   const estExemple = () => lire(cleContenu) === null;
 
   // ---------- Bandeau : désigner, groupe, son, plein écran (pas sur téléphone, voir base.css) ----------
+  // Dans une fenêtre très étroite avec le plein écran, « Désigner » se réduit à sa roue (base.css) :
+  // son libellé reste lu par les lecteurs d'écran
   const boutonDesigner = el(
     'button',
     {
@@ -89,7 +94,7 @@ export function monterJeu(config) {
       onclick: () => designer(),
     },
     icone('arrows-spin'),
-    'Désigner',
+    el('span', { class: 'bouton-bandeau__texte' }, 'Désigner'),
   );
   const boutonGroupe = el(
     'button',
@@ -198,6 +203,8 @@ export function monterJeu(config) {
     const ecran = el('section', { class: `ecran ${classe}` }, ...enfants);
     remplir(cadre, ecran);
     window.scrollTo?.(0, 0);
+    // Écrans projetés (partie, fin) : pas de bouton « Remonter en haut »
+    hautDePage.permettre(classe === 'ecran-accueil' || classe === 'ecran-preparation');
     return ecran;
   }
 

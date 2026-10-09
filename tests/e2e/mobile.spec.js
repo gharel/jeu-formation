@@ -75,6 +75,60 @@ async function sansDefilementHorizontal(page) {
   expect(large, 'la page déborde en largeur').toBeLessThanOrEqual(ecran);
 }
 
+/**
+ * Bandeau sur téléphone, en trois lignes : la maison, la pastille, puis la roue « Les outils » et le
+ * logo au bord droit ; le titre, sans mot coupé ; les `nombre` boutons, sur une seule ligne, avec
+ * leur libellé entier.
+ */
+async function verifierBandeauTelephone(page, nombre) {
+  const m = await page.locator('.bandeau').evaluate((bandeau) => {
+    const boite = (e) => {
+      const r = e.getBoundingClientRect();
+      return { haut: r.top, bas: r.bottom, gauche: r.left, droite: r.right };
+    };
+    const titre = bandeau.querySelector('h1');
+    // Un mot coupé occupe plusieurs lignes
+    const coupes = [];
+    const texte = titre.firstChild;
+    for (const mot of texte.textContent.matchAll(/\S+/g)) {
+      const plage = document.createRange();
+      plage.setStart(texte, mot.index);
+      plage.setEnd(texte, mot.index + mot[0].length);
+      const hauts = [...plage.getClientRects()].filter((r) => r.width > 0).map((r) => r.top);
+      if (new Set(hauts.map(Math.round)).size > 1) coupes.push(mot[0]);
+    }
+    const style = getComputedStyle(bandeau);
+    return {
+      bord: bandeau.getBoundingClientRect().right - parseFloat(style.paddingRight),
+      ligne: ['.bandeau__accueil', '.bandeau__outil', '.lien-outils', '.signature__logo'].map((s) =>
+        boite(bandeau.querySelector(s)),
+      ),
+      titre: boite(titre),
+      coupes,
+      boutons: [...bandeau.querySelectorAll('#actions > *')]
+        .filter((e) => e.checkVisibility())
+        .map((e) => ({ ...boite(e), entier: e.scrollWidth <= e.clientWidth })),
+    };
+  });
+  const [accueil, outil, outils, logo] = m.ligne;
+  const milieux = m.ligne.map((b) => (b.haut + b.bas) / 2);
+  expect(Math.max(...milieux) - Math.min(...milieux), 'première ligne').toBeLessThan(3);
+  expect(accueil.droite).toBeLessThan(outil.gauche);
+  expect(outil.droite).toBeLessThan(outils.gauche);
+  expect(outils.droite).toBeLessThan(logo.gauche);
+  expect(Math.abs(logo.droite - m.bord), 'le logo au bord droit').toBeLessThan(2);
+  expect(m.titre.haut, 'le titre sous la première ligne').toBeGreaterThan(Math.max(...milieux));
+  expect(m.coupes, 'mot coupé dans le titre').toEqual([]);
+  expect(m.boutons).toHaveLength(nombre);
+  if (!nombre) return;
+  expect(new Set(m.boutons.map((b) => Math.round(b.haut))).size, 'boutons sur une ligne').toBe(1);
+  expect(m.boutons[0].haut, 'les boutons sous le titre').toBeGreaterThanOrEqual(m.titre.bas - 1);
+  for (const bouton of m.boutons) {
+    expect(bouton.entier, 'libellé coupé').toBe(true);
+    expect(bouton.droite, 'bouton hors du bandeau').toBeLessThanOrEqual(m.bord + 1);
+  }
+}
+
 test('sur ordinateur, le bouton Plein écran est là', async ({ page }) => {
   await ouvrirJeu(page, 'motus');
   await expect(page.getByRole('button', { name: 'Plein écran' })).toBeVisible();
@@ -191,6 +245,82 @@ test.describe('sur téléphone', () => {
     await expect(salle.getByRole('button', { name: 'Place 3 : Bob' })).toBeVisible();
     await expect(page.getByRole('dialog')).toHaveCount(0);
 
+    await sansDefilementHorizontal(page);
+    await verifierAccessibilite(page);
+    expect(erreurs).toEqual([]);
+  });
+});
+
+// Bandeau des téléphones courants (390 px) et du plus étroit (360 px)
+for (const largeur of [390, 360]) {
+  test.describe(`bandeau sur téléphone de ${largeur} px`, () => {
+    test.use({ ...telephone, viewport: { width: largeur, height: 740 } });
+
+    test('maison, pastille, roue et logo ; le titre ; les boutons sur une ligne', async ({
+      page,
+    }) => {
+      const erreurs = surveillerErreurs(page);
+      // Le titre le plus long, et Désigner, Groupe, Son (pas de plein écran sur téléphone)
+      await ouvrirJeu(page, 'debout-assis', { prenoms: ['Ana', 'Bob', 'Chloé'] });
+      const bandeau = page.getByRole('banner');
+      for (const nom of ['Désigner', 'Groupe', 'Son']) {
+        await expect(bandeau.getByRole('button', { name: nom, exact: true })).toBeVisible();
+      }
+      await verifierBandeauTelephone(page, 3);
+      // Les textes masqués à l'écran restent les noms des liens
+      await expect(bandeau.getByRole('link', { name: 'Accueil', exact: true })).toBeVisible();
+      await expect(bandeau.getByRole('link', { name: 'Mini-jeux', exact: true })).toBeVisible();
+      const outils = bandeau.getByRole('link', { name: 'Les outils', exact: true });
+      await expect(outils).toHaveAttribute('href', 'https://gharel.github.io/home/');
+      // Zone de toucher d'au moins 40 px
+      const zone = await outils.boundingBox();
+      expect(Math.min(zone.width, zone.height)).toBeGreaterThanOrEqual(40);
+      await sansDefilementHorizontal(page);
+      await verifierAccessibilite(page);
+
+      // Une page sans bouton (Le groupe : plein écran masqué) : le titre sous la première ligne
+      await page.goto('/groupe/');
+      await verifierBandeauTelephone(page, 0);
+      await sansDefilementHorizontal(page);
+      expect(erreurs).toEqual([]);
+    });
+
+    test('« Remonter en haut » sur l’accueil du jeu, jamais en partie', async ({ page }) => {
+      const erreurs = surveillerErreurs(page);
+      const defiler = () =>
+        page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+      const remonter = page.getByRole('button', { name: 'Remonter en haut de la page' });
+      await ouvrirJeu(page, 'pyramide', { prenoms: ['Ana', 'Bob'] });
+      await expect(remonter).toBeHidden();
+      await defiler();
+      await expect(remonter).toBeVisible();
+      // 44 px, à 16 px des bords
+      const boite = await remonter.boundingBox();
+      expect(Math.round(boite.width)).toBe(44);
+      expect(Math.round(largeur - boite.x - boite.width)).toBe(16);
+      await remonter.tap();
+      await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+      await expect(page.getByRole('heading', { level: 1 })).toBeFocused();
+      await lancerPartie(page);
+      await defiler();
+      await expect(remonter).toBeHidden();
+      expect(erreurs).toEqual([]);
+    });
+  });
+}
+
+// Fenêtre étroite sur ordinateur (souris, sans écran tactile) : le Plein écran s'ajoute aux boutons
+test.describe('fenêtre de 360 px sans écran tactile', () => {
+  test.use({ viewport: { width: 360, height: 740 } });
+
+  test('les quatre boutons tiennent sur une ligne, Désigner réduit à sa roue', async ({ page }) => {
+    const erreurs = surveillerErreurs(page);
+    await ouvrirJeu(page, 'debout-assis', { prenoms: ['Ana', 'Bob', 'Chloé'] });
+    const bandeau = page.getByRole('banner');
+    for (const nom of ['Désigner', 'Groupe', 'Son', 'Plein écran']) {
+      await expect(bandeau.getByRole('button', { name: nom, exact: true })).toBeVisible();
+    }
+    await verifierBandeauTelephone(page, 4);
     await sansDefilementHorizontal(page);
     await verifierAccessibilite(page);
     expect(erreurs).toEqual([]);

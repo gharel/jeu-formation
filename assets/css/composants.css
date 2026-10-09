@@ -17,10 +17,58 @@
   margin: 0 auto;
 }
 
+/* En haut du héros : la signature en grand à gauche, « Les outils » à droite */
+.heros__haut {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
 /* Signature en grand (voir base.css) : logo de 55 px de haut, pastille de 43 px, nom de 26 px */
 .heros__signature {
-  margin-bottom: 2rem;
+  min-width: 0;
   font-size: clamp(1.25rem, 2.2vw, 1.625rem);
+}
+
+/* « Les outils » un peu plus grand que dans le bandeau, à la mesure du héros */
+.heros__outils {
+  gap: 0.6rem;
+  padding: 0.375rem 1rem 0.375rem 0.5rem;
+  font-size: 1.0625rem;
+}
+
+.heros__outils .lien-outils__roue {
+  width: 2rem;
+  height: 2rem;
+}
+
+/* Sur téléphone, la roue seule (zone de toucher de 44 px), le nom reste lu par les lecteurs
+   d'écran ; sous 400 px, la signature rapetisse un peu pour lui laisser la place */
+@media (max-width: 700px) {
+  .heros__outils {
+    justify-content: center;
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    margin-inline-end: -0.375rem;
+    padding: 0;
+  }
+
+  .heros__outils .lien-outils__texte {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 400px) {
+  .heros__signature {
+    font-size: 1.125rem;
+  }
 }
 
 .heros h1 {
@@ -1590,15 +1638,14 @@
   .intro {
     flex-direction: column;
   }
-  .bandeau {
-    flex-wrap: wrap;
-  }
-  /* Les points décoratifs restent dans les coins : sur un écran étroit, ils passaient sous le texte */
+  /* Les points décoratifs restent dans les coins : sur un écran étroit, ils passaient sous le texte
+     (le vert, dans le coin en haut à gauche : à droite, il passait sous « Les outils ») */
   .points-deco span:nth-child(1) {
     width: 56px;
     height: 56px;
-    right: -14px;
-    top: 14px;
+    right: auto;
+    left: -24px;
+    top: -24px;
   }
   .points-deco span:nth-child(2) {
     width: 28px;

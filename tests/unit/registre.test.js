@@ -105,16 +105,67 @@ describe('pages publiées', () => {
     }
   });
 
-  // Signature commune : logo Skazy Formation (lien), filet, pastille (le favicon) et nom de l'outil
-  it.each(pages)('%s : signature logo, pastille et « Mini-jeux »', (page) => {
+  // Signature commune aux outils Skazy Formation : la pastille (le favicon) et « Mini-jeux » forment
+  // un lien vers l'accueil des mini-jeux, « Les outils » mène à la page de tous les outils, le logo
+  // au site de Skazy Formation
+  it.each(pages)('%s : signature, « Mini-jeux », « Les outils » et logo', (page) => {
     const texte = readFileSync(racine + page, 'utf8').replace(/\s+/g, ' ');
     const remonte = '../'.repeat(page.split('/').length - 1);
-    expect(texte).toContain('<a class="signature__logo" href="https://formation.skazy.nc"');
-    expect(texte).toContain(`src="${remonte}assets/img/logo-skazy-formation-blanc.svg"`);
-    // La pastille est décorative : alt vide
-    const pastille = texte.match(/<img class="signature__pastille" [^>]*>/)?.[0];
+
+    // Logo : lien vers formation.skazy.nc, dans un nouvel onglet
+    const logo = texte.match(/<a class="signature__logo"[^>]*> <img [^>]*> <\/a>/)?.[0];
+    expect(logo).toContain('href="https://formation.skazy.nc"');
+    expect(logo).toContain('target="_blank"');
+    expect(logo).toContain(`src="${remonte}assets/img/logo-skazy-formation-blanc.svg"`);
+    expect(logo).toContain('alt="Site de Skazy Formation (nouvel onglet)"');
+
+    // Pastille (décorative : alt vide) et nom de l'outil, dans un seul lien vers l'accueil
+    const outil = texte.match(/<a class="signature__outil[^"]*"[^>]*>.*?<\/a>/)?.[0];
+    expect(outil).toContain(`href="${remonte || './'}"`);
+    const pastille = outil.match(/<img class="signature__pastille" [^>]*>/)?.[0];
     expect(pastille).toContain(`src="${remonte}assets/img/favicon.svg"`);
     expect(pastille).toContain('alt=""');
-    expect(texte).toContain('<span class="signature__nom">Mini-jeux</span>');
+    expect(outil).toContain('<span class="signature__nom">Mini-jeux</span>');
+    if (page === 'index.html') expect(outil).toContain('aria-current="page"');
+
+    // « Les outils » : la roue (copie dans le dépôt, décorative) et son nom, dans le même onglet
+    const outils = texte.match(/<a class="lien-outils[^"]*"[^>]*>.*?<\/a>/)?.[0];
+    expect(outils).toContain('href="https://gharel.github.io/home/"');
+    expect(outils).toContain('title="Tous les outils Skazy Formation"');
+    expect(outils).not.toContain('target=');
+    const roue = outils.match(/<img class="lien-outils__roue" [^>]*>/)?.[0];
+    expect(roue).toContain(`src="${remonte}assets/img/les-outils.svg"`);
+    expect(roue).toContain('alt=""');
+    expect(outils).toContain('<span class="lien-outils__texte">Les outils</span>');
+    expect(existsSync(`${racine}assets/img/les-outils.svg`)).toBe(true);
   });
+
+  // Bandeau : la maison « Accueil », « Mini-jeux », le titre, les boutons, « Les outils », puis le
+  // logo, toujours le dernier
+  it.each(pages.filter((page) => page !== 'index.html'))(
+    '%s : bandeau dans l’ordre, le logo en dernier',
+    (page) => {
+      const texte = readFileSync(racine + page, 'utf8').replace(/\s+/g, ' ');
+      const bandeau = texte.match(/<header class="bandeau">.*?<\/header>/)?.[0];
+      const ordre = [
+        'class="bouton-bandeau bandeau__accueil"',
+        'class="signature__outil bandeau__outil"',
+        'class="bandeau__titre"',
+        'id="actions"',
+        'class="lien-outils"',
+        'class="signature__logo"',
+      ].map((marque) => bandeau.indexOf(marque));
+      expect(ordre.every((position) => position > 0)).toBe(true);
+      expect([...ordre].sort((a, b) => a - b)).toEqual(ordre);
+      // Rien après le logo
+      expect(bandeau).toMatch(
+        /<a class="signature__logo"[^>]*> <img [^>]*> <\/a> <\/div> <\/header>$/,
+      );
+      // Les deux liens « Accueil » et « Mini-jeux » mènent à l'accueil des mini-jeux
+      const remonte = '../'.repeat(page.split('/').length - 1);
+      expect(bandeau).toMatch(
+        new RegExp(`class="bouton-bandeau bandeau__accueil" href="${remonte}"`),
+      );
+    },
+  );
 });

@@ -9,8 +9,10 @@ import { creerTirage } from './commun/roue.js';
 import { tirerAvecRoue } from './commun/dialogues.js';
 import { exigerAcces, verrouiller } from './commun/acces.js';
 import { charger as chargerParticipants } from './commun/participants.js';
+import { creerHautDePage } from './commun/haut-de-page.js';
 
 await exigerAcces();
+creerHautDePage();
 
 function carteJeu(jeu) {
   return el(

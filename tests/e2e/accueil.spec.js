@@ -23,14 +23,116 @@ test('l’accueil présente un jeu par carte, avec un lien qui fonctionne', asyn
     );
   }
 
+  // En haut du héros : « Mini-jeux » (cette page), et « Les outils » vers tous les outils
+  await expect(page.getByRole('link', { name: 'Mini-jeux', exact: true })).toHaveAttribute(
+    'aria-current',
+    'page',
+  );
+  await expect(page.getByRole('link', { name: 'Les outils', exact: true })).toHaveAttribute(
+    'href',
+    'https://gharel.github.io/home/',
+  );
+
   await page.getByRole('link', { name: JEUX[0].titre }).click();
   await expect(page.getByRole('heading', { level: 1, name: JEUX[0].titre })).toBeVisible();
-  // Bandeau : l'accueil à gauche, le logo à droite mène au site de Skazy Formation
-  const logo = page.getByRole('link', { name: 'Site de Skazy Formation (nouvel onglet)' });
+  // Bandeau : la maison à gauche ; le logo, en dernier, mène au site de Skazy Formation
+  const bandeau = page.getByRole('banner');
+  const logo = bandeau.getByRole('link', { name: 'Site de Skazy Formation (nouvel onglet)' });
   await expect(logo).toHaveAttribute('href', 'https://formation.skazy.nc');
   await expect(logo).toHaveAttribute('target', '_blank');
+  // Dans l'ordre : Accueil, Mini-jeux, (titre et boutons), Les outils, puis le logo
+  const liens = bandeau.getByRole('link');
+  await expect(liens).toHaveText(['Accueil', 'Mini-jeux', 'Les outils', '']);
+  await expect(liens.last()).toHaveAccessibleName('Site de Skazy Formation (nouvel onglet)');
+  const outils = bandeau.getByRole('link', { name: 'Les outils', exact: true });
+  await expect(outils).toHaveAttribute('href', 'https://gharel.github.io/home/');
+  await expect(outils).not.toHaveAttribute('target');
+  const droites = await bandeau
+    .locator('a, button')
+    .evaluateAll((elements) =>
+      elements.filter((e) => e.checkVisibility()).map((e) => e.getBoundingClientRect().right),
+    );
+  expect(Math.max(...droites), 'le logo est le plus à droite').toBe(droites.at(-1));
+  // « Mini-jeux » (pastille et nom) ramène à l'accueil, comme la maison
+  await bandeau.getByRole('link', { name: 'Mini-jeux', exact: true }).click();
+  await expect(page.locator('.carte-jeu')).toHaveCount(JEUX.length);
+  await page.goBack();
   await page.getByRole('link', { name: 'Accueil', exact: true }).click();
   await expect(page.locator('.carte-jeu')).toHaveCount(JEUX.length);
+  expect(erreurs).toEqual([]);
+});
+
+// Au vidéoprojecteur comme sur un portable, le bandeau garde une seule ligne, avec le titre le plus
+// long et quatre boutons (Désigner, Groupe, Son, Plein écran), jusqu'en 1024 × 768
+test('le bandeau tient sur une ligne, de 1920 à 1024 px de large', async ({ page }) => {
+  const erreurs = surveillerErreurs(page);
+  await ouvrirJeu(page, 'motus', { prenoms: ['Ana', 'Bob', 'Chloé'] });
+  await expect(page.getByRole('button', { name: 'Désigner', exact: true })).toBeVisible();
+  for (const width of [1920, 1440, 1366, 1280, 1201, 1200, 1024]) {
+    await page.setViewportSize({ width, height: 720 });
+    // Chromium applique les media queries de la nouvelle largeur à l'image suivante
+    await page.evaluate(
+      () => new Promise((fin) => requestAnimationFrame(() => requestAnimationFrame(fin))),
+    );
+    const { centres, lignesTitre, nomVisible, outilsVisible } = await page
+      .locator('.bandeau')
+      .evaluate((bandeau) => {
+        const visibles = [...bandeau.querySelectorAll('a, h1, button, .signature__filet')].filter(
+          (e) => e.checkVisibility(),
+        );
+        const plage = document.createRange();
+        plage.selectNodeContents(bandeau.querySelector('h1'));
+        const hauts = [...plage.getClientRects()].filter((r) => r.width > 0).map((r) => r.top);
+        const affiche = (s) => getComputedStyle(bandeau.querySelector(s)).clipPath === 'none';
+        return {
+          centres: visibles.map((e) => {
+            const r = e.getBoundingClientRect();
+            return (r.top + r.bottom) / 2;
+          }),
+          lignesTitre: new Set(hauts.map(Math.round)).size,
+          nomVisible: affiche('.signature__nom'),
+          outilsVisible: affiche('.lien-outils__texte'),
+        };
+      });
+    expect(lignesTitre, `titre en ${width} px`).toBe(1);
+    expect(Math.max(...centres) - Math.min(...centres), `une ligne en ${width} px`).toBeLessThan(3);
+    // Le nom « Mini-jeux » s'efface sous 1200 px, le texte « Les outils » sous 1350 px
+    expect(nomVisible, `« Mini-jeux » en ${width} px`).toBe(width > 1200);
+    expect(outilsVisible, `« Les outils » en ${width} px`).toBe(width > 1350);
+    await verifierMiseEnPage(page);
+  }
+  // Effacés à l'écran, ils restent des liens nommés
+  const bandeau = page.getByRole('banner');
+  await expect(bandeau.getByRole('link', { name: 'Les outils', exact: true })).toBeVisible();
+  await expect(bandeau.getByRole('link', { name: 'Mini-jeux', exact: true })).toBeVisible();
+  expect(erreurs).toEqual([]);
+});
+
+test('« Remonter en haut » apparaît après défilement et ramène au titre', async ({ page }) => {
+  const erreurs = surveillerErreurs(page);
+  const defiler = () =>
+    page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+  await page.goto('/');
+  await expect(page.locator('.carte-jeu')).toHaveCount(JEUX.length);
+  const remonter = page.getByRole('button', { name: 'Remonter en haut de la page' });
+  // Caché en haut de la page (ni affiché, ni dans la tabulation)
+  await expect(remonter).toBeHidden();
+  await defiler();
+  await expect(remonter).toBeVisible();
+  await verifierAccessibilite(page);
+  await remonter.click();
+  await expect.poll(() => page.evaluate(() => window.scrollY)).toBe(0);
+  await expect(page.getByRole('heading', { level: 1 })).toBeFocused();
+  await expect(remonter).toBeHidden();
+
+  // Dans un jeu : sur son accueil, mais jamais pendant la partie (écran projeté)
+  await page.setViewportSize({ width: 1280, height: 400 });
+  await ouvrirJeu(page, 'motus', { prenoms: ['Ana', 'Bob'] });
+  await defiler();
+  await expect(remonter).toBeVisible();
+  await lancerPartie(page);
+  await defiler();
+  await expect(remonter).toBeHidden();
   expect(erreurs).toEqual([]);
 });
 
