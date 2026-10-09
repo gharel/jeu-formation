@@ -113,7 +113,7 @@ En ligne : **https://gharel.github.io/jeu-formation/**
 Le site est 100 % statique : il suffit de copier `index.html`, `assets/`, `jeux/`, `groupe/` et `contenus/` sur n'importe quel hébergement web (sous-dossier accepté).
 Il fonctionne hors ligne une fois chargé : aucune ressource externe.
 
-Un **mot de passe** est demandé à la première visite, sur l'accueil comme sur chaque jeu. Le navigateur s'en souvient ensuite ; le bouton « Verrouiller l'accès sur cet ordinateur », en bas de l'accueil, le fait redemander. Pour le changer : `npm run mot-de-passe`, puis recopier le sel et l'empreinte affichés dans `assets/js/commun/acces.js`. C'est une protection dissuasive : le site reste statique et ses fichiers publics.
+Un **mot de passe** est demandé à la première visite, sur l'accueil comme sur chaque jeu. Le navigateur s'en souvient ensuite ; le bouton « Verrouiller l'accès sur cet ordinateur », en bas de l'accueil, le fait redemander. Chaque mot de passe incorrect bloque la saisie sur ce navigateur, de plus en plus longtemps : 5 minutes, 1 heure, 24 heures, 1 semaine, 1 mois, puis définitivement. Pour le changer : `npm run mot-de-passe`, puis recopier le sel et l'empreinte affichés dans `assets/js/commun/acces.js`. C'est une protection dissuasive : le site reste statique et ses fichiers publics.
 
 ### Déploiement sur GitHub Pages
 
