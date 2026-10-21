@@ -20,6 +20,8 @@ export function creerGroupe() {
   let scores = scoresGroupe.charger(participants);
   let equipes = listeEquipes.charger(participants);
   let scoresEquipes = listeEquipes.chargerScores(equipes);
+  /** Les équipes telles qu'enregistrées (peut-être changées dans un autre onglet). */
+  const equipesEnregistrees = () => listeEquipes.charger(listeParticipants.charger());
   const ecouteurs = new Set();
   const prevenir = () => {
     for (const ecouteur of ecouteurs) ecouteur();
@@ -158,14 +160,15 @@ export function creerGroupe() {
     },
 
     // Les scores sont relus dans le stockage avant chaque changement : un jeu ouvert dans un
-    // autre onglet a pu en ajouter.
+    // autre onglet a pu en ajouter. Ils sont gardés selon la liste et les équipes enregistrées,
+    // pas celles de cette page : une personne ajoutée ailleurs ne perd pas ses points.
 
     /**
      * Points gagnés (ou perdus) dans un jeu par une personne ou plusieurs (une liste) : `source`
      * est le slug du jeu. Une seule lecture et une seule écriture, quel que soit le nombre.
      */
     ajouterPoints(prenoms, source, n) {
-      let nouveaux = scoresGroupe.charger(participants);
+      let nouveaux = scoresGroupe.charger(listeParticipants.charger());
       for (const prenom of [].concat(prenoms)) {
         nouveaux = scoresGroupe.ajouterPoints(nouveaux, prenom, source, n);
       }
@@ -176,9 +179,10 @@ export function creerGroupe() {
 
     /** Points gagnés (ou perdus) dans un jeu par une équipe ou plusieurs (leurs identifiants). */
     ajouterPointsEquipes(ids, source, n) {
-      let nouveaux = listeEquipes.chargerScores(equipes);
+      const enregistrees = equipesEnregistrees();
+      let nouveaux = listeEquipes.chargerScores(enregistrees);
       for (const id of [].concat(ids)) {
-        if (equipes.some((e) => e.id === id)) {
+        if (enregistrees.some((e) => e.id === id)) {
           nouveaux = scoresGroupe.ajouterPoints(nouveaux, id, source, n);
         }
       }
@@ -189,14 +193,22 @@ export function creerGroupe() {
 
     /** L'animateur corrige le total d'une équipe. */
     fixerTotalEquipe(id, total) {
-      scoresEquipes = scoresGroupe.fixerTotal(listeEquipes.chargerScores(equipes), id, total);
+      scoresEquipes = scoresGroupe.fixerTotal(
+        listeEquipes.chargerScores(equipesEnregistrees()),
+        id,
+        total,
+      );
       listeEquipes.enregistrerScores(scoresEquipes);
       prevenirScores();
     },
 
     /** L'animateur corrige le total d'une personne. */
     fixerTotal(prenom, total) {
-      scores = scoresGroupe.fixerTotal(scoresGroupe.charger(participants), prenom, total);
+      scores = scoresGroupe.fixerTotal(
+        scoresGroupe.charger(listeParticipants.charger()),
+        prenom,
+        total,
+      );
       scoresGroupe.enregistrer(scores);
       prevenirScores();
     },

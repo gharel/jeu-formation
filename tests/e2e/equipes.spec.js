@@ -269,6 +269,67 @@ test('mode par équipes : qui joue contre qui, seules les équipes marquent, un 
   expect(erreurs).toEqual([]);
 });
 
+test('par équipes, un joueur sans équipe est placé avant de lancer (sinon ses points seraient perdus)', async ({
+  page,
+}) => {
+  const erreurs = surveillerErreurs(page);
+  await ouvrirAvecEquipes(page, 'motus');
+  await page.evaluate(() =>
+    localStorage.setItem(
+      'skazy-jeux:participants',
+      JSON.stringify(['Ana', 'Bob', 'Chloé', 'David', 'Zoé']),
+    ),
+  );
+  await page.reload();
+  const bloc = await choisirMode(page, 'Par équipes');
+  await expect(bloc).toContainText(
+    /Sans équipe\s: Zoé\. Par équipes, ses points ne compteraient pas/,
+  );
+
+  // Annuler : la partie ne part pas
+  await page.getByRole('button', { name: /Lancer la partie/ }).click();
+  const dialogue = page.getByRole('dialog', { name: /Zoé n’a pas d’équipe/ });
+  await dialogue.getByRole('button', { name: 'Annuler' }).click();
+  await expect(page.getByRole('heading', { name: 'Comment on joue ?' })).toBeVisible();
+
+  // Placer et lancer : Zoé rejoint une équipe, la partie démarre
+  await page.getByRole('button', { name: /Lancer la partie/ }).click();
+  await dialogue.getByRole('button', { name: 'Placer et lancer' }).click();
+  await expect(page.getByRole('button', { name: /Quitter la partie/ })).toBeVisible();
+  const equipes = await page.evaluate(() => JSON.parse(localStorage.getItem('skazy-jeux:equipes')));
+  expect(equipes.flatMap((e) => e.membres)).toContain('zoé');
+
+  // Chacun pour soi : pas d'avertissement « Sans équipe »
+  await page.getByRole('button', { name: /Quitter la partie/ }).click();
+  await page.evaluate(() =>
+    localStorage.setItem(
+      'skazy-jeux:equipes',
+      JSON.stringify([
+        { id: 'e1', nom: 'Les Bleus', membres: ['ana', 'bob'] },
+        { id: 'e2', nom: 'Les Rouges', membres: ['chloé', 'david'] },
+      ]),
+    ),
+  );
+  await page.reload();
+  const blocSeul = await choisirMode(page, 'Chacun pour soi');
+  await expect(blocSeul).not.toContainText('Sans équipe');
+  expect(erreurs).toEqual([]);
+});
+
+test('pyramide par équipes : le binôme se choisit dans l’équipe dont c’est le tour', async ({
+  page,
+}) => {
+  const erreurs = surveillerErreurs(page);
+  await ouvrirAvecEquipes(page, 'pyramide');
+  await choisirMode(page, 'Par équipes');
+  await lancerPartie(page);
+  await expect(page.locator('#cadre').getByText('Au tour de l’équipe Les Bleus')).toBeVisible();
+  for (const libelle of ['Fait deviner', 'Devine, dos à l’écran']) {
+    await expect(page.getByLabel(libelle).locator('option')).toHaveText(['Ana', 'Bob']);
+  }
+  expect(erreurs).toEqual([]);
+});
+
 test('chacun pour soi : pas d’équipes en partie ; former les équipes depuis le jeu', async ({
   page,
 }) => {

@@ -34,7 +34,8 @@ export function creerBlocParticipants(groupe) {
         if (
           await confirmer({
             titre: 'Effacer la liste ?',
-            message: 'Tous les prénoms (et leurs infos) seront retirés.',
+            message:
+              'Tous les prénoms seront retirés, avec leurs infos, leurs points et leur place dans les équipes.',
             oui: 'Effacer',
           })
         ) {
@@ -106,7 +107,19 @@ export function creerBlocParticipants(groupe) {
               type: 'button',
               class: 'puce__retirer',
               'aria-label': `Retirer ${prenom}`,
-              onclick: () => {
+              onclick: async () => {
+                // Ses points sont effacés avec la personne : on demande d'abord, s'il en a
+                const points = groupe.totalDe(prenom);
+                if (
+                  points &&
+                  !(await confirmer({
+                    titre: `Retirer ${prenom} ?`,
+                    message: `${prenom} a ${points} point${Math.abs(points) > 1 ? 's' : ''} : ils seront effacés.`,
+                    oui: 'Retirer',
+                  }))
+                ) {
+                  return;
+                }
                 groupe.changerParticipants(listeParticipants.retirer(groupe.participants, prenom));
                 dessiner();
                 champ.focus();

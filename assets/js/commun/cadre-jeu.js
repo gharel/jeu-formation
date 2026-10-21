@@ -33,7 +33,7 @@ import {
 } from './ui.js';
 import { choisirGagnants, choisirPrenoms, confirmer, designerAvecRoue } from './dialogues.js';
 import { creerGroupe, etiquetteInfo } from './groupe.js';
-import { membresParmi } from './equipes.js';
+import { membresParmi, sansEquipe, completerEquipes } from './equipes.js';
 import { creerBlocJoueurs } from './bloc-joueurs.js';
 import { creerBlocMode } from './bloc-mode.js';
 import {
@@ -648,7 +648,27 @@ export function monterJeu(config) {
   }
 
   // ---------- Partie ----------
+  /**
+   * Par équipes, seules les équipes marquent : un joueur sans équipe jouerait pour rien. On le
+   * dit avant de lancer, et on propose de le placer (sinon, pas de partie).
+   */
+  async function placerLesJoueursSansEquipe() {
+    groupe.rechargerEquipes();
+    const presents = joueurs();
+    if (modeDeLaPartie(modeChoisi, equipesParmi(presents)) !== 'equipes') return true;
+    const seuls = sansEquipe(groupe.equipes, presents);
+    if (!seuls.length) return true;
+    const placer = await confirmer({
+      titre: seuls.length > 1 ? 'Des joueurs sans équipe' : `${seuls[0]} n’a pas d’équipe`,
+      message: `Par équipes, seules les équipes marquent : les points de ${seuls.join(', ')} ne compteraient pas. Placer ${seuls.length > 1 ? 'ces joueurs' : seuls[0]} dans l’équipe la moins nombreuse ?`,
+      oui: 'Placer et lancer',
+    });
+    if (placer) groupe.changerEquipes(completerEquipes(groupe.equipes, presents));
+    return placer;
+  }
+
   async function lancerPartie() {
+    if (!(await placerLesJoueursSansEquipe())) return;
     arreterPartie();
     // Les joueurs du moment : ceux choisis dans « Qui joue ? », présents aujourd'hui
     joueursEnJeu = joueurs();

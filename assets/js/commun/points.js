@@ -83,7 +83,10 @@ export function creerBoutonPoints(
     });
     if (!gagnants.prenoms.length && !gagnants.equipes?.length) return;
     coup = ctx.scores.ajouterGagnants(gagnants, points);
-    if (!coup) return;
+    if (!coup) {
+      ctx.annoncer('Aucun point attribué.');
+      return;
+    }
     const qui = decrireGagnants(ctx, gagnants);
     bouton.disabled = true;
     remplir(bouton, icone('check'), `+${libelle} pour ${qui}`);

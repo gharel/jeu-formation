@@ -11,6 +11,8 @@ import {
   placerDansEquipe,
   repartirAuHasard,
   classementEquipes,
+  equipesEnTrop,
+  avertirEquipesRetirees,
 } from '../../assets/js/commun/equipes.js';
 import { creerGroupe } from '../../assets/js/commun/groupe.js';
 import { creerScores } from '../../assets/js/commun/scores.js';
@@ -107,7 +109,42 @@ describe('équipes : fonctions pures', () => {
   });
 });
 
+describe('équipes recomposées en moins d’équipes', () => {
+  const trois = [...bleusRouges, { id: 'e3', nom: 'Les Verts', membres: [] }];
+
+  it('retire les dernières équipes', () => {
+    expect(equipesEnTrop(trois, 2).map((e) => e.id)).toEqual(['e3']);
+    expect(equipesEnTrop(trois, 3)).toEqual([]);
+  });
+
+  it('prévient seulement si une équipe retirée perd des points', () => {
+    expect(avertirEquipesRetirees(trois, 2, {})).toBe('');
+    expect(avertirEquipesRetirees(trois, 2, { e3: { motus: 4 } })).toBe(
+      'L’équipe Les Verts est retirée, avec ses 4 points.',
+    );
+    expect(avertirEquipesRetirees(trois, 1, { e2: { motus: 1 }, e3: { motus: 1 } })).toBe(
+      'Les équipes Les Rouges et Les Verts sont retirées, avec leurs points.',
+    );
+  });
+});
+
 describe('équipes : état partagé (groupe.js)', () => {
+  it('un jeu ouvert avant un changement de la liste ne fait pas perdre de points', () => {
+    // Le jeu est ouvert avec Ana et Bob ; Zoé et une 3e équipe arrivent depuis la page Groupe
+    const jeu = creerGroupe();
+    jeu.changerParticipants(['Ana', 'Bob']);
+    jeu.changerEquipes([{ id: 'e1', nom: 'Les Bleus', membres: ['ana'] }]);
+    const page = creerGroupe();
+    page.changerParticipants(['Ana', 'Bob', 'Zoé']);
+    page.changerEquipes([...page.equipes, { id: 'e2', nom: 'Les Rouges', membres: ['zoé'] }]);
+    page.fixerTotal('Zoé', 3);
+    page.fixerTotalEquipe('e2', 2);
+    jeu.ajouterPoints('Ana', 'motus', 1);
+    jeu.ajouterPointsEquipes(['e1'], 'motus', 1);
+    expect(lire('scores-groupe')).toEqual({ zoé: { correction: 3 }, ana: { motus: 1 } });
+    expect(lire('scores-equipes')).toEqual({ e2: { correction: 2 }, e1: { motus: 1 } });
+  });
+
   it('garde les équipes cohérentes avec la liste, et leurs points d’un jeu à l’autre', () => {
     const groupe = creerGroupe();
     groupe.changerParticipants(groupe4);

@@ -13,7 +13,9 @@ import {
   placerDansEquipe,
   repartirAuHasard,
   sansEquipe,
+  avertirEquipesRetirees,
 } from './equipes.js';
+import { totalDe } from './scores-groupe.js';
 import { confirmer, ouvrirDialogue } from './dialogues.js';
 import { el, remplir, icone, annoncer } from './ui.js';
 
@@ -121,7 +123,27 @@ export function creerBlocEquipes(groupe, { hasard = Math.random } = {}) {
             class: 'puce__retirer',
             'aria-label': `Retirer l’équipe ${equipe.nom}`,
             title: 'Retirer cette équipe (ses membres restent dans le groupe)',
-            onclick: () => groupe.changerEquipes(retirerEquipe(groupe.equipes, equipe.id)),
+            onclick: async () => {
+              // Retirer une équipe efface ses points : on demande d'abord, s'il y a de quoi perdre
+              const points = totalDe(groupe.scoresEquipes, equipe.id);
+              const aPerdre = [
+                membres.length
+                  ? `ses ${pluriel(membres.length, 'membre')} restent sans équipe`
+                  : '',
+                points ? `ses ${pluriel(Math.abs(points), 'point')} sont effacés` : '',
+              ].filter(Boolean);
+              if (
+                aPerdre.length &&
+                !(await confirmer({
+                  titre: `Retirer l’équipe ${equipe.nom} ?`,
+                  message: `${aPerdre.join(' et ').replace(/^./, (c) => c.toUpperCase())}.`,
+                  oui: 'Retirer',
+                }))
+              ) {
+                return;
+              }
+              groupe.changerEquipes(retirerEquipe(groupe.equipes, equipe.id));
+            },
           },
           icone('xmark'),
         ),
@@ -230,12 +252,18 @@ export function creerBlocEquipes(groupe, { hasard = Math.random } = {}) {
       class: 'bouton bouton--principal',
       onclick: async () => {
         const composees = groupe.equipes.some((e) => e.membres.length);
+        const retirees = avertirEquipesRetirees(
+          groupe.equipes,
+          Number(nombre.value),
+          groupe.scoresEquipes,
+        );
         if (
-          composees &&
+          (composees || retirees) &&
           !(await confirmer({
             titre: 'Recomposer les équipes ?',
-            message:
-              'Les présents sont répartis de nouveau au hasard. Les équipes gardent leur nom et leurs points.',
+            message: retirees
+              ? `Les présents sont répartis de nouveau au hasard. ${retirees} Les autres gardent leur nom et leurs points.`
+              : 'Les présents sont répartis de nouveau au hasard. Les équipes gardent leur nom et leurs points.',
             oui: 'Recomposer',
           }))
         ) {

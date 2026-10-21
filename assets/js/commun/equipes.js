@@ -132,6 +132,28 @@ export function repartirAuHasard(equipes, prenoms, nombre, hasard = Math.random)
   return nouvelles;
 }
 
+/** Les équipes que « Former au hasard » en `nombre` équipes retire : les dernières de la liste. */
+export function equipesEnTrop(equipes, nombre) {
+  const n = Math.max(1, Math.min(NOMBRE_EQUIPES_MAX, Math.trunc(nombre) || 1));
+  return equipes.slice(n);
+}
+
+/**
+ * Avant de recomposer : « L’équipe Les Verts est retirée, avec ses 4 points. », ou '' si aucune
+ * équipe retirée n'a de points (elle n'a rien à perdre).
+ */
+export function avertirEquipesRetirees(equipes, nombre, scores) {
+  const perdues = equipesEnTrop(equipes, nombre).filter((e) => totalDe(scores, e.id) !== 0);
+  if (!perdues.length) return '';
+  if (perdues.length === 1) {
+    const [e] = perdues;
+    const points = totalDe(scores, e.id);
+    return `L’équipe ${e.nom} est retirée, avec ses ${points} point${Math.abs(points) > 1 ? 's' : ''}.`;
+  }
+  const noms = perdues.map((e) => e.nom);
+  return `Les équipes ${noms.slice(0, -1).join(', ')} et ${noms.at(-1)} sont retirées, avec leurs points.`;
+}
+
 /**
  * Place chaque joueur sans équipe dans l'équipe qui compte le moins de joueurs (parmi `joueurs`),
  * la première en cas d'égalité. Sans équipe, ne change rien.

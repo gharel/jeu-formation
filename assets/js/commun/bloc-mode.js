@@ -11,7 +11,13 @@
  * - cooperatif : tout le groupe joue ensemble (le mode dit seulement qui reçoit les points).
  */
 import { MODES, avecEquipes, equipesSuffisantes } from './mode-jeu.js';
-import { NOMBRE_EQUIPES_MAX, completerEquipes, repartirAuHasard, sansEquipe } from './equipes.js';
+import {
+  NOMBRE_EQUIPES_MAX,
+  completerEquipes,
+  repartirAuHasard,
+  sansEquipe,
+  avertirEquipesRetirees,
+} from './equipes.js';
 import { confirmer } from './dialogues.js';
 import { sons } from './sons.js';
 import { el, remplir, icone, annoncer } from './ui.js';
@@ -37,11 +43,12 @@ export function creerBlocMode(
   async function former() {
     const presents = joueurs();
     const dejaFormees = groupe.equipes.some((e) => e.membres.length);
+    const retirees = avertirEquipesRetirees(groupe.equipes, nombreEquipes, groupe.scoresEquipes);
     if (
-      dejaFormees &&
+      (dejaFormees || retirees) &&
       !(await confirmer({
         titre: 'Former les équipes au hasard ?',
-        message: `Les équipes du groupe sont refaites au hasard parmi les ${presents.length} joueurs de la partie. Les autres personnes du groupe se retrouvent sans équipe.`,
+        message: `Les équipes du groupe sont refaites au hasard parmi les ${presents.length} joueurs de la partie. Les autres personnes du groupe se retrouvent sans équipe.${retirees ? ` ${retirees}` : ''}`,
         oui: 'Former au hasard',
       }))
     ) {
@@ -145,7 +152,8 @@ export function creerBlocMode(
     const assez = equipesSuffisantes(equipes);
     const description = MODES.find((m) => m.valeur === actuel)?.aide ?? '';
     const enEquipes = avecEquipes(actuel);
-    const seuls = assez ? sansEquipe(groupe.equipes, presents) : [];
+    // Sans équipe : seulement s'il y a une partie en équipes (rien à dire chacun pour soi)
+    const seuls = enEquipes && assez ? sansEquipe(groupe.equipes, presents) : [];
     let etat = null;
     if (enEquipes && !assez) {
       etat = el(
@@ -178,7 +186,9 @@ export function creerBlocMode(
               'p',
               { class: 'bloc-mode__alerte' },
               icone('triangle-exclamation'),
-              `Sans équipe : ${seuls.join(', ')}.`,
+              actuel === 'equipes'
+                ? `Sans équipe : ${seuls.join(', ')}. Par équipes, ${seuls.length > 1 ? 'leurs' : 'ses'} points ne compteraient pas.`
+                : `Sans équipe : ${seuls.join(', ')}. Points individuels seulement.`,
             ),
             el(
               'button',

@@ -71,6 +71,15 @@ test('les points de chaque jeu s’additionnent dans les scores du groupe', asyn
   await expect(lignes.filter({ hasText: 'Ana' }).locator('.scores-groupe__rang')).toHaveText('1.');
   await onglet.getByRole('button', { name: 'Un point de moins pour Bob' }).click();
   await expect(onglet.getByLabel('Score de Bob')).toHaveValue('2');
+  // Un point marqué ailleurs juste avant (stockage changé sans prévenir la page) : + le garde
+  await onglet.evaluate(() => {
+    const cle = 'skazy-jeux:scores-groupe';
+    const scores = JSON.parse(localStorage.getItem(cle));
+    scores.bob = { ...scores.bob, bingo: 2 };
+    localStorage.setItem(cle, JSON.stringify(scores));
+  });
+  await onglet.getByRole('button', { name: 'Un point de plus pour Bob' }).click();
+  await expect(onglet.getByLabel('Score de Bob')).toHaveValue('5');
   await onglet.getByLabel('Score de Chloé').fill('7');
   await onglet.getByLabel('Score de Chloé').press('Tab');
   await expect(lignes.nth(0)).toContainText('Chloé');
@@ -115,7 +124,14 @@ test('une personne retirée du groupe perd ses points ; le fichier du groupe les
     points: { correction: 4 },
   });
 
+  // Ses points partiraient avec elle : on demande d'abord
+  const dialogue = page.getByRole('dialog');
   await page.getByRole('button', { name: 'Retirer Ana' }).click();
+  await expect(dialogue).toContainText(/Ana a 4\spoints\s: ils seront effacés/);
+  await dialogue.getByRole('button', { name: 'Annuler' }).click();
+  await expect(page.locator('#bloc-scores').getByRole('listitem')).toHaveCount(2);
+  await page.getByRole('button', { name: 'Retirer Ana' }).click();
+  await dialogue.getByRole('button', { name: 'Retirer' }).click();
   await expect(page.locator('#bloc-scores').getByRole('listitem')).toHaveCount(1);
   await page.getByLabel('Ajouter un prénom').fill('Ana');
   await page.getByRole('button', { name: 'Ajouter', exact: true }).click();

@@ -66,20 +66,18 @@ function demarrer(ctx) {
       equipe ? `Au tour de l’équipe ${equipe.nom}` : 'Quel binôme joue ?',
     );
     const erreur = el('p', { class: 'pyramide__erreur', role: 'alert' });
+    // En équipes, le binôme se choisit parmi les membres de l'équipe dont c'est le tour
+    const candidats = equipe ? equipe.membres : ctx.participants;
     const selecteur = (id) =>
       el(
         'select',
         { id, class: 'champ__controle' },
-        ctx.participants.map((p) => el('option', { value: p }, p)),
+        candidats.map((p) => el('option', { value: p }, p)),
       );
     const maitre = selecteur('pyramide-maitre');
     const devineur = selecteur('pyramide-devineur');
     const tirer = () => {
-      [maitre.value, devineur.value] = tirerBinome(
-        equipe ? equipe.membres : ctx.participants,
-        dejaJoue,
-        ctx.hasard,
-      );
+      [maitre.value, devineur.value] = tirerBinome(candidats, dejaJoue, ctx.hasard);
       remplir(erreur);
     };
     tirer();

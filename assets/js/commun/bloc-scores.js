@@ -83,9 +83,20 @@ export function creerBlocScores(groupe) {
   /**
    * Une ligne du classement. `nom` : le prénom ou le nom de l'équipe (`qui`, pour les boutons :
    * « l’équipe Les Bleus ») ; `repere` : ce qui retrouve ses boutons après un nouveau dessin (le
-   * prénom, ou « equipe:e1 ») ; `fixer(total)` corrige son score.
+   * prénom, ou « equipe:e1 ») ; `fixer(total)` corrige son score ; `corriger(n)` ajoute n points
+   * au score enregistré (− et + : un point marqué entre-temps dans un autre onglet est gardé).
    */
-  function ligne({ nom, qui = nom, repere, points, rang, detail, absente = false, fixer }) {
+  function ligne({
+    nom,
+    qui = nom,
+    repere,
+    points,
+    rang,
+    detail,
+    absente = false,
+    fixer,
+    corriger,
+  }) {
     const champ = el('input', {
       type: 'number',
       class: 'champ__controle scores-groupe__total',
@@ -128,7 +139,7 @@ export function creerBlocScores(groupe) {
             class: 'scores-groupe__bouton',
             'aria-label': `Un point de moins pour ${qui}`,
             dataset: { moins: repere },
-            onclick: () => fixer(points - 1),
+            onclick: () => corriger(-1),
           },
           icone('minus'),
         ),
@@ -140,7 +151,7 @@ export function creerBlocScores(groupe) {
             class: 'scores-groupe__bouton',
             'aria-label': `Un point de plus pour ${qui}`,
             dataset: { plus: repere },
-            onclick: () => fixer(points + 1),
+            onclick: () => corriger(1),
           },
           icone('plus'),
         ),
@@ -171,6 +182,7 @@ export function creerBlocScores(groupe) {
           detail: detailDe(groupe.scores, prenom),
           absente: groupe.estAbsent(prenom),
           fixer: (total) => groupe.fixerTotal(prenom, total),
+          corriger: (n) => groupe.ajouterPoints(prenom, CORRECTION, n),
         }),
       ),
     );
@@ -186,6 +198,7 @@ export function creerBlocScores(groupe) {
           rang,
           detail: detailDe(groupe.scoresEquipes, id),
           fixer: (total) => groupe.fixerTotalEquipe(id, total),
+          corriger: (n) => groupe.ajouterPointsEquipes([id], CORRECTION, n),
         }),
       ),
     );
