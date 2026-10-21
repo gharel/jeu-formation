@@ -39,6 +39,27 @@ export async function lancerPartie(page) {
 }
 
 /** Clique « Attribuer … » puis le prénom dans la fenêtre (et « Valider » si le choix est multiple). */
+/**
+ * Règle un minuteur (réglage « duree ») sur l'accueil du jeu : 0 = « Sans limite » (la croix),
+ * sinon les flèches du clavier sur la valeur, par pas de 5 s.
+ */
+export async function choisirDuree(page, libelle, secondes) {
+  const valeur = page.getByRole('spinbutton', { name: libelle });
+  const champ = page.locator('.champ--duree').filter({ has: valeur });
+  if (secondes === 0) {
+    const croix = champ.getByRole('button', { name: 'Sans limite' });
+    if ((await croix.getAttribute('aria-pressed')) !== 'true') await croix.click();
+    return;
+  }
+  await valeur.focus();
+  await valeur.press('Home');
+  for (let i = 0; i < 200; i += 1) {
+    if (Number(await valeur.getAttribute('aria-valuenow')) >= secondes) break;
+    await valeur.press('ArrowUp');
+  }
+  await expect(valeur).toHaveAttribute('aria-valuenow', String(secondes));
+}
+
 export async function attribuerPoints(page, prenom) {
   await page.getByRole('button', { name: /Attribuer/ }).click();
   const dialogue = page.getByRole('dialog');

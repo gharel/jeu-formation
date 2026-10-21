@@ -340,6 +340,9 @@ test('nouvelle formation : tout vider, ou seulement les équipes et les scores',
   await expect(
     page.locator('#cadre').getByText('contenu d’exemple', { exact: true }),
   ).toBeVisible();
-  await expect(page.getByLabel('Temps par mot')).toHaveValue('120');
+  await expect(page.getByRole('spinbutton', { name: 'Temps par mot' })).toHaveAttribute(
+    'aria-valuenow',
+    '120',
+  );
   expect(erreurs).toEqual([]);
 });

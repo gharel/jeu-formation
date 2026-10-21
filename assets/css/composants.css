@@ -1209,8 +1209,8 @@
   display: inline-flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 0.4rem 0.6rem;
-  padding: 0.3rem 0.35rem 0.3rem 0.9rem;
+  gap: 0.5rem 1rem;
+  padding: 0.45rem 0.55rem 0.45rem 1.3rem;
   background: var(--blanc);
   border: 3px solid transparent;
   border-radius: var(--rayon-pilule);
@@ -1221,8 +1221,8 @@
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  padding-bottom: 0.4rem;
+  gap: 0.7rem;
+  padding: 0.1rem 0.15rem 0.55rem 0;
 }
 
 .minuteur-manche__icone {
@@ -1261,7 +1261,7 @@
 
 .minuteur-manche__plus,
 .minuteur-manche__passer {
-  padding: 0.4em 0.9em;
+  padding: 0.5em 1.15em;
 }
 
 .minuteur-manche--urgent {

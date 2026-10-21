@@ -812,6 +812,89 @@ textarea.champ__controle {
   }
 }
 
+/* Durée (minuteur) : une pilule − valeur +, et à côté la croix ronde « Sans limite » */
+.duree {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.duree__bouton {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  font: inherit;
+  font-size: 1.05rem;
+  color: var(--bleu-nuit);
+  background: var(--blanc);
+  border: 2px solid var(--bord);
+  border-radius: 50%;
+  box-shadow: var(--ombre);
+  cursor: pointer;
+  touch-action: manipulation;
+  user-select: none;
+  transition:
+    border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.duree__bouton .icone {
+  margin-inline-end: 0;
+}
+
+.duree__bouton:hover:not([aria-disabled='true']) {
+  border-color: var(--bleu-nuit);
+  background: var(--fond);
+}
+
+.duree__bouton[aria-disabled='true'] {
+  opacity: 0.35;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
+.duree__valeur {
+  min-width: 6.6em;
+  padding: 0.5rem 0.6rem;
+  font-weight: 800;
+  font-size: 1.15rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  color: var(--bleu-nuit);
+  background: var(--fond);
+  border: 2px solid transparent;
+  border-radius: var(--rayon-pilule);
+  cursor: default;
+}
+
+.duree__valeur:focus-visible {
+  border-color: var(--bleu-nuit);
+}
+
+.duree__valeur--sans-limite {
+  color: var(--texte-doux);
+}
+
+/* La croix, un peu à l'écart : enfoncée (« Sans limite » choisi), elle passe en bleu nuit */
+.duree__sans-limite {
+  margin-inline-start: 0.35rem;
+}
+
+.duree__sans-limite[aria-pressed='true'] {
+  color: var(--blanc);
+  background: var(--bleu-nuit);
+  border-color: var(--bleu-nuit);
+}
+
+.duree__sans-limite[aria-pressed='true']:hover {
+  color: var(--blanc);
+  background: var(--bleu-nuit);
+}
+
 .champ__unite {
   font-weight: 700;
   color: var(--texte-doux);

@@ -5,7 +5,7 @@
  * {
  *   reglages: [{ cle, libelle, type: 'nombre' | 'case' | 'choix' | 'duree', defaut, min, max, unite,
  *                options, sansLimite, lancement }],
- *   // duree : en secondes, choisie dans une liste (« 1 min 30 ») ; sansLimite : 0 = « Sans limite »
+ *   // duree : en secondes, réglée par − / + (pas de 5 s, « 1 min 30 ») ; sansLimite : 0 = « Sans limite »
  *   // lancement : réglé sur l'accueil du jeu, au lancement (minuteur), pas dans « Préparer »
  *   elements: {
  *     libelle: 'Mot', pluriel: 'mots', feminin: false, min: 5, max: 5,
@@ -29,8 +29,8 @@ export function cleContenu(slug) {
 }
 
 const LONGUEUR_TEXTE = 200;
-/** Durées proposées pour un réglage de type « duree », en secondes. */
-export const DUREES = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 300, 600];
+/** Pas des boutons − / + d'un réglage de type « duree », en secondes. */
+export const PAS_DUREE = 5;
 const LONGUEUR_TEXTE_LONG = 1000;
 
 function longueurMax(champ) {
@@ -43,7 +43,7 @@ function valeurParDefaut(champ) {
     case 'nombre':
       return null;
     case 'duree':
-      return champ.sansLimite ? 0 : (champ.min ?? DUREES[0]);
+      return champ.sansLimite ? 0 : (champ.min ?? PAS_DUREE);
     case 'case':
       return false;
     case 'choix':
@@ -116,18 +116,19 @@ export function libelleDuree(secondes) {
 }
 
 /**
- * Choix d'un réglage « duree » : les durées de la liste entre min et max, « Sans limite » en tête
- * si le jeu le permet, et la valeur actuelle si elle n'y est pas (venue d'un import).
+ * Durée suivante (sens +1) ou précédente (sens −1) d'un réglage « duree » : par pas de 5 s, calée
+ * sur un multiple de 5 (une valeur importée, 77 s, passe à 80 s ou 75 s), entre min et max.
+ * Depuis « Sans limite » (0), + repart de la valeur conseillée ; − n'y descend jamais (bouton X).
  */
-export function optionsDuree(champ, actuelle = null) {
-  const { min = 1, max = 3600 } = champ;
-  const valeurs = new Set(DUREES.filter((d) => d >= min && d <= max));
-  if (champ.defaut) valeurs.add(champ.defaut);
-  if (Number.isInteger(actuelle) && (actuelle > 0 || champ.sansLimite)) valeurs.add(actuelle);
-  if (champ.sansLimite) valeurs.add(0);
-  return [...valeurs]
-    .sort((a, b) => (a === 0 ? -1 : b === 0 ? 1 : a - b))
-    .map((valeur) => ({ valeur, libelle: libelleDuree(valeur) }));
+export function pasDuree(champ, valeur, sens) {
+  const min = champ.min ?? PAS_DUREE;
+  const max = champ.max ?? 3600;
+  if (!valeur) return sens > 0 ? champ.defaut || min : 0;
+  const suivante =
+    sens > 0
+      ? (Math.floor(valeur / PAS_DUREE) + 1) * PAS_DUREE
+      : (Math.ceil(valeur / PAS_DUREE) - 1) * PAS_DUREE;
+  return Math.min(max, Math.max(min, suivante));
 }
 
 function nettoyerDuree(champ, brut) {

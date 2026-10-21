@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { creerMinuteurManche, formaterTemps } from '../../assets/js/commun/minuteur-manche.js';
 import {
   libelleDuree,
-  optionsDuree,
+  pasDuree,
   nettoyerContenu,
   validerContenu,
   validerReglages,
@@ -124,13 +124,23 @@ describe('réglage de durée', () => {
     expect(libelleDuree(90)).toBe('1 min 30');
   });
 
-  it('propose « Sans limite », les durées entre min et max, et la valeur importée', () => {
-    const options = optionsDuree(schema.reglages[0], 75).map((o) => o.valeur);
-    expect(options[0]).toBe(0);
-    expect(options).toContain(75);
-    expect(options).toContain(120);
-    expect(options).not.toContain(10);
-    expect(options).not.toContain(900);
+  it('avance et recule par pas de 5 s, entre min et max', () => {
+    const temps = schema.reglages[0];
+    expect(pasDuree(temps, 120, 1)).toBe(125);
+    expect(pasDuree(temps, 120, -1)).toBe(115);
+    // Une valeur importée hors du pas se recale sur un multiple de 5
+    expect(pasDuree(temps, 77, 1)).toBe(80);
+    expect(pasDuree(temps, 77, -1)).toBe(75);
+    // Bornes
+    expect(pasDuree(temps, 15, -1)).toBe(15);
+    expect(pasDuree(temps, 600, 1)).toBe(600);
+  });
+
+  it('depuis « Sans limite », + revient à la valeur conseillée et − ne bouge pas', () => {
+    const temps = schema.reglages[0];
+    expect(pasDuree(temps, 0, 1)).toBe(120);
+    expect(pasDuree(temps, 0, -1)).toBe(0);
+    expect(pasDuree({ ...temps, defaut: undefined }, 0, 1)).toBe(15);
   });
 
   it('se nettoie : bornes, « Sans limite », valeur illisible', () => {

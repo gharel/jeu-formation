@@ -2,8 +2,8 @@
  * Éditeur générique du contenu d'un jeu, construit à partir de son schéma (voir contenu.js).
  * Les réponses (champs « secret ») sont masquées par défaut : l'écran est peut-être projeté.
  */
-import { el, remplir, icone } from './ui.js';
-import { elementVide, exempleDuChamp, optionsDuree } from './contenu.js';
+import { el, remplir, icone, typographier } from './ui.js';
+import { elementVide, exempleDuChamp, pasDuree, libelleDuree, PAS_DUREE } from './contenu.js';
 import { lireNombre, formaterNombre } from './nombres.js';
 import { enregistrerImage, lireFichierImage, imageDuCollage, adresseImage } from './images.js';
 
@@ -143,28 +143,8 @@ export function construireChamp(champ, lire, ecrire, outils = { zonesImage: [] }
       );
     }
 
-    case 'duree': {
-      const controle = el(
-        'select',
-        {
-          id,
-          class: 'champ__controle',
-          'aria-describedby': idAide,
-          onchange: (e) => ecrire(Number(e.target.value)),
-        },
-        ...optionsDuree(champ, lire()).map((o) =>
-          el('option', { value: String(o.valeur) }, o.libelle),
-        ),
-      );
-      controle.value = String(lire());
-      return el(
-        'div',
-        { class: 'champ champ--duree' },
-        etiquette(champ, id),
-        controle,
-        aide(avecAide),
-      );
-    }
+    case 'duree':
+      return construireDuree(champ, lire, ecrire, id, avecAide);
 
     case 'liste':
       return construireListe(champ, lire, ecrire, avecAide);
@@ -175,6 +155,151 @@ export function construireChamp(champ, lire, ecrire, outils = { zonesImage: [] }
     default:
       return null;
   }
+}
+
+/** Appui long sur un bouton : l'action se répète (− / + d'une durée), après un court délai. */
+function repeterAppui(bouton, action) {
+  let attente = null;
+  let boucle = null;
+  let repete = false;
+  const cesser = () => {
+    clearTimeout(attente);
+    clearInterval(boucle);
+    attente = null;
+    boucle = null;
+  };
+  bouton.addEventListener('pointerdown', (e) => {
+    if (e.button !== 0) return;
+    cesser();
+    repete = false;
+    attente = setTimeout(() => {
+      repete = true;
+      action();
+      boucle = setInterval(action, 90);
+    }, 450);
+  });
+  for (const fin of ['pointerup', 'pointerleave', 'pointercancel', 'blur']) {
+    bouton.addEventListener(fin, cesser);
+  }
+  // Le clic qui termine un appui long ne rajoute pas un pas ; Entrée et Espace font un pas
+  bouton.addEventListener('click', () => {
+    if (repete) repete = false;
+    else action();
+  });
+}
+
+/**
+ * Durée (minuteur de manche) : − et + par pas de 5 s autour de la valeur (« 1 min 30 »), et X pour
+ * « Sans limite » (un second clic revient à la valeur conseillée). Au clavier, la valeur est un
+ * curseur (spinbutton) : flèches, Page précédente / suivante (30 s), Début / Fin.
+ */
+function construireDuree(champ, lire, ecrire, id, avecAide) {
+  const idLibelle = `${id}-libelle`;
+  const min = champ.min ?? PAS_DUREE;
+  const max = champ.max ?? 3600;
+  const valeur = el('span', {
+    id,
+    class: 'duree__valeur',
+    role: 'spinbutton',
+    tabindex: '0',
+    'aria-labelledby': idLibelle,
+    'aria-describedby': avecAide.idAide,
+    'aria-valuemin': champ.sansLimite ? 0 : min,
+    'aria-valuemax': max,
+  });
+  const moins = el(
+    'button',
+    {
+      type: 'button',
+      class: 'duree__bouton',
+      'aria-label': `Retirer ${PAS_DUREE} secondes`,
+      title: `− ${PAS_DUREE} s`,
+      'aria-controls': id,
+    },
+    icone('minus'),
+  );
+  const plus = el(
+    'button',
+    {
+      type: 'button',
+      class: 'duree__bouton',
+      'aria-label': `Ajouter ${PAS_DUREE} secondes`,
+      title: `+ ${PAS_DUREE} s`,
+      'aria-controls': id,
+    },
+    icone('plus'),
+  );
+  const sansLimite = champ.sansLimite
+    ? el(
+        'button',
+        {
+          type: 'button',
+          class: 'duree__bouton duree__sans-limite',
+          'aria-label': 'Sans limite',
+          title: 'Sans limite de temps',
+          'aria-controls': id,
+        },
+        icone('xmark'),
+      )
+    : null;
+
+  function afficher() {
+    const v = lire();
+    const texte = typographier(libelleDuree(v));
+    valeur.textContent = texte;
+    valeur.setAttribute('aria-valuenow', String(v));
+    valeur.setAttribute('aria-valuetext', texte);
+    valeur.classList.toggle('duree__valeur--sans-limite', !v);
+    // aria-disabled plutôt que disabled : le bouton garde le focus quand on atteint une borne
+    moins.setAttribute('aria-disabled', String(!v || v <= min));
+    plus.setAttribute('aria-disabled', String(Boolean(v) && v >= max));
+    sansLimite?.setAttribute('aria-pressed', String(!v));
+  }
+
+  function changer(nouvelle) {
+    if (nouvelle === lire()) return;
+    ecrire(nouvelle);
+    afficher();
+  }
+
+  const pas = (sens, fois = 1) => {
+    let v = lire();
+    for (let i = 0; i < fois; i += 1) v = pasDuree(champ, v, sens);
+    changer(v);
+  };
+
+  repeterAppui(moins, () => {
+    if (moins.getAttribute('aria-disabled') !== 'true') pas(-1);
+  });
+  repeterAppui(plus, () => {
+    if (plus.getAttribute('aria-disabled') !== 'true') pas(1);
+  });
+  sansLimite?.addEventListener('click', () => changer(lire() ? 0 : champ.defaut || min));
+
+  valeur.addEventListener('keydown', (e) => {
+    const actions = {
+      ArrowUp: () => pas(1),
+      ArrowRight: () => pas(1),
+      ArrowDown: () => lire() && pas(-1),
+      ArrowLeft: () => lire() && pas(-1),
+      PageUp: () => pas(1, 6),
+      PageDown: () => lire() && pas(-1, 6),
+      Home: () => changer(min),
+      End: () => changer(max),
+    };
+    if (!actions[e.key]) return;
+    e.preventDefault();
+    actions[e.key]();
+  });
+
+  afficher();
+  return el(
+    'div',
+    { class: 'champ champ--duree' },
+    el('span', { id: idLibelle, class: 'champ__libelle' }, champ.libelle),
+    el('div', { class: 'duree' }, moins, valeur, plus, sansLimite),
+    aide(avecAide),
+  );
 }
 
 function construireListe(champ, lire, ecrire, avecAide) {

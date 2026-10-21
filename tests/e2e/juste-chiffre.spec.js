@@ -5,6 +5,7 @@ import {
   lancerPartie,
   pointsDe,
   verifierAccessibilite,
+  choisirDuree,
 } from './outils.js';
 
 const minuteur = (page) => page.locator('.minuteur-manche');
@@ -77,7 +78,7 @@ test('le minuteur choisi au lancement alerte à zéro : du temps en plus, ou la 
 }) => {
   await ouvrirJeu(page, 'juste-chiffre');
   // Le temps se choisit sur l'accueil, au lancement
-  await page.getByLabel('Temps par question').selectOption('5');
+  await choisirDuree(page, 'Temps par question', 5);
   await lancerPartie(page);
   await expect(page.locator('#cadre').getByText('5 secondes pour trouver le nombre')).toBeVisible();
   await afficherQuestion(page);
@@ -105,7 +106,7 @@ test('le minuteur choisi au lancement alerte à zéro : du temps en plus, ou la 
 
 test('sans limite de temps, la question n’a pas de chrono', async ({ page }) => {
   await ouvrirJeu(page, 'juste-chiffre');
-  await page.getByLabel('Temps par question').selectOption('0');
+  await choisirDuree(page, 'Temps par question', 0);
   await lancerPartie(page);
   await expect(
     page.locator('#cadre').getByText('Sans limite de temps pour trouver le nombre'),
