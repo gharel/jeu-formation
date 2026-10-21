@@ -8,9 +8,8 @@ import {
 } from './outils.js';
 
 async function paliersCourts(page) {
-  await page.getByRole('button', { name: /Préparer le contenu/ }).click();
+  // La durée des paliers se règle sur l'accueil du jeu, au lancement
   await page.getByLabel('Durée de chaque palier').fill('2');
-  await page.getByRole('button', { name: 'Enregistrer' }).click();
 }
 
 test('Qui suis-je : les points fondent, Stop fige, la bonne réponse marque', async ({ page }) => {

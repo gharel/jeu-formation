@@ -11,6 +11,16 @@ export const schema = {
       max: 5,
       aide: 'Moins on utilise d’essais, plus on marque de points.',
     },
+    {
+      cle: 'tempsManche',
+      libelle: 'Temps par procédure',
+      type: 'duree',
+      defaut: 90,
+      min: 30,
+      max: 600,
+      sansLimite: true,
+      lancement: true,
+    },
   ],
   elements: {
     libelle: 'Procédure',

@@ -5,6 +5,7 @@ import {
   creerMot,
   roles,
   tirerBinome,
+  equipeDuTour,
 } from '../../jeux/pyramide/logique.js';
 import { schema, exemple } from '../../jeux/pyramide/exemple.js';
 import { nettoyerContenu, validerContenu } from '../../assets/js/commun/contenu.js';
@@ -101,8 +102,31 @@ describe('Pyramide', () => {
       elements: [{ mot: 'Souris', indices: ['Rongeur', 'Molette', 'Clic'] }],
     };
     expect(nettoyerContenu(schema, ancien)).toEqual({
-      reglages: { motsParBinome: 2 },
+      reglages: { motsParBinome: 2, tempsManche: 45 },
       elements: [{ mot: 'Souris' }],
     });
+  });
+});
+
+describe('Pyramide en équipes', () => {
+  it('fait jouer les équipes d’au moins deux joueurs, chacune son tour', () => {
+    const bleus = { id: 'e1', membres: ['Ana', 'Bob'] };
+    const rouges = { id: 'e2', membres: ['Chloé', 'David', 'Eva'] };
+    const seul = { id: 'e3', membres: ['Zoé'] };
+    expect([0, 1, 2].map((t) => equipeDuTour([bleus, seul, rouges], t).id)).toEqual([
+      'e1',
+      'e2',
+      'e1',
+    ]);
+    expect(equipeDuTour([bleus, seul], 0)).toBeNull();
+  });
+
+  it('perd le mot quand le temps est écoulé', () => {
+    const mot = creerMot();
+    expect(mot.abandonner()).toBe(false);
+    mot.afficher();
+    expect(mot.abandonner()).toBe(true);
+    expect(mot.issue).toBe('temps');
+    expect(mot.points).toBe(0);
   });
 });

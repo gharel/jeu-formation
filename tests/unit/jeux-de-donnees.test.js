@@ -104,8 +104,9 @@ describe('jeu de données : contenu d’un jeu', () => {
       { elements: [{ question: 'Quel raccourci copie ?', reponse: 'Ctrl + C', intrus: 1 }] },
       actuel,
     );
+    // Le temps par question se choisit au lancement : sa valeur par défaut reste dans le contenu
     expect(contenu).toEqual({
-      reglages: { pointsVictoire: 5 },
+      reglages: { pointsVictoire: 5, tempsManche: 30 },
       elements: [{ question: 'Quel raccourci copie ?', reponse: 'Ctrl + C' }],
     });
   });
@@ -113,9 +114,10 @@ describe('jeu de données : contenu d’un jeu', () => {
   it('prend les réglages du fichier, sinon ceux par défaut', () => {
     expect(
       contenuDepuisDonnees(schemaDuel, { reglages: { pointsVictoire: 2 }, elements: [] }).reglages,
-    ).toEqual({ pointsVictoire: 2 });
+    ).toEqual({ pointsVictoire: 2, tempsManche: 30 });
     expect(contenuDepuisDonnees(schemaDuel, { elements: [] }).reglages).toEqual({
       pointsVictoire: 3,
+      tempsManche: 30,
     });
   });
 });

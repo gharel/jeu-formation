@@ -291,3 +291,55 @@ test('deux personnes du même prénom : la deuxième reçoit un numéro, partout
   await expect(liste.locator('.puce__prenom')).toHaveText(['Marie', 'Paul']);
   expect(erreurs).toEqual([]);
 });
+
+test('nouvelle formation : tout vider, ou seulement les équipes et les scores', async ({
+  page,
+}) => {
+  const erreurs = surveillerErreurs(page);
+  await page.goto('/groupe/');
+  await page.evaluate(() => {
+    localStorage.setItem('skazy-jeux:participants', JSON.stringify(['Ana', 'Bob', 'Chloé']));
+    localStorage.setItem(
+      'skazy-jeux:equipes',
+      JSON.stringify([{ id: 'e1', nom: 'Les Bleus', membres: ['ana', 'bob'] }]),
+    );
+    localStorage.setItem('skazy-jeux:scores-groupe', JSON.stringify({ ana: { motus: 3 } }));
+    localStorage.setItem(
+      'skazy-jeux:motus:contenu',
+      JSON.stringify({
+        elements: ['octet', 'pixel', 'souris', 'ecran', 'clavier'].map((mot) => ({ mot })),
+      }),
+    );
+    localStorage.setItem('skazy-jeux:motus:lancement', JSON.stringify({ tempsManche: 30 }));
+  });
+  await page.reload();
+  const bloc = page.getByRole('region', { name: 'Nouvelle formation' });
+
+  // D'abord seulement les équipes et les scores : les joueurs et les contenus restent
+  await bloc.getByRole('button', { name: 'Tout vider…' }).click();
+  let dialogue = page.getByRole('dialog', { name: /Tout vider/ });
+  await verifierAccessibilite(page);
+  await dialogue.getByLabel('Les joueurs').uncheck();
+  await dialogue.getByLabel('Les contenus des jeux').uncheck();
+  await dialogue.getByRole('button', { name: 'Tout vider' }).click();
+  await expect(bloc).toContainText('C’est vidé : les équipes et les scores.');
+  await expect(page.getByRole('list', { name: 'Participants' })).toContainText('Chloé');
+  await expect(page.getByLabel('Nom de l’équipe 1')).toHaveCount(0);
+
+  // Puis tout : les joueurs emportent équipes et scores (cochés d'office)
+  await bloc.getByRole('button', { name: 'Tout vider…' }).click();
+  dialogue = page.getByRole('dialog', { name: /Tout vider/ });
+  await expect(dialogue.getByLabel('Les scores')).toBeChecked();
+  await expect(dialogue.getByLabel('Les scores')).toBeDisabled();
+  await dialogue.getByRole('button', { name: 'Tout vider' }).click();
+  await expect(bloc).toContainText(/C’est vidé\s:\sles joueurs, les équipes, les scores et/);
+  await expect(page.locator('.puce__prenom')).toHaveCount(0);
+
+  // Dans le jeu : le contenu d'exemple et le minuteur par défaut sont revenus
+  await page.goto('/jeux/motus/');
+  await expect(
+    page.locator('#cadre').getByText('contenu d’exemple', { exact: true }),
+  ).toBeVisible();
+  await expect(page.getByLabel('Temps par mot')).toHaveValue('120');
+  expect(erreurs).toEqual([]);
+});

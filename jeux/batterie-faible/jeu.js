@@ -62,6 +62,12 @@ function demarrer(ctx) {
   let index = 0;
   let auTourDe = null;
   let rafraichirTour = null;
+  // Temps par mot (choisi au lancement) : à zéro, une alerte ; l'animateur peut dévoiler le mot
+  let devoiler = null;
+  const minuteur = ctx.creerMinuteurManche({
+    duree: ctx.reglages.tempsManche,
+    passer: { libelle: 'Dévoiler le mot', faire: () => devoiler?.() },
+  });
 
   ctx.quandDesigne((prenom) => {
     auTourDe = prenom;
@@ -253,8 +259,9 @@ function demarrer(ctx) {
       dessinerEtat();
     }
 
-    function conclure(trouve) {
+    function conclure(trouve, tempsEcoule = false) {
       fini = true;
+      minuteur?.arreter();
       rafraichirTour();
       commandes.hidden = true;
       remplir(message);
@@ -267,7 +274,9 @@ function demarrer(ctx) {
         { class: 'lettres__verdict' },
         trouve
           ? [icone('face-grin-stars'), 'Mot découvert !']
-          : [icone('battery-empty'), 'Batterie à plat !'],
+          : tempsEcoule
+            ? [icone('hourglass-end'), 'Temps écoulé !']
+            : [icone('battery-empty'), 'Batterie à plat !'],
       );
       remplir(
         resultat,
@@ -304,7 +313,9 @@ function demarrer(ctx) {
       // Les sons une fois l'écran construit
       if (trouve) ctx.sons.fanfare(3);
       else ctx.sons.batterie.aPlat();
-      ctx.annoncer(`${trouve ? 'Mot découvert' : 'Batterie à plat'} : ${mot}`);
+      ctx.annoncer(
+        `${trouve ? 'Mot découvert' : tempsEcoule ? 'Temps écoulé' : 'Batterie à plat'} : ${mot}`,
+      );
       focaliser(titre);
     }
 
@@ -356,6 +367,10 @@ function demarrer(ctx) {
     dessinerMot();
     dessinerEtat();
     saisie.focus();
+    devoiler = () => {
+      if (!fini) conclure(false, true);
+    };
+    minuteur?.relancer();
   }
 
   afficherMot();
@@ -374,7 +389,7 @@ monterJeu({
     'Avant la séance, préparez des mots ou courtes expressions du numérique.',
     'Les participants proposent des lettres à l’oral : vous les tapez ou les cliquez.',
     'Chaque lettre absente vide un cran de la batterie. Batterie à plat : le mot est révélé.',
-    'Celui ou celle qui découvre le mot (lettre par lettre ou d’un coup) gagne 1 point.',
+    'Qui découvre le mot (lettre par lettre ou d’un coup) gagne 1 point, ou le fait gagner à son équipe.',
   ],
   demarrer,
 });

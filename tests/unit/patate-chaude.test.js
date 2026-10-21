@@ -90,3 +90,17 @@ describe('Patate chaude', () => {
     expect(nettoyerContenu(schema, exemple)).toEqual(exemple);
   });
 });
+
+describe('Patate chaude en équipes', () => {
+  it('ne fait marquer que les autres équipes', () => {
+    const joueurs = ['Ana', 'Bob', 'Chloé', 'David'];
+    const equipes = [
+      { id: 'e1', membres: ['Ana', 'Bob'] },
+      { id: 'e2', membres: ['Chloé'] },
+    ];
+    expect(gagnantsDeLaManche(joueurs, 'Ana', equipes)).toEqual(['Chloé', 'David']);
+    // Sans équipe, seule la personne brûlée ne marque pas
+    expect(gagnantsDeLaManche(joueurs, 'David', equipes)).toEqual(['Ana', 'Bob', 'Chloé']);
+    expect(gagnantsDeLaManche(joueurs, 'Ana')).toEqual(['Bob', 'Chloé', 'David']);
+  });
+});

@@ -10,6 +10,7 @@ export const schema = {
       defaut: 10,
       min: 2,
       max: 30,
+      lancement: true,
     },
     {
       cle: 'penalite',

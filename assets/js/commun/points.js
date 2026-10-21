@@ -1,7 +1,8 @@
 /**
  * Bouton « Attribuer le point » : ouvre la liste des prénoms et ajoute les points choisis, à une
- * personne, à plusieurs, à tout le monde ou à une équipe. Sans participants, renvoie null (on joue
- * sans classement).
+ * personne, à plusieurs, à tout le monde ou à une équipe (selon le mode de jeu). Un bouton
+ * « Annuler les points » le suit, pour réparer une erreur de clic. Sans participants, renvoie
+ * null (on joue sans classement).
  */
 import { el, remplir, icone } from './ui.js';
 
@@ -31,6 +32,16 @@ export function decrireGagnants(ctx, { prenoms, equipes = [] }, max = 3) {
   return nommerGagnants(prenoms, ctx.participants, max, choisies);
 }
 
+/**
+ * Qui a marqué, quand le jeu donne lui-même le point à un joueur : « Bob », « Bob (Les Bleus) »
+ * quand l'équipe marque aussi, ou « Les Bleus » quand seules les équipes marquent.
+ */
+export function nommerMarqueur(ctx, prenom) {
+  const equipe = ctx.equipeDe?.(prenom);
+  if (!equipe) return prenom;
+  return ctx.mode === 'equipes' ? equipe.nom : `${prenom} (${equipe.nom})`;
+}
+
 export function creerBoutonPoints(
   ctx,
   { points = 1, titre = 'Qui a trouvé ?', message = '', multiple = false, preselection = [] } = {},
@@ -43,6 +54,25 @@ export function creerBoutonPoints(
     icone('trophy'),
     `Attribuer ${libelle}`,
   );
+  let coup = null;
+  const annuler = el(
+    'button',
+    {
+      type: 'button',
+      class: 'bouton bouton--discret',
+      onclick: () => {
+        if (!ctx.scores.annuler?.(coup)) return;
+        coup = null;
+        annuler.remove();
+        bouton.disabled = false;
+        remplir(bouton, icone('trophy'), `Attribuer ${libelle}`);
+        ctx.annoncer('Points retirés : vous pouvez les attribuer de nouveau.');
+        bouton.focus();
+      },
+    },
+    icone('rotate-left'),
+    'Annuler les points',
+  );
   bouton.addEventListener('click', async () => {
     const gagnants = await ctx.choisirGagnants({
       titre,
@@ -51,11 +81,13 @@ export function creerBoutonPoints(
       plusieurs: !multiple,
       preselection,
     });
-    if (!gagnants.prenoms.length) return;
-    ctx.scores.ajouterGagnants(gagnants, points);
+    if (!gagnants.prenoms.length && !gagnants.equipes?.length) return;
+    coup = ctx.scores.ajouterGagnants(gagnants, points);
+    if (!coup) return;
     const qui = decrireGagnants(ctx, gagnants);
     bouton.disabled = true;
     remplir(bouton, icone('check'), `+${libelle} pour ${qui}`);
+    bouton.after(annuler);
     ctx.annoncer(`${libelle} pour ${qui}`);
     ctx.sons.ding();
   });

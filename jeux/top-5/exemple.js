@@ -10,6 +10,16 @@ export const schema = {
       min: 1,
       max: 6,
     },
+    {
+      cle: 'tempsManche',
+      libelle: 'Temps par question',
+      type: 'duree',
+      defaut: 120,
+      min: 30,
+      max: 600,
+      sansLimite: true,
+      lancement: true,
+    },
   ],
   elements: {
     libelle: 'Question',
@@ -52,7 +62,7 @@ export const schema = {
 };
 
 export const exemple = {
-  reglages: { erreursMax: 3 },
+  reglages: { erreursMax: 3, tempsManche: 120 },
   elements: [
     {
       question: 'Citez un navigateur web.',

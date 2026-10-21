@@ -1,5 +1,10 @@
 import { describe, it, expect } from 'vitest';
-import { consigne, appliquerEliminations, gagnant } from '../../jeux/debout-assis/logique.js';
+import {
+  consigne,
+  appliquerEliminations,
+  gagnant,
+  equipeGagnante,
+} from '../../jeux/debout-assis/logique.js';
 import { schema, exemple } from '../../jeux/debout-assis/exemple.js';
 import { nettoyerContenu, validerContenu } from '../../assets/js/commun/contenu.js';
 
@@ -35,5 +40,18 @@ describe('Debout ou assis ?', () => {
     expect(validerContenu(schema, contenu)).toEqual([]);
     const defaut = nettoyerContenu(schema, {});
     expect(defaut.reglages).toEqual({ duree: 10, consigne: 'debout', survie: false });
+  });
+});
+
+describe('Debout ou assis, survie en équipes', () => {
+  const bleus = { id: 'e1', nom: 'Les Bleus', membres: ['Ana', 'Bob'] };
+  const rouges = { id: 'e2', nom: 'Les Rouges', membres: ['Chloé'] };
+
+  it('désigne la dernière équipe en jeu', () => {
+    expect(equipeGagnante(['Ana', 'Bob'], [bleus, rouges])).toBe(bleus);
+    expect(equipeGagnante(['Ana', 'Chloé'], [bleus, rouges])).toBeNull();
+    // Un joueur sans équipe est encore en jeu : pas de vainqueur
+    expect(equipeGagnante(['Ana', 'Zoé'], [bleus, rouges])).toBeNull();
+    expect(equipeGagnante(['Ana'], [])).toBeNull();
   });
 });

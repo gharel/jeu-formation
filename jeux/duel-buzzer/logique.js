@@ -87,6 +87,31 @@ export function creerDuel({ pointsVictoire = 3 } = {}) {
   };
 }
 
+/** Clé d'un affrontement, dans un sens comme dans l'autre : « e1|e2 ». */
+export function cleAffrontement(a, b) {
+  return [a, b].sort().join('|');
+}
+
+/**
+ * En équipes : deux équipes différentes ({ id }) tirées au hasard, de préférence parmi les
+ * affrontements pas encore joués (`dejaJoues` : leurs clés). Null s'il y a moins de deux équipes.
+ */
+export function tirerEquipesDuel(equipes, dejaJoues = [], hasard = Math.random) {
+  if (equipes.length < 2) return null;
+  const paires = [];
+  equipes.forEach((a, i) => equipes.slice(i + 1).forEach((b) => paires.push([a.id, b.id])));
+  const joues = new Set(dejaJoues);
+  const nouvelles = paires.filter(([a, b]) => !joues.has(cleAffrontement(a, b)));
+  const choix = nouvelles.length ? nouvelles : paires;
+  const paire = choix[Math.floor(hasard() * choix.length)];
+  return hasard() < 0.5 ? paire : [paire[1], paire[0]];
+}
+
+/** Qui répond pour une équipe à la question `numero` (0, 1, 2…) : ses membres à tour de rôle. */
+export function repondant(membres, numero) {
+  return membres.length ? membres[numero % membres.length] : null;
+}
+
 /** Deux participants différents tirés au hasard. */
 export function tirerDuellistes(participants, hasard = Math.random) {
   if (participants.length < 2) return null;

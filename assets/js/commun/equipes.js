@@ -132,6 +132,21 @@ export function repartirAuHasard(equipes, prenoms, nombre, hasard = Math.random)
   return nouvelles;
 }
 
+/**
+ * Place chaque joueur sans équipe dans l'équipe qui compte le moins de joueurs (parmi `joueurs`),
+ * la première en cas d'égalité. Sans équipe, ne change rien.
+ */
+export function completerEquipes(equipes, joueurs) {
+  if (!equipes.length) return equipes;
+  let nouvelles = equipes;
+  for (const prenom of sansEquipe(equipes, joueurs)) {
+    const tailles = nouvelles.map((e) => membresParmi(e, joueurs).length);
+    const plusPetite = nouvelles[tailles.indexOf(Math.min(...tailles))];
+    nouvelles = placerDansEquipe(nouvelles, prenom, plusPetite.id);
+  }
+  return nouvelles;
+}
+
 /** Classement des équipes : [{ id, nom, points, rang }], ex æquo au même rang. */
 export function classementEquipes(scores, equipes) {
   const noms = new Map(equipes.map((e) => [e.id, e.nom]));

@@ -1,6 +1,18 @@
 import { validerMotSecret, NOMBRE_MOTS } from './logique.js';
 
 export const schema = {
+  reglages: [
+    {
+      cle: 'tempsManche',
+      libelle: 'Temps par mot',
+      type: 'duree',
+      defaut: 120,
+      min: 30,
+      max: 600,
+      sansLimite: true,
+      lancement: true,
+    },
+  ],
   elements: {
     libelle: 'Mot',
     pluriel: 'mots',

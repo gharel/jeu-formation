@@ -1,6 +1,18 @@
 import { MOTS_MIN } from './logique.js';
 
 export const schema = {
+  reglages: [
+    {
+      cle: 'tempsManche',
+      libelle: 'Temps entre deux tirages',
+      type: 'duree',
+      defaut: 30,
+      min: 10,
+      max: 180,
+      sansLimite: true,
+      lancement: true,
+    },
+  ],
   elements: {
     libelle: 'Mot',
     pluriel: 'mots',

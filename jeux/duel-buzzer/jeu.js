@@ -8,7 +8,15 @@ import {
   ecouterClavier,
 } from '../../assets/js/commun/ui.js';
 import { schema, exemple } from './exemple.js';
-import { creerDuel, autre, tirerDuellistes, TOUCHES } from './logique.js';
+import {
+  creerDuel,
+  autre,
+  tirerDuellistes,
+  tirerEquipesDuel,
+  cleAffrontement,
+  repondant,
+  TOUCHES,
+} from './logique.js';
 import { creerIllustrationDuel } from './illustration.js';
 
 const COTES = ['gauche', 'droite'];
@@ -20,10 +28,19 @@ function demarrer(ctx) {
   const { pointsVictoire } = ctx.reglages;
   const questions = ctx.elements;
   const avecPrenoms = ctx.participants.length >= 2;
+  // En équipes : deux équipes s'affrontent, leurs membres répondent à tour de rôle
+  const enEquipes = ctx.equipes.length >= 2;
+  const dejaJoues = [];
   let indexQuestion = 0;
   let retirerClavier = null;
   // Le buzzer du plateau : il s'enfonce quand quelqu'un buzze
   const illustration = creerIllustrationDuel();
+  // Temps par question (choisi au lancement) : à zéro, une alerte ; on peut passer la question
+  let passerCourant = null;
+  const minuteur = ctx.creerMinuteurManche({
+    duree: ctx.reglages.tempsManche,
+    passer: { libelle: 'Passer la question', faire: () => passerCourant?.() },
+  });
 
   const restantes = () => questions.length - indexQuestion;
   const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? 's' : ''}`;
@@ -32,7 +49,12 @@ function demarrer(ctx) {
   function afficherChoix() {
     retirerClavier?.();
     retirerClavier = null;
-    const titre = el('h3', { class: 'panneau__texte' }, 'Qui s’affronte ?');
+    minuteur?.arreter();
+    const titre = el(
+      'h3',
+      { class: 'panneau__texte' },
+      enEquipes ? 'Quelles équipes s’affrontent ?' : 'Qui s’affronte ?',
+    );
     const erreur = el('p', { class: 'duel__erreur', role: 'alert' });
     const selecteurs = {};
     let choix = el(
@@ -46,11 +68,15 @@ function demarrer(ctx) {
         selecteurs[cote] = el(
           'select',
           { id: `duel-${cote}`, class: 'champ__controle' },
-          ctx.participants.map((p) => el('option', { value: p }, p)),
+          enEquipes
+            ? ctx.equipes.map((e) => el('option', { value: e.id }, e.nom))
+            : ctx.participants.map((p) => el('option', { value: p }, p)),
         );
       }
       const tirer = () => {
-        const [g, d] = tirerDuellistes(ctx.participants, ctx.hasard);
+        const [g, d] = enEquipes
+          ? tirerEquipesDuel(ctx.equipes, dejaJoues, ctx.hasard)
+          : tirerDuellistes(ctx.participants, ctx.hasard);
         selecteurs.gauche.value = g;
         selecteurs.droite.value = d;
         erreur.textContent = '';
@@ -94,14 +120,24 @@ function demarrer(ctx) {
         type: 'button',
         class: 'bouton bouton--principal bouton--grand',
         onclick: () => {
-          const noms = avecPrenoms
-            ? { gauche: selecteurs.gauche.value, droite: selecteurs.droite.value }
-            : { gauche: 'Gauche', droite: 'Droite' };
-          if (noms.gauche === noms.droite) {
-            erreur.textContent = 'Choisissez deux personnes différentes.';
+          if (avecPrenoms && selecteurs.gauche.value === selecteurs.droite.value) {
+            erreur.textContent = enEquipes
+              ? 'Choisissez deux équipes différentes.'
+              : 'Choisissez deux personnes différentes.';
             return;
           }
-          afficherDuel(noms);
+          const camps = {};
+          for (const cote of COTES) {
+            const valeur = selecteurs[cote]?.value;
+            const equipe = enEquipes ? ctx.equipes.find((e) => e.id === valeur) : null;
+            if (equipe) camps[cote] = { nom: equipe.nom, membres: equipe.membres };
+            else if (avecPrenoms) camps[cote] = { nom: valeur, membres: [valeur] };
+            else camps[cote] = { nom: cote === 'gauche' ? 'Gauche' : 'Droite', membres: [] };
+          }
+          if (enEquipes) {
+            dejaJoues.push(cleAffrontement(selecteurs.gauche.value, selecteurs.droite.value));
+          }
+          afficherDuel(camps);
         },
       },
       'Commencer le duel',
@@ -133,8 +169,15 @@ function demarrer(ctx) {
   }
 
   // ---------- Duel ----------
-  function afficherDuel(noms) {
+  /** `camps` : { gauche, droite }, chacun { nom, membres } (une personne, ou une équipe). */
+  function afficherDuel(camps) {
     const duel = creerDuel({ pointsVictoire });
+    const noms = { gauche: camps.gauche.nom, droite: camps.droite.nom };
+    // Questions jouées dans ce duel : en équipes, les membres répondent à tour de rôle
+    let numero = 0;
+    const repondantDe = (cote) => repondant(camps[cote].membres, numero);
+    /** « Ana (Les Bleus) » en équipes, sinon le nom du joueur. */
+    const quiRepond = (cote) => (enEquipes ? `${repondantDe(cote)} (${noms[cote]})` : noms[cote]);
     const cotes = {};
     for (const cote of COTES) {
       const touche = TOUCHES[cote].toUpperCase();
@@ -165,14 +208,16 @@ function demarrer(ctx) {
         },
         el('span', { class: 'duel__touche', 'aria-hidden': 'true' }, touche),
       );
+      const repond = enEquipes ? el('p', { class: 'duel__repondant' }) : null;
       const bloc = el(
         'div',
         { class: `duel__joueur duel__joueur--${cote}` },
         buzzer,
         el('p', { class: 'duel__nom' }, noms[cote]),
+        repond,
         points,
       );
-      cotes[cote] = { bloc, points, pastilles };
+      cotes[cote] = { bloc, points, pastilles, repond };
     }
 
     const surtitre = el('p', { class: 'panneau__surtitre' });
@@ -230,6 +275,7 @@ function demarrer(ctx) {
           `Points de ${noms[cote]} : ${p[cote]} sur ${pointsVictoire}`,
         );
         cotes[cote].bloc.classList.toggle('duel__joueur--main', duel.main === cote);
+        if (cotes[cote].repond) remplir(cotes[cote].repond, `Répond : ${repondantDe(cote)}`);
       }
     }
 
@@ -290,7 +336,7 @@ function demarrer(ctx) {
           el('p', { class: 'panneau__surtitre' }, 'Réponse'),
           el('p', { class: 'reponse-apercu__valeur' }, questions[indexQuestion].reponse),
         );
-        remplir(statut, message ?? `${noms[duel.main]} répond !`);
+        remplir(statut, message ?? `${quiRepond(duel.main)} répond !`);
         actionEntree = () => valider(true);
         remplir(
           actions,
@@ -310,6 +356,7 @@ function demarrer(ctx) {
     }
 
     function dessinerFin() {
+      minuteur?.arreter();
       montrerReponse();
       const derniere = indexQuestion >= questions.length - 1;
       if (duel.vainqueur) {
@@ -337,6 +384,7 @@ function demarrer(ctx) {
         ? () => ctx.terminer({ message: 'Toutes les questions ont été posées.' })
         : () => {
             indexQuestion += 1;
+            numero += 1;
             duel.preparer();
             dessiner();
           };
@@ -355,6 +403,7 @@ function demarrer(ctx) {
       if (!duel.ouvrir()) return;
       dessiner();
       animer(question, 'apparition');
+      minuteur?.relancer();
     }
 
     function buzz(cote) {
@@ -368,10 +417,10 @@ function demarrer(ctx) {
       const cote = duel.main;
       const issue = duel.valider(bonne);
       if (issue === null) return;
-      if (issue === 'point' && ctx.participants.includes(noms[cote])) {
-        ctx.scores.ajouter(noms[cote], 1);
-      }
-      dessiner(issue === 'main-adverse' ? `Raté ! ${noms[autre(cote)]} peut répondre` : null);
+      // Le point va à qui a répondu (et à son équipe, selon le mode de jeu)
+      const qui = repondantDe(cote);
+      if (issue === 'point' && ctx.participants.includes(qui)) ctx.scores.ajouter(qui, 1);
+      dessiner(issue === 'main-adverse' ? `Raté ! ${quiRepond(autre(cote))} peut répondre` : null);
       if (issue === 'personne') remplir(statut, 'Raté des deux côtés : pas de point.');
       // L'illustration et le son une fois le plateau à jour (la victoire a sa propre fanfare,
       // jouée par dessinerFin)
@@ -381,10 +430,14 @@ function demarrer(ctx) {
     }
 
     function passer() {
-      duel.passer();
+      if (!duel.passer()) return;
       remplir(statut, 'Personne ne sait : pas de point.');
       dessinerFin();
     }
+    passerCourant = () => {
+      passer();
+      plateau.focus({ preventScroll: true });
+    };
 
     retirerClavier?.();
     retirerClavier = ecouterClavier({
@@ -409,7 +462,7 @@ monterJeu({
   exemple,
   regles: [
     'Avant la séance, préparez des questions courtes avec leur réponse.',
-    'Choisissez deux participants (ou tirez-les au sort). Pour buzzer : touche A à gauche, L à droite, ou leur buzzer à l’écran (souris, écran tactile).',
+    'Choisissez deux participants, ou deux équipes dont les membres répondent à tour de rôle (ou tirez-les au sort). Pour buzzer : touche A à gauche, L à droite, ou leur buzzer à l’écran (souris, écran tactile).',
     'Affichez la question : le premier qui buzze répond. Pas de faux départ possible !',
     'Bonne réponse : 1 point. Mauvaise : la main passe à l’adversaire. Le premier à 3 points gagne.',
   ],

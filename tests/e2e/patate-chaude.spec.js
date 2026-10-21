@@ -82,9 +82,8 @@ test('Patate chaude sans prénoms : on joue quand même, sans points', async ({ 
   await figerHorloge(page);
   await ouvrirJeu(page, 'patate-chaude');
   await arreterHorloge(page);
-  await page.getByRole('button', { name: /Préparer le contenu/ }).click();
+  // La mèche se règle sur l'accueil du jeu, au lancement
   await page.getByLabel('Mèche').selectOption('courte');
-  await page.getByRole('button', { name: 'Enregistrer' }).click();
   await lancerPartie(page);
   const cadre = page.locator('#cadre');
   await expect(cadre.getByText('Qui commence ? Prenez la patate en main !')).toBeVisible();

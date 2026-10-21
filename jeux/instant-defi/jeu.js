@@ -224,7 +224,8 @@ monterJeu({
     'Avant la séance, écrivez la fin de vos défis (« … le menu pour enregistrer un fichier »).',
     'La roue tire un défi au hasard, avec un début générique : « 30 secondes pour trouver… ».',
     'Désignez un joueur ou laissez tout le monde chercher sur son poste, puis Top départ !',
-    'Cochez les personnes qui ont réussi : 1 point chacune.',
+    'Cochez les personnes qui ont réussi : 1 point chacune (ou à leur équipe).',
   ],
+  aideMinuteur: 'Le temps de chaque défi est donné par son début : « 30 secondes pour trouver… ».',
   demarrer,
 });

@@ -9,6 +9,7 @@ export const schema = {
       options: OPTIONS_MECHE,
       defaut: 'moyenne',
       aide: 'La patate brûle au bout d’un temps tiré au hasard dans cet intervalle : personne ne le connaît, pas même vous.',
+      lancement: true,
     },
   ],
   elements: {

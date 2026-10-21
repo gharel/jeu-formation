@@ -22,9 +22,8 @@ function echelle(page) {
 test('Zoom mystère : l’image se dézoome, Stop fige, la bonne réponse marque', async ({ page }) => {
   const erreurs = surveillerErreurs(page);
   await ouvrirJeu(page, 'zoom-mystere', { prenoms: ['Ana', 'Bob'] });
-  await page.getByRole('button', { name: /Préparer le contenu/ }).click();
+  // La durée des paliers se règle sur l'accueil du jeu, au lancement
   await page.getByLabel('Durée de chaque palier').fill('2');
-  await page.getByRole('button', { name: 'Enregistrer' }).click();
   await lancerPartie(page);
 
   await expect(page.locator('#cadre').getByText('Image 1 sur 4')).toBeVisible();

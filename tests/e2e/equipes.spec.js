@@ -143,7 +143,8 @@ test('plusieurs équipes et personnes à la fois, classement des équipes en fin
   const tableau = page.locator('#cadre').getByRole('list', { name: 'Les 5 réponses' });
   await expect(tableau).toContainText('+5 pour Les Rouges et Ana');
   await expect(pointsEquipe(page, 'Les Rouges')).toHaveText('5');
-  await expect(pointsEquipe(page, 'Les Bleus')).toHaveText('0');
+  // Équipes et joueurs (le mode d'un groupe qui a des équipes) : Ana fait marquer son équipe
+  await expect(pointsEquipe(page, 'Les Bleus')).toHaveText('5');
 
   // Firefox (4 points) : les Bleus
   await page.getByRole('button', { name: /Attribuer les 4 points de/ }).click();
@@ -151,25 +152,25 @@ test('plusieurs équipes et personnes à la fois, classement des équipes en fin
     .getByRole('dialog')
     .getByRole('button', { name: /Les Bleus/ })
     .click();
-  await expect(pointsEquipe(page, 'Les Bleus')).toHaveText('4');
+  await expect(pointsEquipe(page, 'Les Bleus')).toHaveText('9');
   await expect(pointsDe(page, 'Ana')).toHaveText('9');
 
   await page.getByRole('button', { name: 'Tout dévoiler' }).click();
   await page.getByRole('button', { name: /Voir le classement/ }).click();
   const classement = page.getByRole('list', { name: 'Classement des équipes' });
   await expect(classement.getByRole('listitem')).toHaveText([
+    /Les Bleus\s*9\spts/,
     /Les Rouges\s*5\spts/,
-    /Les Bleus\s*4\spts/,
   ]);
   await verifierAccessibilite(page);
 
   // Sur la page « Le groupe » : le classement des équipes, corrigeable
   await page.goto('/groupe/');
   const scores = page.getByRole('list', { name: 'Scores des équipes' });
-  await expect(scores.getByRole('listitem').first()).toContainText('Les Rouges');
-  await expect(page.getByLabel('Score de l’équipe Les Bleus')).toHaveValue('4');
+  await expect(scores.getByRole('listitem').first()).toContainText('Les Bleus');
+  await expect(page.getByLabel('Score de l’équipe Les Bleus')).toHaveValue('9');
   await page.getByRole('button', { name: 'Un point de plus pour l’équipe Les Bleus' }).click();
-  await expect(page.getByLabel('Score de l’équipe Les Bleus')).toHaveValue('5');
+  await expect(page.getByLabel('Score de l’équipe Les Bleus')).toHaveValue('10');
   await verifierAccessibilite(page);
   expect(erreurs).toEqual([]);
 });
@@ -208,5 +209,117 @@ test('les équipes et leurs points voyagent dans le fichier du groupe', async ({
   await page.getByRole('dialog').getByRole('button', { name: 'Remplacer' }).click();
   await expect(page.getByLabel('Nom de l’équipe 2')).toHaveValue('Les Rouges');
   await expect(page.getByLabel('Score de l’équipe Les Rouges')).toHaveValue('3');
+  expect(erreurs).toEqual([]);
+});
+
+/** Choisit le mode de jeu sur l'accueil du jeu. */
+async function choisirMode(page, libelle) {
+  const bloc = page.getByRole('region', { name: 'Mode de jeu' });
+  await bloc.getByText(libelle, { exact: true }).click();
+  await expect(bloc.getByRole('radio', { name: libelle })).toBeChecked();
+  return bloc;
+}
+
+test('mode par équipes : qui joue contre qui, seules les équipes marquent, un point s’annule', async ({
+  page,
+}) => {
+  const erreurs = surveillerErreurs(page);
+  await ouvrirAvecEquipes(page, 'motus');
+  const bloc = await choisirMode(page, 'Par équipes');
+  const affiche = bloc.getByRole('list', { name: 'Qui joue contre qui' });
+  await expect(affiche).toContainText('Les Bleus');
+  await expect(affiche).toContainText('Chloé, David');
+  await verifierAccessibilite(page);
+  await lancerPartie(page);
+
+  // Pas de points par personne : seulement ceux des équipes
+  await expect(page.getByRole('list', { name: 'Points des équipes' })).toBeVisible();
+  await expect(page.getByRole('list', { name: 'Points', exact: true })).toHaveCount(0);
+
+  await page.getByLabel('Proposition du participant').fill('CLAVIER');
+  await page.getByLabel('Proposition du participant').press('Enter');
+  await page.getByRole('button', { name: /Attribuer/ }).click();
+  // La fenêtre ne propose que les équipes
+  const dialogue = page.getByRole('dialog', { name: 'Qui a trouvé le mot ?' });
+  await expect(dialogue.getByRole('button', { name: /Les Bleus/ })).toBeVisible();
+  await expect(dialogue.getByRole('button', { name: 'Ana', exact: true })).toHaveCount(0);
+  await dialogue.getByRole('button', { name: /Les Rouges/ }).click();
+  await expect(pointsEquipe(page, 'Les Rouges')).toHaveText('1');
+
+  // Erreur de clic : on annule, puis on attribue à la bonne équipe
+  await page.getByRole('button', { name: 'Annuler les points' }).click();
+  await expect(pointsEquipe(page, 'Les Rouges')).toHaveText('0');
+  await page.getByRole('button', { name: /Attribuer 1 point/ }).click();
+  await page
+    .getByRole('dialog')
+    .getByRole('button', { name: /Les Bleus/ })
+    .click();
+  await expect(pointsEquipe(page, 'Les Bleus')).toHaveText('1');
+  await verifierAccessibilite(page);
+
+  // Le choix du mode est gardé pour la séance, d'un jeu à l'autre
+  await page.goto('/jeux/top-5/');
+  await expect(
+    page.getByRole('region', { name: 'Mode de jeu' }).getByRole('radio', { name: 'Par équipes' }),
+  ).toBeChecked();
+  // Sur la page « Le groupe » : les points de l'équipe (l'erreur de clic est bien retirée)
+  await page.goto('/groupe/');
+  await expect(page.getByLabel('Score de l’équipe Les Bleus')).toHaveValue('1');
+  await expect(page.getByLabel('Score de l’équipe Les Rouges')).toHaveValue('0');
+  expect(erreurs).toEqual([]);
+});
+
+test('chacun pour soi : pas d’équipes en partie ; former les équipes depuis le jeu', async ({
+  page,
+}) => {
+  const erreurs = surveillerErreurs(page);
+  await ouvrirAvecEquipes(page, 'motus');
+  await choisirMode(page, 'Chacun pour soi');
+  await lancerPartie(page);
+  await expect(page.getByRole('list', { name: 'Points des équipes' })).toHaveCount(0);
+  await page.getByLabel('Proposition du participant').fill('CLAVIER');
+  await page.getByLabel('Proposition du participant').press('Enter');
+  await page.getByRole('button', { name: /Attribuer/ }).click();
+  await expect(page.getByRole('dialog').getByRole('group', { name: 'Équipes' })).toHaveCount(0);
+  await page.getByRole('dialog').getByRole('button', { name: 'Bob', exact: true }).click();
+  await expect(pointsDe(page, 'Bob')).toHaveText('1');
+
+  // Retour à l'accueil : on forme deux équipes au hasard, sans quitter le jeu
+  await page.getByRole('button', { name: /Quitter la partie/ }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Quitter' }).click();
+  const bloc = await choisirMode(page, 'Équipes et joueurs');
+  await bloc.getByLabel('Nombre d’équipes').selectOption('2');
+  await bloc.getByRole('button', { name: 'Former au hasard' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Former au hasard' }).click();
+  const affiche = bloc.getByRole('list', { name: 'Qui joue contre qui' });
+  await expect(affiche.locator('.affiche-equipes__equipe')).toHaveCount(2);
+  await expect(affiche.locator('.affiche-equipes__nombre')).toHaveText([/2/, /2/]);
+  expect(erreurs).toEqual([]);
+});
+
+test('duel buzzer par équipes : deux équipes s’affrontent, leurs membres répondent à tour de rôle', async ({
+  page,
+}) => {
+  const erreurs = surveillerErreurs(page);
+  await ouvrirAvecEquipes(page, 'duel-buzzer');
+  await choisirMode(page, 'Par équipes');
+  await lancerPartie(page);
+  await expect(page.getByRole('heading', { name: /Quelles équipes s.affrontent/ })).toBeVisible();
+  await page.getByLabel('À gauche, touche A').selectOption({ label: 'Les Bleus' });
+  await page.getByLabel('À droite, touche L').selectOption({ label: 'Les Rouges' });
+  await page.getByRole('button', { name: 'Commencer le duel' }).click();
+  await expect(page.locator('.duel__joueur--gauche')).toContainText('Répond : Ana');
+  await expect(page.locator('.duel__joueur--droite')).toContainText('Répond : Chloé');
+
+  await page.keyboard.press('Enter');
+  await page.keyboard.press('a');
+  await expect(page.locator('#cadre').getByText('Ana (Les Bleus) répond !')).toBeVisible();
+  await page.getByRole('button', { name: /Bonne/ }).click();
+  await expect(pointsEquipe(page, 'Les Bleus')).toHaveText('1');
+
+  // Question suivante : au tour de Bob pour les Bleus
+  await page.getByRole('button', { name: /Question suivante/ }).click();
+  await expect(page.locator('.duel__joueur--gauche')).toContainText('Répond : Bob');
+  await verifierAccessibilite(page);
   expect(erreurs).toEqual([]);
 });

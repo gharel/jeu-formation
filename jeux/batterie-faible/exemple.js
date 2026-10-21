@@ -11,6 +11,16 @@ export const schema = {
       max: 12,
       aide: 'Proposer le mot entier et se tromper coûte aussi un cran.',
     },
+    {
+      cle: 'tempsManche',
+      libelle: 'Temps par mot',
+      type: 'duree',
+      defaut: 90,
+      min: 30,
+      max: 600,
+      sansLimite: true,
+      lancement: true,
+    },
   ],
   elements: {
     libelle: 'Mot',

@@ -3,7 +3,7 @@
  * Les réponses (champs « secret ») sont masquées par défaut : l'écran est peut-être projeté.
  */
 import { el, remplir, icone } from './ui.js';
-import { elementVide, exempleDuChamp } from './contenu.js';
+import { elementVide, exempleDuChamp, optionsDuree } from './contenu.js';
 import { lireNombre, formaterNombre } from './nombres.js';
 import { enregistrerImage, lireFichierImage, imageDuCollage, adresseImage } from './images.js';
 
@@ -22,8 +22,11 @@ function aide(champ) {
   return el('p', { class: 'champ__aide', id: `${champ.idAide}` }, champ.aide);
 }
 
-/** Construit le contrôle d'un champ. `lire()` et `ecrire(v)` accèdent à la valeur du brouillon. */
-function construireChamp(champ, lire, ecrire, outils) {
+/**
+ * Construit le contrôle d'un champ. `lire()` et `ecrire(v)` accèdent à la valeur du brouillon.
+ * Sert aussi aux réglages de lancement, sur l'accueil du jeu (`outils` inutile hors image).
+ */
+export function construireChamp(champ, lire, ecrire, outils = { zonesImage: [] }) {
   const id = identifiant('champ');
   const idAide = champ.aide ? `${id}-aide` : null;
   const avecAide = { ...champ, idAide };
@@ -134,6 +137,29 @@ function construireChamp(champ, lire, ecrire, outils) {
       return el(
         'div',
         { class: 'champ champ--choix' },
+        etiquette(champ, id),
+        controle,
+        aide(avecAide),
+      );
+    }
+
+    case 'duree': {
+      const controle = el(
+        'select',
+        {
+          id,
+          class: 'champ__controle',
+          'aria-describedby': idAide,
+          onchange: (e) => ecrire(Number(e.target.value)),
+        },
+        ...optionsDuree(champ, lire()).map((o) =>
+          el('option', { value: String(o.valeur) }, o.libelle),
+        ),
+      );
+      controle.value = String(lire());
+      return el(
+        'div',
+        { class: 'champ champ--duree' },
         etiquette(champ, id),
         controle,
         aide(avecAide),
@@ -391,12 +417,14 @@ export function creerEditeur({ schema, contenu }) {
     'Afficher les réponses',
   );
 
-  const reglages = (schema.reglages ?? []).length
+  // Les réglages de lancement (minuteur) se choisissent sur l'accueil du jeu, pas ici
+  const reglagesEditeur = (schema.reglages ?? []).filter((r) => !r.lancement);
+  const reglages = reglagesEditeur.length
     ? el(
         'fieldset',
         { class: 'carte editeur__reglages' },
         el('legend', {}, 'Réglages'),
-        ...schema.reglages.map((r) =>
+        ...reglagesEditeur.map((r) =>
           construireChamp(
             r,
             () => brouillon.reglages[r.cle],
@@ -522,7 +550,8 @@ export function creerEditeur({ schema, contenu }) {
   dessinerElements();
   remplir(
     racine,
-    el('div', { class: 'editeur__outils' }, boutonMasque),
+    // Collé en haut de l'écran : on masque ou affiche les réponses sans remonter la liste
+    el('div', { class: 'editeur__outils barre-reponses' }, boutonMasque),
     reglages,
     el(
       'h3',

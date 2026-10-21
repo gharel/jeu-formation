@@ -487,6 +487,27 @@
   max-width: 16rem;
 }
 
+/* Minuteur choisi au lancement, au-dessus du bouton */
+.intro__minuteur {
+  margin: 0 0 1rem;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.intro__minuteur .champ {
+  margin: 0 0 0.6rem;
+}
+
+.intro__minuteur .champ__controle--nombre {
+  max-width: 7rem;
+  text-align: center;
+}
+
+.intro__minuteur .champ__ligne {
+  justify-content: center;
+}
+
 .ecran__entete {
   display: flex;
   flex-wrap: wrap;
@@ -515,6 +536,30 @@
   margin-bottom: 1rem;
 }
 
+/* « Afficher les réponses » collé en haut de l'écran pendant le défilement d'une longue liste
+   (consultation des contenus, éditeur) : sous « Remonter en haut » (20) et la barre Annuler /
+   Enregistrer (5). Son fond suit celui de la page, blanc dans une carte, et s'efface vers le bas */
+.barre-reponses {
+  --fond-barre: var(--fond);
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 0.5rem;
+  padding: 0.6rem 0 0.9rem;
+  background: linear-gradient(to bottom, var(--fond-barre) 75%, transparent);
+}
+
+.carte .barre-reponses {
+  --fond-barre: var(--blanc);
+}
+
+/* L'éditeur ouvert dans la consultation suit le bouton de la consultation : un seul bouton */
+.consultation .editeur .barre-reponses {
+  display: none;
+}
+
 .editeur__reglages {
   margin: 0 0 1.5rem;
   border: 0;
@@ -527,6 +572,12 @@
   font-size: 1.2rem;
   font-weight: 800;
   color: var(--bleu-nuit);
+}
+
+/* Sous la légende flottante : une case à cocher en premier (flex) se placerait à côté et
+   déborderait */
+.editeur__reglages > .champ {
+  clear: both;
 }
 
 .editeur__intertitre {
@@ -1145,6 +1196,121 @@
 @keyframes battement {
   to {
     transform: scale(1.06);
+  }
+}
+
+/* ---------- Minuteur de manche (barre de l'écran de jeu) ---------- */
+
+.ecran-jeu__chrono:empty {
+  display: none;
+}
+
+.minuteur-manche {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4rem 0.6rem;
+  padding: 0.3rem 0.35rem 0.3rem 0.9rem;
+  background: var(--blanc);
+  border: 3px solid transparent;
+  border-radius: var(--rayon-pilule);
+  box-shadow: var(--ombre);
+}
+
+.minuteur-manche__cadran {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding-bottom: 0.4rem;
+}
+
+.minuteur-manche__icone {
+  font-size: 1.4rem;
+  color: var(--bleu-nuit);
+}
+
+.minuteur-manche__temps {
+  min-width: 3.4ch;
+  font-size: clamp(1.7rem, min(3.2vw, 5.5vh), 2.8rem);
+  font-weight: 900;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  color: var(--bleu-nuit);
+}
+
+.minuteur-manche__barre {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 5px;
+  overflow: hidden;
+  background: var(--fond);
+  border-radius: var(--rayon-pilule);
+}
+
+.minuteur-manche__progression {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: inherit;
+  transform-origin: left;
+  transition: transform 0.1s linear;
+}
+
+.minuteur-manche__plus,
+.minuteur-manche__passer {
+  padding: 0.4em 0.9em;
+}
+
+.minuteur-manche--urgent {
+  border-color: var(--erreur);
+}
+
+.minuteur-manche--urgent .minuteur-manche__temps,
+.minuteur-manche--urgent .minuteur-manche__icone {
+  color: var(--erreur);
+}
+
+.minuteur-manche--urgent .minuteur-manche__progression {
+  background: var(--erreur);
+}
+
+/* Temps écoulé : rouge vif, le temps clignote et compte le dépassement ; « +30 s » et « Passer »
+   ressortent en blanc. Sans animation si l'utilisateur les a réduites (rouge fixe) */
+.minuteur-manche--depasse {
+  background: var(--erreur);
+  border-color: var(--erreur);
+}
+
+.minuteur-manche--depasse .minuteur-manche__temps,
+.minuteur-manche--depasse .minuteur-manche__icone {
+  color: var(--blanc);
+  animation: clignoter 0.8s ease-in-out infinite alternate;
+}
+
+.minuteur-manche--depasse .minuteur-manche__barre {
+  display: none;
+}
+
+.minuteur-manche--depasse .minuteur-manche__plus {
+  border-color: var(--blanc);
+}
+
+/* Manche finie : le chrono reste, éteint */
+.minuteur-manche--arrete .minuteur-manche__temps,
+.minuteur-manche--arrete .minuteur-manche__icone {
+  color: var(--texte-doux);
+}
+
+.minuteur-manche--arrete .minuteur-manche__plus {
+  display: none;
+}
+
+@keyframes clignoter {
+  to {
+    opacity: 0.35;
   }
 }
 
@@ -2862,9 +3028,127 @@
   color: var(--texte-doux);
 }
 
+/* ---------- Nouvelle formation : tout vider (page Le groupe) ---------- */
+
+.bloc-nouvelle-formation .groupe-boutons {
+  margin-top: 1rem;
+}
+
+.remise-a-zero {
+  display: grid;
+  gap: 0.6rem;
+  margin: 1rem 0;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.remise-a-zero legend {
+  margin-bottom: 0.4rem;
+  font-weight: 800;
+  color: var(--bleu-nuit);
+}
+
+.remise-a-zero__ligne {
+  margin: 0;
+}
+
+.remise-a-zero__ligne .case-a-cocher {
+  margin: 0;
+  font-weight: 700;
+}
+
+.remise-a-zero__ligne .champ__aide {
+  margin: 0.1rem 0 0 1.9rem;
+}
+
+/* ---------- Mode de jeu (accueil d'un jeu) ---------- */
+
+.bloc-mode__corps {
+  display: grid;
+  gap: 0.85rem;
+}
+
+.bloc-mode__corps > p {
+  margin: 0;
+}
+
+/* Les trois modes l'un sous l'autre : « Équipes et joueurs » ne reste pas seul sur sa ligne */
+.segments--mode {
+  display: grid;
+  grid-template-columns: 1fr;
+  justify-self: stretch;
+  border-radius: var(--rayon);
+}
+
+.segments--mode .segment {
+  border-radius: calc(var(--rayon) - 0.25rem);
+}
+
+.bloc-mode__alerte {
+  margin: 0;
+  font-weight: 700;
+  color: var(--bleu-nuit);
+}
+
+.bloc-mode__alerte .icone {
+  color: var(--erreur);
+}
+
+.bloc-mode__seuls {
+  display: grid;
+  gap: 0.5rem;
+  justify-items: start;
+}
+
+.bloc-mode__formation {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.75rem;
+  align-items: center;
+}
+
+/* Qui joue contre qui : une carte par équipe, « contre » entre deux */
+.affiche-equipes {
+  display: grid;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.affiche-equipes__equipe {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.55rem 1rem;
+  background: var(--accent-clair);
+  border-radius: var(--rayon);
+}
+
+.affiche-equipes__nom {
+  font-weight: 900;
+  color: var(--bleu-nuit);
+}
+
+.affiche-equipes__nombre {
+  font-weight: 700;
+}
+
+.affiche-equipes__membres {
+  font-weight: 600;
+}
+
+.affiche-equipes__contre {
+  text-align: center;
+  font-weight: 800;
+  font-style: italic;
+  color: var(--texte-doux);
+}
+
 /* ---------- Blocs d’export et d’import JSON ---------- */
 
 .bloc-fichier-groupe,
+.bloc-nouvelle-formation,
 .bloc-fichier-contenus,
 .bloc-consultation,
 .bloc-thematiques {
@@ -3062,6 +3346,11 @@
   max-width: 32rem;
 }
 
+/* Un jeu ouvert en modification ne doit pas élargir la liste (débordement sur téléphone) */
+.consultation__jeux > li {
+  min-width: 0;
+}
+
 .consultation__jeux {
   display: grid;
   gap: 0.75rem;
@@ -3198,7 +3487,8 @@
   border-radius: 6px;
 }
 
-/* Réponses floutées tant que l'animateur ne les affiche pas (l'éditeur a son propre bouton) */
+/* Réponses floutées tant que l'animateur ne les affiche pas (un éditeur ouvert sur place suit le
+   même bouton) */
 .consultation--masque .apercu-jeu__elements .secret {
   filter: blur(7px);
   user-select: none;

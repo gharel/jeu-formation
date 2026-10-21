@@ -3,7 +3,10 @@
  *
  * Chaque jeu décrit son contenu par un schéma :
  * {
- *   reglages: [{ cle, libelle, type: 'nombre' | 'case' | 'choix', defaut, min, max, unite, options }],
+ *   reglages: [{ cle, libelle, type: 'nombre' | 'case' | 'choix' | 'duree', defaut, min, max, unite,
+ *                options, sansLimite, lancement }],
+ *   // duree : en secondes, choisie dans une liste (« 1 min 30 ») ; sansLimite : 0 = « Sans limite »
+ *   // lancement : réglé sur l'accueil du jeu, au lancement (minuteur), pas dans « Préparer »
  *   elements: {
  *     libelle: 'Mot', pluriel: 'mots', feminin: false, min: 5, max: 5,
  *     champs: [{ cle, libelle, type, requis, secret, min, max, longueurMax, options, suggestions, aide,
@@ -26,6 +29,8 @@ export function cleContenu(slug) {
 }
 
 const LONGUEUR_TEXTE = 200;
+/** Durées proposées pour un réglage de type « duree », en secondes. */
+export const DUREES = [5, 10, 15, 20, 30, 45, 60, 90, 120, 180, 300, 600];
 const LONGUEUR_TEXTE_LONG = 1000;
 
 function longueurMax(champ) {
@@ -37,6 +42,8 @@ function valeurParDefaut(champ) {
   switch (champ.type) {
     case 'nombre':
       return null;
+    case 'duree':
+      return champ.sansLimite ? 0 : (champ.min ?? DUREES[0]);
     case 'case':
       return false;
     case 'choix':
@@ -99,8 +106,47 @@ function nettoyerImage(brut) {
   return image.id || image.src || image.donnees ? image : null;
 }
 
+/** « Sans limite », « 30 s », « 2 min », « 1 min 30 ». */
+export function libelleDuree(secondes) {
+  if (!secondes) return 'Sans limite';
+  if (secondes < 60) return `${secondes} s`;
+  const minutes = Math.floor(secondes / 60);
+  const reste = secondes % 60;
+  return reste ? `${minutes} min ${String(reste).padStart(2, '0')}` : `${minutes} min`;
+}
+
+/**
+ * Choix d'un réglage « duree » : les durées de la liste entre min et max, « Sans limite » en tête
+ * si le jeu le permet, et la valeur actuelle si elle n'y est pas (venue d'un import).
+ */
+export function optionsDuree(champ, actuelle = null) {
+  const { min = 1, max = 3600 } = champ;
+  const valeurs = new Set(DUREES.filter((d) => d >= min && d <= max));
+  if (champ.defaut) valeurs.add(champ.defaut);
+  if (Number.isInteger(actuelle) && (actuelle > 0 || champ.sansLimite)) valeurs.add(actuelle);
+  if (champ.sansLimite) valeurs.add(0);
+  return [...valeurs]
+    .sort((a, b) => (a === 0 ? -1 : b === 0 ? 1 : a - b))
+    .map((valeur) => ({ valeur, libelle: libelleDuree(valeur) }));
+}
+
+function nettoyerDuree(champ, brut) {
+  const n = lireNombre(brut);
+  if (n === null) return valeurParDefaut(champ);
+  const secondes = Math.round(n);
+  if (secondes <= 0) return champ.sansLimite ? 0 : valeurParDefaut(champ);
+  return Math.min(champ.max ?? 3600, Math.max(champ.min ?? 1, secondes));
+}
+
+/** Un réglage nettoyé (valeur de lancement, import…) : le bon type, sinon sa valeur par défaut. */
+export function nettoyerReglage(reglage, brut) {
+  return nettoyerValeur(reglage, brut);
+}
+
 function nettoyerValeur(champ, brut) {
   switch (champ.type) {
+    case 'duree':
+      return nettoyerDuree(champ, brut);
     case 'texte':
     case 'texte-long':
       return typeof brut === 'string' || typeof brut === 'number'
@@ -175,6 +221,22 @@ function verifierNombre(champ, valeur, prefixe) {
   return null;
 }
 
+/** Problèmes des réglages `reglages` (une liste du schéma) pour ces `valeurs`. */
+export function validerReglages(reglages, valeurs) {
+  const erreurs = [];
+  for (const reglage of reglages) {
+    const valeur = valeurs?.[reglage.cle];
+    if (reglage.type !== 'nombre') continue;
+    if (valeur === null || valeur === undefined) {
+      erreurs.push(`Réglage « ${reglage.libelle} » : une valeur est obligatoire.`);
+    } else {
+      const probleme = verifierNombre(reglage, valeur, 'Réglage ');
+      if (probleme) erreurs.push(probleme);
+    }
+  }
+  return erreurs;
+}
+
 /** Liste des problèmes (en français) ; vide si le contenu est prêt à jouer. */
 export function validerContenu(schema, contenu) {
   const erreurs = [];
@@ -188,17 +250,13 @@ export function validerContenu(schema, contenu) {
     erreurs.push(`Il faut au plus ${max} ${pluriel}.`);
   }
 
-  for (const reglage of schema.reglages ?? []) {
-    const valeur = contenu.reglages[reglage.cle];
-    if (reglage.type === 'nombre') {
-      if (valeur === null || valeur === undefined) {
-        erreurs.push(`Réglage « ${reglage.libelle} » : une valeur est obligatoire.`);
-      } else {
-        const probleme = verifierNombre(reglage, valeur, 'Réglage ');
-        if (probleme) erreurs.push(probleme);
-      }
-    }
-  }
+  // Les réglages de lancement (minuteur) se vérifient sur l'accueil du jeu
+  erreurs.push(
+    ...validerReglages(
+      (schema.reglages ?? []).filter((r) => !r.lancement),
+      contenu.reglages,
+    ),
+  );
 
   contenu.elements.forEach((element, i) => {
     const prefixe = `${libelle} ${i + 1} : `;

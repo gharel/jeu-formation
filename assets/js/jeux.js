@@ -1,6 +1,8 @@
 /**
  * Liste des mini-jeux. L'accueil affiche une carte par jeu, et chaque jeu
  * a sa page dans jeux/<slug>/index.html. `icone` : nom d'une icône Font Awesome (style solid).
+ * `joueursMin` (facultatif) : un jeu à deux (duel, binôme) ne se lance pas avec un seul joueur.
+ * `cooperatif` (facultatif) : tout le groupe joue ensemble ; le mode de jeu dit qui reçoit les points.
  */
 export const JEUX = [
   {
@@ -75,6 +77,7 @@ export const JEUX = [
     accroche: 'Deux participants, deux buzzers : clavier ou écran tactile. Le plus rapide répond !',
     duree: '5 à 10 min',
     preparation: 'Des questions et leurs réponses',
+    joueursMin: 2,
   },
   {
     slug: 'pyramide',
@@ -85,6 +88,7 @@ export const JEUX = [
       'Faites deviner un mot à votre binôme en 1, 2, 3 ou 4 mots. Du premier coup : 4 points !',
     duree: '5 à 15 min',
     preparation: 'Une liste de mots à faire deviner',
+    joueursMin: 2,
   },
   {
     slug: 'batterie-faible',
@@ -134,6 +138,7 @@ export const JEUX = [
       'Des serrures, un compte à rebours : résolvez les énigmes ensemble pour ouvrir le coffre. Une erreur coûte du temps !',
     duree: '10 à 15 min',
     preparation: 'Des énigmes et leur réponse',
+    cooperatif: true,
   },
   {
     slug: 'top-5',

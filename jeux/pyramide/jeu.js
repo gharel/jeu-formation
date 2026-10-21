@@ -8,7 +8,14 @@ import {
   ecouterClavier,
 } from '../../assets/js/commun/ui.js';
 import { schema, exemple } from './exemple.js';
-import { INDICES_MAX, pointsPourIndices, creerMot, roles, tirerBinome } from './logique.js';
+import {
+  INDICES_MAX,
+  pointsPourIndices,
+  creerMot,
+  roles,
+  tirerBinome,
+  equipeDuTour,
+} from './logique.js';
 import { creerIllustrationPyramide } from './illustration.js';
 
 const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? 's' : ''}`;
@@ -23,6 +30,22 @@ function demarrer(ctx) {
   // Binôme en cours ([prénom, prénom], null sans prénoms) et rang de son mot (0, 1…)
   let binome = null;
   let rang = 0;
+  // En équipes : le binôme se forme dans une équipe, et les équipes jouent chacune leur tour
+  let tourBinome = 0;
+  // Temps par mot (choisi au lancement) : à zéro, une alerte ; l'animateur peut passer le mot
+  let passerMot = null;
+  const minuteur = ctx.creerMinuteurManche({
+    duree: ctx.reglages.tempsManche,
+    passer: { libelle: 'Mot perdu, au suivant', faire: () => passerMot?.() },
+  });
+
+  /** À qui vont les points du binôme : « Ana et Bob », « Ana et Bob (Les Bleus) », « Les Bleus ». */
+  function pourQui(maitre, devineur) {
+    const equipe = ctx.equipeDe(maitre);
+    const ensemble = equipe && ctx.equipeDe(devineur)?.id === equipe.id;
+    if (ensemble && ctx.mode === 'equipes') return equipe.nom;
+    return ensemble ? `${maitre} et ${devineur} (${equipe.nom})` : `${maitre} et ${devineur}`;
+  }
   // Une pyramide de quatre étages : l'étage en jeu s'allume, un drapeau quand c'est trouvé
   const illustration = creerIllustrationPyramide();
   // Raccourcis du moment : Entrée (trouvé) et Espace (raté, afficher, continuer)
@@ -35,7 +58,13 @@ function demarrer(ctx) {
   // ---------- Choix du binôme ----------
   function afficherChoix() {
     touches = {};
-    const titre = el('h3', { class: 'panneau__texte' }, 'Quel binôme joue ?');
+    minuteur?.arreter();
+    const equipe = equipeDuTour(ctx.equipes, tourBinome);
+    const titre = el(
+      'h3',
+      { class: 'panneau__texte' },
+      equipe ? `Au tour de l’équipe ${equipe.nom}` : 'Quel binôme joue ?',
+    );
     const erreur = el('p', { class: 'pyramide__erreur', role: 'alert' });
     const selecteur = (id) =>
       el(
@@ -46,7 +75,11 @@ function demarrer(ctx) {
     const maitre = selecteur('pyramide-maitre');
     const devineur = selecteur('pyramide-devineur');
     const tirer = () => {
-      [maitre.value, devineur.value] = tirerBinome(ctx.participants, dejaJoue, ctx.hasard);
+      [maitre.value, devineur.value] = tirerBinome(
+        equipe ? equipe.membres : ctx.participants,
+        dejaJoue,
+        ctx.hasard,
+      );
       remplir(erreur);
     };
     tirer();
@@ -59,6 +92,7 @@ function demarrer(ctx) {
       binome = [maitre.value, devineur.value];
       for (const prenom of binome) dejaJoue.add(prenom);
       rang = 0;
+      tourBinome += 1;
       afficherMot();
     };
 
@@ -108,7 +142,13 @@ function demarrer(ctx) {
           ),
         ),
         erreur,
-        el('p', { class: 'champ__aide' }, 'Les rôles s’inversent à chaque mot.'),
+        el(
+          'p',
+          { class: 'champ__aide' },
+          equipe
+            ? `Un binôme des ${equipe.nom} : les rôles s’inversent à chaque mot.`
+            : 'Les rôles s’inversent à chaque mot.',
+        ),
         el(
           'div',
           { class: 'actions-jeu' },
@@ -260,7 +300,7 @@ function demarrer(ctx) {
       if (phase === 'cache' || numero > indice) return 'a-venir';
       if (numero < indice) return 'passe';
       if (phase === 'jeu') return 'courant';
-      return { trouve: 'gagne', rate: 'passe', faute: 'faute' }[issue];
+      return { trouve: 'gagne', rate: 'passe', faute: 'faute', temps: 'passe' }[issue];
     }
 
     const ETATS = { courant: 'en cours', passe: 'raté', gagne: 'trouvé', faute: 'faute' };
@@ -331,6 +371,7 @@ function demarrer(ctx) {
     function afficher() {
       if (!partie.afficher()) return;
       dessiner();
+      minuteur?.relancer();
       animer(carton, 'apparition');
       ctx.sons.pyramide.etage(1);
       ctx.annoncer(`Mot à faire deviner : ${mot}. 1er mot d’indice : 4 points en jeu.`);
@@ -362,7 +403,13 @@ function demarrer(ctx) {
       conclure();
     }
 
+    passerMot = () => {
+      if (!partie.abandonner()) return;
+      conclure();
+    };
+
     function conclure() {
+      minuteur?.arreter();
       dessiner();
       const { issue, indice, points } = partie;
       const verdict = el(
@@ -372,6 +419,7 @@ function demarrer(ctx) {
           trouve: [icone('face-grin-stars'), `Trouvé en ${pluriel(indice, 'mot')} d’indice !`],
           rate: [icone('hourglass-end'), `Pas trouvé en ${INDICES_MAX} mots…`],
           faute: [icone('ban'), 'Faute : le mot est perdu.'],
+          temps: [icone('hourglass-end'), 'Temps écoulé : le mot est perdu.'],
         }[issue],
       );
       let gain = null;
@@ -381,7 +429,7 @@ function demarrer(ctx) {
           { class: 'pyramide__gain' },
           icone('check'),
           maitre
-            ? `+${pluriel(points, 'point')} pour ${maitre} et ${devineur}`
+            ? `+${pluriel(points, 'point')} pour ${pourQui(maitre, devineur)}`
             : `+${pluriel(points, 'point')} pour le binôme`,
         );
       }
@@ -438,7 +486,7 @@ monterJeu({
   exemple,
   regles: [
     'Avant la séance, préparez une liste de mots à faire deviner. Les indices, ce sont les joueurs qui les trouvent !',
-    'On joue par deux : l’un voit le mot et le fait deviner, l’autre se met dos à l’écran. Les rôles s’inversent à chaque mot.',
+    'On joue par deux : l’un voit le mot et le fait deviner, l’autre se met dos à l’écran. Les rôles s’inversent à chaque mot. En équipes, le binôme est d’une même équipe, et les équipes jouent chacune leur tour.',
     'Un seul mot d’indice à la fois, puis une réponse. Raté ? Un autre mot d’indice, jusqu’à 4. Trouvé en 1 mot : 4 points, en 2 : 3 points, en 3 : 2 points, en 4 : 1 point.',
     'Faute si l’indice est de la même famille que le mot, en contient plusieurs ou s’accompagne d’un geste : le mot est perdu. Et le public ne souffle pas !',
   ],

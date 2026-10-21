@@ -34,3 +34,13 @@ export function appliquerEliminations(enJeu, elimines) {
 export function gagnant(enJeu) {
   return enJeu.length === 1 ? enJeu[0] : null;
 }
+
+/**
+ * En équipes : la dernière équipe en jeu ({ id, nom, membres }), quand tous ceux qui restent en
+ * jeu sont de la même équipe ; null s'il reste plusieurs équipes, ou un joueur sans équipe.
+ */
+export function equipeGagnante(enJeu, equipes = []) {
+  const equipe = equipes.find((e) => e.membres.includes(enJeu[0]));
+  if (!equipe) return null;
+  return enJeu.every((p) => equipe.membres.includes(p)) ? equipe : null;
+}

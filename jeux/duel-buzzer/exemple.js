@@ -8,6 +8,16 @@ export const schema = {
       min: 1,
       max: 10,
     },
+    {
+      cle: 'tempsManche',
+      libelle: 'Temps par question',
+      type: 'duree',
+      defaut: 30,
+      min: 10,
+      max: 300,
+      sansLimite: true,
+      lancement: true,
+    },
   ],
   elements: {
     libelle: 'Question',

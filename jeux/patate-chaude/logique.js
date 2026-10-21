@@ -54,10 +54,15 @@ export function premierPorteur(participants, dernierBrule = null, hasard = Math.
   return participants[Math.floor(hasard() * participants.length)];
 }
 
-/** Ceux qui marquent quand la patate brûle : tous les joueurs, sauf la personne brûlée. */
-export function gagnantsDeLaManche(participants, brule) {
+/**
+ * Ceux qui marquent quand la patate brûle : tous les joueurs, sauf la personne brûlée. En
+ * équipes ([{ membres }]), son équipe entière ne marque pas : seules les autres équipes marquent.
+ */
+export function gagnantsDeLaManche(participants, brule, equipes = []) {
   if (!brule) return [];
-  return participants.filter((p) => p !== brule);
+  const perdants = new Set(equipes.find((e) => e.membres.includes(brule))?.membres ?? [brule]);
+  perdants.add(brule);
+  return participants.filter((p) => !perdants.has(p));
 }
 
 /**

@@ -90,7 +90,8 @@ export function confirmer({ titre, message, oui = 'Oui', non = 'Annuler' }) {
  * Avec `plusieurs` (attribuer des points), un clic sur un prénom suffit toujours, mais la fenêtre
  * propose aussi « Tout le monde » et « Plusieurs personnes », qui passe aux cases à cocher.
  * `equipes` ([{ id, nom, membres }], membres parmi `prenoms`) : une équipe se choisit d'un clic,
- * ses membres avec elle.
+ * ses membres avec elle. Avec `mode: 'equipes'` (seules les équipes marquent), la fenêtre ne
+ * propose que les équipes ; « Tout le monde » choisit aussi toutes les équipes.
  * Résout avec { prenoms, equipes } (les identifiants des équipes choisies), vides si personne.
  * Sans participants, résout tout de suite.
  */
@@ -101,6 +102,7 @@ export function choisirGagnants({
   multiple = false,
   plusieurs = false,
   equipes = [],
+  mode = 'mixte',
   libelleAucun = 'Personne',
   preselection = [],
 }) {
@@ -110,6 +112,7 @@ export function choisirGagnants({
   const equipesVisibles = equipes
     .map((e) => ({ ...e, membres: e.membres.filter((m) => enJeu.has(m)) }))
     .filter((e) => e.membres.length);
+  const seulementEquipes = mode === 'equipes' && equipesVisibles.length > 0;
   return ouvrirDialogue({
     titre,
     classe: 'dialogue--prenoms',
@@ -118,6 +121,18 @@ export function choisirGagnants({
       if (message) corps.append(el('p', { class: 'dialogue__message' }, message));
       const choisis = new Set(preselection);
       const equipesChoisies = new Set();
+      // Seules les équipes se choisissent : celle d'un joueur présélectionné l'est, en entier
+      if (seulementEquipes) {
+        for (const e of equipesVisibles) {
+          if (!e.membres.some((m) => choisis.has(m))) continue;
+          equipesChoisies.add(e.id);
+          for (const m of e.membres) choisis.add(m);
+        }
+      }
+      const toutes = () => ({
+        prenoms: [...prenoms],
+        equipes: equipesVisibles.map((e) => e.id),
+      });
       let aCocher = multiple;
       const outils = el('p', { class: 'dialogue__outils' });
       const grille = el('div', { class: 'grille-prenoms' });
@@ -151,17 +166,20 @@ export function choisirGagnants({
           type: 'button',
           class: 'bouton bouton--discret',
           onclick: () => {
-            const tous = choisis.size < prenoms.length;
-            for (const p of prenoms) {
-              if (tous) choisis.add(p);
-              else choisis.delete(p);
+            const tous = seulementEquipes
+              ? equipesChoisies.size < equipesVisibles.length
+              : choisis.size < prenoms.length;
+            choisis.clear();
+            equipesChoisies.clear();
+            if (tous) {
+              for (const p of prenoms) choisis.add(p);
+              for (const e of equipesVisibles) equipesChoisies.add(e.id);
             }
-            if (!tous) equipesChoisies.clear();
             dessinerCoches();
           },
         },
         icone('users'),
-        'Tout le monde / personne',
+        seulementEquipes ? 'Toutes les équipes / aucune' : 'Tout le monde / personne',
       );
 
       function passerAuxCoches() {
@@ -171,9 +189,11 @@ export function choisirGagnants({
           el(
             'p',
             { class: 'dialogue__message' },
-            equipesVisibles.length
-              ? 'Cliquez sur chaque équipe ou personne, puis Valider.'
-              : 'Cliquez sur chaque personne, puis Valider.',
+            seulementEquipes
+              ? 'Cliquez sur chaque équipe, puis Valider.'
+              : equipesVisibles.length
+                ? 'Cliquez sur chaque équipe ou personne, puis Valider.'
+                : 'Cliquez sur chaque personne, puis Valider.',
           ),
         );
         remplir(outils, toutCocher);
@@ -189,7 +209,7 @@ export function choisirGagnants({
               type: 'button',
               class: 'puce-equipe',
               'data-equipe': equipe.id,
-              'aria-pressed': aCocher ? 'false' : null,
+              'aria-pressed': aCocher ? String(equipesChoisies.has(equipe.id)) : null,
               onclick: () => {
                 if (!aCocher) {
                   fermer({ prenoms: [...equipe.membres], equipes: [equipe.id] });
@@ -246,24 +266,21 @@ export function choisirGagnants({
           ),
         );
       }
+      const nombreChoix = seulementEquipes ? equipesVisibles.length : prenoms.length;
       if (aCocher) outils.append(toutCocher);
-      else if (plusieurs && prenoms.length > 1) {
+      else if (plusieurs && nombreChoix > 1) {
         outils.append(
           el(
             'button',
-            {
-              type: 'button',
-              class: 'bouton bouton--discret',
-              onclick: () => fermer({ prenoms: [...prenoms], equipes: [] }),
-            },
+            { type: 'button', class: 'bouton bouton--discret', onclick: () => fermer(toutes()) },
             icone('users'),
-            'Tout le monde',
+            seulementEquipes ? 'Toutes les équipes' : 'Tout le monde',
           ),
           el(
             'button',
             { type: 'button', class: 'bouton bouton--discret', onclick: passerAuxCoches },
             icone('list-check'),
-            'Plusieurs personnes',
+            seulementEquipes ? 'Plusieurs équipes' : 'Plusieurs personnes',
           ),
         );
       }
@@ -272,10 +289,14 @@ export function choisirGagnants({
         corps.append(
           el('p', { id: 'titre-equipes-gagnantes', class: 'dialogue__sous-titre' }, 'Équipes'),
           grilleEquipes,
-          el('p', { class: 'dialogue__sous-titre' }, 'Personnes'),
         );
       }
-      corps.append(grille);
+      if (!seulementEquipes) {
+        if (equipesVisibles.length) {
+          corps.append(el('p', { class: 'dialogue__sous-titre' }, 'Personnes'));
+        }
+        corps.append(grille);
+      }
       pied.append(
         el(
           'button',

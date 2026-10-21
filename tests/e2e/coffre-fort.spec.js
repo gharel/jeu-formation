@@ -81,9 +81,12 @@ test('Le Coffre-fort : pénalité, réponse acceptée à la main, indice, coffre
 
   await page.keyboard.press('Enter');
   await expect(page.getByRole('heading', { name: /Partie terminée/ })).toBeVisible();
+  // Jeu coopératif : chaque serrure ouverte rapporte 1 point à chacun, pas de podium d'ex æquo
   await expect(
-    page.locator('#cadre').getByText('Le coffre est ouvert : bravo à toute l’équipe !'),
+    page.locator('#cadre').getByText(/Le coffre est ouvert\s:\sbravo à tout le groupe/),
   ).toBeVisible();
+  await expect(page.locator('#cadre').getByText(/Chacun marque \d+\spoints/)).toBeVisible();
+  await expect(page.locator('.podium')).toHaveCount(0);
 
   // Rejouer : le record à battre s'affiche
   await page.getByRole('button', { name: 'Rejouer' }).click();
@@ -98,9 +101,8 @@ test('Le Coffre-fort : temps écoulé, les réponses manquantes s’affichent', 
   await figerHorloge(page);
   await ouvrirJeu(page, 'coffre-fort');
   await arreterHorloge(page);
-  await page.getByRole('button', { name: /Préparer le contenu/ }).click();
+  // Le temps se règle sur l'accueil du jeu, au lancement
   await page.getByLabel('Temps pour ouvrir le coffre').fill('2');
-  await page.getByRole('button', { name: 'Enregistrer' }).click();
   await lancerPartie(page);
   const cadre = page.locator('#cadre');
   await page.getByRole('button', { name: /Lancer le compte à rebours/ }).click();
@@ -129,8 +131,8 @@ test('Le Coffre-fort : un indice qui vide le chrono mène au bilan, Entrée au c
   await figerHorloge(page);
   await ouvrirJeu(page, 'coffre-fort');
   await arreterHorloge(page);
-  await page.getByRole('button', { name: /Préparer le contenu/ }).click();
   await page.getByLabel('Temps pour ouvrir le coffre').fill('2');
+  await page.getByRole('button', { name: /Préparer le contenu/ }).click();
   await page.getByLabel('Prix d’un indice').fill('300');
   await page.getByRole('button', { name: 'Enregistrer' }).click();
   await lancerPartie(page);

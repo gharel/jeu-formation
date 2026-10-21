@@ -263,3 +263,21 @@ test('les exemples se consultent sans être modifiés, une thématique se modifi
     }),
   ).toBeVisible();
 });
+
+test('« Afficher les réponses » reste à portée de main pendant qu’on fait défiler', async ({
+  page,
+}) => {
+  await ouvrirContenus(page);
+  for (const slug of ['motus', 'top-5', 'bingo', 'duel-buzzer']) {
+    await apercuDe(page, slug).locator('summary').click();
+  }
+  // Tout en bas de la consultation : le bouton est collé en haut de l'écran
+  await apercuDe(page, 'duel-buzzer').locator('.apercu-element').last().scrollIntoViewIfNeeded();
+  const bouton = page.getByRole('button', { name: 'Afficher les réponses' });
+  await expect(bouton).toBeInViewport();
+  const position = await bouton.boundingBox();
+  expect(position.y).toBeLessThan(100);
+  await bouton.click();
+  await expect(page.locator('.consultation')).not.toHaveClass(/consultation--masque/);
+  await expect(page.getByRole('button', { name: 'Masquer les réponses' })).toBeInViewport();
+});

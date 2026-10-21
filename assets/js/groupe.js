@@ -25,6 +25,7 @@ import {
   annoncer,
 } from './commun/ui.js';
 import { creerHautDePage } from './commun/haut-de-page.js';
+import { demanderQuoiVider, viderTout, decrireParties } from './commun/remise-a-zero.js';
 
 await exigerAcces();
 creerHautDePage();
@@ -183,6 +184,40 @@ function creerBlocFichier() {
   );
 }
 
+/** « Nouvelle formation » : tout vider (joueurs, équipes, scores, contenus des jeux). */
+function creerBlocNouvelleFormation() {
+  const messages = el('div', { class: 'messages', role: 'status' });
+  async function vider() {
+    const choix = await demanderQuoiVider();
+    if (!choix?.length) return;
+    const parties = await viderTout(groupe, choix);
+    const texte = `C’est vidé : ${decrireParties(parties)}. Prêt pour une nouvelle formation !`;
+    remplir(messages, el('div', { class: 'message message--info' }, el('p', {}, texte)));
+    annoncer(texte);
+  }
+  return el(
+    'section',
+    { class: 'carte bloc-nouvelle-formation', 'aria-labelledby': 'titre-nouvelle-formation' },
+    el('h3', { id: 'titre-nouvelle-formation' }, 'Nouvelle formation'),
+    el(
+      'p',
+      { class: 'champ__aide' },
+      'Avant un nouveau groupe : videz les joueurs, les équipes et les scores, et remettez les contenus d’exemple dans tous les jeux. Vous choisissez ce que vous videz.',
+    ),
+    el(
+      'div',
+      { class: 'groupe-boutons' },
+      el(
+        'button',
+        { type: 'button', class: 'bouton bouton--danger', onclick: vider },
+        icone('broom'),
+        'Tout vider…',
+      ),
+    ),
+    messages,
+  );
+}
+
 const titre = el('h2', {}, 'Qui est dans la salle ?');
 remplir(
   document.getElementById('cadre'),
@@ -223,6 +258,7 @@ remplir(
     ),
     creerBlocEquipes(groupe, { hasard: hasardDePage() }),
     creerBlocScores(groupe),
+    creerBlocNouvelleFormation(),
   ),
 );
 // Lien « Voir les scores du groupe » de la fin d'une partie (#scores) : on va droit au bloc. Aucun

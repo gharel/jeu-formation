@@ -139,3 +139,15 @@ test('un jeu de données (tous les jeux) s’importe aussi dans un seul jeu', as
   });
   await expect(page.getByRole('alert')).toContainText('ne contient rien pour « Pyramide »');
 });
+
+test('dans l’éditeur, « Afficher les réponses » reste collé en haut de l’écran', async ({
+  page,
+}) => {
+  await ouvrirJeu(page, 'top-5');
+  await page.getByRole('button', { name: /Préparer le contenu/ }).click();
+  await page.locator('.editeur__element').last().scrollIntoViewIfNeeded();
+  const bouton = page.getByRole('button', { name: 'Afficher les réponses' });
+  await expect(bouton).toBeInViewport();
+  await bouton.click();
+  await expect(page.locator('.editeur')).not.toHaveClass(/editeur--masque/);
+});

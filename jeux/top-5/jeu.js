@@ -19,6 +19,12 @@ function demarrer(ctx) {
   const retirerClavier = ecouterClavier({ Entrée: () => touches.entree?.() });
   // Le trophée : il saute à chaque réponse trouvée, ses étoiles brillent au top 5 complet
   const illustration = creerIllustrationTop5();
+  // Temps par question (choisi au lancement) : à zéro, une alerte ; l'animateur peut tout dévoiler
+  let devoiler = null;
+  const minuteur = ctx.creerMinuteurManche({
+    duree: ctx.reglages.tempsManche,
+    passer: { libelle: 'Dévoiler les réponses', faire: () => devoiler?.() },
+  });
 
   function afficherQuestion() {
     const { question, reponses } = questions[index];
@@ -157,7 +163,22 @@ function demarrer(ctx) {
 
     function dessinerActions() {
       if (manche.finie) {
-        const suite = () => {
+        const suite = async () => {
+          // Des réponses trouvées sans gagnant : leurs points seraient perdus
+          const oubliees = avecPrenoms
+            ? reponses.filter((_, rang) => manche.estTrouvee(rang) && !attribues.has(rang)).length
+            : 0;
+          if (
+            oubliees &&
+            !(await ctx.confirmer({
+              titre: 'Des points à attribuer',
+              message: `${oubliees} réponse${oubliees > 1 ? 's' : ''} trouvée${oubliees > 1 ? 's' : ''} sans gagnant : ${oubliees > 1 ? 'leurs' : 'ses'} points seront perdus. Passer quand même ?`,
+              oui: 'Passer',
+              non: 'Attribuer d’abord',
+            }))
+          ) {
+            return;
+          }
           touches = {};
           if (derniere) {
             ctx.terminer({
@@ -289,9 +310,8 @@ function demarrer(ctx) {
         message: `${points(pointsDuRang(rang))} pour cette réponse.`,
         plusieurs: true,
       });
-      if (!gagnants.prenoms.length || attribues.has(rang)) return;
+      if (attribues.has(rang) || !ctx.scores.ajouterGagnants(gagnants, pointsDuRang(rang))) return;
       attribues.set(rang, gagnants);
-      ctx.scores.ajouterGagnants(gagnants, pointsDuRang(rang));
       ctx.sons.ding();
       dessinerTableau();
       if (!manche.finie) saisie.focus();
@@ -299,6 +319,7 @@ function demarrer(ctx) {
 
     /** `apparue` : la réponse qui finit le top 5, qui se retourne avec le bilan. */
     function conclure(apparue = -1) {
+      minuteur?.arreter();
       total += manche.points;
       saisie.disabled = true;
       formulaire.hidden = true;
@@ -328,6 +349,8 @@ function demarrer(ctx) {
     remplir(ctx.zone, panneau);
     dessiner();
     saisie.focus();
+    devoiler = abandonner;
+    minuteur?.relancer();
   }
 
   afficherQuestion();

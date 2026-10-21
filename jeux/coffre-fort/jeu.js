@@ -359,6 +359,23 @@ function demarrer(ctx) {
       saisie.disabled = true;
       essayer.disabled = true;
       dessinerSerrures();
+      // Jeu coopératif : chaque serrure ouverte rapporte 1 point à tout le groupe (ou à chaque
+      // équipe, selon le mode de jeu)
+      if (coffre.ouvertes && ctx.participants.length) {
+        ctx.scores.ajouterATous(ctx.participants, coffre.ouvertes);
+      }
+    }
+
+    /** « Chacun marque 3 points. », ou rien sans serrure ouverte ni prénoms. */
+    function pointsDuGroupe() {
+      if (!coffre.ouvertes || !ctx.participants.length) return '';
+      const qui = ctx.mode === 'equipes' ? 'Chaque équipe marque' : 'Chacun marque';
+      return `${qui} ${pluriel(coffre.ouvertes, 'point')}.`;
+    }
+
+    function lignePoints() {
+      const texte = pointsDuGroupe();
+      return texte ? el('p', { class: 'coffre__detail-bilan' }, icone('trophy'), texte) : null;
     }
 
     function coffreOuvert() {
@@ -382,6 +399,7 @@ function demarrer(ctx) {
               { class: 'coffre__detail-bilan' },
               `Le record reste à ${formaterDuree(ancien)} d’avance.`,
             ),
+        lignePoints(),
       );
       // La fête et la fanfare une fois le bilan affiché
       illustration.reagir('fete');
@@ -405,6 +423,7 @@ function demarrer(ctx) {
           { class: 'coffre__detail-bilan' },
           `Le coffre reste fermé : ${serruresOuvertes(coffre.ouvertes)} sur ${enigmes.length}.`,
         ),
+        lignePoints(),
         el(
           'div',
           { class: 'reponse-revelee coffre__solutions' },
@@ -424,9 +443,15 @@ function demarrer(ctx) {
     function afficherBilan(...contenu) {
       const suite = () =>
         ctx.terminer({
-          message: coffre.ouvert
-            ? 'Le coffre est ouvert : bravo à toute l’équipe !'
-            : `Le coffre est resté fermé : ${serruresOuvertes(coffre.ouvertes)} sur ${enigmes.length}.`,
+          cooperatif: true,
+          message: [
+            coffre.ouvert
+              ? 'Le coffre est ouvert : bravo à tout le groupe !'
+              : `Le coffre est resté fermé : ${serruresOuvertes(coffre.ouvertes)} sur ${enigmes.length}.`,
+            pointsDuGroupe(),
+          ]
+            .filter(Boolean)
+            .join(' '),
         });
       touches = { entree: suite };
       const bouton = el(
@@ -465,7 +490,7 @@ monterJeu({
     'Avant la séance, préparez de 3 à 8 énigmes : chacune ferme une serrure du coffre.',
     'Lancez le compte à rebours : tout le groupe cherche ensemble et vous donne sa réponse, que vous tapez. Majuscules, accents et petites fautes de frappe sont pardonnés, et un seul mot de la réponse suffit.',
     'Bonne réponse : la serrure s’ouvre. Mauvaise réponse : le chrono perd du temps. Un indice aussi.',
-    'Toutes les serrures ouvertes avant la fin : le coffre s’ouvre ! Le temps restant devient le record à battre.',
+    'Toutes les serrures ouvertes avant la fin : le coffre s’ouvre ! Le temps restant devient le record à battre. Chaque serrure ouverte rapporte 1 point à chacun.',
   ],
   demarrer,
 });

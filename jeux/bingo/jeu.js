@@ -132,6 +132,17 @@ function demarrer(ctx) {
     const boule = el('p', { class: 'bingo__boule', 'aria-hidden': 'true' });
     // La sphère du loto tourne à chaque tirage, la boule tirée sort à côté
     const illustration = creerIllustrationBingo();
+    // Temps entre deux tirages (choisi au lancement) : à zéro, une alerte ; on tire le suivant
+    const minuteur = ctx.creerMinuteurManche({
+      duree: ctx.reglages.tempsManche,
+      passer: {
+        libelle: 'Tirer le mot suivant',
+        faire: () => {
+          if (partie.restants > 0) tirer();
+          if (scene.isConnected) scene.focus();
+        },
+      },
+    });
     const definition = el('p', { class: 'bingo__definition' });
     const mot = el('p', { class: 'bingo__mot' });
     const message = el('p', { class: 'bingo__message', 'aria-live': 'polite' });
@@ -270,6 +281,8 @@ function demarrer(ctx) {
       animer(revele ? mot : definition, 'apparition');
       ctx.sons.bingo.tirage();
       ctx.annoncer(revele ? `Mot tiré : ${m}` : `Définition : ${d}`);
+      if (partie.restants > 0) minuteur?.relancer();
+      else minuteur?.arreter();
     }
 
     function devoiler() {
@@ -290,6 +303,17 @@ function demarrer(ctx) {
     async function verifierAnnonce(annonce) {
       const { cri, verifier, gagnants: question } = ANNONCES[annonce];
       const tires = trierMots(motsDevoiles());
+      // Le temps s'arrête pendant la vérification
+      const enCours = minuteur?.enCours;
+      minuteur?.pause();
+      try {
+        await verifierEtAttribuer(annonce, { cri, verifier, question, tires });
+      } finally {
+        if (enCours && scene.isConnected) minuteur.reprendre();
+      }
+    }
+
+    async function verifierEtAttribuer(annonce, { cri, verifier, question, tires }) {
       const valide = await ouvrirDialogue({
         titre: `${cri} On vérifie…`,
         valeurAnnulation: false,
@@ -329,15 +353,23 @@ function demarrer(ctx) {
         return;
       }
       // L'annonce n'est plus celle du moment : rien à valider, aucun point à donner
-      if (!partie.valider(annonce)) return;
+      if (partie.objectif !== annonce) return;
       const gagnants = await ctx.choisirGagnants({
         titre: question,
         message: 'Cliquez sur les gagnants, puis Valider.',
         multiple: true,
       });
+      const aDesGagnants = gagnants.prenoms.length > 0 || gagnants.equipes.length > 0;
+      // Personne de choisi (fenêtre fermée) : l'annonce n'est pas perdue, on continue
+      if (ctx.participants.length && !aDesGagnants) {
+        remplir(message, icone('rotate-right'), 'Aucun gagnant choisi : on continue la partie.');
+        animer(message, 'apparition');
+        return;
+      }
+      if (!partie.valider(annonce)) return;
       ctx.scores.ajouterGagnants(gagnants, POINTS[annonce]);
-      const qui = gagnants.prenoms.length ? ` pour ${decrireGagnants(ctx, gagnants)}` : '';
-      const gain = gagnants.prenoms.length ? ` : +${pluriel(POINTS[annonce], 'point')}` : '';
+      const qui = aDesGagnants ? ` pour ${decrireGagnants(ctx, gagnants)}` : '';
+      const gain = aDesGagnants ? ` : +${pluriel(POINTS[annonce], 'point')}` : '';
       if (annonce === 'bingo') {
         // L'écran de fin fête la victoire (fanfare et applaudissements) : pas deux fois
         ctx.terminer({

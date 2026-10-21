@@ -8,6 +8,7 @@ export const schema = {
       defaut: 10,
       min: 3,
       max: 60,
+      lancement: true,
     },
     {
       cle: 'consigne',

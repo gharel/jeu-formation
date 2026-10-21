@@ -63,6 +63,16 @@ function demarrer(ctx) {
   // L'animation d'apparition se rejoue d'elle-même chaque fois que le résultat cesse d'être caché
   const resultat = el('div', { class: 'motus-resultat apparition', hidden: true });
   const illustration = creerIllustrationMotus();
+  // Temps par mot (choisi au lancement) : à zéro, une alerte ; l'animateur peut dévoiler le mot
+  const minuteur = ctx.creerMinuteurManche({
+    duree: ctx.reglages.tempsManche,
+    passer: {
+      libelle: 'Dévoiler le mot',
+      faire: () => {
+        if (!fini) terminerMot(false);
+      },
+    },
+  });
   const jeu = el(
     'div',
     { class: 'motus-jeu' },
@@ -239,10 +249,12 @@ function demarrer(ctx) {
     dessinerClavier();
     saisie.focus();
     saisie.setSelectionRange(1, 1);
+    minuteur?.relancer();
   }
 
   function terminerMot(trouve) {
     fini = true;
+    minuteur?.arreter();
     const { secret, definition } = motCourant();
     formulaire.hidden = true;
     clavier.hidden = true;
@@ -350,7 +362,7 @@ monterJeu({
     'Avant la séance, préparez 5 mots du numérique (de 4 à 10 lettres).',
     'La première lettre est donnée. Un participant propose un mot à l’oral, vous le tapez.',
     'Vert : lettre bien placée. Jaune (rond) : lettre présente mais mal placée. Bleu : absente.',
-    '6 essais par mot. Celui ou celle qui trouve gagne 1 point.',
+    '6 essais par mot, dans le temps choisi au lancement. Qui trouve gagne 1 point (ou son équipe).',
   ],
   demarrer,
 });

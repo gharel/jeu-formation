@@ -8,6 +8,7 @@ import {
   ecouterClavier,
 } from '../../assets/js/commun/ui.js';
 import { creerChrono } from '../../assets/js/commun/chrono.js';
+import { nommerAvecEquipe } from '../../assets/js/commun/mode-jeu.js';
 import { schema, exemple } from './exemple.js';
 import {
   tirerDuree,
@@ -34,6 +35,9 @@ function demarrer(ctx) {
   const consignes = ctx.elements;
   const { meche } = ctx.reglages;
   const avecPrenoms = ctx.participants.length > 0;
+  // En équipes, l'équipe de la personne brûlée ne marque pas : seules les autres équipes marquent
+  const lesAutres = ctx.equipes.length ? 'les autres équipes' : 'tous les autres';
+  const LesAutres = ctx.equipes.length ? 'Les autres équipes' : 'Tous les autres';
   let index = 0;
   let dernierBrule = null;
   let chrono = null;
@@ -228,7 +232,7 @@ function demarrer(ctx) {
       ctx.sons.patate.brule();
       ctx.annoncer(
         avecPrenoms
-          ? 'Brûlé ! Qui tenait la patate ? Tous les autres marquent 1 point.'
+          ? `Brûlé ! Qui tenait la patate ? ${LesAutres} marquent 1 point.`
           : 'Brûlé ! La personne qui tient la patate perd la manche.',
       );
     }
@@ -246,15 +250,15 @@ function demarrer(ctx) {
     async function choisirBrule() {
       const [prenom] = await ctx.choisirPrenoms({
         titre: 'Qui tenait la patate ?',
-        message: 'Tous les autres joueurs marquent 1 point.',
+        message: `${LesAutres} marquent 1 point.`,
       });
       if (!prenom || brule) return;
       brule = prenom;
       dernierBrule = prenom;
-      ctx.scores.ajouterATous(gagnantsDeLaManche(ctx.participants, prenom), 1);
+      ctx.scores.ajouterATous(gagnantsDeLaManche(ctx.participants, prenom, ctx.equipes), 1);
       dessiner();
       ctx.sons.ding();
-      ctx.annoncer(`${prenom} tenait la patate : 1 point pour tous les autres.`);
+      ctx.annoncer(`${prenom} tenait la patate : 1 point pour ${lesAutres}.`);
     }
 
     function dessinerFin() {
@@ -264,8 +268,8 @@ function demarrer(ctx) {
       let detail = 'La personne qui tient la patate perd la manche.';
       if (avecPrenoms) {
         detail = brule
-          ? `${brule} tenait la patate : 1 point pour tous les autres !`
-          : 'Qui tenait la patate ? Tous les autres marquent 1 point.';
+          ? `${nommerAvecEquipe(ctx.equipes, brule)} tenait la patate : 1 point pour ${lesAutres} !`
+          : `Qui tenait la patate ? ${LesAutres} marquent 1 point.`;
       }
       remplir(
         resultat,
@@ -330,7 +334,7 @@ monterJeu({
     'Avant la séance, préparez des consignes qui ont beaucoup de réponses : « Citez une fonction d’Excel ».',
     'Lancez la patate : elle chauffe pendant un temps caché, que personne ne connaît. Le tic-tac s’accélère…',
     'La personne qui tient la patate donne une réponse valable, pas encore dite, puis la passe à son voisin. Vous validez d’une touche (Espace).',
-    'Quand la patate brûle, la personne qui la tient ne marque pas : tous les autres gagnent 1 point.',
+    'Quand la patate brûle, la personne qui la tient ne marque pas : tous les autres gagnent 1 point (en équipes : les autres équipes).',
   ],
   demarrer,
 });

@@ -7,8 +7,8 @@ import {
   focaliser,
   ecouterClavier,
 } from '../../assets/js/commun/ui.js';
-import { creerMinuteur } from '../../assets/js/commun/chrono.js';
-import { creerBoutonPoints } from '../../assets/js/commun/points.js';
+import { creerBoutonPoints, nommerMarqueur } from '../../assets/js/commun/points.js';
+import { nommerAvecEquipe } from '../../assets/js/commun/mode-jeu.js';
 import { lireNombre, formaterNombre } from '../../assets/js/commun/nombres.js';
 import { schema, exemple } from './exemple.js';
 import { creerIllustrationJuste } from './illustration.js';
@@ -31,23 +31,34 @@ function demarrer(ctx) {
   const { duree, tourDeRole } = ctx.reglages;
   const questions = ctx.elements;
   const avecTour = tourDeRole && ctx.participants.length > 0;
+  // Tour de rôle : les joueurs, ou les équipes chacune leur tour (leurs membres tournent)
+  const ordre = ctx.ordreDePassage();
   let indexQuestion = 0;
   let indexJoueur = 0;
   let designe = null;
-  let minuteur = null;
   let rafraichirJoueur = null;
+  // Temps par question (choisi au lancement) : à zéro, une alerte ; on peut ajouter du temps ou
+  // révéler la réponse. Sans limite : pas de chrono
+  let revelerCourant = null;
+  const minuteur = ctx.creerMinuteurManche({
+    duree,
+    passer: { libelle: 'Révéler la réponse', faire: () => revelerCourant?.('temps') },
+  });
   // Entrée : « Afficher la question » sur l'écran d'attente
   let toucheEntree = null;
   const retirerClavier = ecouterClavier({ Entrée: () => toucheEntree?.() });
 
   function joueurCourant() {
-    if (avecTour) return ctx.participants[indexJoueur];
+    if (avecTour) return ordre[indexJoueur];
     return designe;
   }
 
+  /** « Au tour de Bob », « Au tour de Bob (Les Bleus) » en équipes. */
+  const auTourDe = (joueur) => `Au tour de ${nommerAvecEquipe(ctx.equipes, joueur)}`;
+
   ctx.quandDesigne((prenom) => {
     designe = prenom;
-    if (avecTour) indexJoueur = ctx.participants.indexOf(prenom);
+    if (avecTour) indexJoueur = Math.max(0, ordre.indexOf(prenom));
     rafraichirJoueur?.();
   });
 
@@ -64,7 +75,7 @@ function demarrer(ctx) {
     rafraichirJoueur = () => {
       const joueur = joueurCourant();
       tour.hidden = !joueur;
-      remplir(tour, icone('microphone'), `Au tour de ${joueur}`);
+      remplir(tour, icone('microphone'), auTourDe(joueur));
     };
     rafraichirJoueur();
     const lancer = () => {
@@ -91,7 +102,9 @@ function demarrer(ctx) {
             'p',
             { class: 'juste-attente__duree' },
             icone('stopwatch'),
-            `${dureeLisible(duree)} pour trouver le nombre`,
+            duree
+              ? `${dureeLisible(duree)} pour trouver le nombre`
+              : 'Sans limite de temps pour trouver le nombre',
           ),
           tour,
           el(
@@ -112,9 +125,6 @@ function demarrer(ctx) {
     const unite = String(q.unite ?? '').trim();
     const historique = [];
     let finie = false;
-
-    minuteur?.arreter();
-    minuteur = creerMinuteur({ duree, sons: ctx.sons, surFin: () => reveler('temps') });
 
     const surtitre = el(
       'p',
@@ -151,23 +161,25 @@ function demarrer(ctx) {
     const borne = el('p', { class: 'juste__fourchette' });
     const liste = el('ol', { class: 'juste__historique', 'aria-label': 'Propositions' });
     const compteur = el('p', { class: 'juste__compteur' });
-    const pause = el(
-      'button',
-      {
-        type: 'button',
-        class: 'bouton bouton--discret',
-        onclick: () => {
-          if (minuteur.enCours) minuteur.pause();
-          else minuteur.demarrer();
-          remplir(
-            pause,
-            ...(minuteur.enCours ? [icone('pause'), 'Pause'] : [icone('play'), 'Reprendre']),
-          );
-        },
-      },
-      icone('pause'),
-      'Pause',
-    );
+    const pause = minuteur
+      ? el(
+          'button',
+          {
+            type: 'button',
+            class: 'bouton bouton--discret',
+            onclick: () => {
+              if (minuteur.enCours) minuteur.pause();
+              else minuteur.reprendre();
+              remplir(
+                pause,
+                ...(minuteur.enCours ? [icone('pause'), 'Pause'] : [icone('play'), 'Reprendre']),
+              );
+            },
+          },
+          icone('pause'),
+          'Pause',
+        )
+      : null;
     const devoiler = el(
       'button',
       { type: 'button', class: 'bouton bouton--discret', onclick: () => reveler('abandon') },
@@ -185,7 +197,7 @@ function demarrer(ctx) {
     rafraichirJoueur = () => {
       const joueur = joueurCourant();
       tour.hidden = !joueur;
-      remplir(tour, icone('microphone'), `Au tour de ${joueur}`);
+      remplir(tour, icone('microphone'), auTourDe(joueur));
       etiquette.textContent = joueur ? `Proposition de ${joueur}` : 'Proposition';
     };
     rafraichirJoueur();
@@ -211,8 +223,7 @@ function demarrer(ctx) {
     function reveler(raison) {
       if (finie) return;
       finie = true;
-      minuteur.arreter();
-      minuteur.element.classList.add('chrono--compact');
+      minuteur?.arreter();
       formulaire.hidden = true;
       commandes.hidden = true;
       verdict.hidden = true;
@@ -221,6 +232,7 @@ function demarrer(ctx) {
       const trouve = raison === 'juste';
       const gagnant = trouve ? historique.at(-1)?.joueur : null;
       if (gagnant) ctx.scores.ajouter(gagnant, 1);
+      const marqueur = gagnant ? nommerMarqueur(ctx, gagnant) : null;
       const reponse = `${formaterNombre(q.reponse)}${unite ? ` ${unite}` : ''}`;
       const titre = el(
         'p',
@@ -245,7 +257,7 @@ function demarrer(ctx) {
           'div',
           { class: 'actions-jeu' },
           gagnant
-            ? el('p', { class: 'juste__point' }, icone('check'), `+1 point pour ${gagnant}`)
+            ? el('p', { class: 'juste__point' }, icone('check'), `+1 point pour ${marqueur}`)
             : trouve
               ? creerBoutonPoints(ctx, { titre: 'Qui a trouvé ?' })
               : null,
@@ -260,7 +272,7 @@ function demarrer(ctx) {
                   return;
                 }
                 indexQuestion += 1;
-                if (avecTour) indexJoueur = suivant(ctx.participants, indexJoueur);
+                if (avecTour) indexJoueur = suivant(ordre, indexJoueur);
                 afficherAttente();
               },
             },
@@ -325,7 +337,6 @@ function demarrer(ctx) {
           el(
             'div',
             { class: 'juste__gauche' },
-            minuteur.element,
             commandes,
             el('div', { class: 'juste__infos' }, borne, compteur, liste),
           ),
@@ -341,7 +352,8 @@ function demarrer(ctx) {
         ),
       ),
     );
-    minuteur.demarrer();
+    revelerCourant = reveler;
+    minuteur?.relancer();
     saisie.focus();
   }
 
@@ -359,8 +371,8 @@ monterJeu({
   regles: [
     'Avant la séance, préparez des questions dont la réponse est un nombre.',
     'Un participant propose un nombre à l’oral, vous le tapez : le jeu répond « c’est plus » ou « c’est moins ».',
-    'Le minuteur (30 s par défaut) part quand vous affichez la question : à zéro, la réponse est révélée.',
-    'Celui ou celle qui trouve gagne 1 point. La même personne propose jusqu’à la fin de la question, puis le tour de rôle passe la main.',
+    'Le minuteur (réglé au lancement) part quand vous affichez la question : à zéro, il sonne et clignote ; ajoutez du temps ou révélez la réponse.',
+    'Qui trouve gagne 1 point (ou le fait gagner à son équipe). La même personne propose jusqu’à la fin de la question, puis le tour de rôle passe la main (en équipes : à l’équipe suivante).',
   ],
   demarrer,
 });

@@ -12,6 +12,7 @@ export const schema = {
       min: 2,
       max: 30,
       aide: '5 paliers : l’image se dézoome d’un cran à chaque fois.',
+      lancement: true,
     },
     {
       cle: 'zoom',

@@ -32,7 +32,7 @@ export function creerMot() {
     get indice() {
       return indice;
     },
-    /** 'trouve', 'rate' ou 'faute' une fois le mot fini. */
+    /** 'trouve', 'rate', 'faute' ou 'temps' une fois le mot fini. */
     get issue() {
       return issue;
     },
@@ -80,6 +80,14 @@ export function creerMot() {
       issue = 'faute';
       return true;
     },
+
+    /** Temps écoulé, l'animateur passe : le mot est perdu. */
+    abandonner() {
+      if (phase !== 'jeu') return false;
+      phase = 'fini';
+      issue = 'temps';
+      return true;
+    },
   };
 }
 
@@ -87,6 +95,15 @@ export function creerMot() {
 export function roles(binome, n) {
   const [a, b] = binome;
   return n % 2 === 0 ? { maitre: a, devineur: b } : { maitre: b, devineur: a };
+}
+
+/**
+ * En équipes : les équipes d'au moins deux joueurs (un binôme se forme dans une même équipe),
+ * chacune son tour. `tour` : le numéro du binôme (0, 1, 2…). Null sans deux telles équipes.
+ */
+export function equipeDuTour(equipes, tour) {
+  const jouables = equipes.filter((e) => e.membres.length >= 2);
+  return jouables.length >= 2 ? jouables[tour % jouables.length] : null;
 }
 
 /**

@@ -3,12 +3,12 @@ export const schema = {
     {
       cle: 'duree',
       libelle: 'Temps par question',
-      type: 'nombre',
-      unite: 'secondes',
+      type: 'duree',
       defaut: 30,
       min: 5,
       max: 600,
-      aide: 'À zéro, la réponse est révélée et personne ne marque.',
+      sansLimite: true,
+      lancement: true,
     },
     {
       cle: 'tourDeRole',

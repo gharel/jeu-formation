@@ -16,10 +16,11 @@ import {
   disposition,
   repere,
   distribuer,
-  joueurSuivant,
   creerPartie,
 } from './logique.js';
 import { creerIllustrationMemoire } from './illustration.js';
+import { nommerAvecEquipe } from '../../assets/js/commun/mode-jeu.js';
+import { nommerMarqueur } from '../../assets/js/commun/points.js';
 
 /** Le dernier nombre de cartes choisi, proposé de nouveau à la partie suivante. */
 const CLE_NOMBRE = 'memoire-vive:cartes';
@@ -40,14 +41,32 @@ function demarrer(ctx) {
   });
   let joueur = null;
   let rafraichirTour = null;
+  // Ordre de passage : les joueurs, ou les équipes chacune leur tour (leurs membres tournent)
+  const ordre = ctx.ordreDePassage();
+  let rang = 0;
+  // Temps par tour (choisi au lancement) : à zéro, une alerte ; on peut passer au suivant
+  let passerAuSuivant = null;
+  const minuteur = ctx.creerMinuteurManche({
+    duree: ctx.reglages.tempsManche,
+    passer: { libelle: 'Joueur suivant', faire: () => passerAuSuivant?.() },
+  });
+  const nom = (prenom) => nommerAvecEquipe(ctx.equipes, prenom);
   // La barrette de mémoire vive : une puce s'allume par quart de paires trouvées
   const illustration = creerIllustrationMemoire();
 
   // La roue du bandeau désigne qui joue
   ctx.quandDesigne((prenom) => {
     joueur = prenom;
+    rang = Math.max(0, ordre.indexOf(prenom));
     rafraichirTour?.();
   });
+
+  /** Au suivant : le joueur d'après dans l'ordre de passage (null sans joueurs). */
+  function suivant() {
+    if (!ordre.length) return null;
+    rang = (rang + 1) % ordre.length;
+    return ordre[rang];
+  }
 
   // ---------- Combien de cartes ? ----------
   function afficherChoix() {
@@ -100,10 +119,8 @@ function demarrer(ctx) {
     const { paires: choisies, cartes } = distribuer(paires, nombre, ctx.hasard);
     const partie = creerPartie(cartes);
     const { colonnes, lignes } = disposition(nombre);
-    const participants = ctx.participants;
-    joueur = participants.length
-      ? participants[Math.floor(ctx.hasard() * participants.length)]
-      : null;
+    rang = Math.floor(ctx.hasard() * ordre.length);
+    joueur = ordre.length ? ordre[rang] : null;
     let coups = 0;
     illustration.progression(0, partie.nombreDePaires);
 
@@ -172,7 +189,7 @@ function demarrer(ctx) {
 
     rafraichirTour = () => {
       tour.hidden = !joueur || partie.phase === 'finie';
-      remplir(tour, icone('hand-pointer'), `Au tour de ${joueur}`);
+      remplir(tour, icone('hand-pointer'), `Au tour de ${nom(joueur)}`);
     };
 
     function dessinerCartes() {
@@ -283,11 +300,12 @@ function demarrer(ctx) {
         trouverPaire(cartes[i].paire);
       } else {
         coups += 1;
-        joueur = joueurSuivant(participants, joueur);
+        joueur = suivant();
+        minuteur?.relancer();
         remplir(
           message,
           icone('eye'),
-          `Pas de paire : mémorisez-les bien !${joueur ? ` Au tour de ${joueur}.` : ''}`,
+          `Pas de paire : mémorisez-les bien !${joueur ? ` Au tour de ${nom(joueur)}.` : ''}`,
         );
       }
       dessiner();
@@ -308,8 +326,13 @@ function demarrer(ctx) {
       illustration.progression(partie.pairesTrouvees, partie.nombreDePaires);
       if (joueur) ctx.scores.ajouter(joueur, 1);
       const fini = partie.phase === 'finie';
-      let texte = joueur ? `Paire trouvée par ${joueur} : 1 point !` : 'Paire trouvée !';
+      let texte = joueur
+        ? `Paire trouvée par ${nommerMarqueur(ctx, joueur)} : 1 point !`
+        : 'Paire trouvée !';
       if (!fini && joueur) texte += ` ${joueur} rejoue.`;
+      // Une paire : le même joueur rejoue, avec un nouveau tour de temps ; la dernière arrête tout
+      if (fini) minuteur?.arreter();
+      else minuteur?.relancer();
       if (fini) texte = `${texte} Toutes les paires sont trouvées, en ${coups} coups.`;
       remplir(message, icone('circle-check'), texte);
       remplir(explication, choisies[rang].explication || '');
@@ -318,9 +341,20 @@ function demarrer(ctx) {
 
     function cacher() {
       if (!partie.cacher()) return;
-      remplir(message, joueur ? `À ${joueur} de jouer.` : 'À vous de jouer.');
+      remplir(message, joueur ? `À ${nom(joueur)} de jouer.` : 'À vous de jouer.');
       dessiner();
     }
+
+    // Temps écoulé : l'animateur peut passer la main (les cartes retournées se cachent)
+    passerAuSuivant = () => {
+      if (partie.phase === 'finie') return;
+      partie.cacher();
+      joueur = suivant();
+      remplir(message, joueur ? `Temps écoulé : à ${nom(joueur)} de jouer.` : 'À vous de jouer.');
+      dessiner();
+      minuteur?.relancer();
+      plateau.focus();
+    };
 
     function terminer() {
       touches = {};
@@ -330,9 +364,10 @@ function demarrer(ctx) {
     }
 
     remplir(ctx.zone, plateau);
-    remplir(message, joueur ? `${joueur} commence !` : 'Qui commence ? Annoncez une carte.');
+    remplir(message, joueur ? `${nom(joueur)} commence !` : 'Qui commence ? Annoncez une carte.');
     dessiner();
     plateau.focus();
+    minuteur?.relancer();
   }
 
   afficherChoix();
@@ -347,7 +382,7 @@ monterJeu({
     'Avant la séance, préparez des paires de cartes qui vont ensemble : « Ctrl + Z » et « Annuler », « PDF » et son sens…',
     'Au lancement, choisissez le nombre de cartes : de 8 à 24, selon le temps dont vous disposez.',
     'À son tour, le joueur annonce deux cartes par leur repère (« B3 et D1 ») : vous les retournez.',
-    'Une paire ? 1 point, et il rejoue. Sinon, tout le monde les mémorise, elles se cachent, et c’est au suivant.',
+    'Une paire ? 1 point, et il rejoue. Sinon, tout le monde les mémorise, elles se cachent, et c’est au suivant (en équipes : à l’équipe suivante).',
   ],
   demarrer,
 });

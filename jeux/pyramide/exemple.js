@@ -9,6 +9,16 @@ export const schema = {
       max: 10,
       aide: 'Les rôles s’inversent à chaque mot : avec 2 mots, chacun fait deviner une fois.',
     },
+    {
+      cle: 'tempsManche',
+      libelle: 'Temps par mot',
+      type: 'duree',
+      defaut: 45,
+      min: 15,
+      max: 300,
+      sansLimite: true,
+      lancement: true,
+    },
   ],
   elements: {
     libelle: 'Mot',

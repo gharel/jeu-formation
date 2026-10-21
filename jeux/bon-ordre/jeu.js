@@ -15,6 +15,13 @@ function demarrer(ctx) {
   let index = 0;
   // Trois cartes en vrac, qui se rangent quand l'ordre est juste
   const illustration = creerIllustrationOrdre();
+  // Temps par procédure (choisi au lancement) : à zéro, une alerte ; l'animateur peut montrer
+  // la solution
+  let montrerSolution = null;
+  const minuteur = ctx.creerMinuteurManche({
+    duree: ctx.reglages.tempsManche,
+    passer: { libelle: 'Voir la solution', faire: () => montrerSolution?.() },
+  });
 
   function afficherProcedure() {
     const { titre, etapes } = procedures[index];
@@ -201,6 +208,7 @@ function demarrer(ctx) {
 
     function conclure(texte, boutons, nomIcone) {
       terminee = true;
+      minuteur?.arreter();
       formulaire.hidden = true;
       dessiner();
       const dernier = index === procedures.length - 1;
@@ -291,6 +299,10 @@ function demarrer(ctx) {
     );
     dessiner();
     focaliser(titreProcedure);
+    montrerSolution = () => {
+      if (!terminee) echouer();
+    };
+    minuteur?.relancer();
   }
 
   afficherProcedure();

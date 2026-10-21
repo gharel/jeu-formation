@@ -1,6 +1,18 @@
 import { PAIRES_MIN, validerPaire } from './logique.js';
 
 export const schema = {
+  reglages: [
+    {
+      cle: 'tempsManche',
+      libelle: 'Temps par tour',
+      type: 'duree',
+      defaut: 20,
+      min: 10,
+      max: 120,
+      sansLimite: true,
+      lancement: true,
+    },
+  ],
   elements: {
     libelle: 'Paire',
     pluriel: 'paires',

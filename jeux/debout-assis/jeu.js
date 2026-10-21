@@ -10,7 +10,7 @@ import {
 import { creerMinuteur } from '../../assets/js/commun/chrono.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { schema, exemple } from './exemple.js';
-import { consigne, appliquerEliminations, gagnant } from './logique.js';
+import { consigne, appliquerEliminations, gagnant, equipeGagnante } from './logique.js';
 import { creerIllustrationDebout } from './illustration.js';
 
 function tuileGeste(c, sens) {
@@ -37,6 +37,15 @@ function demarrer(ctx) {
   // Le personnage se lève (vrai) ou s'assoit (faux) ; avec les mains, il les baisse
   const illustration = creerIllustrationDebout();
   const etatFaux = ctx.reglages.consigne === 'main' ? 'baisse' : 'faux';
+
+  /** Fin du mode survie : le dernier en jeu, ou la dernière équipe en jeu ; sinon null. */
+  function vainqueur() {
+    if (!survie) return null;
+    const champion = gagnant(enJeu);
+    if (champion) return `${champion} est le dernier en jeu !`;
+    const equipe = equipeGagnante(enJeu, ctx.equipes);
+    return equipe ? `${equipe.nom} : dernière équipe en jeu !` : null;
+  }
 
   function blocEnJeu() {
     if (!survie) return null;
@@ -185,6 +194,8 @@ function demarrer(ctx) {
         return;
       }
 
+      // Les joueurs du début de la manche : l'élimination se corrige tant qu'on n'a pas continué
+      const avantManche = [...enJeu];
       const enJeuAffiche = el('div', {}, blocEnJeu());
       const eliminer = el(
         'button',
@@ -193,43 +204,47 @@ function demarrer(ctx) {
           class: 'bouton bouton--danger bouton--grand',
           onclick: async () => {
             const elimines = await ctx.choisirPrenoms({
-              prenoms: enJeu,
+              prenoms: avantManche,
               titre: 'Qui s’est trompé ?',
               message: 'Cliquez sur les personnes éliminées, puis Valider.',
               multiple: true,
+              preselection: eliminesManche ?? [],
             });
-            if (!elimines.length) return;
-            const issue = appliquerEliminations(enJeu, elimines);
-            eliminer.disabled = true;
+            // Fenêtre fermée sans choix, la première fois : rien n'est décidé
+            if (!elimines.length && eliminesManche === null) return;
+            eliminesManche = elimines;
+            const issue = appliquerEliminations(avantManche, elimines);
+            tousTrompes = issue.tousElimines;
+            enJeu = issue.enJeu;
+            remplir(eliminer, icone('pen'), 'Corriger les éliminations');
             if (issue.tousElimines) {
               remplir(
                 enJeuAffiche,
                 el(
                   'p',
                   { class: 'debout__info' },
-                  'Tout le monde s’est trompé : personne n’est éliminé !',
+                  'Tout le monde s’est trompé : personne n’est éliminé (ni ne marque) !',
                 ),
                 blocEnJeu(),
               );
               return;
             }
-            enJeu = issue.enJeu;
-            ctx.sons.erreur();
-            const champion = gagnant(enJeu);
+            if (elimines.length) ctx.sons.erreur();
+            const fin = vainqueur();
             remplir(
               enJeuAffiche,
-              champion
-                ? el(
-                    'p',
-                    { class: 'debout__info debout__info--gagnant' },
-                    icone('trophy'),
-                    `${champion} est le dernier en jeu !`,
-                  )
+              fin
+                ? el('p', { class: 'debout__info debout__info--gagnant' }, icone('trophy'), fin)
                 : null,
               blocEnJeu(),
             );
-            // passerALaSuite() termine la partie dès qu'il ne reste qu'une personne
-            if (champion) suivant.textContent = 'Voir le classement';
+            // passerALaSuite() termine la partie dès qu'il ne reste qu'une personne (ou équipe)
+            remplir(
+              suivant,
+              fin || dernier
+                ? 'Voir le classement'
+                : ['Affirmation suivante', icone('arrow-right')],
+            );
           },
         },
         'Éliminer ceux qui se sont trompés',
@@ -238,16 +253,30 @@ function demarrer(ctx) {
       resultat.append(enJeuAffiche);
     }
 
-    function passerALaSuite() {
-      // Mode survie : chaque manche survécue rapporte 1 point (le classement suit l'ordre d'élimination)
-      if (survie) ctx.scores.ajouterATous(enJeu, 1);
-      const champion = survie ? gagnant(enJeu) : null;
-      if (champion || index === affirmations.length - 1) {
-        ctx.terminer({
-          message: champion
-            ? `${champion} est le dernier en jeu !`
-            : 'Toutes les affirmations ont été jouées.',
-        });
+    // Mode survie : qui a été éliminé pendant cette manche (null tant que rien n'est décidé)
+    let eliminesManche = null;
+    let tousTrompes = false;
+
+    async function passerALaSuite() {
+      if (
+        survie &&
+        eliminesManche === null &&
+        !(await ctx.confirmer({
+          titre: 'Personne ne s’est trompé ?',
+          message:
+            'Sinon, éliminez d’abord ceux qui se sont trompés : les autres marquent 1 point.',
+          oui: 'Personne, on continue',
+          non: 'Éliminer d’abord',
+        }))
+      ) {
+        return;
+      }
+      // Mode survie : chaque manche survécue rapporte 1 point (le classement suit l'ordre
+      // d'élimination). Si tout le monde s'est trompé, personne ne marque.
+      if (survie && !tousTrompes) ctx.scores.ajouterATous(enJeu, 1);
+      const fin = vainqueur();
+      if (fin || index === affirmations.length - 1) {
+        ctx.terminer({ message: fin ?? 'Toutes les affirmations ont été jouées.' });
         return;
       }
       index += 1;
@@ -289,7 +318,7 @@ monterJeu({
     'Avant la séance, préparez des affirmations vraies ou fausses, avec une courte explication.',
     'Tout le monde se lève. Vrai ? On reste debout. Faux ? On s’assoit. (Variante : main levée.)',
     'Après le compte à rebours, la réponse et l’explication s’affichent.',
-    'Mode survie possible : qui se trompe est éliminé, le dernier en jeu gagne.',
+    'Mode survie possible : qui se trompe est éliminé, le dernier en jeu gagne (en équipes : la dernière équipe en jeu).',
   ],
   demarrer,
 });

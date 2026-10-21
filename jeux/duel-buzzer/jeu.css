@@ -158,6 +158,18 @@
   word-break: break-word;
 }
 
+/* En équipes : qui répond pour l'équipe à cette question */
+.duel__repondant {
+  margin: 0;
+  font-size: clamp(1rem, min(1.6vw, 2.8vh), 1.5rem);
+  font-weight: 800;
+  color: var(--bleu-nuit);
+}
+
+.duel__joueur--main .duel__repondant {
+  color: var(--sur-accent);
+}
+
 .duel__points {
   display: flex;
   flex-wrap: wrap;

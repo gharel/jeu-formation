@@ -55,13 +55,15 @@ describe('Le Juste Chiffre', () => {
     expect(nettoyerContenu(schema, {}).reglages.duree).toBe(30);
   });
 
-  it('refuse un minuteur trop court ou une réponse manquante', () => {
+  it('ramène un minuteur trop court à 5 s, garde « Sans limite », refuse une réponse manquante', () => {
+    // Le temps par question se choisit dans une liste au lancement : il ne peut plus être faux
     const contenu = nettoyerContenu(schema, {
       reglages: { duree: 2 },
       elements: [{ question: 'Combien ?' }],
     });
+    expect(contenu.reglages.duree).toBe(5);
+    expect(nettoyerContenu(schema, { reglages: { duree: 0 } }).reglages.duree).toBe(0);
     const erreurs = validerContenu(schema, contenu);
-    expect(erreurs).toContain('Réglage « Temps par question » doit être au moins 5.');
-    expect(erreurs).toContain('Question 1 : « Réponse (un nombre) » est obligatoire.');
+    expect(erreurs).toEqual(['Question 1 : « Réponse (un nombre) » est obligatoire.']);
   });
 });

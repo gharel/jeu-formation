@@ -1,5 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { creerDuel, autre, tirerDuellistes } from '../../jeux/duel-buzzer/logique.js';
+import {
+  creerDuel,
+  autre,
+  tirerDuellistes,
+  tirerEquipesDuel,
+  cleAffrontement,
+  repondant,
+} from '../../jeux/duel-buzzer/logique.js';
 import { schema, exemple } from '../../jeux/duel-buzzer/exemple.js';
 import { nettoyerContenu, validerContenu } from '../../assets/js/commun/contenu.js';
 import { creerHasard } from '../../assets/js/commun/hasard.js';
@@ -71,5 +78,28 @@ describe('Duel buzzer', () => {
   it('a un exemple valide, 3 points pour gagner par défaut', () => {
     expect(validerContenu(schema, nettoyerContenu(schema, exemple))).toEqual([]);
     expect(nettoyerContenu(schema, {}).reglages.pointsVictoire).toBe(3);
+  });
+});
+
+describe('Duel buzzer en équipes', () => {
+  const equipes = [{ id: 'e1' }, { id: 'e2' }, { id: 'e3' }];
+
+  it('tire deux équipes différentes, d’abord celles qui ne se sont pas affrontées', () => {
+    const hasard = creerHasard(4);
+    const deja = [cleAffrontement('e1', 'e2'), cleAffrontement('e3', 'e1')];
+    for (let i = 0; i < 20; i++) {
+      const [a, b] = tirerEquipesDuel(equipes, deja, hasard);
+      expect(cleAffrontement(a, b)).toBe('e2|e3');
+    }
+    // Tous les affrontements joués : on recommence parmi tous
+    const [a, b] = tirerEquipesDuel(equipes, ['e1|e2', 'e1|e3', 'e2|e3'], hasard);
+    expect(a).not.toBe(b);
+    expect(tirerEquipesDuel([{ id: 'e1' }], [], hasard)).toBeNull();
+  });
+
+  it('fait répondre les membres à tour de rôle', () => {
+    expect(['Ana', 'Bob'].map((_, i) => repondant(['Ana', 'Bob'], i))).toEqual(['Ana', 'Bob']);
+    expect(repondant(['Ana', 'Bob'], 2)).toBe('Ana');
+    expect(repondant([], 0)).toBeNull();
   });
 });

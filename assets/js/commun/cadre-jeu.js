@@ -8,7 +8,11 @@
  *   exporter(contenu) => contenu sérialisable (facultatif, async),
  *   importer(contenuBrut) => contenu (facultatif, async),
  *   apresEnregistrement(contenu) (facultatif, async),
+ *   aideMinuteur: 'Le temps vient de chaque défi.' (facultatif : jeu sans réglage de lancement),
  * })
+ *
+ * L'accueil propose aussi le mode de jeu (chacun pour soi, par équipes, équipes et joueurs) et les
+ * réglages de lancement du schéma (`lancement: true`, le minuteur), gardés à part du contenu.
  */
 import { trouverJeu, titresDesJeux } from '../jeux.js';
 import * as listeParticipants from './participants.js';
@@ -31,6 +35,17 @@ import { choisirGagnants, choisirPrenoms, confirmer, designerAvecRoue } from './
 import { creerGroupe, etiquetteInfo } from './groupe.js';
 import { membresParmi } from './equipes.js';
 import { creerBlocJoueurs } from './bloc-joueurs.js';
+import { creerBlocMode } from './bloc-mode.js';
+import {
+  lireMode,
+  ecrireMode,
+  modeDeLaPartie,
+  avecEquipes,
+  equipeDuJoueur,
+  ordreDePassage,
+} from './mode-jeu.js';
+import { reglagesDeLancement, lireLancement, ecrireLancement } from './lancement.js';
+import { creerMinuteurManche } from './minuteur-manche.js';
 import { selectionParDefaut, joueursDeLaPartie } from './joueurs.js';
 import { ouvrirGroupe } from './plan-salle.js';
 import {
@@ -42,10 +57,11 @@ import {
   preparerExport,
   lireImport,
   cleContenu as cleDuContenu,
+  validerReglages,
 } from './contenu.js';
 import { sourceDe, oublierSource } from './jeux-de-donnees.js';
 import { telechargerJson, nomDeFichier } from './fichiers.js';
-import { creerEditeur } from './editeur-contenu.js';
+import { creerEditeur, construireChamp } from './editeur-contenu.js';
 import { exigerAcces } from './acces.js';
 import { creerHautDePage } from './haut-de-page.js';
 
@@ -53,7 +69,7 @@ import { creerHautDePage } from './haut-de-page.js';
 await exigerAcces();
 
 export function monterJeu(config) {
-  const { slug, schema, exemple, regles = [], demarrer } = config;
+  const { slug, schema, exemple, regles = [], demarrer, aideMinuteur = '' } = config;
   const jeu = trouverJeu(slug);
   const cadre = document.getElementById('cadre');
   const hasard = hasardDePage();
@@ -66,13 +82,27 @@ export function monterJeu(config) {
   let selection = selectionParDefaut();
   const joueurs = () => joueursDeLaPartie(groupe.presents, selection);
   let mettreAJourLancer = () => {};
+  let actualiserMode = () => {};
   let joueursEnJeu = [];
   let equipesEnJeu = [];
+  let modePartie = 'individuel';
+  // Pendant la partie, la roue ne tire que parmi les joueurs de la partie
+  let enPartie = false;
+  const joueursDeLaRoue = () => (enPartie ? joueursEnJeu : joueurs());
+  // Mode de jeu : gardé pour la séance, d'un jeu à l'autre. Tant que l'animateur n'en a choisi
+  // aucun, un groupe qui a déjà des équipes joue en équipes et joueurs (comme avant ce choix)
+  let modeChoisi = lireMode(groupe.equipes.some((e) => e.membres.length) ? 'mixte' : 'individuel');
+  // Minuteurs de manche de la partie : arrêtés à la fin, quoi que fasse le jeu
+  const minuteursManche = new Set();
+  const emplacementChrono = el('div', { class: 'ecran-jeu__chrono' });
   const tirage = creerTirage(joueurs(), {
     equitable: lire('roue-equitable', true) !== false,
     hasard,
   });
   let contenu = nettoyerContenu(schema, lire(cleContenu) ?? exemple);
+  // Réglages choisis au lancement (minuteur) : voir lancement.js
+  const reglagesLancement = reglagesDeLancement(schema);
+  let lancement = lireLancement(slug, schema, contenu.reglages);
   let nettoyerPartie = null;
   let ecouteDesignation = null;
   let editeur = null;
@@ -144,15 +174,16 @@ export function monterJeu(config) {
     ?.append(...[boutonDesigner, boutonGroupe, boutonSon, boutonPleinEcran].filter(Boolean));
 
   function mettreAJourDesigner() {
-    boutonDesigner.hidden = joueurs().length < 2;
+    boutonDesigner.hidden = joueursDeLaRoue().length < 2;
   }
   mettreAJourDesigner();
 
   /** Le groupe ou la sélection a changé : la roue et les boutons suivent. */
   function actualiserJoueurs() {
-    tirage.mettreAJour(joueurs());
+    tirage.mettreAJour(joueursDeLaRoue());
     mettreAJourDesigner();
     mettreAJourLancer();
+    actualiserMode();
   }
   groupe.surChangement(actualiserJoueurs);
 
@@ -162,7 +193,7 @@ export function monterJeu(config) {
   });
 
   async function designer(titre) {
-    const participants = joueurs();
+    const participants = joueursDeLaRoue();
     if (participants.length < 2) return participants[0] ?? null;
     const prenom = await designerAvecRoue({
       prenoms: participants,
@@ -194,7 +225,21 @@ export function monterJeu(config) {
     } finally {
       nettoyerPartie = null;
       ecouteDesignation = null;
+      for (const minuteur of minuteursManche) minuteur.arreter();
+      minuteursManche.clear();
+      remplir(emplacementChrono);
+      if (enPartie) {
+        enPartie = false;
+        tirage.mettreAJour(joueurs());
+      }
     }
+  }
+
+  /** Les équipes du groupe réduites à des joueurs ; une équipe sans joueur disparaît. */
+  function equipesParmi(liste) {
+    return groupe.equipes
+      .map((e) => ({ id: e.id, nom: e.nom, membres: membresParmi(e, liste) }))
+      .filter((e) => e.membres.length);
   }
 
   function afficherEcran(classe, ...enfants) {
@@ -278,6 +323,34 @@ export function monterJeu(config) {
     );
   }
 
+  /**
+   * Le minuteur, à côté de « Lancer la partie » : les réglages de lancement du jeu (temps par
+   * mot, par question…), gardés dès qu'ils changent.
+   */
+  function blocMinuteur() {
+    if (!reglagesLancement.length) {
+      return aideMinuteur
+        ? el('p', { class: 'intro__minuteur champ__aide' }, icone('stopwatch'), aideMinuteur)
+        : null;
+    }
+    return el(
+      'fieldset',
+      { class: 'intro__minuteur' },
+      el('legend', { class: 'visuellement-cache' }, 'Minuteur'),
+      ...reglagesLancement.map((r) =>
+        construireChamp(
+          r,
+          () => lancement[r.cle],
+          (valeur) => {
+            lancement = { ...lancement, [r.cle]: valeur };
+            ecrireLancement(slug, lancement);
+            mettreAJourLancer();
+          },
+        ),
+      ),
+    );
+  }
+
   function afficherAccueil() {
     arreterPartie();
     const erreurs = validerContenu(schema, contenu);
@@ -293,13 +366,32 @@ export function monterJeu(config) {
       icone('play'),
     );
     const aideLancer = el('p', { class: 'champ__aide' });
-    // Sans joueur choisi (mode « Choisir » ou « Au hasard »), pas de partie
+    // Mode de jeu et qui joue contre qui : suit « Qui joue ? » et les équipes du groupe
+    const blocMode = creerBlocMode(groupe, {
+      mode: modeChoisi,
+      surMode: (nouveau) => {
+        modeChoisi = nouveau;
+        ecrireMode(nouveau);
+      },
+      joueurs,
+      equipesEnJeu: () => equipesParmi(joueurs()),
+      hasard,
+      cooperatif: Boolean(jeu.cooperatif),
+    });
+    actualiserMode = blocMode.actualiser;
+    // Sans joueur choisi (mode « Choisir » ou « Au hasard »), pas de partie. Un jeu à deux (duel,
+    // binôme) ne se lance pas avec un seul joueur ; sans aucun prénom, on joue sans classement.
     mettreAJourLancer = () => {
-      const sansJoueur = selection.mode !== 'tous' && joueurs().length === 0;
-      lancer.disabled = erreurs.length > 0 || sansJoueur;
+      const n = joueurs().length;
+      const sansJoueur = selection.mode !== 'tous' && n === 0;
+      const tropPeu = n > 0 && n < (jeu.joueursMin ?? 1);
+      const problemes = validerReglages(reglagesLancement, lancement);
+      lancer.disabled = erreurs.length > 0 || sansJoueur || tropPeu || problemes.length > 0;
       let aide = '';
       if (erreurs.length) aide = 'Complétez d’abord le contenu du jeu.';
       else if (sansJoueur) aide = 'Choisissez au moins un joueur.';
+      else if (tropPeu) aide = `Il faut au moins ${jeu.joueursMin} joueurs pour ce jeu.`;
+      else if (problemes.length) aide = problemes[0];
       remplir(aideLancer, aide);
       aideLancer.hidden = !aide;
     };
@@ -327,7 +419,7 @@ export function monterJeu(config) {
             `Durée : ${jeu.duree}`,
           ),
         ),
-        el('div', { class: 'intro__lancer' }, lancer, aideLancer),
+        el('div', { class: 'intro__lancer' }, blocMinuteur(), lancer, aideLancer),
       ),
       el(
         'div',
@@ -341,6 +433,7 @@ export function monterJeu(config) {
           hasard,
           designer: () => designer(),
         }),
+        blocMode.element,
         blocContenu(erreurs),
       ),
     );
@@ -559,11 +652,14 @@ export function monterJeu(config) {
     arreterPartie();
     // Les joueurs du moment : ceux choisis dans « Qui joue ? », présents aujourd'hui
     joueursEnJeu = joueurs();
-    // Les équipes du groupe (composées peut-être dans un autre onglet), réduites aux joueurs
+    enPartie = true;
+    tirage.mettreAJour(joueursEnJeu);
+    // Les équipes du groupe (composées peut-être dans un autre onglet), réduites aux joueurs ;
+    // elles ne jouent que dans un mode à équipes, et s'il y en a au moins deux
     groupe.rechargerEquipes();
-    equipesEnJeu = groupe.equipes
-      .map((e) => ({ id: e.id, nom: e.nom, membres: membresParmi(e, joueursEnJeu) }))
-      .filter((e) => e.membres.length);
+    const equipesDuGroupe = equipesParmi(joueursEnJeu);
+    modePartie = modeDeLaPartie(modeChoisi, equipesDuGroupe);
+    equipesEnJeu = avecEquipes(modePartie) ? equipesDuGroupe : [];
     const tableau = el('ul', { class: 'tableau-points', 'aria-label': 'Points' });
     const tableauEquipes = el('ul', {
       class: 'tableau-points tableau-points--equipes',
@@ -572,6 +668,7 @@ export function monterJeu(config) {
     // Chaque point gagné part aussi dans le score du groupe, gardé d'un jeu à l'autre
     const scores = creerScores(joueursEnJeu, {
       equipes: equipesEnJeu,
+      mode: modePartie,
       surChangement: dessinerPoints,
       surAjout: (prenoms, n) => groupe.ajouterPoints(prenoms, slug, n),
       surAjoutEquipes: (ids, n) => groupe.ajouterPointsEquipes(ids, slug, n),
@@ -630,12 +727,15 @@ export function monterJeu(config) {
           icone('arrow-left'),
           'Quitter la partie',
         ),
+        // Le minuteur de manche, au même endroit dans tous les jeux (rempli par le jeu)
+        emplacementChrono,
         joueursEnJeu.length
           ? el(
               'div',
               { class: 'ecran-jeu__points' },
               equipesEnJeu.length ? tableauEquipes : null,
-              tableau,
+              // Par équipes, seules les équipes marquent : pas de points par personne
+              modePartie === 'equipes' ? null : tableau,
             )
           : null,
       ),
@@ -645,26 +745,63 @@ export function monterJeu(config) {
     // (ouvrir la sortie peut figer la page : mieux vaut maintenant qu'à l'écran de réussite)
     requestAnimationFrame(() => setTimeout(preparerSon, 0));
 
+    /** Pendant une fenêtre (qui a trouvé ?), le minuteur de manche s'arrête, puis repart. */
+    async function pendantDialogue(ouvrir) {
+      const actifs = [...minuteursManche].filter((m) => m.enCours);
+      for (const minuteur of actifs) minuteur.pause();
+      try {
+        return await ouvrir();
+      } finally {
+        for (const minuteur of actifs) if (minuteursManche.has(minuteur)) minuteur.reprendre();
+      }
+    }
+
     const ctx = {
       zone,
-      reglages: structuredClone(contenu.reglages),
+      // Réglages du contenu, et ceux choisis au lancement (minuteur)
+      reglages: { ...structuredClone(contenu.reglages), ...structuredClone(lancement) },
       elements: structuredClone(contenu.elements),
       participants: [...joueursEnJeu],
-      // Les équipes en jeu : [{ id, nom, membres }] (membres parmi les joueurs)
+      // Mode de jeu : 'individuel', 'equipes' ou 'mixte' (voir mode-jeu.js)
+      mode: modePartie,
+      // Les équipes en jeu : [{ id, nom, membres }] (membres parmi les joueurs), vide chacun pour soi
       equipes: structuredClone(equipesEnJeu),
+      /** L'équipe en jeu d'un joueur ({ id, nom, membres }), ou null. */
+      equipeDe: (prenom) => equipeDuJoueur(equipesEnJeu, prenom),
+      /** Tour de rôle : les joueurs, ou les équipes chacune leur tour (leurs membres tournent). */
+      ordreDePassage: () => ordreDePassage(joueursEnJeu, equipesEnJeu, modePartie),
       scores,
       hasard,
       sons,
       annoncer,
-      confirmer,
+      confirmer: (options) => pendantDialogue(() => confirmer(options)),
       designer,
       quandDesigne(fonction) {
         ecouteDesignation = fonction;
       },
-      choisirPrenoms: (options) => choisirPrenoms({ prenoms: joueursEnJeu, ...options }),
+      /**
+       * Minuteur de manche (minuteur-manche.js), affiché dans la barre du jeu ; null sans limite
+       * (`duree` 0). `passer` : { libelle, faire }, l'action proposée une fois le temps écoulé.
+       */
+      creerMinuteurManche({ duree, passer = null } = {}) {
+        if (!duree) return null;
+        const minuteur = creerMinuteurManche({ duree, sons, annoncer, passer });
+        minuteursManche.add(minuteur);
+        remplir(emplacementChrono, minuteur.element);
+        return minuteur;
+      },
+      choisirPrenoms: (options) =>
+        pendantDialogue(() => choisirPrenoms({ prenoms: joueursEnJeu, ...options })),
       // Pour attribuer des points : une personne, plusieurs, tout le monde ou une équipe
       choisirGagnants: (options) =>
-        choisirGagnants({ prenoms: joueursEnJeu, equipes: equipesEnJeu, ...options }),
+        pendantDialogue(() =>
+          choisirGagnants({
+            prenoms: joueursEnJeu,
+            equipes: equipesEnJeu,
+            mode: modePartie,
+            ...options,
+          }),
+        ),
       terminer: (options) => afficherFin(scores, options),
     };
     const nettoyage = await demarrer(ctx);
@@ -672,7 +809,54 @@ export function monterJeu(config) {
   }
 
   // ---------- Fin ----------
-  function afficherFin(scores, { message = '' } = {}) {
+  /** Par équipes : le podium et le classement des équipes, avec leurs joueurs. */
+  function resultatsEquipes(scores) {
+    const classement = scores.classementEquipes();
+    const membresDe = (id) => equipesEnJeu.find((e) => e.id === id)?.membres ?? [];
+    const podium = classement.some((e) => e.points > 0)
+      ? el(
+          'ol',
+          { class: 'podium', 'aria-label': 'Podium des équipes' },
+          classement
+            .filter((e) => e.rang <= 3 && e.points > 0)
+            .map((e) =>
+              el(
+                'li',
+                { class: `podium__marche podium__marche--${e.rang}` },
+                el('span', { class: 'podium__medaille' }, icone('medal')),
+                el('span', { class: 'podium__prenom' }, e.nom),
+                el('span', { class: 'podium__info' }, membresDe(e.id).join(', ')),
+                el('span', { class: 'podium__points' }, `${e.points} pt${e.points > 1 ? 's' : ''}`),
+              ),
+            ),
+        )
+      : null;
+    const liste = el(
+      'ol',
+      { class: 'classement', 'aria-label': 'Classement des équipes' },
+      classement.map((e) =>
+        el(
+          'li',
+          { class: 'classement__ligne' },
+          el('span', { class: 'classement__rang' }, `${e.rang}.`),
+          el('span', { class: 'classement__prenom' }, e.nom),
+          el('span', { class: 'classement__points' }, `${e.points} pt${e.points > 1 ? 's' : ''}`),
+        ),
+      ),
+    );
+    return el(
+      'div',
+      { class: `fin__resultats${podium ? ' fin__resultats--deux' : ''}` },
+      podium ?? el('p', { class: 'fin__message' }, 'Bravo à toutes les équipes !'),
+      liste,
+    );
+  }
+
+  /**
+   * Écran de fin. `cooperatif` : tout le groupe a joué ensemble (Coffre-fort) ; pas de podium
+   * d'ex æquo, le message du jeu dit ce que le groupe a gagné.
+   */
+  function afficherFin(scores, { message = '', cooperatif = false } = {}) {
     arreterPartie();
     const titre = el('h2', { class: 'fin__titre' }, icone('trophy'), 'Partie terminée !');
     const classement = scores.classement();
@@ -734,6 +918,19 @@ export function monterJeu(config) {
           ),
         )
       : null;
+    function resultats() {
+      if (cooperatif) return el('p', { class: 'fin__message' }, 'Bravo à toutes et à tous !');
+      if (modePartie === 'equipes') return resultatsEquipes(scores);
+      return [
+        equipes,
+        el(
+          'div',
+          { class: `fin__resultats${podium && liste ? ' fin__resultats--deux' : ''}` },
+          podium ?? el('p', { class: 'fin__message' }, 'Bravo à toutes et à tous !'),
+          liste,
+        ),
+      ];
+    }
     afficherEcran(
       'ecran-fin',
       el(
@@ -743,14 +940,8 @@ export function monterJeu(config) {
       ),
       titre,
       message ? el('p', { class: 'fin__message' }, message) : null,
-      equipes,
       // Podium et classement : côte à côte sur grand écran (tout tient en 1280 × 720)
-      el(
-        'div',
-        { class: `fin__resultats${podium && liste ? ' fin__resultats--deux' : ''}` },
-        podium ?? el('p', { class: 'fin__message' }, 'Bravo à toutes et à tous !'),
-        liste,
-      ),
+      resultats(),
       el(
         'div',
         { class: 'groupe-boutons groupe-boutons--centre' },

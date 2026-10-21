@@ -925,6 +925,10 @@ const boutonReponses = el(
     'aria-pressed': 'false',
     onclick: () => {
       const masque = consultation.classList.toggle('consultation--masque');
+      // Un éditeur ouvert sur place suit ce bouton (le sien est masqué : un seul bouton collé)
+      for (const editeur of consultation.querySelectorAll('.editeur')) {
+        editeur.classList.toggle('editeur--masque', masque);
+      }
       boutonReponses.setAttribute('aria-pressed', String(!masque));
       remplir(
         boutonReponses,
@@ -936,7 +940,12 @@ const boutonReponses = el(
   icone('eye'),
   'Afficher les réponses',
 );
-consultation.append(enteteConsultation, listeJeux);
+// Le bouton reste en haut de l'écran pendant qu'on fait défiler les questions (barre collée)
+consultation.append(
+  el('div', { class: 'barre-reponses' }, boutonReponses),
+  enteteConsultation,
+  listeJeux,
+);
 let tourDeDessin = 0;
 
 /** Valeur d'un champ : texte, liste numérotée ou image. */
@@ -1081,6 +1090,10 @@ function cibleThematique(slug, thematique) {
 function ouvrirEdition(slug, corps, cible) {
   const { schema } = cible;
   const editeur = creerEditeur({ schema, contenu: cible.contenu });
+  editeur.element.classList.toggle(
+    'editeur--masque',
+    consultation.classList.contains('consultation--masque'),
+  );
   editeursOuverts.add(editeur);
   let reference = JSON.stringify(editeur.valeur());
   const zoneErreurs = el('div', { class: 'messages', role: 'alert' });
@@ -1525,12 +1538,7 @@ remplir(
     el(
       'section',
       { class: 'carte bloc-consultation', 'aria-labelledby': 'titre-consultation' },
-      el(
-        'div',
-        { class: 'ecran__entete' },
-        el('h3', { id: 'titre-consultation' }, 'Consulter les questions'),
-        boutonReponses,
-      ),
+      el('h3', { id: 'titre-consultation' }, 'Consulter les questions'),
       el(
         'div',
         { class: 'champ bloc-consultation__choix' },

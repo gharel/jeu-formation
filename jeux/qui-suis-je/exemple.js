@@ -11,6 +11,7 @@ export const schema = {
       min: 2,
       max: 30,
       aide: '5 paliers : avec 6 secondes, chaque mystère dure 30 secondes au plus.',
+      lancement: true,
     },
   ],
   elements: {
