@@ -208,7 +208,6 @@ const N = {
   do4: 261.63,
   mi4: 329.63,
   sol4: 392,
-  la4: 440,
   do5: 523.25,
   re5: 587.33,
   mi5: 659.25,
@@ -259,7 +258,6 @@ export const sons = {
     note(520, { debut: 0.18, duree: 0.15, forme: 'square', volume: 0.08 });
     note(390, { debut: 0.36, duree: 0.4, forme: 'square', volume: 0.08 });
   },
-  buzz: () => note(150, { duree: 0.45, forme: 'sawtooth', volume: 0.12 }),
   ding: () => cloche(N.la5, { volume: 0.14 }),
   fanfare,
   /** Clic de la roue quand un segment passe sous le pointeur. */

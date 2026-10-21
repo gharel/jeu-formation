@@ -3,10 +3,10 @@
  * Chaque mauvaise lettre vide un cran de la batterie ; batterie à plat = mot révélé.
  */
 
-export const LETTRES_MIN = 3;
+const LETTRES_MIN = 3;
 
 /** « é » → « E », « ç » → « C ». */
-export function sansAccent(lettre) {
+function sansAccent(lettre) {
   return String(lettre)
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')

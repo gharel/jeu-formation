@@ -38,7 +38,7 @@ import { CORRECTION, normaliserScores } from './scores-groupe.js';
 import { NOMBRE_EQUIPES_MAX, normaliserNomEquipe, normaliserScoresEquipes } from './equipes.js';
 
 export const FORMAT_GROUPE = 'skazy-jeux-groupe';
-export const VERSION_GROUPE = 1;
+const VERSION_GROUPE = 1;
 
 /** Fichier du groupe : `groupe` a les mêmes propriétés que creerGroupe() (nom, participants…). */
 export function preparerExportGroupe(groupe, maintenant = new Date()) {

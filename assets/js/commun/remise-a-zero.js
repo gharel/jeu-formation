@@ -17,7 +17,7 @@ import { enregistrerTires } from './joueurs.js';
 import { ouvrirDialogue } from './dialogues.js';
 import { el, icone } from './ui.js';
 
-export const PARTIES = [
+const PARTIES = [
   {
     cle: 'joueurs',
     libelle: 'Les joueurs',

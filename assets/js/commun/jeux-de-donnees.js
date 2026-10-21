@@ -16,7 +16,7 @@
 import { FORMAT, FORMAT_DONNEES, nettoyerContenu } from './contenu.js';
 import { lire, ecrire } from './stockage.js';
 
-export const VERSION_DONNEES = 1;
+const VERSION_DONNEES = 1;
 export const LONGUEUR_TITRE = 80;
 export const LONGUEUR_DESCRIPTION = 300;
 const CLE_SOURCES = 'sources-contenus';

@@ -5,7 +5,7 @@
 
 const BASE = 'skazy-jeux';
 const MAGASIN = 'images';
-export const TAILLE_MAX = 15 * 1024 * 1024;
+const TAILLE_MAX = 15 * 1024 * 1024;
 
 let ouverture = null;
 
@@ -55,7 +55,7 @@ export async function lireImage(id) {
   return (await transaction('readonly', (magasin) => magasin.get(id))) ?? null;
 }
 
-export async function supprimerImage(id) {
+async function supprimerImage(id) {
   await transaction('readwrite', (magasin) => magasin.delete(id));
 }
 

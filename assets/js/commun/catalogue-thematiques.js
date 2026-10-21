@@ -26,8 +26,8 @@ import {
 
 /** Export groupé : toutes les thématiques dans un seul fichier. */
 export const FORMAT_THEMATIQUES = 'skazy-jeux-thematiques';
-export const VERSION_THEMATIQUES = 1;
-export const PREFIXE_PERSO = 'perso-';
+const VERSION_THEMATIQUES = 1;
+const PREFIXE_PERSO = 'perso-';
 export const ICONE_PAR_DEFAUT = 'layer-group';
 const CLE = 'thematiques';
 

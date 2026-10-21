@@ -19,7 +19,7 @@
 import { lireNombre, formaterNombre } from './nombres.js';
 
 export const FORMAT = 'skazy-jeux';
-export const VERSION = 1;
+const VERSION = 1;
 /** Jeu de données : le contenu de plusieurs jeux dans un seul fichier (voir jeux-de-donnees.js). */
 export const FORMAT_DONNEES = 'skazy-jeux-donnees';
 

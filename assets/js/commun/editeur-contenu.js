@@ -567,7 +567,7 @@ export function creerEditeur({ schema, contenu }) {
 
   function dessinerElements(focus = null) {
     outils.zonesImage = [];
-    const cartes = brouillon.elements.map((element, i) => {
+    const cartes = brouillon.elements.map((_, i) => {
       const titre = el(
         'h3',
         { class: 'editeur__titre-element' },

@@ -116,7 +116,7 @@ export function creerMinuteur({ duree, sons, surFin, sonFin = true }) {
 }
 
 /** Affichage d'un chrono : grand temps + barre qui se vide. Rouge pendant les 5 dernières secondes. */
-export function creerAffichageChrono(duree) {
+function creerAffichageChrono(duree) {
   const temps = document.createElement('span');
   temps.className = 'chrono__temps';
   temps.setAttribute('role', 'timer');

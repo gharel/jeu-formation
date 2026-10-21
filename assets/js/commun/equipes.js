@@ -13,7 +13,7 @@ import { melanger } from './hasard.js';
 import { classer } from './scores.js';
 import { normaliserScores, totalDe } from './scores-groupe.js';
 
-export const CLE_EQUIPES = 'equipes';
+const CLE_EQUIPES = 'equipes';
 export const CLE_SCORES_EQUIPES = 'scores-equipes';
 export const NOMBRE_EQUIPES_MAX = 8;
 export const LONGUEUR_NOM_EQUIPE = 30;

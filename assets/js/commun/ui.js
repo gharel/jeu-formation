@@ -111,7 +111,7 @@ const TYPES_NON_TEXTE = new Set([
   'file',
 ]);
 
-export function estChampDeSaisie(cible) {
+function estChampDeSaisie(cible) {
   if (!(cible instanceof Element)) return false;
   if (cible.isContentEditable) return true;
   if (cible.tagName === 'TEXTAREA' || cible.tagName === 'SELECT') return true;
@@ -127,7 +127,7 @@ function estActivable(cible) {
 }
 
 /** Nom simple de la touche : 'Espace', 'Entrée', 'Retour', 'Échap' ou la lettre en minuscule. */
-export function nomTouche(evenement) {
+function nomTouche(evenement) {
   switch (evenement.key) {
     case ' ':
     case 'Spacebar':

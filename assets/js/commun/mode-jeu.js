@@ -29,7 +29,7 @@ export const MODES = [
   },
 ];
 
-export const MODE_PAR_DEFAUT = 'individuel';
+const MODE_PAR_DEFAUT = 'individuel';
 
 export function nettoyerMode(brut) {
   return MODES.some((m) => m.valeur === brut) ? brut : MODE_PAR_DEFAUT;
