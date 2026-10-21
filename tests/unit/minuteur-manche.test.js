@@ -69,6 +69,54 @@ describe('minuteur de manche', () => {
     expect(m.restant()).toBe(20_000);
   });
 
+  it('« −30 s » retire du temps sans descendre sous zéro : à zéro, l’alerte', () => {
+    const { m } = minuteur({ duree: 60 });
+    const moins = m.element.querySelector('.minuteur-manche__moins');
+    m.demarrer();
+    vi.advanceTimersByTime(10_000);
+    moins.click();
+    expect(m.restant()).toBe(20_000);
+    expect(m.depasse).toBe(false);
+    moins.click();
+    expect(m.restant()).toBe(0);
+    expect(m.depasse).toBe(true);
+    expect(moins.disabled).toBe(true);
+    vi.advanceTimersByTime(3000);
+    expect(m.element.querySelector('[role="timer"]').textContent).toBe('+0:03');
+  });
+
+  it('le bouton Pause fige le temps ; le jeu ne peut pas le relancer, la manche suivante oui', () => {
+    const { m } = minuteur();
+    const pause = m.element.querySelector('.minuteur-manche__pause');
+    m.demarrer();
+    vi.advanceTimersByTime(2000);
+    pause.click();
+    expect(m.enPause).toBe(true);
+    expect(pause.getAttribute('aria-pressed')).toBe('true');
+    expect(pause.getAttribute('aria-label')).toBe('Reprendre le minuteur');
+    vi.advanceTimersByTime(5000);
+    expect(m.restant()).toBe(8000);
+    // Une fenêtre se ferme : le jeu reprend, mais la pause de l'animateur tient
+    m.reprendre();
+    vi.advanceTimersByTime(1000);
+    expect(m.restant()).toBe(8000);
+    // Le temps s'ajuste aussi en pause
+    m.ajouter(30);
+    expect(m.restant()).toBe(38_000);
+    pause.click();
+    vi.advanceTimersByTime(1000);
+    expect(m.restant()).toBe(37_000);
+    // Pause, puis nouvelle manche : le chrono repart
+    pause.click();
+    m.relancer();
+    expect(m.enPause).toBe(false);
+    expect(m.enCours).toBe(true);
+    // Manche finie : le bouton Pause ne fait plus rien
+    m.arreter();
+    pause.click();
+    expect(m.enPause).toBe(false);
+  });
+
   it('se met en pause, repart du temps complet et s’arrête sans alerte', () => {
     const { m, sons } = minuteur();
     m.demarrer();

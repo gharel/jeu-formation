@@ -1259,9 +1259,50 @@
   transition: transform 0.1s linear;
 }
 
+.minuteur-manche__moins,
 .minuteur-manche__plus,
 .minuteur-manche__passer {
   padding: 0.5em 1.15em;
+}
+
+/* −30 s et +30 s se suivent, un peu plus serrés entre eux qu'avec le reste */
+.minuteur-manche__moins {
+  margin-inline-end: -0.4rem;
+}
+
+.minuteur-manche__moins:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Pause : un bouton rond, l'icône seule (son nom est lu par les lecteurs d'écran) */
+.minuteur-manche__pause {
+  display: inline-grid;
+  place-items: center;
+  width: 2.75em;
+  height: 2.75em;
+  padding: 0;
+}
+
+.minuteur-manche__pause .icone {
+  margin-inline-end: 0;
+}
+
+/* En pause : le temps est figé et grisé, le bouton (lecture) ressort */
+.minuteur-manche--pause .minuteur-manche__temps,
+.minuteur-manche--pause .minuteur-manche__icone {
+  color: var(--texte-doux);
+}
+
+.minuteur-manche--pause .minuteur-manche__progression {
+  background: var(--texte-doux);
+}
+
+.minuteur-manche--pause .minuteur-manche__pause,
+.minuteur-manche--pause .minuteur-manche__pause:hover:not(:disabled) {
+  color: var(--blanc);
+  background: var(--bleu-nuit);
+  border-color: var(--bleu-nuit);
 }
 
 .minuteur-manche--urgent {
@@ -1294,8 +1335,21 @@
   display: none;
 }
 
-.minuteur-manche--depasse .minuteur-manche__plus {
+.minuteur-manche--depasse .minuteur-manche__plus,
+.minuteur-manche--depasse .minuteur-manche__pause {
   border-color: var(--blanc);
+}
+
+/* Temps écoulé : rien à retirer */
+.minuteur-manche--depasse .minuteur-manche__moins {
+  display: none;
+}
+
+/* Temps écoulé et en pause : le dépassement ne clignote plus */
+.minuteur-manche--depasse.minuteur-manche--pause .minuteur-manche__temps,
+.minuteur-manche--depasse.minuteur-manche--pause .minuteur-manche__icone {
+  color: var(--blanc);
+  animation: none;
 }
 
 /* Manche finie : le chrono reste, éteint */
@@ -1304,7 +1358,9 @@
   color: var(--texte-doux);
 }
 
-.minuteur-manche--arrete .minuteur-manche__plus {
+.minuteur-manche--arrete .minuteur-manche__moins,
+.minuteur-manche--arrete .minuteur-manche__plus,
+.minuteur-manche--arrete .minuteur-manche__pause {
   display: none;
 }
 

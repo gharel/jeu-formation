@@ -161,25 +161,6 @@ function demarrer(ctx) {
     const borne = el('p', { class: 'juste__fourchette' });
     const liste = el('ol', { class: 'juste__historique', 'aria-label': 'Propositions' });
     const compteur = el('p', { class: 'juste__compteur' });
-    const pause = minuteur
-      ? el(
-          'button',
-          {
-            type: 'button',
-            class: 'bouton bouton--discret',
-            onclick: () => {
-              if (minuteur.enCours) minuteur.pause();
-              else minuteur.reprendre();
-              remplir(
-                pause,
-                ...(minuteur.enCours ? [icone('pause'), 'Pause'] : [icone('play'), 'Reprendre']),
-              );
-            },
-          },
-          icone('pause'),
-          'Pause',
-        )
-      : null;
     const devoiler = el(
       'button',
       { type: 'button', class: 'bouton bouton--discret', onclick: () => reveler('abandon') },
@@ -187,12 +168,7 @@ function demarrer(ctx) {
     );
     // L'animation d'apparition se joue d'elle-même quand le bilan cesse d'être caché
     const fin = el('div', { class: 'juste__fin apparition', hidden: true });
-    const commandes = el(
-      'div',
-      { class: 'groupe-boutons groupe-boutons--centre' },
-      pause,
-      devoiler,
-    );
+    const commandes = el('div', { class: 'groupe-boutons groupe-boutons--centre' }, devoiler);
 
     rafraichirJoueur = () => {
       const joueur = joueurCourant();
@@ -214,10 +190,14 @@ function demarrer(ctx) {
           el('span', { class: 'juste__sens' }, icone(FLECHES[h.resultat]), h.resultat),
         ),
       );
-      borne.textContent = decrireFourchette(fourchette(historique), unite);
-      compteur.textContent = historique.length
-        ? `${historique.length} proposition${historique.length > 1 ? 's' : ''}`
-        : '';
+      // remplir() et non textContent : espaces insécables (« 1 000 », « 3 propositions »)
+      remplir(borne, decrireFourchette(fourchette(historique), unite));
+      remplir(
+        compteur,
+        historique.length
+          ? `${historique.length} proposition${historique.length > 1 ? 's' : ''}`
+          : '',
+      );
     }
 
     function reveler(raison) {

@@ -53,6 +53,19 @@ test('le temps par mot se choisit au lancement ; à zéro, une alerte, du temps 
   await lancerPartie(page);
   await expect(minuteur(page).getByRole('timer')).toHaveText('0:30');
 
+  // Pause : le temps se fige jusqu'à ce que l'animateur reprenne
+  await minuteur(page).getByRole('button', { name: 'Mettre en pause' }).click();
+  await expect(minuteur(page)).toHaveClass(/minuteur-manche--pause/);
+  await page.clock.runFor(10_000);
+  await expect(minuteur(page).getByRole('timer')).toHaveText('0:30');
+  await minuteur(page).getByRole('button', { name: 'Reprendre le minuteur' }).click();
+  await expect(minuteur(page)).not.toHaveClass(/minuteur-manche--pause/);
+  // +30 s puis −30 s : retour au même temps
+  await minuteur(page).getByRole('button', { name: '+30 s' }).click();
+  await expect(minuteur(page).getByRole('timer')).toHaveText('1:00');
+  await minuteur(page).getByRole('button', { name: '−30 s' }).click();
+  await expect(minuteur(page).getByRole('timer')).toHaveText('0:30');
+
   // À zéro, rien ne s'arrête : le chrono passe au rouge et compte le dépassement
   await page.clock.runFor(32_000);
   await expect(minuteur(page)).toHaveClass(/minuteur-manche--depasse/);
@@ -93,4 +106,24 @@ test('sans limite : pas de chrono pendant la partie', async ({ page }) => {
 test('Instant défi : l’accueil dit que le temps vient de chaque défi', async ({ page }) => {
   await ouvrirJeu(page, 'instant-defi');
   await expect(page.locator('.intro__minuteur')).toContainText('donné par son début');
+});
+
+test('une fenêtre ouverte fige aussi les paliers (Qui suis-je ?)', async ({ page }) => {
+  const erreurs = surveillerErreurs(page);
+  await figerHorloge(page);
+  await ouvrirJeu(page, 'qui-suis-je');
+  await page.clock.pauseAt(new Date('2026-10-05T09:00:00'));
+  await lancerPartie(page);
+  await page.getByRole('button', { name: 'Démarrer' }).click();
+  const paliers = page.getByRole('list', { name: /Points en jeu/ });
+  await expect(paliers).toHaveAttribute('aria-label', 'Points en jeu : 5');
+  // « Quitter la partie ? » reste ouvert longtemps : les chiffres ne s'éteignent pas
+  await page.getByRole('button', { name: /Quitter la partie/ }).click();
+  await page.clock.runFor(60_000);
+  await page.getByRole('dialog').getByRole('button', { name: 'Annuler' }).click();
+  await expect(paliers).toHaveAttribute('aria-label', 'Points en jeu : 5');
+  // Fenêtre fermée : le temps repart
+  await page.clock.runFor(60_000);
+  await expect(paliers).not.toHaveAttribute('aria-label', 'Points en jeu : 5');
+  expect(erreurs).toEqual([]);
 });

@@ -85,11 +85,11 @@ test('le minuteur choisi au lancement alerte à zéro : du temps en plus, ou la 
   await expect(page.locator('.minuteur-manche__temps')).toHaveText(/0:0[45]/);
 
   // Pause : le temps se fige
-  await page.getByRole('button', { name: 'Pause' }).click();
+  await minuteur(page).getByRole('button', { name: 'Mettre en pause' }).click();
   const fige = await page.locator('.minuteur-manche__temps').textContent();
   await page.waitForTimeout(1500);
   await expect(page.locator('.minuteur-manche__temps')).toHaveText(fige);
-  await page.getByRole('button', { name: 'Reprendre' }).click();
+  await minuteur(page).getByRole('button', { name: 'Reprendre le minuteur' }).click();
 
   // À zéro : le chrono passe au rouge et compte le dépassement, la question reste ouverte
   await expect(minuteur(page)).toHaveClass(/minuteur-manche--depasse/, { timeout: 8000 });
@@ -114,7 +114,7 @@ test('sans limite de temps, la question n’a pas de chrono', async ({ page }) =
   await page.getByRole('button', { name: /Afficher la question/ }).click();
   await expect(page.locator('#juste-saisie')).toBeVisible();
   await expect(minuteur(page)).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Pause' })).toHaveCount(0);
+  await expect(page.getByRole('button', { name: 'Mettre en pause' })).toHaveCount(0);
 });
 
 test('une marge de 10 % accepte une réponse proche', async ({ page }) => {
