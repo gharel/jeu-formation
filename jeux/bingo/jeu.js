@@ -136,9 +136,12 @@ function demarrer(ctx) {
     const minuteur = ctx.creerMinuteurManche({
       duree: ctx.reglages.tempsManche,
       passer: {
-        libelle: 'Tirer le mot suivant',
+        libelle: 'On avance',
         faire: () => {
-          if (partie.restants > 0) tirer();
+          // Une définition pas encore trouvée : on dévoile d'abord son mot (il rejoint les mots
+          // tirés, la salle le coche), puis seulement on tire le suivant
+          if (!revele) devoiler();
+          else if (partie.restants > 0) tirer();
           if (scene.isConnected) scene.focus();
         },
       },
@@ -281,7 +284,8 @@ function demarrer(ctx) {
       animer(revele ? mot : definition, 'apparition');
       ctx.sons.bingo.tirage();
       ctx.annoncer(revele ? `Mot tiré : ${m}` : `Définition : ${d}`);
-      if (partie.restants > 0) minuteur?.relancer();
+      // Le dernier mot : le temps ne compte que s'il reste sa définition à trouver
+      if (partie.restants > 0 || !revele) minuteur?.relancer();
       else minuteur?.arreter();
     }
 
@@ -290,6 +294,7 @@ function demarrer(ctx) {
       revele = true;
       dessiner();
       ajouterAuxTires(mots[partie.dernier].mot);
+      if (partie.restants === 0) minuteur?.arreter();
       animer(mot, 'apparition');
       ctx.sons.bingo.revele();
       ctx.annoncer(`Le mot : ${mots[partie.dernier].mot}`);

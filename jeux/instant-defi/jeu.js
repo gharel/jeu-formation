@@ -95,6 +95,8 @@ function demarrer(ctx) {
   function afficherDefi(defi) {
     const { texte, duree } = resoudreDefi(defi.element, ctx.hasard);
     minuteur = creerMinuteur({ duree, sons: ctx.sons, surFin: () => finir(false) });
+    // Le chrono du défi s'arrête pendant une fenêtre (roue, « Quitter ? »)
+    ctx.figerPendantFenetres(minuteur);
     const enonce = el('p', { class: 'panneau__texte defi__enonce' }, texte);
     const tour = el('p', { class: 'au-tour-de', hidden: true });
     dessinerTour(tour);
@@ -135,7 +137,10 @@ function demarrer(ctx) {
         {
           type: 'button',
           class: 'bouton bouton--succes bouton--grand',
-          onclick: () => finir(true),
+          // Le second clic d'un double-clic sur « Top départ ! » (même endroit) ne compte pas
+          onclick: (e) => {
+            if (e.detail < 2) finir(true);
+          },
         },
         icone('check'),
         'Réussi, on arrête le chrono',

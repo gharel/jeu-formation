@@ -131,6 +131,8 @@ function demarrer(ctx) {
       surFin: tempsEcoule,
       sonFin: false,
     });
+    // Le compte à rebours s'arrête pendant une fenêtre (roue, « Quitter ? »)
+    ctx.figerPendantFenetres(minuteur);
 
     const serrures = el('ol', { class: 'coffre__serrures', 'aria-label': 'Serrures' });
     const ecart = el('p', { class: 'coffre__ecart', 'aria-hidden': 'true' });
@@ -292,6 +294,8 @@ function demarrer(ctx) {
     });
 
     function accepterQuandMeme() {
+      // En pause, rien ne s'ouvre (comme la saisie, figée)
+      if (panneau.classList.contains('coffre--pause')) return;
       const annule = coffre.accepterQuandMeme();
       if (!annule) return;
       if (annule.rendu) {

@@ -173,6 +173,9 @@ export function creerMancheAPaliers({
     },
   });
 
+  // Une fenêtre ouverte (roue, « Quitter ? ») fige aussi les chiffres
+  const oublierPaliers = ctx.figerPendantFenetres?.(paliers);
+
   affichage.afficher(nombre);
   dessiner();
 
@@ -181,6 +184,7 @@ export function creerMancheAPaliers({
     actions,
     detruire() {
       paliers.arreter();
+      oublierPaliers?.();
       retirerClavier();
     },
   };

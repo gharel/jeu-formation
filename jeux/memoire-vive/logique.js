@@ -62,13 +62,6 @@ export function distribuer(paires, nombre, hasard = Math.random) {
   return { paires: choisies, cartes: melanger(cartes, hasard) };
 }
 
-/** Joueur suivant dans la liste, en boucle (null sans joueurs). */
-export function joueurSuivant(participants, actuel) {
-  if (!participants.length) return null;
-  const i = participants.indexOf(actuel);
-  return participants[(i + 1) % participants.length];
-}
-
 /**
  * Une partie. On retourne une carte, puis une seconde : si elles forment une paire, elles restent
  * visibles pour de bon ; sinon elles restent visibles le temps de les mémoriser, jusqu'à cacher()
@@ -128,6 +121,16 @@ export function creerPartie(cartes) {
     /** Cache les deux cartes d'un raté. */
     cacher() {
       if (phase !== 'ratee') return false;
+      visibles = [];
+      phase = 'premiere';
+      return true;
+    },
+    /**
+     * Le tour passe (temps écoulé) : les cartes retournées se cachent, même une seule (le joueur
+     * suivant repart d'une première carte, pas de la carte de l'autre).
+     */
+    abandonnerTour() {
+      if (phase !== 'seconde' && phase !== 'ratee') return false;
       visibles = [];
       phase = 'premiere';
       return true;

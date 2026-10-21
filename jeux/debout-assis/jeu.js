@@ -97,6 +97,7 @@ function demarrer(ctx) {
     minuteur?.arreter();
     // À zéro, la réponse se révèle avec son propre son : pas le son de fin par-dessus
     minuteur = creerMinuteur({ duree, sons: ctx.sons, surFin: () => reveler(), sonFin: false });
+    ctx.figerPendantFenetres(minuteur);
     illustration.etat(null);
     // Le chrono, puis le verdict à sa place : tout tient sur une ligne avec les tuiles
     const zoneMinute = el('div', { class: 'debout__minute' }, minuteur.element);

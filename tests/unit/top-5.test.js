@@ -42,8 +42,8 @@ describe('Top 5', () => {
     expect(manche.proposer('google')).toEqual({ resultat: 'ambigu', rang: -1 });
     expect(manche.erreurs).toBe(0);
     expect(manche.proposer('sheets')).toEqual({ resultat: 'trouvee', rang: 1 });
-    expect(manche.proposer('google')).toEqual({ resultat: 'ambigu', rang: -1 });
-    expect(manche.proposer('google docs')).toEqual({ resultat: 'trouvee', rang: 0 });
+    // Une seule réponse cachée contient encore « Google » : c'est elle
+    expect(manche.proposer('google')).toEqual({ resultat: 'trouvee', rang: 0 });
     // Toutes les réponses de ce mot sont au tableau : déjà trouvée
     expect(manche.proposer('google')).toEqual({ resultat: 'deja', rang: 0 });
     expect(manche.proposer('mot')).toEqual({ resultat: 'deja', rang: 2 });

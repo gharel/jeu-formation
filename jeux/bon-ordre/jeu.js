@@ -132,7 +132,10 @@ function demarrer(ctx) {
     }
 
     function dessiner() {
-      surtitre.textContent = `Procédure ${index + 1} sur ${procedures.length} · Essai ${essai} sur ${essaisMax}`;
+      remplir(
+        surtitre,
+        `Procédure ${index + 1} sur ${procedures.length} · Essai ${essai} sur ${essaisMax}`,
+      );
       for (const [carte, bouton] of boutonsCartes) {
         bouton.classList.toggle('ordre__carte--placee', estPlacee(carte));
         bouton.disabled = terminee || estPlacee(carte);

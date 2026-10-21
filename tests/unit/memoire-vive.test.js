@@ -8,7 +8,6 @@ import {
   disposition,
   repere,
   distribuer,
-  joueurSuivant,
   creerPartie,
 } from '../../jeux/memoire-vive/logique.js';
 import { schema, exemple } from '../../jeux/memoire-vive/exemple.js';
@@ -64,11 +63,19 @@ describe('Mémoire vive', () => {
     expect(distribuer(paires, 12, creerHasard(3))).toEqual({ paires: choisies, cartes });
   });
 
-  it('passe au joueur suivant, en boucle', () => {
-    expect(joueurSuivant(['Ana', 'Bob', 'Chloé'], 'Bob')).toBe('Chloé');
-    expect(joueurSuivant(['Ana', 'Bob', 'Chloé'], 'Chloé')).toBe('Ana');
-    expect(joueurSuivant(['Ana', 'Bob'], null)).toBe('Ana');
-    expect(joueurSuivant([], 'Ana')).toBeNull();
+  it('un tour passé (temps écoulé) cache aussi une carte seule : le suivant repart de zéro', () => {
+    const { cartes } = distribuer(paires, 8, creerHasard(5));
+    const partie = creerPartie(cartes);
+    const [a0, b0] = cartesDeLaPaire(cartes, 0);
+    expect(partie.retourner(a0)).toBe('premiere');
+    expect(partie.cacher()).toBe(false);
+    expect(partie.abandonnerTour()).toBe(true);
+    expect(partie.visibles).toEqual([]);
+    expect(partie.phase).toBe('premiere');
+    // Le joueur suivant ne finit pas la paire de l'autre
+    expect(partie.retourner(b0)).toBe('premiere');
+    expect(partie.abandonnerTour()).toBe(true);
+    expect(partie.abandonnerTour()).toBe(false);
   });
 
   it('garde une paire trouvée visible, cache un raté', () => {

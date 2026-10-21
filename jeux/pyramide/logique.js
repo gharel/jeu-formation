@@ -99,11 +99,13 @@ export function roles(binome, n) {
 
 /**
  * En équipes : les équipes d'au moins deux joueurs (un binôme se forme dans une même équipe),
- * chacune son tour. `tour` : le numéro du binôme (0, 1, 2…). Null sans deux telles équipes.
+ * chacune son tour. `tour` : le numéro du binôme (0, 1, 2…). Une seule telle équipe : elle
+ * joue tous les binômes (jamais un binôme à cheval sur deux équipes, qui ferait marquer les deux).
+ * Null sans aucune équipe d'au moins deux joueurs.
  */
 export function equipeDuTour(equipes, tour) {
   const jouables = equipes.filter((e) => e.membres.length >= 2);
-  return jouables.length >= 2 ? jouables[tour % jouables.length] : null;
+  return jouables.length ? jouables[tour % jouables.length] : null;
 }
 
 /**

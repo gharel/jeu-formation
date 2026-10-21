@@ -234,7 +234,7 @@ function demarrer(ctx) {
     essais = [];
     fini = false;
     const { secret } = motCourant();
-    surtitre.textContent = `Mot ${indexMot + 1} sur ${mots.length} · ${secret.length} lettres`;
+    remplir(surtitre, `Mot ${indexMot + 1} sur ${mots.length} · ${secret.length} lettres`);
     saisie.maxLength = secret.length;
     saisie.value = secret[0];
     saisie.disabled = false;

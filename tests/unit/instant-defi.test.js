@@ -20,6 +20,13 @@ describe('Instant défi', () => {
     ['1 min 30 pour ranger', 90],
     ['Pour trouver (sans durée)', 30],
     ['2 souris pour 1 minute', 60],
+    ['Une minute pour montrer', 60],
+    ['Deux minutes et demie pour ranger', 150],
+    ['1 minute et demie pour créer', 90],
+    ['Quarante-cinq secondes pour retrouver', 45],
+    ['Quinze secondes pour un dernier essai', 15],
+    ['Dix secondes, pas une de plus', 10],
+    ['Un défi unique pour trouver', 30],
   ])('lit la durée dans « %s »', (texte, duree) => {
     expect(dureeDepuisAmorce(texte)).toBe(duree);
   });

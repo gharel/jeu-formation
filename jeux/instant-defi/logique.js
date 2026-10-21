@@ -18,12 +18,45 @@ export const OPTIONS_AMORCE = [
   { valeur: 'perso', libelle: 'Autre : j’écris mon propre début' },
 ];
 
+/** Nombres écrits en lettres, des plus longs aux plus courts (« quarante-cinq » avant « cinq »). */
+const NOMBRES_EN_LETTRES = [
+  ['quatre-vingt-dix', 90],
+  ['quarante-cinq', 45],
+  ['soixante', 60],
+  ['cinquante', 50],
+  ['quarante', 40],
+  ['trente', 30],
+  ['vingt', 20],
+  ['quinze', 15],
+  ['douze', 12],
+  ['onze', 11],
+  ['dix', 10],
+  ['neuf', 9],
+  ['huit', 8],
+  ['sept', 7],
+  ['six', 6],
+  ['cinq', 5],
+  ['quatre', 4],
+  ['trois', 3],
+  ['deux', 2],
+  ['une', 1],
+  ['un', 1],
+].map(([mot, n]) => [new RegExp(`(?<![\\p{L}-])${mot}(?![\\p{L}-])`, 'gu'), String(n)]);
+
+/** « deux minutes » → « 2 minutes » : un mot entier seulement (« dixième », « unique » restent). */
+function enChiffres(texte) {
+  return NOMBRES_EN_LETTRES.reduce((t, [mot, n]) => t.replace(mot, n), texte);
+}
+
 /**
  * Durée du chrono lue dans le texte : « 30 secondes », « 45 s », « 1 minute », « 2 min »,
- * « 1 min 30 ». Sans durée lisible, on prend la valeur par défaut.
+ * « 1 min 30 », et en lettres : « Une minute », « Deux minutes et demie », « Quinze secondes ».
+ * Sans durée lisible, on prend la valeur par défaut.
  */
 export function dureeDepuisAmorce(texte) {
-  const t = String(texte ?? '').toLowerCase();
+  const t = enChiffres(String(texte ?? '').toLowerCase());
+  const demie = t.match(/(\d+)\s*(?:minutes?|min|mn)\s+et\s+demie?\b/);
+  if (demie) return Number(demie[1]) * 60 + 30;
   const minutes = t.match(/(\d+)\s*(?:minutes?|min|mn)\b\s*(\d+)?/);
   if (minutes) return Number(minutes[1]) * 60 + Number(minutes[2] ?? 0);
   const secondes = t.match(/(\d+)\s*(?:s|sec|secondes?)\b/);

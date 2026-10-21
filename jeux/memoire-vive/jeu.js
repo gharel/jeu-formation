@@ -119,8 +119,11 @@ function demarrer(ctx) {
     const { paires: choisies, cartes } = distribuer(paires, nombre, ctx.hasard);
     const partie = creerPartie(cartes);
     const { colonnes, lignes } = disposition(nombre);
-    rang = Math.floor(ctx.hasard() * ordre.length);
-    joueur = ordre.length ? ordre[rang] : null;
+    // Le premier joueur : celui que la roue a désigné avant la donne, sinon au hasard
+    if (!joueur) {
+      rang = Math.floor(ctx.hasard() * ordre.length);
+      joueur = ordre.length ? ordre[rang] : null;
+    }
     let coups = 0;
     illustration.progression(0, partie.nombreDePaires);
 
@@ -290,6 +293,12 @@ function demarrer(ctx) {
     function retourner(i, evenement) {
       // Au clic, le focus revient au plateau (Espace garde son sens) ; au clavier, il reste là
       if (evenement?.detail > 0) plateau.focus();
+      // Après un raté, Espace ou Entrée sur une carte encore visible (le focus y est resté au
+      // clavier) cache les cartes, comme le dit l'aide
+      if (partie.phase === 'ratee' && partie.visibles.includes(i)) {
+        cacher();
+        return;
+      }
       const resultat = partie.retourner(i);
       if (!resultat) return;
       remplir(explication);
@@ -309,6 +318,8 @@ function demarrer(ctx) {
         );
       }
       dessiner();
+      // Dernière paire : le focus quitte la carte pour qu'Entrée ouvre le classement
+      if (partie.phase === 'finie') plateau.focus();
       // Les animations et les sons une fois la page à jour
       if (resultat !== 'premiere') animer(message, 'apparition');
       ctx.sons.memoire.retourner();
@@ -348,7 +359,7 @@ function demarrer(ctx) {
     // Temps écoulé : l'animateur peut passer la main (les cartes retournées se cachent)
     passerAuSuivant = () => {
       if (partie.phase === 'finie') return;
-      partie.cacher();
+      partie.abandonnerTour();
       joueur = suivant();
       remplir(message, joueur ? `Temps écoulé : à ${nom(joueur)} de jouer.` : 'À vous de jouer.');
       dessiner();

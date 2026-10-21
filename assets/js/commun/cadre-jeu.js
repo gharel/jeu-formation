@@ -16,7 +16,7 @@
  */
 import { trouverJeu, titresDesJeux } from '../jeux.js';
 import * as listeParticipants from './participants.js';
-import { lire, ecrire, effacer } from './stockage.js';
+import { lire, ecrire } from './stockage.js';
 import { hasardDePage } from './hasard.js';
 import { creerTirage } from './roue.js';
 import { creerScores } from './scores.js';
@@ -88,12 +88,16 @@ export function monterJeu(config) {
   let modePartie = 'individuel';
   // Pendant la partie, la roue ne tire que parmi les joueurs de la partie
   let enPartie = false;
+  let numeroPartie = 0;
   const joueursDeLaRoue = () => (enPartie ? joueursEnJeu : joueurs());
   // Mode de jeu : gardé pour la séance, d'un jeu à l'autre. Tant que l'animateur n'en a choisi
   // aucun, un groupe qui a déjà des équipes joue en équipes et joueurs (comme avant ce choix)
   let modeChoisi = lireMode(groupe.equipes.some((e) => e.membres.length) ? 'mixte' : 'individuel');
   // Minuteurs de manche de la partie : arrêtés à la fin, quoi que fasse le jeu
   const minuteursManche = new Set();
+  // Les autres chronos du jeu (paliers, mèche, compte à rebours) : figés eux aussi pendant une
+  // fenêtre (voir ctx.figerPendantFenetres)
+  const chronosDuJeu = new Set();
   const emplacementChrono = el('div', { class: 'ecran-jeu__chrono' });
   const tirage = creerTirage(joueurs(), {
     equitable: lire('roue-equitable', true) !== false,
@@ -134,7 +138,7 @@ export function monterJeu(config) {
       title: 'Revoir les prénoms, les infos et le plan de salle',
       // À la fermeture, le focus revient au jeu (pas au bouton) : Entrée et Espace gardent leur
       // sens en partie
-      onclick: () => ouvrirGroupe(groupe, { focusApres: cadre }),
+      onclick: () => pendantDialogue(() => ouvrirGroupe(groupe, { focusApres: cadre })),
     },
     icone('users'),
     'Groupe',
@@ -192,26 +196,45 @@ export function monterJeu(config) {
     f: () => basculerPleinEcran(),
   });
 
-  async function designer(titre) {
+  /**
+   * Pendant une fenêtre (qui a trouvé ?, la roue, le groupe, « Quitter ? »), le minuteur de
+   * manche s'arrête, puis repart.
+   */
+  async function pendantDialogue(ouvrir) {
+    const actifs = [...minuteursManche, ...chronosDuJeu].filter((m) => m.enCours);
+    for (const chrono of actifs) chrono.pause();
+    try {
+      return await ouvrir();
+    } finally {
+      for (const chrono of actifs) {
+        if (!minuteursManche.has(chrono) && !chronosDuJeu.has(chrono)) continue;
+        if (chrono.reprendre) chrono.reprendre();
+        else chrono.demarrer();
+      }
+    }
+  }
+
+  async function designer() {
     const participants = joueursDeLaRoue();
     if (participants.length < 2) return participants[0] ?? null;
-    const prenom = await designerAvecRoue({
-      prenoms: participants,
-      tirage,
-      hasard,
-      titre,
-      surEquitable: (v) => ecrire('roue-equitable', v),
-      // Sous le prénom tiré : son info et sa place (« Place 4, îlot 2 »)
-      decrire: (p) => {
-        const info = groupe.infoDe(p);
-        const place = groupe.placeDe(p);
-        return [
-          info ? [icone(listeParticipants.themeDe(info.theme).icone), groupe.decrire(p)] : '',
-          info && place ? ' · ' : '',
-          place,
-        ];
-      },
-    });
+    const prenom = await pendantDialogue(() =>
+      designerAvecRoue({
+        prenoms: participants,
+        tirage,
+        hasard,
+        surEquitable: (v) => ecrire('roue-equitable', v),
+        // Sous le prénom tiré : son info et sa place (« Place 4, îlot 2 »)
+        decrire: (p) => {
+          const info = groupe.infoDe(p);
+          const place = groupe.placeDe(p);
+          return [
+            info ? [icone(listeParticipants.themeDe(info.theme).icone), groupe.decrire(p)] : '',
+            info && place ? ' · ' : '',
+            place,
+          ];
+        },
+      }),
+    );
     if (prenom) {
       annoncer(`C’est au tour de ${prenom}. ${groupe.decrire(prenom)} ${groupe.placeDe(prenom)}`);
       ecouteDesignation?.(prenom);
@@ -227,6 +250,7 @@ export function monterJeu(config) {
       ecouteDesignation = null;
       for (const minuteur of minuteursManche) minuteur.arreter();
       minuteursManche.clear();
+      chronosDuJeu.clear();
       remplir(emplacementChrono);
       if (enPartie) {
         enPartie = false;
@@ -670,6 +694,10 @@ export function monterJeu(config) {
   async function lancerPartie() {
     if (!(await placerLesJoueursSansEquipe())) return;
     arreterPartie();
+    // Chaque lancement a son numéro : un jeu qui se prépare lentement (images de Zoom mystère)
+    // et qu'on a quitté entre-temps se nettoie aussitôt prêt, au lieu de rester actif
+    numeroPartie += 1;
+    const numero = numeroPartie;
     // Les joueurs du moment : ceux choisis dans « Qui joue ? », présents aujourd'hui
     joueursEnJeu = joueurs();
     enPartie = true;
@@ -733,12 +761,14 @@ export function monterJeu(config) {
             class: 'bouton bouton--discret',
             onclick: async () => {
               if (
-                await confirmer({
-                  titre: 'Quitter la partie ?',
-                  message:
-                    'La partie s’arrête. Les points déjà gagnés restent dans les scores du groupe.',
-                  oui: 'Quitter',
-                })
+                await pendantDialogue(() =>
+                  confirmer({
+                    titre: 'Quitter la partie ?',
+                    message:
+                      'La partie s’arrête. Les points déjà gagnés restent dans les scores du groupe.',
+                    oui: 'Quitter',
+                  }),
+                )
               ) {
                 afficherAccueil();
               }
@@ -764,17 +794,6 @@ export function monterJeu(config) {
     // La sortie audio s'ouvre juste après l'affichage de l'écran de jeu, pas au premier son
     // (ouvrir la sortie peut figer la page : mieux vaut maintenant qu'à l'écran de réussite)
     requestAnimationFrame(() => setTimeout(preparerSon, 0));
-
-    /** Pendant une fenêtre (qui a trouvé ?), le minuteur de manche s'arrête, puis repart. */
-    async function pendantDialogue(ouvrir) {
-      const actifs = [...minuteursManche].filter((m) => m.enCours);
-      for (const minuteur of actifs) minuteur.pause();
-      try {
-        return await ouvrir();
-      } finally {
-        for (const minuteur of actifs) if (minuteursManche.has(minuteur)) minuteur.reprendre();
-      }
-    }
 
     const ctx = {
       zone,
@@ -810,6 +829,15 @@ export function monterJeu(config) {
         remplir(emplacementChrono, minuteur.element);
         return minuteur;
       },
+      /**
+       * Un chrono du jeu (paliers, mèche, compte à rebours : { pause, reprendre ou demarrer,
+       * enCours }) qui s'arrête pendant les fenêtres (roue, « Quitter ? », qui a trouvé ?), comme
+       * le minuteur de manche, puis repart s'il tournait. Renvoie de quoi l'oublier.
+       */
+      figerPendantFenetres(chrono) {
+        chronosDuJeu.add(chrono);
+        return () => chronosDuJeu.delete(chrono);
+      },
       choisirPrenoms: (options) =>
         pendantDialogue(() => choisirPrenoms({ prenoms: joueursEnJeu, ...options })),
       // Pour attribuer des points : une personne, plusieurs, tout le monde ou une équipe
@@ -825,7 +853,9 @@ export function monterJeu(config) {
       terminer: (options) => afficherFin(scores, options),
     };
     const nettoyage = await demarrer(ctx);
-    if (typeof nettoyage === 'function') nettoyerPartie = nettoyage;
+    if (typeof nettoyage !== 'function') return;
+    if (numero === numeroPartie && enPartie) nettoyerPartie = nettoyage;
+    else nettoyage();
   }
 
   // ---------- Fin ----------
@@ -1002,14 +1032,4 @@ export function monterJeu(config) {
   }
 
   afficherAccueil();
-
-  return {
-    /** Pour les tests : efface le contenu enregistré. */
-    reinitialiser() {
-      effacer(cleContenu);
-      oublierSource(slug);
-      contenu = nettoyerContenu(schema, exemple);
-      afficherAccueil();
-    },
-  };
 }

@@ -118,7 +118,11 @@ describe('Pyramide en équipes', () => {
       'e2',
       'e1',
     ]);
-    expect(equipeDuTour([bleus, seul], 0)).toBeNull();
+    // Une seule équipe peut former un binôme : elle joue (pas de binôme entre deux équipes)
+    expect(equipeDuTour([bleus, seul], 0).id).toBe('e1');
+    expect(equipeDuTour([bleus, seul], 1).id).toBe('e1');
+    expect(equipeDuTour([seul], 0)).toBeNull();
+    expect(equipeDuTour([], 0)).toBeNull();
   });
 
   it('perd le mot quand le temps est écoulé', () => {

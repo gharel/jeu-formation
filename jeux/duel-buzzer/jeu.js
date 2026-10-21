@@ -168,14 +168,17 @@ function demarrer(ctx) {
     focaliser(titre);
   }
 
+  // Questions jouées par chaque camp, d'un duel à l'autre : en équipes, ses membres répondent à
+  // tour de rôle sur toute la partie (pas toujours le premier au début de chaque duel)
+  const questionsDuCamp = new Map();
+
   // ---------- Duel ----------
   /** `camps` : { gauche, droite }, chacun { nom, membres } (une personne, ou une équipe). */
   function afficherDuel(camps) {
     const duel = creerDuel({ pointsVictoire });
     const noms = { gauche: camps.gauche.nom, droite: camps.droite.nom };
-    // Questions jouées dans ce duel : en équipes, les membres répondent à tour de rôle
-    let numero = 0;
-    const repondantDe = (cote) => repondant(camps[cote].membres, numero);
+    const repondantDe = (cote) =>
+      repondant(camps[cote].membres, questionsDuCamp.get(camps[cote].nom) ?? 0);
     /** « Ana (Les Bleus) » en équipes, sinon le nom du joueur. */
     const quiRepond = (cote) => (enEquipes ? `${repondantDe(cote)} (${noms[cote]})` : noms[cote]);
     const cotes = {};
@@ -309,7 +312,7 @@ function demarrer(ctx) {
       illustration.etat(duel.phase === 'buzze' ? 'buzze' : null);
       // Les buzzers s'allument quand la question s'affiche
       plateau.classList.toggle('duel--ouvert', duel.phase === 'ouvert');
-      surtitre.textContent = `Question ${indexQuestion + 1} sur ${questions.length}`;
+      remplir(surtitre, `Question ${indexQuestion + 1} sur ${questions.length}`);
       if (duel.phase === 'attente') {
         remplir(question, 'Mains sur les buzzers… Prêts ?');
         question.classList.add('duel__question--attente');
@@ -384,7 +387,10 @@ function demarrer(ctx) {
         ? () => ctx.terminer({ message: 'Toutes les questions ont été posées.' })
         : () => {
             indexQuestion += 1;
-            numero += 1;
+            for (const cote of COTES) {
+              const n = camps[cote].nom;
+              questionsDuCamp.set(n, (questionsDuCamp.get(n) ?? 0) + 1);
+            }
             duel.preparer();
             dessiner();
           };

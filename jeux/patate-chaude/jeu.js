@@ -134,6 +134,8 @@ function demarrer(ctx) {
       },
       surFin: () => bruler(),
     });
+    // La mèche ne brûle pas pendant une fenêtre (roue, « Quitter ? »)
+    ctx.figerPendantFenetres(chrono);
 
     function dessinerCompteur() {
       const n = manche.passes;

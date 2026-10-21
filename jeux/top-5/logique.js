@@ -34,8 +34,9 @@ export function validerQuestion({ reponses = [] } = {}) {
 
 /**
  * Une manche. `proposer(texte)` renvoie { resultat, rang } avec resultat : 'trouvee', 'deja'
- * (déjà retournée), 'ambigu' (un mot commun à plusieurs réponses : « Google » pour « Google Docs »
- * et « Google Sheets », ni trouvé ni erreur), 'erreur' ou 'vide' ; null si la manche est finie.
+ * (déjà retournée), 'ambigu' (un mot commun à plusieurs réponses encore cachées : « Google » pour
+ * « Google Docs » et « Google Sheets », ni trouvé ni erreur), 'erreur' ou 'vide' ; null si la
+ * manche est finie.
  */
 export function creerManche(reponses, { erreursMax = 3 } = {}) {
   const trouvees = new Set();
@@ -80,8 +81,10 @@ export function creerManche(reponses, { erreursMax = 3 } = {}) {
       if (!rangs.length) return erreur();
       const restantes = rangs.filter((rang) => !trouvees.has(rang));
       if (!restantes.length) return { resultat: 'deja', rang: rangs[0] };
-      if (rangs.length > 1) return { resultat: 'ambigu', rang: -1 };
-      return trouver(rangs[0]);
+      // Plusieurs réponses encore cachées contiennent ce mot : à préciser. Une seule : c'est elle
+      // (« Google » quand « Google Sheets » est déjà au tableau retourne « Google Docs »)
+      if (restantes.length > 1) return { resultat: 'ambigu', rang: -1 };
+      return trouver(restantes[0]);
     },
     /** L'animateur retourne une case à la main : la réponse a été dite autrement. */
     reveler(rang) {
