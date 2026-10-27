@@ -8,6 +8,7 @@ import {
   taillePourGroupe,
   nombreDePlaces,
   dessinerSalle,
+  vueFormateur,
   planVide,
   normaliserPlan,
   nettoyerPlan,
@@ -157,6 +158,55 @@ describe('plan de salle : placement', () => {
     expect(libellePlace(plan('u', 4), groupe, 'p3')).toBe('Place 3');
     expect(libellePlace(plan('ilots', 8, { parIlot: 4 }), groupe, 'p6')).toBe('Place 6, îlot 2');
     expect(libellePlace(plan('u', 4), groupe, 'p9')).toBe('');
+  });
+});
+
+describe('plan de salle : vue du formateur', () => {
+  for (const { valeur } of DISPOSITIONS) {
+    it(`${valeur} : rotation de 180°, mêmes places, tables retournées`, () => {
+      const dessin = dessinerSalle(plan(valeur, 9), prenoms(9));
+      const vue = vueFormateur(dessin);
+      expect(vue.taille).toEqual(dessin.taille);
+      expect(vue.places).toHaveLength(dessin.places.length);
+      for (const p of dessin.places) {
+        const v = vue.places.find((q) => q.id === p.id);
+        expect(v.numero).toBe(p.numero);
+        expect(v.groupe).toBe(p.groupe);
+        expect(v.x).toBeCloseTo(LARGEUR - p.x);
+        expect(v.y).toBeCloseTo(HAUTEUR - p.y);
+        expect(Boolean(v.inverse)).toBe(!p.inverse);
+      }
+      dessin.tables.forEach((t, i) => {
+        expect(vue.tables[i]).toMatchObject({ l: t.l, h: t.h, forme: t.forme });
+        expect(vue.tables[i].x).toBeCloseTo(LARGEUR - t.x);
+        expect(vue.tables[i].y).toBeCloseTo(HAUTEUR - t.y);
+      });
+    });
+
+    it(`${valeur} : les places sont rangées de haut en bas, puis de gauche à droite`, () => {
+      const { places } = vueFormateur(dessinerSalle(plan(valeur, 11), prenoms(11)));
+      const arrondi = (v) => Math.round(v * 100);
+      for (let i = 1; i < places.length; i++) {
+        const [a, b] = [places[i - 1], places[i]];
+        expect(arrondi(a.y) < arrondi(b.y) || (arrondi(a.y) === arrondi(b.y) && a.x <= b.x)).toBe(
+          true,
+        );
+      }
+    });
+  }
+
+  it('l’écran est en bas : plus aucune place dans la bande réservée en bas', () => {
+    for (const { valeur } of DISPOSITIONS) {
+      const { places } = vueFormateur(dessinerSalle(plan(valeur, 12), prenoms(12)));
+      for (const p of places) expect(p.y).toBeLessThanOrEqual(HAUTEUR - HAUT_SALLE + 0.001);
+    }
+  });
+
+  it('en salle de classe, la place 1 passe en bas à droite', () => {
+    const { places } = vueFormateur(dessinerSalle(plan('classe', 6), prenoms(6)));
+    const un = places.find((p) => p.numero === 1);
+    for (const p of places.filter((q) => q.numero !== 1)) expect(un.y).toBeGreaterThanOrEqual(p.y);
+    expect(places[places.length - 1].id).toBe('p1');
   });
 });
 

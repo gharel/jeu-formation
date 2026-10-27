@@ -1,5 +1,6 @@
 /**
- * Plan de salle affiché : l'écran (et son faisceau) en haut, les tables, et une place par bouton.
+ * Plan de salle affiché, vu par le formateur (face au groupe, l'écran derrière lui) : l'écran et
+ * son faisceau en bas, les tables, et une place par bouton (voir `vueFormateur` dans salle.js).
  * Chaque personne est un avatar rond à ses initiales, dans une couleur de la charte, avec un
  * badge pour le thème de son info, son prénom en étiquette et son info en dessous.
  *
@@ -117,7 +118,9 @@ export function creerPlanSalle(groupe, { modifiable = false, hasard = Math.rando
   }
 
   function dessinerSalle() {
-    const { places, taille, tables } = salle.dessinerSalle(plan(), groupe.participants);
+    const { places, taille, tables } = salle.vueFormateur(
+      salle.dessinerSalle(plan(), groupe.participants),
+    );
     const disposition = salle.DISPOSITIONS.find((d) => d.valeur === plan().disposition);
     // Peu de place par personne : l'info, puis le prénom, laissent la place à l'avatar
     let densite = '';
@@ -133,6 +136,7 @@ export function creerPlanSalle(groupe, { modifiable = false, hasard = Math.rando
       boite,
       el('div', { class: 'salle__faisceau', 'aria-hidden': 'true' }),
       el('div', { class: 'salle__ecran', 'aria-hidden': 'true' }, icone('display'), 'Écran'),
+      el('p', { class: 'salle__legende', 'aria-hidden': 'true' }, 'Vue formateur'),
       tables.map((t) =>
         el(
           'div',
@@ -204,9 +208,8 @@ export function creerPlanSalle(groupe, { modifiable = false, hasard = Math.rando
 
   /** Aperçu miniature d'une disposition : ses tables et ses places, avec le nombre de places actuel. */
   function apercu(disposition) {
-    const { places, taille, tables } = salle.dessinerSalle(
-      { ...plan(), disposition },
-      groupe.participants,
+    const { places, taille, tables } = salle.vueFormateur(
+      salle.dessinerSalle({ ...plan(), disposition }, groupe.participants),
     );
     const point = taille.l * 0.62;
     return el(

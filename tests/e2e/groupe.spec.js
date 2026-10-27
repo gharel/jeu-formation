@@ -28,6 +28,9 @@ async function preparerGroupe(page) {
 test('depuis l’accueil, on saisit le groupe et on le place sur le plan de salle', async ({
   page,
 }) => {
+  // Vue formateur : la place 3 est en haut du plan, loin des prénoms à placer : une fenêtre haute
+  // garde les deux visibles pendant le glisser (la souris ne fait pas défiler la page)
+  await page.setViewportSize({ width: 1280, height: 1900 });
   const erreurs = surveillerErreurs(page);
   await page.goto('/');
   const lien = page.getByRole('link', { name: 'Le groupe · à saisir' });
@@ -101,6 +104,52 @@ test('depuis l’accueil, on saisit le groupe et on le place sur le plan de sall
   await page.getByLabel('Nombre de places').fill('');
   await page.getByLabel('Nombre de places').press('Enter');
   await expect(salle.locator('.salle__place')).toHaveCount(5);
+  expect(erreurs).toEqual([]);
+});
+
+test('le plan de salle est vu du formateur : écran en bas, places tournées de 180°', async ({
+  page,
+}) => {
+  const erreurs = surveillerErreurs(page);
+  await preparerGroupe(page);
+  const salle = page.getByRole('group', { name: /Plan de salle/ });
+  await expect(salle.locator('.salle__legende')).toHaveText('Vue formateur');
+  const centre = (b) => ({ x: b.x + b.width / 2, y: b.y + b.height / 2 });
+
+  // En U (par défaut) : l'écran est sous toutes les places, le U s'ouvre vers lui
+  const ecran = await salle.locator('.salle__ecran').boundingBox();
+  for (const place of await salle.locator('.salle__place').all()) {
+    const b = await place.boundingBox();
+    expect(b.y + b.height).toBeLessThanOrEqual(ecran.y + 1);
+  }
+  await expect(salle.locator('.salle__table--u')).toHaveCSS('border-bottom-width', '0px');
+
+  // Salle de classe : la place 1, première rangée vue du fond de la salle, est en bas à droite
+  await page.locator('label.disposition', { hasText: 'Salle de classe' }).click();
+  await expect(salle.locator('.salle__place')).toHaveCount(6);
+  const ecranClasse = await salle.locator('.salle__ecran').boundingBox();
+  const un = centre(await salle.getByRole('button', { name: 'Place 1, libre' }).boundingBox());
+  const autres = [];
+  for (let n = 2; n <= 6; n++) {
+    const b = await salle.getByRole('button', { name: `Place ${n}, libre` }).boundingBox();
+    autres.push(centre(b));
+  }
+  for (const a of autres) {
+    expect(un.y).toBeGreaterThanOrEqual(a.y - 1);
+    if (Math.abs(un.y - a.y) <= 1) expect(un.x).toBeGreaterThan(a.x);
+  }
+  expect(autres.some((a) => a.y < un.y - 5)).toBe(true);
+  expect(un.y).toBeLessThan(ecranClasse.y);
+
+  // L'ordre de tabulation suit l'ordre visuel : de haut en bas, puis de gauche à droite
+  const ordre = await salle.locator('.salle__place').evaluateAll((boutons) =>
+    boutons.map((b) => {
+      const r = b.getBoundingClientRect();
+      return [Math.round(r.top), Math.round(r.left)];
+    }),
+  );
+  const trie = [...ordre].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  expect(ordre).toEqual(trie);
   expect(erreurs).toEqual([]);
 });
 

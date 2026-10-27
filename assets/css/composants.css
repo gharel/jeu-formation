@@ -2417,8 +2417,8 @@
 .disposition__table--u {
   background: none;
   border: calc(var(--ep) * 1cqi) solid var(--blanc);
-  border-top: 0;
-  border-radius: 0 0 4px 4px;
+  border-bottom: 0;
+  border-radius: 4px 4px 0 0;
   filter: var(--ombre-table-forme);
 }
 
@@ -2517,7 +2517,7 @@
 
 /* ---------- La salle ---------- */
 
-/* 100 × 70 unités carrées, l'écran en haut. Places et tables sont posées en pourcentages ;
+/* 100 × 70 unités carrées, vue du formateur : l'écran en bas, devant lui. Places et tables sont posées en pourcentages ;
    la taille des avatars et des prénoms suit la taille des places (--s, en unités cqi). */
 .salle {
   position: relative;
@@ -2534,7 +2534,7 @@
 
 .salle__ecran {
   position: absolute;
-  top: 2.2%;
+  bottom: 2.2%;
   left: 36%;
   width: 28%;
   height: 5.5%;
@@ -2557,15 +2557,30 @@
   color: var(--accent);
 }
 
-/* La lumière du vidéoprojecteur, de l'écran vers la salle */
+/* Rappel du point de vue du plan, dans le coin à côté de l'écran */
+.salle__legende {
+  position: absolute;
+  bottom: 2.2%;
+  left: 2%;
+  margin: 0;
+  font-size: clamp(0.6rem, 1.3cqi, 0.9rem);
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--texte-doux);
+  pointer-events: none;
+}
+
+/* La lumière du vidéoprojecteur, de l'écran (en bas) vers la salle */
 .salle__faisceau {
   position: absolute;
-  top: 7%;
+  bottom: 7%;
   left: 20%;
   width: 60%;
   height: 62%;
-  background: linear-gradient(to bottom, var(--accent-clair), transparent 90%);
-  clip-path: polygon(27% 0, 73% 0, 100% 100%, 0 100%);
+  background: linear-gradient(to top, var(--accent-clair), transparent 90%);
+  clip-path: polygon(0 0, 100% 0, 73% 100%, 27% 100%);
   opacity: 0.75;
   pointer-events: none;
 }
@@ -2584,13 +2599,13 @@
   border-radius: clamp(10px, 3.5cqi, 48px);
 }
 
-/* Table en U d'un seul tenant : trois branches dessinées par la bordure (épaisseur --ep) ;
-   l'ombre suit la forme du U */
+/* Table en U d'un seul tenant, ouverte vers l'écran (en bas) : trois branches dessinées par la
+   bordure (épaisseur --ep) ; l'ombre suit la forme du U */
 .salle__table--u {
   background: none;
   border: calc(var(--ep) * 1cqi) solid var(--blanc);
-  border-top: 0;
-  border-radius: 0 0 clamp(8px, 3cqi, 36px) clamp(8px, 3cqi, 36px);
+  border-bottom: 0;
+  border-radius: clamp(8px, 3cqi, 36px) clamp(8px, 3cqi, 36px) 0 0;
   box-shadow: none;
   filter: var(--ombre-table-forme);
 }

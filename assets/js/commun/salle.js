@@ -2,7 +2,8 @@
  * Plan de salle : dispositions (en U, salle de classe, îlots, réunion) et placement des
  * participants. Fonctions pures, sauf charger/enregistrer qui passent par stockage.js.
  *
- * La salle mesure 100 × 70 (unités carrées), l'écran et l'animateur sont en haut.
+ * La salle mesure 100 × 70 (unités carrées), l'écran et l'animateur sont en haut : ce sont les
+ * coordonnées vues par un participant. Le plan affiché est celui du formateur (`vueFormateur`).
  * Une place : { id: 'p1', numero: 1, x, y, groupe, inverse } (x, y = centre ; inverse : la table
  * est en dessous, l'avatar se met donc en bas, côté table). Toutes les places d'une
  * disposition ont la même taille { l, h }, carrée : un avatar et un prénom.
@@ -279,6 +280,25 @@ export function nombreDePlaces(plan, participants) {
 export function dessinerSalle(plan, participants) {
   const n = nombreDePlaces(plan, participants);
   return DESSINS[plan.disposition](n, plan.parIlot);
+}
+
+/**
+ * Le dessin vu par le formateur, debout devant face au groupe : une rotation de 180° de la salle
+ * (haut et bas, gauche et droite inversés), l'écran se retrouve en bas. Seul l'affichage change : ids,
+ * numéros et groupes des places restent ceux de `dessinerSalle`. Une place au-dessus de sa table
+ * passe dessous (et inversement), son avatar change donc de côté (`inverse`). Les places sont
+ * rangées de haut en bas puis de gauche à droite : l'ordre de tabulation suit ce qu'on voit.
+ */
+export function vueFormateur({ places, taille, tables }) {
+  const tourner = (o) => ({ ...o, x: LARGEUR - o.x, y: HAUTEUR - o.y });
+  const arrondi = (v) => Math.round(v * 100);
+  return {
+    places: places
+      .map((p) => ({ ...tourner(p), inverse: !p.inverse }))
+      .sort((a, b) => arrondi(a.y) - arrondi(b.y) || arrondi(a.x) - arrondi(b.x)),
+    taille,
+    tables: tables.map(tourner),
+  };
 }
 
 // ---------- Plan : nettoyage et placement ----------
