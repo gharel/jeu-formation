@@ -535,6 +535,86 @@
         {
           "mot": "Raccourci",
           "definition": "Une combinaison de touches, comme Ctrl + C, pour agir plus vite qu’avec la souris."
+        },
+        {
+          "mot": "SharePoint",
+          "definition": "Le site d’équipe où une organisation range et partage ses documents."
+        },
+        {
+          "mot": "OneNote",
+          "definition": "Le bloc-notes numérique de Microsoft 365, organisé en carnets et en pages."
+        },
+        {
+          "mot": "Planner",
+          "definition": "L’outil qui range les tâches d’une équipe dans des colonnes : à faire, en cours, terminé."
+        },
+        {
+          "mot": "Forms",
+          "definition": "L’outil de Microsoft 365 pour créer un questionnaire ou un sondage."
+        },
+        {
+          "mot": "Calendrier",
+          "definition": "L’agenda où l’on place ses rendez-vous et ses réunions."
+        },
+        {
+          "mot": "Contact",
+          "definition": "Une personne enregistrée dans l’annuaire, avec son adresse e-mail et son téléphone."
+        },
+        {
+          "mot": "Pièce jointe",
+          "definition": "Le fichier envoyé avec un courriel."
+        },
+        {
+          "mot": "Courrier indésirable",
+          "definition": "Le dossier où Outlook range les messages suspects ou publicitaires."
+        },
+        {
+          "mot": "Signature",
+          "definition": "Le texte ajouté automatiquement à la fin de chaque message, avec votre nom et vos coordonnées."
+        },
+        {
+          "mot": "Réunion",
+          "definition": "Un rendez-vous à plusieurs, en salle ou en visio, créé dans Teams ou Outlook."
+        },
+        {
+          "mot": "Partage d’écran",
+          "definition": "Montrer en direct ce qu’on affiche sur son ordinateur aux autres participants."
+        },
+        {
+          "mot": "Chat",
+          "definition": "La discussion écrite, en direct, entre deux collègues ou plus."
+        },
+        {
+          "mot": "Modèle",
+          "definition": "Un document déjà préparé, qu’on remplit au lieu de partir d’une page blanche."
+        },
+        {
+          "mot": "Suivi des modifications",
+          "definition": "Il garde la trace de chaque changement, pour accepter ou refuser les corrections."
+        },
+        {
+          "mot": "Graphique",
+          "definition": "Un dessin en barres, en courbes ou en secteurs qui illustre des chiffres."
+        },
+        {
+          "mot": "Mise en forme",
+          "definition": "Tout ce qui change l’aspect du texte : gras, couleur, taille…"
+        },
+        {
+          "mot": "Insertion",
+          "definition": "L’onglet qui permet d’ajouter une image, un tableau ou une forme."
+        },
+        {
+          "mot": "Enregistrer",
+          "definition": "Garder son travail pour le retrouver plus tard."
+        },
+        {
+          "mot": "Partager",
+          "definition": "Donner accès à un fichier à d’autres personnes, d’un simple clic."
+        },
+        {
+          "mot": "Licence",
+          "definition": "L’abonnement qui donne droit d’utiliser les applications."
         }
       ]
     },

@@ -534,6 +534,86 @@
         {
           "mot": "Verrouiller",
           "definition": "Bloquer l’écran quand on s’absente, pour que personne n’utilise l’ordinateur."
+        },
+        {
+          "mot": "Pièce jointe",
+          "definition": "Le fichier accroché à un e-mail, qui peut cacher un piège."
+        },
+        {
+          "mot": "Code PIN",
+          "definition": "Le petit code à quelques chiffres qui déverrouille un téléphone ou une carte."
+        },
+        {
+          "mot": "Double authentification",
+          "definition": "Une seconde preuve, comme un code reçu par SMS, demandée en plus du mot de passe."
+        },
+        {
+          "mot": "Empreinte digitale",
+          "definition": "Votre doigt posé sur le capteur pour déverrouiller un appareil."
+        },
+        {
+          "mot": "Usurpation",
+          "definition": "Se faire passer pour quelqu’un d’autre afin de tromper ses proches."
+        },
+        {
+          "mot": "Clé USB",
+          "definition": "Un petit support branché à l’ordinateur : ne jamais utiliser celle d’un inconnu."
+        },
+        {
+          "mot": "Expéditeur",
+          "definition": "La personne ou l’adresse qui a envoyé un message : à vérifier avant de cliquer."
+        },
+        {
+          "mot": "HTTPS",
+          "definition": "Le début d’une adresse de site sécurisé, avec un s à la fin."
+        },
+        {
+          "mot": "Navigation privée",
+          "definition": "Un mode du navigateur qui n’enregistre pas l’historique de la session."
+        },
+        {
+          "mot": "Gestionnaire",
+          "definition": "Une application qui retient tous vos mots de passe derrière un seul, bien choisi."
+        },
+        {
+          "mot": "Cloud",
+          "definition": "Des serveurs sur Internet où l’on garde ses fichiers, accessibles de partout."
+        },
+        {
+          "mot": "Cheval de Troie",
+          "definition": "Un programme qui se cache derrière une apparence inoffensive pour entrer dans l’ordinateur."
+        },
+        {
+          "mot": "Logiciel espion",
+          "definition": "Un programme caché qui observe ce que vous faites et le transmet à un tiers."
+        },
+        {
+          "mot": "Carte bancaire",
+          "definition": "Ses numéros se saisissent uniquement sur un site de confiance, jamais par message."
+        },
+        {
+          "mot": "Faux site",
+          "definition": "Une copie d’une page connue, conçue pour récupérer vos codes."
+        },
+        {
+          "mot": "Session",
+          "definition": "Le temps où l’on reste identifié sur un site, du début à la fin."
+        },
+        {
+          "mot": "Téléchargement",
+          "definition": "Copier un fichier depuis Internet : à faire uniquement depuis un site de confiance."
+        },
+        {
+          "mot": "SMS",
+          "definition": "Un court texte envoyé d’un téléphone à un autre, parfois piégé par des escrocs."
+        },
+        {
+          "mot": "Déconnexion",
+          "definition": "Fermer sa session avant de quitter un ordinateur partagé."
+        },
+        {
+          "mot": "Utilisateur",
+          "definition": "Une personne qui se sert d’un ordinateur, d’un logiciel ou d’un compte."
         }
       ]
     },

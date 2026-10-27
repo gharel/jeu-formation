@@ -539,6 +539,86 @@
         {
           "mot": "Meta",
           "definition": "Depuis 2021, le nom de l’entreprise qui possède Facebook, Instagram et WhatsApp."
+        },
+        {
+          "mot": "Ami",
+          "definition": "Une personne avec qui l’on est relié sur Facebook, après une demande acceptée."
+        },
+        {
+          "mot": "Publication",
+          "definition": "Un texte, une photo ou une vidéo que l’on met en ligne pour ses amis."
+        },
+        {
+          "mot": "Commentaire",
+          "definition": "Un message écrit sous une publication pour réagir ou répondre."
+        },
+        {
+          "mot": "J’aime",
+          "definition": "Le pouce levé qui dit qu’on apprécie une publication."
+        },
+        {
+          "mot": "Photo de profil",
+          "definition": "La petite image ronde qui vous représente à côté de votre nom."
+        },
+        {
+          "mot": "Photo de couverture",
+          "definition": "La grande image en haut de votre profil ou de votre page."
+        },
+        {
+          "mot": "Vidéo",
+          "definition": "Des images qui bougent, avec du son, que l’on publie ou que l’on regarde dans son fil."
+        },
+        {
+          "mot": "Abonné",
+          "definition": "Quelqu’un qui suit vos publications sans être forcément votre ami."
+        },
+        {
+          "mot": "Demande d’ami",
+          "definition": "Le message envoyé pour proposer à quelqu’un de se connecter à vous."
+        },
+        {
+          "mot": "Événement",
+          "definition": "Une sortie ou une fête annoncée sur Facebook, avec la liste des invités."
+        },
+        {
+          "mot": "Émoji",
+          "definition": "Un petit dessin, comme un visage souriant, glissé dans un texte."
+        },
+        {
+          "mot": "Mot de passe",
+          "definition": "Le code secret qui protège votre compte."
+        },
+        {
+          "mot": "Confidentialité",
+          "definition": "Les réglages qui décident qui peut voir vos publications."
+        },
+        {
+          "mot": "Paramètres",
+          "definition": "Le menu où l’on règle son compte, ses alertes et sa sécurité."
+        },
+        {
+          "mot": "Compte",
+          "definition": "Votre espace personnel, ouvert avec une adresse e-mail et un mot de passe."
+        },
+        {
+          "mot": "Direct",
+          "definition": "Une vidéo diffusée au moment même où elle est filmée, que l’on peut commenter."
+        },
+        {
+          "mot": "Album",
+          "definition": "Un ensemble de photos rangées ensemble sous un même titre."
+        },
+        {
+          "mot": "Canular",
+          "definition": "Une fausse nouvelle qui circule en ligne : vérifiez avant de la partager."
+        },
+        {
+          "mot": "Bloquer",
+          "definition": "Empêcher une personne de voir votre profil ou de vous écrire."
+        },
+        {
+          "mot": "Souvenir",
+          "definition": "Une publication d’il y a un ou plusieurs ans, que Facebook vous remet sous les yeux."
         }
       ]
     },

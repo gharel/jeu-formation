@@ -535,6 +535,86 @@
         {
           "mot": "Fine-tuning",
           "definition": "L’ajustement qui permet de spécialiser une IA générale pour un domaine ou un métier très précis."
+        },
+        {
+          "mot": "ChatGPT",
+          "definition": "L’assistant conversationnel d’OpenAI, lancé en 2022 et devenu très connu."
+        },
+        {
+          "mot": "Copilot",
+          "definition": "L’assistant de Microsoft, présent dans Windows, Word ou Edge."
+        },
+        {
+          "mot": "Mistral",
+          "definition": "L’entreprise française d’intelligence artificielle qui a créé l’assistant Le Chat."
+        },
+        {
+          "mot": "Intelligence artificielle",
+          "definition": "Des machines capables d’imiter certaines capacités humaines, comme comprendre ou créer."
+        },
+        {
+          "mot": "Réseau de neurones",
+          "definition": "Le modèle mathématique, inspiré du cerveau, qui permet à l’IA d’apprendre."
+        },
+        {
+          "mot": "Apprentissage",
+          "definition": "La façon dont une IA s’améliore en observant de nombreux exemples."
+        },
+        {
+          "mot": "IA générative",
+          "definition": "Une IA qui crée du texte, des images, de la musique ou des vidéos."
+        },
+        {
+          "mot": "Deepfake",
+          "definition": "Une fausse vidéo ou un faux son, réalisés par IA, qui imitent une vraie personne."
+        },
+        {
+          "mot": "Image générée",
+          "definition": "Une création visuelle obtenue en décrivant simplement ce qu’on souhaite voir."
+        },
+        {
+          "mot": "Assistant vocal",
+          "definition": "Un programme qui répond à vos demandes à l’oral, comme Siri ou Alexa."
+        },
+        {
+          "mot": "Résumé",
+          "definition": "Ce qu’une IA peut produire à partir d’un long texte : l’essentiel en quelques lignes."
+        },
+        {
+          "mot": "Traduction",
+          "definition": "Passer un texte d’une langue à une autre, une tâche que l’IA réalise en quelques secondes."
+        },
+        {
+          "mot": "Reformuler",
+          "definition": "Réécrire une phrase autrement, avec d’autres mots, sans changer son sens."
+        },
+        {
+          "mot": "Vérifier",
+          "definition": "Contrôler les réponses de l’IA, car elle peut se tromper."
+        },
+        {
+          "mot": "Confidentialité",
+          "definition": "Ce qu’on protège en ne donnant à l’IA ni mot de passe ni informations personnelles."
+        },
+        {
+          "mot": "Droit d’auteur",
+          "definition": "Ce qui protège une œuvre et son créateur : un sujet délicat pour les contenus générés par IA."
+        },
+        {
+          "mot": "Reconnaissance vocale",
+          "definition": "La capacité d’une machine à transformer ce que l’on dit en texte écrit."
+        },
+        {
+          "mot": "Rôle",
+          "definition": "Ce qu’on demande à l’IA de jouer, comme « agis en professeur »."
+        },
+        {
+          "mot": "Exemple",
+          "definition": "Un modèle de réponse donné à l’IA pour qu’elle comprenne ce qu’on attend."
+        },
+        {
+          "mot": "Abonnement",
+          "definition": "La formule payante qui donne accès à des fonctions en plus."
         }
       ]
     },

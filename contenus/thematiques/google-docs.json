@@ -519,6 +519,86 @@
         {
           "mot": "Zoom",
           "definition": "Il agrandit ou réduit l’affichage à l’écran, sans changer la taille du texte imprimé."
+        },
+        {
+          "mot": "Gras",
+          "definition": "Le style qui épaissit les lettres, pour mettre un mot en valeur."
+        },
+        {
+          "mot": "Italique",
+          "definition": "Le style penché des lettres, souvent utilisé pour un titre d’œuvre."
+        },
+        {
+          "mot": "Souligner",
+          "definition": "Tirer un trait sous un mot ou une phrase."
+        },
+        {
+          "mot": "Police",
+          "definition": "Le dessin des lettres du texte, comme Arial ou Roboto."
+        },
+        {
+          "mot": "Interligne",
+          "definition": "L’espace laissé entre deux lignes de texte."
+        },
+        {
+          "mot": "Puces",
+          "definition": "Les petits ronds placés devant chaque élément d’une liste."
+        },
+        {
+          "mot": "Liste numérotée",
+          "definition": "Une suite d’éléments qui commencent par 1, 2, 3…"
+        },
+        {
+          "mot": "Marge",
+          "definition": "Le vide entre le texte et le bord de la page."
+        },
+        {
+          "mot": "Centrer",
+          "definition": "Placer le texte au milieu de la ligne, à égale distance des deux bords."
+        },
+        {
+          "mot": "Table des matières",
+          "definition": "La liste des titres avec leur page, pour s’y rendre d’un clic."
+        },
+        {
+          "mot": "Correcteur",
+          "definition": "Il souligne en rouge les fautes pour vous aider à les corriger."
+        },
+        {
+          "mot": "Hors connexion",
+          "definition": "Le mode qui permet de travailler sans Internet, puis de tout synchroniser plus tard."
+        },
+        {
+          "mot": "Drive",
+          "definition": "Le rangement en ligne de Google où sont enregistrés vos documents."
+        },
+        {
+          "mot": "Imprimer",
+          "definition": "Mettre le document sur papier."
+        },
+        {
+          "mot": "Télécharger",
+          "definition": "Enregistrer une copie du document sur son ordinateur, en Word ou en PDF."
+        },
+        {
+          "mot": "Modèle",
+          "definition": "Un document déjà mis en forme, prêt à remplir : CV, lettre, compte rendu…"
+        },
+        {
+          "mot": "Rechercher",
+          "definition": "Chercher un mot dans tout le document grâce à Ctrl + F."
+        },
+        {
+          "mot": "Annuler",
+          "definition": "Revenir en arrière après une erreur, avec Ctrl + Z."
+        },
+        {
+          "mot": "Saut de page",
+          "definition": "Ce qui force la suite du texte à commencer sur une nouvelle feuille."
+        },
+        {
+          "mot": "Couper",
+          "definition": "Retirer un passage d’un endroit pour le placer ailleurs, avec Ctrl + X."
         }
       ]
     },

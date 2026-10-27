@@ -2,7 +2,7 @@
 
 .bingo-prep .panneau__texte {
   margin: 0 0 var(--air-serre);
-  font-size: clamp(1.6rem, min(3.2vw, 5.6vh), 3rem);
+  font-size: clamp(1.6rem, min(2.8vw, 4.8vh), 3rem);
 }
 
 .bingo-prep__haut {
@@ -11,7 +11,7 @@
   justify-content: center;
   gap: clamp(1rem, 3vw, 3rem);
   max-width: 64rem;
-  margin: 0 auto var(--air);
+  margin: 0 auto var(--air-serre);
   text-align: left;
 }
 
@@ -45,10 +45,12 @@
   border-radius: 2px;
 }
 
+/* 40 mots sur six colonnes, lus de haut en bas dans l'ordre alphabétique : en 1280 × 720, la liste
+   et le bouton « On tire ! » tiennent sans défiler */
 .bingo-prep__mots {
-  columns: 5 11rem;
-  column-gap: clamp(1rem, 2vw, 2.5rem);
-  max-width: 80rem;
+  columns: 6 10rem;
+  column-gap: clamp(0.75rem, 1.6vw, 2rem);
+  max-width: 100rem;
   margin: 0 auto;
   padding: 0;
   list-style: none;
@@ -58,10 +60,11 @@
 /* Des étiquettes qui grandissent avec la hauteur de l'écran : serrées en 1280 × 720 pour tenir
    sans défiler, aérées en 1920 × 1080 */
 .bingo-prep__mots li {
-  padding: clamp(0.15rem, 1.6vh - 0.6rem, 0.6rem) clamp(0.6rem, 1.8vh - 0.5rem, 1.1rem);
-  margin-bottom: clamp(0.35rem, 1.6vh - 0.55rem, 0.9rem);
-  font-size: clamp(1.05rem, min(1.6vw, 2.8vh), 1.75rem);
+  padding: clamp(0.1rem, 1.2vh - 0.4rem, 0.5rem) clamp(0.5rem, 1.4vh - 0.3rem, 0.9rem);
+  margin-bottom: clamp(0.25rem, 1.2vh - 0.45rem, 0.8rem);
+  font-size: clamp(1rem, min(1.5vw, 2.6vh), 1.5rem);
   font-weight: 800;
+  line-height: 1.25;
   color: var(--bleu-nuit);
   background: var(--accent-clair);
   border-radius: 8px;

@@ -525,6 +525,86 @@
         {
           "mot": "Commentaire",
           "definition": "Une remarque attachée à une case, à laquelle les autres peuvent répondre."
+        },
+        {
+          "mot": "Somme",
+          "definition": "Le calcul qui additionne plusieurs nombres."
+        },
+        {
+          "mot": "Moyenne",
+          "definition": "Le résultat obtenu en additionnant des valeurs puis en divisant par leur nombre."
+        },
+        {
+          "mot": "Pourcentage",
+          "definition": "Un nombre accompagné du signe %, qui exprime une part sur cent."
+        },
+        {
+          "mot": "Total",
+          "definition": "Le résultat d’une addition, souvent affiché en bas d’une colonne."
+        },
+        {
+          "mot": "Feuille",
+          "definition": "Une page de calcul du classeur, avec ses lignes et ses colonnes."
+        },
+        {
+          "mot": "Tableur",
+          "definition": "Un logiciel de calcul fait de lignes et de colonnes, comme Google Sheets ou Excel."
+        },
+        {
+          "mot": "Saisie",
+          "definition": "Ce que l’on tape au clavier dans une case."
+        },
+        {
+          "mot": "Entrée",
+          "definition": "La touche qui valide ce qu’on vient de taper et descend d’une case."
+        },
+        {
+          "mot": "Recopier",
+          "definition": "Étirer une case vers le bas pour répéter son contenu ou continuer sa suite."
+        },
+        {
+          "mot": "Mise en forme",
+          "definition": "Les couleurs, les bordures ou le gras qui rendent un tableau plus lisible."
+        },
+        {
+          "mot": "Bordure",
+          "definition": "Le trait qui entoure une case ou un tableau."
+        },
+        {
+          "mot": "Fusionner",
+          "definition": "Réunir plusieurs cases voisines en une seule grande case."
+        },
+        {
+          "mot": "Devise",
+          "definition": "Le format qui ajoute le symbole d’une monnaie derrière un montant."
+        },
+        {
+          "mot": "Date",
+          "definition": "Un jour, un mois et une année, que le tableur sait comparer et calculer."
+        },
+        {
+          "mot": "Doublon",
+          "definition": "Une valeur qui apparaît deux fois dans une liste."
+        },
+        {
+          "mot": "Historique",
+          "definition": "Il garde la trace de toutes les modifications faites à la feuille."
+        },
+        {
+          "mot": "Excel",
+          "definition": "Le tableur de Microsoft, dont Google Sheets peut ouvrir les fichiers."
+        },
+        {
+          "mot": "Barre de formule",
+          "definition": "La zone au-dessus du tableau qui affiche le contenu de la case choisie."
+        },
+        {
+          "mot": "Sélection",
+          "definition": "L’ensemble des cases surlignées en bleu, sur lesquelles on agit."
+        },
+        {
+          "mot": "Maximum",
+          "definition": "La plus grande valeur d’une liste de nombres."
         }
       ]
     },

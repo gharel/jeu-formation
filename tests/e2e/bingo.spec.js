@@ -33,7 +33,7 @@ test('Bingo : grilles, tirage avec définition, « Ligne ! » puis « Bingo ! »
   await expect(cadre.getByRole('heading', { name: 'Préparez vos grilles !' })).toBeVisible();
   await expect(
     cadre.getByRole('list', { name: 'Les mots à recopier' }).getByRole('listitem'),
-  ).toHaveCount(20);
+  ).toHaveCount(40);
   await page.getByRole('button', { name: 'Grille de 4 × 4' }).click();
   await expect(cadre.getByText(/Recopiez-y 16\smots/)).toBeVisible();
   await page.getByRole('button', { name: 'Grille de 3 × 3' }).click();
@@ -44,14 +44,14 @@ test('Bingo : grilles, tirage avec définition, « Ligne ! » puis « Bingo ! »
   // Pas d'annonce possible avant d'avoir assez de mots
   await expect(page.getByRole('button', { name: /Ligne/ })).toBeDisabled();
   await page.getByRole('button', { name: /Tirer le premier mot/ }).click();
-  await expect(cadre.getByText('Mot 1 sur 20')).toBeVisible();
+  await expect(cadre.getByText('Mot 1 sur 40')).toBeVisible();
   await expect(cadre.getByText('Quel est ce mot ?')).toBeVisible();
   await expect(cadre.locator('.bingo__tire')).toHaveCount(0);
   await verifierAccessibilite(page);
   await page.getByRole('button', { name: /Dévoiler le mot/ }).click();
   await expect(cadre.locator('.bingo__tire')).toHaveCount(1);
   await tirer(page, 2);
-  await expect(cadre.getByText('Mot 3 sur 20')).toBeVisible();
+  await expect(cadre.getByText('Mot 3 sur 40')).toBeVisible();
 
   // « Ligne ! » : on vérifie avec la liste des mots tirés
   await page.getByRole('button', { name: /Ligne/ }).click();
@@ -116,5 +116,30 @@ test('Bingo sans définition : le mot est annoncé tout de suite, comme au loto'
   await expect(cadre.getByText('Quel est ce mot ?')).toHaveCount(0);
   await expect(cadre.locator('.bingo__mot')).toHaveText(new RegExp(mots.join('|')));
   await expect(cadre.locator('.bingo__tire')).toHaveCount(1);
+  expect(erreurs).toEqual([]);
+});
+
+test('Bingo : les 40 mots de la préparation tiennent à l’écran, sans défiler', async ({ page }) => {
+  const erreurs = surveillerErreurs(page);
+  await ouvrirJeu(page, 'bingo', { prenoms: ['Ana', 'Bob'] });
+  await lancerPartie(page);
+  const liste = page.locator('#cadre').getByRole('list', { name: 'Les mots à recopier' });
+  await expect(liste.getByRole('listitem')).toHaveCount(40);
+
+  // Vidéoprojecteur : toute la liste et le bouton « On tire ! » sans défiler
+  for (const [width, height] of [
+    [1280, 720],
+    [1920, 1080],
+  ]) {
+    await page.setViewportSize({ width, height });
+    const hauteur = await page.evaluate(() => document.documentElement.scrollHeight);
+    expect(hauteur, `${width} × ${height}`).toBeLessThanOrEqual(height);
+    await expect(page.getByRole('button', { name: /Tout le monde est prêt/ })).toBeInViewport();
+  }
+
+  // Téléphone : on défile, mais jamais sur le côté
+  await page.setViewportSize({ width: 360, height: 740 });
+  const largeur = await page.evaluate(() => document.documentElement.scrollWidth);
+  expect(largeur).toBeLessThanOrEqual(360);
   expect(erreurs).toEqual([]);
 });

@@ -87,5 +87,65 @@ export const exemple = {
     },
     { mot: 'Écran', definition: 'Il affiche les images de l’ordinateur.' },
     { mot: 'Fichier', definition: 'Un document enregistré : un texte, une photo, un tableau…' },
+    {
+      mot: 'Ordinateur',
+      definition: 'La machine qui permet de taper, de calculer et d’aller sur Internet.',
+    },
+    { mot: 'E-mail', definition: 'Le message écrit qu’on envoie à une adresse, comme une lettre.' },
+    { mot: 'Télécharger', definition: 'Copier un fichier depuis Internet sur son ordinateur.' },
+    {
+      mot: 'Icône',
+      definition: 'Un petit dessin sur l’écran, sur lequel on clique pour ouvrir un programme.',
+    },
+    {
+      mot: 'Bureau',
+      definition: 'La première image de l’ordinateur, où l’on pose ses raccourcis.',
+    },
+    {
+      mot: 'Copier-coller',
+      definition: 'Dupliquer un passage pour le déposer ailleurs, avec Ctrl + C puis Ctrl + V.',
+    },
+    { mot: 'Clé USB', definition: 'Un petit support qu’on branche pour transporter des fichiers.' },
+    {
+      mot: 'Disque dur',
+      definition: 'La mémoire de l’ordinateur où tout reste enregistré, même éteint.',
+    },
+    {
+      mot: 'Casque',
+      definition: 'Il se pose sur les oreilles pour écouter sans gêner les autres.',
+    },
+    { mot: 'Webcam', definition: 'La petite caméra qui sert aux appels en visio.' },
+    {
+      mot: 'Visioconférence',
+      definition: 'Une réunion à distance, où l’on se voit à l’écran.',
+    },
+    {
+      mot: 'Raccourci',
+      definition: 'Une combinaison de touches pour agir plus vite, comme Ctrl + C.',
+    },
+    {
+      mot: 'Favori',
+      definition: 'Un site mis de côté dans le navigateur pour le retrouver en un clic.',
+    },
+    { mot: 'Historique', definition: 'La liste des sites visités récemment.' },
+    {
+      mot: 'Compte',
+      definition: 'L’espace personnel auquel on accède avec un identifiant et un mot de passe.',
+    },
+    { mot: 'Antivirus', definition: 'Le logiciel qui détecte les programmes dangereux.' },
+    {
+      mot: 'Smartphone',
+      definition:
+        'Le téléphone qui sert aussi à aller sur Internet et à installer des applications.',
+    },
+    {
+      mot: 'Bluetooth',
+      definition: 'La liaison sans fil à courte portée, pour un casque ou une enceinte.',
+    },
+    {
+      mot: 'Capture d’écran',
+      definition: 'Une photo de ce qui est affiché à cet instant sur le moniteur.',
+    },
+    { mot: 'Câble', definition: 'Le fil qui relie deux appareils.' },
   ],
 };
