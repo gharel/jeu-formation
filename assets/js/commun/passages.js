@@ -85,6 +85,35 @@ export function valeursEquitables({
   return justes.length ? justes : enBinomes(parEquipe(1));
 }
 
+/**
+ * Jeu en binômes : quand aucun nombre d'éléments n'est équitable avec `parTour` éléments par tour
+ * (7 joueurs, 2 mots par binôme : 14 mots, plus que les 10 du contenu), cherche la plus grande
+ * valeur plus petite du réglage (de `parTour − 1` jusqu'à `parTourMin`) qui en donne au moins un.
+ * `min` peut être une fonction de `parTour` (le plus petit nombre joué dépend de la taille du
+ * tour). Rend { parTour, valeurs } (valeurs équitables, croissantes), ou null s'il n'y en a pas.
+ */
+export function parTourEquitable({
+  joueurs = 0,
+  equipes = [],
+  parTour,
+  parTourMin = 1,
+  min = 1,
+  max = Infinity,
+}) {
+  for (let candidat = parTour - 1; candidat >= Math.max(1, parTourMin); candidat--) {
+    const valeurs = valeursEquitables({
+      tour: 'binome',
+      joueurs,
+      equipes,
+      parTour: candidat,
+      min: typeof min === 'function' ? min(candidat) : min,
+      max,
+    });
+    if (valeurs.length) return { parTour: candidat, valeurs };
+  }
+  return null;
+}
+
 /** Valeur proposée au départ : la plus grande valeur équitable (≤ max), sinon `max`. */
 export function valeurProposee(valeurs, max) {
   const possibles = valeurs.filter((v) => v <= max);

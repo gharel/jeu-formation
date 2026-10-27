@@ -106,6 +106,43 @@ test('un jeu collectif joué avec moins de questions : Debout ou assis finit apr
   expect(erreurs).toEqual([]);
 });
 
+test('Pyramide à 7 joueurs : « Équilibrer » baisse aussi les mots par binôme', async ({ page }) => {
+  const erreurs = surveillerErreurs(page);
+  await ouvrirJeu(page, 'pyramide', {
+    prenoms: ['Ana', 'Bob', 'Chloé', 'Dan', 'Eva', 'Fred', 'Gaëlle'],
+  });
+  const cadre = page.locator('#cadre');
+  const mots = compteur(page, 'Nombre de mots');
+  const parBinome = compteur(page, 'Mots à faire deviner par binôme');
+  const equilibrer = cadre.getByRole('button', { name: 'Équilibrer' });
+
+  // 2 mots par binôme : 7 binômes demanderaient 14 mots, le contenu en a 10
+  await expect(parBinome).toHaveAttribute('aria-valuenow', '2');
+  await expect(mots).toHaveAttribute('aria-valuenow', '10');
+  await expect(
+    cadre.getByText(
+      /5\sbinômes\s:\s4\sjoueurs\spasseront\sune\sfois\sde\smoins\.\sAvec\s1\smot\spar\sbinôme,\s7\smots\s:\schacun\spasse\s2\sfois\./,
+    ),
+  ).toBeVisible();
+  await expect(equilibrer).toBeVisible();
+  await verifierAccessibilite(page);
+
+  // Un clic règle les deux : 1 mot par binôme, 7 mots
+  await equilibrer.click();
+  await expect(parBinome).toHaveAttribute('aria-valuenow', '1');
+  await expect(parBinome).toHaveText('1');
+  await expect(mots).toHaveAttribute('aria-valuenow', '7');
+  await expect(cadre.getByText(/7\sbinômes\s:\schacun\spasse\s2\sfois/)).toBeVisible();
+  await expect(equilibrer).toBeHidden();
+  await verifierMiseEnPage(page);
+
+  await lancerPartie(page);
+  await expect(cadre.getByText('7 mots à faire deviner · 1 par binôme')).toBeVisible();
+  await page.getByRole('button', { name: /C’est parti/ }).click();
+  await expect(cadre.getByText('Mot 1 sur 7')).toBeVisible();
+  expect(erreurs).toEqual([]);
+});
+
 test('les jeux qui ont leur propre nombre d’éléments n’ont pas de compteur', async ({ page }) => {
   for (const slug of ['bingo', 'memoire-vive']) {
     await ouvrirJeu(page, slug, { prenoms: ['Ana', 'Bob', 'Chloé'] });

@@ -4,6 +4,7 @@ import {
   valeursEquitables,
   valeurProposee,
   valeurLaPlusProche,
+  parTourEquitable,
   planBinomes,
   planBinomesParEquipe,
   bilanPassages,
@@ -56,6 +57,42 @@ describe('choisirElements', () => {
     expect(elements).toEqual(copie);
     expect(choix).not.toBe(elements);
     expect(choisirElements([], 3, creerHasard(1))).toEqual([]);
+  });
+});
+
+describe('parTourEquitable', () => {
+  it('7 joueurs, 2 par tour, 10 éléments : 1 par tour, 7 éléments', () => {
+    expect(parTourEquitable({ joueurs: 7, parTour: 2, min: 1, max: 10 })).toEqual({
+      parTour: 1,
+      valeurs: [7],
+    });
+  });
+
+  it('rend la plus grande valeur du réglage qui convient', () => {
+    // 5 joueurs, 4 par tour : 20 éléments > 10 ; 3 par tour : 15 > 10 ; 2 par tour : 10 convient
+    expect(parTourEquitable({ joueurs: 5, parTour: 4, min: 1, max: 10 })).toEqual({
+      parTour: 2,
+      valeurs: [10],
+    });
+  });
+
+  it('respecte le minimum du réglage et celui du nombre joué (fonction du tour)', () => {
+    expect(parTourEquitable({ joueurs: 7, parTour: 2, parTourMin: 2, min: 1, max: 10 })).toBeNull();
+    expect(parTourEquitable({ joueurs: 7, parTour: 2, min: (p) => 8 * p, max: 10 })).toBeNull();
+    expect(parTourEquitable({ joueurs: 7, parTour: 2, min: (p) => p, max: 10 })).not.toBeNull();
+  });
+
+  it('null au plus petit réglage, ou sans joueurs', () => {
+    expect(parTourEquitable({ joueurs: 7, parTour: 1, min: 1, max: 5 })).toBeNull();
+    expect(parTourEquitable({ joueurs: 1, parTour: 2, min: 1, max: 10 })).toBeNull();
+  });
+
+  it('en équipes : cherche une valeur équitable pour les équipes', () => {
+    // Équipes de 3 et 4 : en cherchant sous 3 par tour, 2 par tour fait passer chaque équipe autant
+    expect(parTourEquitable({ joueurs: 7, equipes: [3, 4], parTour: 3, min: 1, max: 12 })).toEqual({
+      parTour: 2,
+      valeurs: [4, 8, 12],
+    });
   });
 });
 

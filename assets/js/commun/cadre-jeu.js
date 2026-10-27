@@ -58,6 +58,7 @@ import {
   valeursEquitables,
   valeurProposee,
   valeurLaPlusProche,
+  parTourEquitable,
   bilanPassages,
 } from './passages.js';
 import { creerMinuteurManche } from './minuteur-manche.js';
@@ -99,6 +100,8 @@ export function monterJeu(config) {
   let mettreAJourLancer = () => {};
   let actualiserMode = () => {};
   let actualiserNombre = () => {};
+  // Les compteurs des réglages de lancement (par clé), pour les redessiner quand « Équilibrer » en change un
+  const compteursLancement = new Map();
   let joueursEnJeu = [];
   let equipesEnJeu = [];
   let modePartie = 'individuel';
@@ -387,23 +390,26 @@ export function monterJeu(config) {
       'fieldset',
       { class: 'intro__minuteur' },
       el('legend', { class: 'visuellement-cache' }, 'Minuteur'),
-      ...reglagesLancement.map((r) =>
-        r.type === 'nombre'
-          ? construireCompteur({
-              libelle: r.libelle,
-              aide: r.aide,
-              min: r.min ?? 1,
-              max: r.max ?? 99,
-              lire: () => lancement[r.cle] ?? r.defaut ?? r.min ?? 1,
-              ecrire: (valeur) => surChangement(r, valeur),
-              unite: r.unite ? (n) => (n > 1 ? r.unite : r.unite.replace(/s$/, '')) : null,
-            }).element
-          : construireChamp(
-              r,
-              () => lancement[r.cle],
-              (valeur) => surChangement(r, valeur),
-            ),
-      ),
+      ...reglagesLancement.map((r) => {
+        if (r.type !== 'nombre') {
+          return construireChamp(
+            r,
+            () => lancement[r.cle],
+            (valeur) => surChangement(r, valeur),
+          );
+        }
+        const compteur = construireCompteur({
+          libelle: r.libelle,
+          aide: r.aide,
+          min: r.min ?? 1,
+          max: r.max ?? 99,
+          lire: () => lancement[r.cle] ?? r.defaut ?? r.min ?? 1,
+          ecrire: (valeur) => surChangement(r, valeur),
+          unite: r.unite ? (n) => (n > 1 ? r.unite : r.unite.replace(/s$/, '')) : null,
+        });
+        compteursLancement.set(r.cle, compteur);
+        return compteur.element;
+      }),
     );
   }
 
@@ -435,8 +441,9 @@ export function monterJeu(config) {
     let min = 1;
     let max;
     let pas = 1;
+    let debut = 1;
     if (enElements) {
-      const debut = schema.elements.jouesMin ?? schema.elements.min ?? 1;
+      debut = schema.elements.jouesMin ?? schema.elements.min ?? 1;
       pas = jeu.tour === 'binome' ? parTour : 1;
       max = Math.max(1, total);
       min = Math.min(max, Math.max(debut, pas));
@@ -482,7 +489,43 @@ export function monterJeu(config) {
     } else if (jeu.tour === 'binome' && nombreDeJoueurs >= 2 && !duelsEntreEquipes) {
       bilan = bilanPassages({ tour: 'binome', nombre, parTour, joueurs: nombreDeJoueurs, equipes });
     }
-    return { ...parametres, min, max, pas, valeurs, nombre, bilan, duelsEntreEquipes };
+    // Binômes : aucun nombre équitable avec ce réglage (7 joueurs, 2 mots par binôme, 10 mots :
+    // il faudrait 14 mots) ; un réglage plus petit (1 mot par binôme : 7 mots) en offre peut-être un
+    let alternative = null;
+    if (
+      enElements &&
+      bilan &&
+      !bilan.equitable &&
+      !valeurs.length &&
+      jeu.tour === 'binome' &&
+      jeu.parTour
+    ) {
+      const reglageParTour = reglagesLancement.find((r) => r.cle === jeu.parTour);
+      const trouve = parTourEquitable({
+        joueurs: nombreDeJoueurs,
+        equipes,
+        parTour,
+        parTourMin: reglageParTour?.min ?? 1,
+        min: (p) => Math.min(max, Math.max(debut, p)),
+        max,
+      });
+      if (trouve) {
+        const cible = valeurLaPlusProche(trouve.valeurs, nombre);
+        alternative = {
+          parTour: trouve.parTour,
+          nombre: cible,
+          libelle: reglageParTour?.libelle ?? '',
+          bilan: bilanPassages({
+            tour: 'binome',
+            nombre: cible,
+            parTour: trouve.parTour,
+            joueurs: nombreDeJoueurs,
+            equipes,
+          }),
+        };
+      }
+    }
+    return { ...parametres, min, max, pas, valeurs, nombre, bilan, duelsEntreEquipes, alternative };
   }
 
   /** La ligne d'aide sous le compteur : combien de fois chacun passe, ou qui passe de moins. */
@@ -496,10 +539,7 @@ export function monterJeu(config) {
       : '';
     let phrase;
     if (bilan.equitable) {
-      phrase =
-        bilan.passages === null
-          ? 'chacun passe autant de fois dans son équipe'
-          : `chacun passe ${fois(bilan.passages)}`;
+      phrase = phraseEquitable(bilan);
     } else if (bilan.parEquipe && p.equipes.length >= 2) {
       phrase = 'chaque équipe passe autant de fois';
     } else {
@@ -517,7 +557,22 @@ export function monterJeu(config) {
         phrase = absents ? `${groupe} ne ${verbe} pas` : `${groupe} ${verbe} une fois de moins`;
       }
     }
-    return tete ? `${tete} : ${phrase}` : majuscule(phrase);
+    let ligne = tete ? `${tete} : ${phrase}` : majuscule(phrase);
+    // Aucun nombre ne convient avec ce réglage : on dit ce qui conviendrait
+    const autre = p.alternative;
+    if (autre) {
+      const { libelle, pluriel } = schema.elements;
+      const motsParTour = `${autre.parTour} ${accord(autre.parTour, libelle.toLowerCase(), pluriel)}`;
+      const motsJoues = `${autre.nombre} ${accord(autre.nombre, libelle.toLowerCase(), pluriel)}`;
+      ligne += `. Avec ${motsParTour} par ${jeu.nombre?.unite ?? 'binôme'}, ${motsJoues} : ${phraseEquitable(autre.bilan)}.`;
+    }
+    return ligne;
+  }
+
+  function phraseEquitable(bilan) {
+    return bilan.passages === null
+      ? 'chacun passe autant de fois dans son équipe'
+      : `chacun passe ${fois(bilan.passages)}`;
   }
 
   function blocNombre() {
@@ -528,6 +583,21 @@ export function monterJeu(config) {
       type: 'button',
       class: 'bouton bouton--discret nombre-joues__equilibrer',
       onclick: () => {
+        const autre = courant.alternative;
+        if (autre) {
+          // Un réglage plus petit (mots par binôme) rend le nombre équitable : on règle les deux
+          lancement = { ...lancement, [jeu.parTour]: autre.parTour };
+          ecrireLancement(slug, lancement);
+          mettreAJourLancer();
+          compteursLancement.get(jeu.parTour)?.rafraichir();
+          nombreChoisi = autre.nombre;
+          ecrireNombreJoue(slug, autre.nombre);
+          actualiserNombre();
+          annoncer(
+            `${autre.libelle} : ${autre.parTour}. ${courant.libelle} : ${courant.nombre}. ${phraseBilan(courant)}`,
+          );
+          return;
+        }
         const cible = valeurLaPlusProche(courant.valeurs, courant.nombre);
         if (cible === null) return;
         nombreChoisi = cible;
@@ -557,10 +627,16 @@ export function monterJeu(config) {
       remplir(aide, phrase);
       aide.hidden = !phrase;
       // « Équilibrer » : seulement quand un autre nombre ferait passer chacun autant de fois
-      const cible = valeurLaPlusProche(courant.valeurs, courant.nombre);
+      const autre = courant.alternative;
+      const cible = autre ? autre.nombre : valeurLaPlusProche(courant.valeurs, courant.nombre);
       const juste = courant.bilan?.equitable || courant.valeurs.includes(courant.nombre);
-      equilibrer.hidden = !courant.bilan || juste || cible === null || cible === courant.nombre;
-      if (!equilibrer.hidden) equilibrer.title = `Passer à ${cible}`;
+      equilibrer.hidden =
+        !courant.bilan || juste || cible === null || (!autre && cible === courant.nombre);
+      if (!equilibrer.hidden) {
+        equilibrer.title = autre
+          ? `Passer à ${autre.parTour} par ${jeu.nombre?.unite ?? 'binôme'}, ${autre.nombre} éléments`
+          : `Passer à ${cible}`;
+      }
     };
     actualiserNombre();
     return el(
