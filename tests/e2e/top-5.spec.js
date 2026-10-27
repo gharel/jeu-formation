@@ -67,9 +67,9 @@ test('Top 5 : réponses retournées, erreurs, points attribués, question suivan
   await expect(tableau).toContainText('Opera');
   await expect(page.getByLabel('Proposition du groupe')).toBeHidden();
 
-  // Entrée : question suivante. Des réponses trouvées n'ont pas de gagnant : le jeu le signale
+  // Espace : question suivante. Des réponses trouvées n'ont pas de gagnant : le jeu le signale
   // avant que leurs points soient perdus
-  await page.keyboard.press('Enter');
+  await page.keyboard.press('Space');
   const alerte = page.getByRole('dialog', { name: 'Des points à attribuer' });
   await expect(alerte).toContainText(/points seront perdus/);
   await alerte.getByRole('button', { name: 'Passer' }).click();

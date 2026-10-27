@@ -6,6 +6,7 @@ import {
   animer,
   focaliser,
   ecouterClavier,
+  aideTouches,
 } from '../../assets/js/commun/ui.js';
 import { planBinomes, tirerDansLePlan } from '../../assets/js/commun/passages.js';
 import { schema, exemple } from './exemple.js';
@@ -20,9 +21,6 @@ import {
 import { creerIllustrationDuel } from './illustration.js';
 
 const COTES = ['gauche', 'droite'];
-
-/** Aide « (Entrée) » d'un bouton : inutile sur téléphone, où elle est masquée (base.css). */
-const aideClavier = (touche) => el('span', { class: 'aide-clavier' }, ` (${touche})`);
 
 function demarrer(ctx) {
   const { pointsVictoire } = ctx.reglages;
@@ -250,6 +248,7 @@ function demarrer(ctx) {
     const statut = el('p', { class: 'duel__statut', 'aria-live': 'assertive' });
     const reponse = el('div', { class: 'reponse-revelee duel__reponse', hidden: true });
     const actions = el('div', { class: 'actions-jeu' });
+    const aide = el('p', { class: 'raccourci' });
     const plateau = el(
       'div',
       { class: 'duel', tabindex: '-1' },
@@ -263,10 +262,13 @@ function demarrer(ctx) {
         statut,
         reponse,
         actions,
+        aide,
       ),
       cotes.droite.bloc,
     );
-    let actionEntree = null;
+    // Touches du moment : Espace ou → (suivant), Entrée (bonne réponse)
+    let actionSuivant = null;
+    let actionValider = null;
 
     function bouton(texte, classe, action) {
       return el(
@@ -336,20 +338,17 @@ function demarrer(ctx) {
         question.classList.add('duel__question--attente');
         remplir(statut, '');
         reponse.hidden = true;
-        actionEntree = afficherQuestion;
-        remplir(
-          actions,
-          bouton(
-            ['Afficher la question', aideClavier('Entrée')],
-            'bouton--principal',
-            afficherQuestion,
-          ),
-        );
+        actionSuivant = afficherQuestion;
+        actionValider = null;
+        aideTouches([['suivant', 'afficher la question']], aide);
+        remplir(actions, bouton('Afficher la question', 'bouton--principal', afficherQuestion));
       } else if (duel.phase === 'ouvert') {
         remplir(question, questions[indexQuestion].question);
         question.classList.remove('duel__question--attente');
         remplir(statut, 'À vos buzzers !', el('span', { class: 'aide-clavier' }, ' Touche A ou L'));
-        actionEntree = null;
+        actionSuivant = passer;
+        actionValider = null;
+        aideTouches([['suivant', 'personne ne sait']], aide);
         remplir(actions, bouton('Personne ne sait', 'bouton--discret', passer));
       } else if (duel.phase === 'buzze') {
         remplir(
@@ -358,17 +357,19 @@ function demarrer(ctx) {
           el('p', { class: 'reponse-apercu__valeur' }, questions[indexQuestion].reponse),
         );
         remplir(statut, message ?? `${quiRepond(duel.main)} répond !`);
-        actionEntree = () => valider(true);
+        actionSuivant = null;
+        actionValider = () => valider(true);
+        aideTouches(
+          [
+            ['valider', 'bonne réponse'],
+            ['erreur', 'mauvaise réponse'],
+          ],
+          aide,
+        );
         remplir(
           actions,
-          bouton([icone('check'), 'Bonne', aideClavier('Entrée')], 'bouton--succes', () =>
-            valider(true),
-          ),
-          bouton(
-            [icone('xmark'), 'Mauvaise', aideClavier('Retour arrière')],
-            'bouton--danger',
-            () => valider(false),
-          ),
+          bouton([icone('check'), 'Bonne'], 'bouton--succes', () => valider(true)),
+          bouton([icone('xmark'), 'Mauvaise'], 'bouton--danger', () => valider(false)),
           boutonApercu(),
         );
       } else {
@@ -386,19 +387,20 @@ function demarrer(ctx) {
         const gagnant = noms[duel.vainqueur];
         remplir(statut, icone('trophy'), `${gagnant} gagne le duel !`);
         cotes[duel.vainqueur].bloc.classList.add('duel__joueur--vainqueur');
-        actionEntree = null;
+        const nouveauDuel = () => {
+          duelsJoues += 1;
+          indexQuestion += 1;
+          afficherChoix();
+        };
+        const classement = () => ctx.terminer({ message: `${gagnant} remporte le dernier duel !` });
+        const encore = !(derniere || dernierDuel);
+        actionSuivant = encore ? nouveauDuel : classement;
+        actionValider = null;
+        aideTouches([['suivant', encore ? 'nouveau duel' : 'voir le classement']], aide);
         remplir(
           actions,
-          derniere || dernierDuel
-            ? null
-            : bouton('Nouveau duel', 'bouton--principal', () => {
-                duelsJoues += 1;
-                indexQuestion += 1;
-                afficherChoix();
-              }),
-          bouton('Voir le classement', 'bouton--sombre', () =>
-            ctx.terminer({ message: `${gagnant} remporte le dernier duel !` }),
-          ),
+          encore ? bouton('Nouveau duel', 'bouton--principal', nouveauDuel) : null,
+          bouton('Voir le classement', 'bouton--sombre', classement),
         );
         // La fanfare une fois l'écran construit
         ctx.sons.duel.victoire();
@@ -415,14 +417,12 @@ function demarrer(ctx) {
             duel.preparer();
             dessiner();
           };
-      actionEntree = suite;
+      actionSuivant = suite;
+      actionValider = null;
+      aideTouches([['suivant', derniere ? 'voir le classement' : 'question suivante']], aide);
       remplir(
         actions,
-        bouton(
-          derniere ? 'Voir le classement' : ['Question suivante', aideClavier('Entrée')],
-          'bouton--sombre',
-          suite,
-        ),
+        bouton(derniere ? 'Voir le classement' : 'Question suivante', 'bouton--sombre', suite),
       );
     }
 
@@ -470,8 +470,9 @@ function demarrer(ctx) {
     retirerClavier = ecouterClavier({
       [TOUCHES.gauche]: () => buzz('gauche'),
       [TOUCHES.droite]: () => buzz('droite'),
-      Entrée: () => actionEntree?.(),
-      Retour: () => valider(false),
+      suivant: () => actionSuivant?.(),
+      valider: () => actionValider?.(),
+      erreur: () => valider(false),
     });
 
     remplir(ctx.zone, plateau);

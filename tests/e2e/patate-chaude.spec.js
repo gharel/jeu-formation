@@ -43,8 +43,8 @@ test('Patate chaude : la patate passe, chauffe, brûle, et les autres marquent',
   await page.getByRole('button', { name: /Lancer la patate/ }).click();
   await expect(cadre.getByText('La patate est tiède…')).toBeVisible();
 
-  // Une réponse valable : la patate change de main (Espace ou bouton)
-  await page.keyboard.press('Space');
+  // Une réponse valable : la patate change de main (Entrée ou bouton)
+  await page.keyboard.press('Enter');
   await page.getByRole('button', { name: /Réponse valable/ }).click();
   await expect(cadre.getByText('2 réponses valables')).toBeVisible();
 
@@ -87,7 +87,7 @@ test('Patate chaude sans prénoms : on joue quand même, sans points', async ({ 
   await lancerPartie(page);
   const cadre = page.locator('#cadre');
   await expect(cadre.getByText('Qui commence ? Prenez la patate en main !')).toBeVisible();
-  await page.keyboard.press('Enter');
+  await page.keyboard.press('Space');
   // La mèche courte dure 25 secondes au plus
   await page.clock.runFor(26000);
   await expect(cadre.getByText('La personne qui tient la patate perd la manche.')).toBeVisible();

@@ -83,8 +83,18 @@ async function demarrer(ctx) {
       if (visible) ctx.annoncer(`La réponse est : ${reponse}`);
     }
 
+    function imageSuivante() {
+      if (index === images.length - 1) {
+        ctx.terminer({ message: 'Toutes les images ont été dévoilées.' });
+        return;
+      }
+      index += 1;
+      afficherImage();
+    }
+
     manche = creerMancheAPaliers({
       ctx,
+      surSuivant: imageSuivante,
       dureePalier: ctx.reglages.dureePalier,
       surValeur: zoomer,
       surEtat(etat) {
@@ -130,14 +140,7 @@ async function demarrer(ctx) {
               {
                 type: 'button',
                 class: 'bouton bouton--sombre bouton--grand',
-                onclick: () => {
-                  if (dernier) {
-                    ctx.terminer({ message: 'Toutes les images ont été dévoilées.' });
-                    return;
-                  }
-                  index += 1;
-                  afficherImage();
-                },
+                onclick: imageSuivante,
               },
               dernier ? 'Voir le classement' : ['Image suivante', icone('arrow-right')],
             ),
@@ -168,18 +171,13 @@ async function demarrer(ctx) {
             manche.paliers,
             el('h3', { class: 'panneau__texte zoom__question' }, 'Qu’est-ce que c’est ?'),
             manche.actions,
-            el(
-              'p',
-              { class: 'raccourci' },
-              el('kbd', {}, 'Espace'),
-              ' : démarrer, stop, reprendre',
-            ),
+            manche.aide,
             resultat,
           ),
         ),
       ),
     );
-    manche.actions.querySelector('button')?.focus();
+    manche.focaliser();
   }
 
   afficherImage();

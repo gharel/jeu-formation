@@ -33,7 +33,7 @@ test('Duel buzzer : faux départ refusé, buzz, main adverse, victoire', async (
   await verifierAccessibilite(page);
 
   // Question 1 : Ana buzze et répond juste
-  await page.keyboard.press('Enter');
+  await page.keyboard.press('Space');
   await expect(
     page.locator('#cadre').getByText('Quel raccourci clavier permet de copier ?'),
   ).toBeVisible();
@@ -46,8 +46,8 @@ test('Duel buzzer : faux départ refusé, buzz, main adverse, victoire', async (
   await expect(pointsDe(page, 'Ana')).toHaveText('1');
 
   // Question 2 : Bob se trompe, la main passe à Ana qui gagne le duel
-  await page.keyboard.press('Enter');
-  await page.keyboard.press('Enter');
+  await page.keyboard.press('Space');
+  await page.keyboard.press('ArrowRight');
   await page.keyboard.press('l');
   await expect(page.locator('#cadre').getByText('Bob répond !')).toBeVisible();
   // L'animateur jette un œil à la réponse (sur la question), puis la cache au même endroit
@@ -68,7 +68,7 @@ test('Duel buzzer : faux départ refusé, buzz, main adverse, victoire', async (
   await expect(page.locator('#cadre').getByText('Raté ! Ana peut répondre')).toBeVisible();
   await expect(apercu).toBeHidden();
   await expect(voir).toBeVisible();
-  await page.getByRole('button', { name: 'Bonne (Entrée)' }).click();
+  await page.getByRole('button', { name: 'Bonne', exact: true }).click();
   await expect(page.locator('#cadre').getByText('Ana gagne le duel !')).toBeVisible();
   await expect(pointsDe(page, 'Ana')).toHaveText('2');
 
@@ -79,7 +79,7 @@ test('Duel buzzer : faux départ refusé, buzz, main adverse, victoire', async (
   ).toBeVisible();
   await page.getByRole('button', { name: 'Tirer au sort' }).click();
   await page.getByRole('button', { name: 'Commencer le duel' }).click();
-  await page.getByRole('button', { name: 'Afficher la question (Entrée)' }).click();
+  await page.getByRole('button', { name: 'Afficher la question' }).click();
   await page.getByRole('button', { name: 'Personne ne sait' }).click();
   await expect(page.locator('#cadre').getByText('Personne ne sait : pas de point.')).toBeVisible();
   await expect(page.locator('.duel__reponse')).toContainText('World Wide Web');
@@ -91,7 +91,7 @@ test('sans prénoms, on joue Gauche contre Droite', async ({ page }) => {
   await lancerPartie(page);
   await page.getByRole('button', { name: 'Commencer le duel' }).click();
   await expect(page.locator('.duel__nom')).toHaveText(['Gauche', 'Droite']);
-  await page.keyboard.press('Enter');
+  await page.keyboard.press('Space');
   await page.keyboard.press('l');
   await expect(page.locator('#cadre').getByText('Droite répond !')).toBeVisible();
 });
@@ -123,10 +123,10 @@ test('le nombre de duels : duellistes prévus, et la partie finit après le dern
 
   // Gauche gagne 3 points : c'était le dernier duel prévu, pas de nouveau duel
   for (let point = 1; point <= 3; point++) {
-    await page.keyboard.press('Enter');
+    await page.keyboard.press('Space');
     await page.keyboard.press('a');
     await page.keyboard.press('Enter');
-    if (point < 3) await page.keyboard.press('Enter');
+    if (point < 3) await page.keyboard.press('Space');
   }
   await expect(cadre.getByText(/gagne le duel/)).toBeVisible();
   await expect(page.getByRole('button', { name: 'Nouveau duel' })).toHaveCount(0);
@@ -146,10 +146,10 @@ test('deux duels : le second reprend les duellistes prévus, sans rejouer le mê
   const premier = await duel();
   await page.getByRole('button', { name: 'Commencer le duel' }).click();
   for (let point = 1; point <= 3; point++) {
-    await page.keyboard.press('Enter');
+    await page.keyboard.press('Space');
     await page.keyboard.press('a');
     await page.keyboard.press('Enter');
-    if (point < 3) await page.keyboard.press('Enter');
+    if (point < 3) await page.keyboard.press('Space');
   }
   await page.getByRole('button', { name: 'Nouveau duel' }).click();
   await expect(page.locator('#cadre').getByText(/Duel\s2\ssur\s3\s·/)).toBeVisible();

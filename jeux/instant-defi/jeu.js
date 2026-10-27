@@ -5,6 +5,7 @@ import {
   icone,
   focaliser,
   ecouterClavier,
+  aideTouches,
   animer,
 } from '../../assets/js/commun/ui.js';
 import { creerRoue, couleursRoue } from '../../assets/js/commun/roue.js';
@@ -20,13 +21,17 @@ function demarrer(ctx) {
   let restants = [...defis];
   let auTourDe = null;
   let minuteur = null;
-  let actionPrincipale = null;
+  // Touches du moment : suivant (roue, top départ, défi suivant), valider (réussi)
+  let touches = {};
   // Faux après « Quitter la partie » : une roue encore en train de tourner n'affiche rien
   let enJeu = true;
   // Le même chronomètre passe de la roue au défi
   const illustration = creerIllustrationDefi();
 
-  const retirerClavier = ecouterClavier({ Espace: () => actionPrincipale?.() });
+  const retirerClavier = ecouterClavier({
+    suivant: () => touches.suivant?.(),
+    valider: () => touches.valider?.(),
+  });
   ctx.quandDesigne((prenom) => {
     auTourDe = prenom;
     const etiquette = ctx.zone.querySelector('.au-tour-de');
@@ -67,7 +72,7 @@ function demarrer(ctx) {
       afficherDefi(defi);
     }
     bouton.addEventListener('click', lancer);
-    actionPrincipale = lancer;
+    touches = { suivant: lancer };
     remplir(
       ctx.zone,
       el(
@@ -85,7 +90,7 @@ function demarrer(ctx) {
           ),
           titre,
           bouton,
-          el('p', { class: 'raccourci' }, 'ou appuyez sur ', el('kbd', {}, 'Espace')),
+          aideTouches([['suivant', 'lancer la roue']]),
         ),
       ),
     );
@@ -102,6 +107,7 @@ function demarrer(ctx) {
     dessinerTour(tour);
     const actions = el('div', { class: 'actions-jeu' });
     const issue = el('div', { class: 'defi__issue', 'aria-live': 'polite' });
+    const aide = el('p', { class: 'raccourci' });
 
     function boutonsAvant() {
       const depart = el(
@@ -125,8 +131,10 @@ function demarrer(ctx) {
           : null,
         depart,
       );
-      actionPrincipale = partir;
-      depart.focus();
+      touches = { suivant: partir };
+      aideTouches([['suivant', 'top départ']], aide);
+      // Le focus sur le texte, pas sur le bouton : Entrée ne lancerait pas le chrono
+      focaliser(enonce);
     }
 
     function partir() {
@@ -146,14 +154,15 @@ function demarrer(ctx) {
         'Réussi, on arrête le chrono',
       );
       remplir(actions, stop);
-      actionPrincipale = () => finir(true);
-      stop.focus();
+      touches = { valider: () => finir(true) };
+      aideTouches([['valider', 'réussi, on arrête le chrono']], aide);
+      focaliser(enonce);
     }
 
     function finir(reussi) {
       minuteur.arreter();
       minuteur.element.classList.add('chrono--compact');
-      actionPrincipale = null;
+      touches = {};
       illustration.etat(null);
       const message = reussi ? 'Défi réussi !' : 'Temps écoulé !';
       remplir(
@@ -187,7 +196,8 @@ function demarrer(ctx) {
         }),
         suivant,
       );
-      actionPrincipale = () => suivant.click();
+      touches = { suivant: () => suivant.click() };
+      aideTouches([['suivant', dernier ? 'voir le classement' : 'défi suivant']], aide);
       // L'illustration et le son une fois l'issue affichée
       illustration.reagir(reussi ? 'fete' : 'secousse');
       if (reussi) ctx.sons.succes();
@@ -206,6 +216,7 @@ function demarrer(ctx) {
         enonce,
         el('div', { class: 'defi__compte' }, illustration.element, minuteur.element, issue),
         actions,
+        aide,
       ),
     );
     animer(enonce, 'apparition');

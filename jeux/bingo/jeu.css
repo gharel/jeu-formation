@@ -5,6 +5,14 @@
   font-size: clamp(1.6rem, min(2.8vw, 4.8vh), 3rem);
 }
 
+.bingo-prep .actions-jeu {
+  align-items: center;
+}
+
+.bingo-prep .actions-jeu .raccourci {
+  margin: 0;
+}
+
 .bingo-prep__haut {
   display: flex;
   align-items: center;

@@ -85,7 +85,7 @@ test('Le Coffre-fort : pénalité, réponse acceptée à la main, indice, coffre
   await expect(cadre.getByText('Nouveau record !')).toBeVisible();
   await verifierAccessibiliteHorloge(page);
 
-  await page.keyboard.press('Enter');
+  await page.keyboard.press('Space');
   await expect(page.getByRole('heading', { name: /Partie terminée/ })).toBeVisible();
   // Jeu coopératif : chaque serrure ouverte rapporte 1 point à chacun, pas de podium d'ex æquo
   await expect(
@@ -150,7 +150,7 @@ test('Le Coffre-fort : un indice qui vide le chrono mène au bilan, Entrée au c
   await page.getByRole('button', { name: /Indice/ }).click();
   await expect(cadre.getByText('Temps écoulé !')).toBeVisible();
   await expect(page.getByRole('timer')).toHaveText('0:00');
-  await page.keyboard.press('Enter');
+  await page.keyboard.press('Space');
   await expect(page.getByRole('heading', { name: /Partie terminée/ })).toBeVisible();
   expect(erreurs).toEqual([]);
 });

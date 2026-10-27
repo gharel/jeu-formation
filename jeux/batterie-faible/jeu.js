@@ -1,5 +1,13 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, icone, animer, focaliser } from '../../assets/js/commun/ui.js';
+import {
+  el,
+  remplir,
+  icone,
+  animer,
+  focaliser,
+  ecouterClavier,
+  aideTouches,
+} from '../../assets/js/commun/ui.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { lire, ecrire } from '../../assets/js/commun/stockage.js';
 import { schema, exemple } from './exemple.js';
@@ -69,6 +77,10 @@ function demarrer(ctx) {
     passer: { libelle: 'Dévoiler le mot', faire: () => devoiler?.() },
   });
 
+  // Le mot est fini : Espace ou → passe au mot suivant (hors champ, comme le bouton)
+  let motSuivant = null;
+  const retirerClavier = ecouterClavier({ suivant: () => motSuivant?.() });
+
   ctx.quandDesigne((prenom) => {
     auTourDe = prenom;
     rafraichirTour?.();
@@ -79,6 +91,7 @@ function demarrer(ctx) {
     const cases = decouper(mot);
     let etat = etatInitial();
     let fini = false;
+    motSuivant = null;
 
     const tour = el('p', { class: 'au-tour-de', hidden: true });
     rafraichirTour = () => {
@@ -269,6 +282,15 @@ function demarrer(ctx) {
       dessinerEtat();
       illustration.reagir(trouve ? 'fete' : 'secousse');
       const dernier = index === mots.length - 1;
+      const avancer = () => {
+        if (dernier) {
+          ctx.terminer({ message: 'Tous les mots ont été découverts.' });
+          return;
+        }
+        index += 1;
+        afficherMot();
+      };
+      motSuivant = avancer;
       const titre = el(
         'p',
         { class: 'lettres__verdict' },
@@ -293,21 +315,11 @@ function demarrer(ctx) {
           trouve ? creerBoutonPoints(ctx, { titre: 'Qui a trouvé le mot ?' }) : null,
           el(
             'button',
-            {
-              type: 'button',
-              class: 'bouton bouton--sombre bouton--grand',
-              onclick: () => {
-                if (dernier) {
-                  ctx.terminer({ message: 'Tous les mots ont été découverts.' });
-                  return;
-                }
-                index += 1;
-                afficherMot();
-              },
-            },
+            { type: 'button', class: 'bouton bouton--sombre bouton--grand', onclick: avancer },
             dernier ? 'Voir le classement' : ['Mot suivant', icone('arrow-right')],
           ),
         ),
+        aideTouches([['suivant', dernier ? 'voir le classement' : 'mot suivant']]),
       );
       resultat.hidden = false;
       // Les sons une fois l'écran construit
@@ -374,6 +386,7 @@ function demarrer(ctx) {
   }
 
   afficherMot();
+  return () => retirerClavier();
 }
 
 // Le jeu s'appelait « lettre-a-lettre » : on récupère un contenu déjà préparé sous l'ancien nom.

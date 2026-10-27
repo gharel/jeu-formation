@@ -271,7 +271,7 @@ test('on recache le mot en cours de jeu, sans perdre l’indice ni relancer le t
 
   // Espace recache le mot : l'alerte « dos à l'écran », rien d'autre ne bouge
   await expect(page.getByRole('button', { name: 'Cacher le mot' })).toBeVisible();
-  await expect(cadre.getByText(/Espace\s:\scacher le mot/)).toBeVisible();
+  await expect(cadre.getByText(/Espace\sou\s→\s:\scacher le mot/)).toBeVisible();
   await page.keyboard.press('Space');
   await expect(mot).toHaveCount(0);
   await expect(cadre.getByText(/dos à l’écran\s!/)).toBeVisible();

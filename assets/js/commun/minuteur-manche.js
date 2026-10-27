@@ -2,7 +2,8 @@
  * Minuteur de manche : le temps d'un mot, d'une question ou d'un tour, choisi au lancement du jeu
  * pour que la partie ne traîne pas. À zéro, le jeu ne coupe rien : un son, un chrono rouge qui
  * clignote et compte le dépassement (« +0:12 »), et l'action du jeu (« Passer »). L'animateur
- * décide. À tout moment, il peut retirer ou ajouter 30 s, et mettre le chrono en pause.
+ * décide. À tout moment, il peut retirer ou ajouter 30 s, et mettre le chrono en pause (bouton
+ * ou touche P : l'écoute du clavier commence avec le chrono et se retire quand il s'arrête).
  *
  * Deux sortes de pause : celle de l'animateur (bouton Pause), qui tient jusqu'à ce qu'il reprenne
  * ou que la manche suivante commence, et celle du jeu (pause() / reprendre() : une fenêtre
@@ -14,7 +15,7 @@
  * Le chrono se place dans la barre de l'écran de jeu (cadre-jeu.js), au même endroit dans tous
  * les jeux.
  */
-import { el, remplir, icone } from './ui.js';
+import { el, remplir, icone, ecouterClavier } from './ui.js';
 
 /** Temps ajouté par le bouton « +30 s », en secondes. */
 const TEMPS_ADDITIONNEL = 30;
@@ -78,6 +79,7 @@ export function creerMinuteurManche({
     type: 'button',
     class: 'bouton bouton--discret minuteur-manche__pause',
     'aria-pressed': 'false',
+    'aria-keyshortcuts': 'P',
     onclick: () => basculerPause(),
   });
   const boutonPasser = passer
@@ -132,7 +134,9 @@ export function creerMinuteurManche({
   function dessinerPause() {
     remplir(boutonPause, icone(enPause ? 'play' : 'pause'));
     boutonPause.setAttribute('aria-label', enPause ? 'Reprendre le minuteur' : 'Mettre en pause');
-    boutonPause.title = enPause ? 'Reprendre le minuteur' : 'Mettre le minuteur en pause';
+    boutonPause.title = enPause
+      ? 'Reprendre le minuteur (touche P)'
+      : 'Mettre le minuteur en pause (touche P)';
     boutonPause.setAttribute('aria-pressed', String(enPause));
     element.classList.toggle('minuteur-manche--pause', enPause);
   }
@@ -173,7 +177,14 @@ export function creerMinuteurManche({
     boucle = null;
   }
 
+  // Touche P : comme le bouton Pause, tant que la manche n'est pas finie
+  let retirerClavier = null;
+  function ecouterPause() {
+    if (retirerClavier === null) retirerClavier = ecouterClavier({ pause: () => basculerPause() });
+  }
+
   function demarrer() {
+    ecouterPause();
     if (boucle !== null || enPause) return;
     arrete = false;
     element.classList.remove('minuteur-manche--arrete');
@@ -235,6 +246,8 @@ export function creerMinuteurManche({
     reprendre: demarrer,
     /** Manche finie : le chrono s'arrête et s'efface un peu, sans alerte. */
     arreter() {
+      retirerClavier?.();
+      retirerClavier = null;
       suspendre();
       arrete = true;
       enPause = false;

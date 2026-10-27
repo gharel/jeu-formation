@@ -144,26 +144,85 @@ function nomTouche(evenement) {
 }
 
 /**
- * Raccourcis clavier de la page. `actions` : { r: fn, Espace: fn, … }.
- * Ignorés pendant la saisie dans un champ, quand une fenêtre de dialogue est ouverte
- * ou avec Ctrl/Alt/Cmd. Espace et Entrée sont aussi ignorés sur un bouton ou un lien
- * (le navigateur les gère déjà). Renvoie une fonction pour retirer l'écoute.
+ * Les mêmes touches jouent le même rôle dans tous les jeux : ce sont ces rôles que les jeux
+ * déclarent (`suivant`, `valider`, `erreur`, `pause`), pas des touches.
+ * - suivant : Espace ou → (avancer : démarrer, afficher, dévoiler, suivant, classement) ;
+ * - valider : Entrée (bonne réponse, trouvé, réussi : jamais « suivant ») ;
+ * - erreur : Retour arrière (mauvaise réponse, raté) ;
+ * - pause : P (pause du minuteur).
+ */
+const ROLES_PAR_TOUCHE = {
+  Espace: 'suivant',
+  ArrowRight: 'suivant',
+  Entrée: 'valider',
+  Retour: 'erreur',
+  p: 'pause',
+};
+
+/** Ce que les rôles affichent dans la ligne d'aide (aideTouches). */
+const TOUCHES_PAR_ROLE = {
+  suivant: ['Espace', ' ou ', '→'],
+  valider: ['Entrée'],
+  erreur: ['Retour arrière'],
+  pause: ['P'],
+};
+
+/** Éléments où la flèche droite a déjà un sens (curseur, liste, onglets…) : on n'y touche pas. */
+const FLECHE_DEJA_UTILISEE =
+  'select, input[type="range"], input[type="radio"], [role="spinbutton"], [role="slider"], ' +
+  '[role="radio"], [role="tab"], [role="option"], [role="listbox"], [role="menuitem"], ' +
+  '[role="tablist"], [role="radiogroup"]';
+
+/**
+ * Raccourcis clavier de la page. `actions` : { suivant: fn, valider: fn, erreur: fn,
+ * pause: fn, r: fn, … }. Un rôle regroupe plusieurs touches (suivant : Espace et →), et une
+ * touche peut aussi être nommée (Espace, Entrée, Retour, a, l…) : elle l'emporte alors sur son
+ * rôle. Ignorés pendant la saisie dans un champ, quand une fenêtre de dialogue est ouverte,
+ * avec Ctrl/Alt/Cmd, en répétition de touche, ou si un autre écouteur a déjà pris la touche
+ * (la flèche des cartes de Mémoire vive). Espace et Entrée sont aussi ignorés sur un bouton ou
+ * un lien (le navigateur les gère déjà), et → sur un curseur, une liste ou un onglet.
+ * Renvoie une fonction pour retirer l'écoute.
  */
 export function ecouterClavier(actions) {
   function surTouche(evenement) {
     if (evenement.ctrlKey || evenement.metaKey || evenement.altKey || evenement.repeat) return;
+    if (evenement.defaultPrevented) return;
     if (document.querySelector('dialog[open]')) return;
     const touche = nomTouche(evenement);
-    const action = actions[touche];
+    const action = actions[touche] ?? actions[ROLES_PAR_TOUCHE[touche]];
     if (!action) return;
     const cible = evenement.target;
     if (estChampDeSaisie(cible)) return;
     if ((touche === 'Espace' || touche === 'Entrée') && estActivable(cible)) return;
+    if (touche === 'ArrowRight' && cible instanceof Element && cible.closest(FLECHE_DEJA_UTILISEE))
+      return;
     evenement.preventDefault();
     action(evenement);
   }
   document.addEventListener('keydown', surTouche);
   return () => document.removeEventListener('keydown', surTouche);
+}
+
+/**
+ * Ligne d'aide sur les touches du moment, la même dans tous les jeux :
+ * aideTouches([['suivant', 'mot suivant'], ['valider', 'trouvé']]) →
+ * « Espace ou → : mot suivant · Entrée : trouvé » (chaque touche dans un <kbd>).
+ * Un rôle (suivant, valider, erreur, pause) donne ses touches ; autre chose (« R ») s'affiche
+ * tel quel. Avec `noeud`, la ligne se remplit (vide : elle se cache) ; sinon un
+ * <p class="raccourci"> est créé. Masquée sur téléphone (base.css).
+ */
+export function aideTouches(touches, noeud = null) {
+  const ligne = noeud ?? el('p', { class: 'raccourci' });
+  const contenu = [];
+  touches.forEach(([role, action], i) => {
+    if (i > 0) contenu.push(' · ');
+    const libelles = TOUCHES_PAR_ROLE[role] ?? [role];
+    contenu.push(libelles.map((l) => (l === ' ou ' ? l : el('kbd', {}, l))));
+    contenu.push(` : ${action}`);
+  });
+  remplir(ligne, contenu);
+  ligne.hidden = touches.length === 0;
+  return ligne;
 }
 
 /** Plein écran possible ? Pas sur iPhone, par exemple : le bouton est alors inutile. */

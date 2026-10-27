@@ -37,12 +37,6 @@
   margin: calc(var(--air) * 1.5) auto 0;
 }
 
-/* Fin de manche : l'aide sur les touches est déjà dans le bouton (« (Entrée) ») ; sa ligne laisse
-   la place au verdict et aux idées */
-.patate-chaude:has(.patate__scene--fin) .raccourci {
-  display: none;
-}
-
 .patate__corps {
   width: 100%;
   height: 100%;

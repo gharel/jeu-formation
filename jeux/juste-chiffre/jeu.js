@@ -6,6 +6,7 @@ import {
   animer,
   focaliser,
   ecouterClavier,
+  aideTouches,
 } from '../../assets/js/commun/ui.js';
 import { creerBoutonPoints, nommerMarqueur } from '../../assets/js/commun/points.js';
 import { nommerAvecEquipe } from '../../assets/js/commun/mode-jeu.js';
@@ -15,7 +16,6 @@ import { creerIllustrationJuste } from './illustration.js';
 import { MESSAGES, comparer, fourchette, decrireFourchette, suivant } from './logique.js';
 
 const FLECHES = { plus: 'arrow-up', moins: 'arrow-down', juste: 'bullseye' };
-const aideClavier = (touche) => el('span', { class: 'aide-clavier' }, ` (${touche})`);
 
 /** « 30 secondes », « 1 minute 30 ». */
 function dureeLisible(secondes) {
@@ -44,9 +44,10 @@ function demarrer(ctx) {
     duree,
     passer: { libelle: 'Révéler la réponse', faire: () => revelerCourant?.('temps') },
   });
-  // Entrée : « Afficher la question » sur l'écran d'attente
-  let toucheEntree = null;
-  const retirerClavier = ecouterClavier({ Entrée: () => toucheEntree?.() });
+  // Espace ou → : « Afficher la question » sur l'écran d'attente, la suite une fois le bilan affiché
+  // (pendant la question, la saisie se valide par Entrée dans le champ)
+  let toucheSuivant = null;
+  const retirerClavier = ecouterClavier({ suivant: () => toucheSuivant?.() });
 
   function joueurCourant() {
     if (avecTour) return ordre[indexJoueur];
@@ -79,10 +80,10 @@ function demarrer(ctx) {
     };
     rafraichirJoueur();
     const lancer = () => {
-      toucheEntree = null;
+      toucheSuivant = null;
       afficherQuestion();
     };
-    toucheEntree = lancer;
+    toucheSuivant = lancer;
     remplir(
       ctx.zone,
       el(
@@ -112,8 +113,8 @@ function demarrer(ctx) {
             { type: 'button', class: 'bouton bouton--principal bouton--grand', onclick: lancer },
             icone('play'),
             'Afficher la question',
-            aideClavier('Entrée'),
           ),
+          aideTouches([['suivant', 'afficher la question']]),
         ),
       ),
     );
@@ -224,6 +225,16 @@ function demarrer(ctx) {
             : 'Réponse',
       );
       const dernier = indexQuestion === questions.length - 1;
+      const avancer = () => {
+        if (dernier) {
+          ctx.terminer({ message: 'Toutes les questions ont été jouées.' });
+          return;
+        }
+        indexQuestion += 1;
+        if (avecTour) indexJoueur = suivant(ordre, indexJoueur);
+        afficherAttente();
+      };
+      toucheSuivant = avancer;
       remplir(
         fin,
         el('div', { class: 'juste__bilan' }, illustration.element, titre),
@@ -243,22 +254,11 @@ function demarrer(ctx) {
               : null,
           el(
             'button',
-            {
-              type: 'button',
-              class: 'bouton bouton--sombre bouton--grand',
-              onclick: () => {
-                if (dernier) {
-                  ctx.terminer({ message: 'Toutes les questions ont été jouées.' });
-                  return;
-                }
-                indexQuestion += 1;
-                if (avecTour) indexJoueur = suivant(ordre, indexJoueur);
-                afficherAttente();
-              },
-            },
+            { type: 'button', class: 'bouton bouton--sombre bouton--grand', onclick: avancer },
             dernier ? 'Voir le classement' : ['Question suivante', icone('arrow-right')],
           ),
         ),
+        aideTouches([['suivant', dernier ? 'voir le classement' : 'question suivante']]),
       );
       fin.hidden = false;
       // L'illustration et le son une fois le bilan affiché (au temps écoulé, le minuteur a déjà

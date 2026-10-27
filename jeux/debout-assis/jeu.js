@@ -6,6 +6,7 @@ import {
   animer,
   focaliser,
   ecouterClavier,
+  aideTouches,
 } from '../../assets/js/commun/ui.js';
 import { creerMinuteur } from '../../assets/js/commun/chrono.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
@@ -33,7 +34,8 @@ function demarrer(ctx) {
   let enJeu = [...ctx.participants];
   let minuteur = null;
   let actionPrincipale = null;
-  const retirerClavier = ecouterClavier({ Espace: () => actionPrincipale?.() });
+  // Espace ou → : avancer (c'est parti, révéler la réponse, affirmation suivante)
+  const retirerClavier = ecouterClavier({ suivant: () => actionPrincipale?.() });
   // Le personnage se lève (vrai) ou s'assoit (faux) ; avec les mains, il les baisse
   const illustration = creerIllustrationDebout();
   const etatFaux = ctx.reglages.consigne === 'main' ? 'baisse' : 'faux';
@@ -87,6 +89,7 @@ function demarrer(ctx) {
           : null,
         blocEnJeu(),
         el('div', { class: 'actions-jeu' }, bouton),
+        aideTouches([['suivant', 'c’est parti']]),
       ),
     );
     focaliser(titre);
@@ -115,6 +118,7 @@ function demarrer(ctx) {
     // L'animation d'apparition se joue d'elle-même quand le résultat cesse d'être caché
     const resultat = el('div', { class: 'debout__resultat apparition', hidden: true });
     const actions = el('div', { class: 'actions-jeu' }, devoiler);
+    const aide = aideTouches([['suivant', 'révéler la réponse']]);
     const tuiles = el(
       'div',
       { class: 'debout__tuiles' },
@@ -181,6 +185,7 @@ function demarrer(ctx) {
         dernier ? 'Voir le classement' : ['Affirmation suivante', icone('arrow-right')],
       );
       actionPrincipale = () => passerALaSuite();
+      aideTouches([['suivant', dernier ? 'voir le classement' : 'affirmation suivante']], aide);
 
       if (!survie) {
         remplir(
@@ -246,6 +251,10 @@ function demarrer(ctx) {
                 ? 'Voir le classement'
                 : ['Affirmation suivante', icone('arrow-right')],
             );
+            aideTouches(
+              [['suivant', fin || dernier ? 'voir le classement' : 'affirmation suivante']],
+              aide,
+            );
           },
         },
         'Éliminer ceux qui se sont trompés',
@@ -298,6 +307,7 @@ function demarrer(ctx) {
         el('div', { class: 'debout__scene' }, illustration.element, tuiles, zoneMinute),
         resultat,
         actions,
+        aide,
       ),
     );
     minuteur.demarrer();

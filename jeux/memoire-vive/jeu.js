@@ -6,6 +6,7 @@ import {
   animer,
   focaliser,
   ecouterClavier,
+  aideTouches,
   typographier,
 } from '../../assets/js/commun/ui.js';
 import { lire, ecrire } from '../../assets/js/commun/stockage.js';
@@ -25,20 +26,15 @@ import { nommerMarqueur } from '../../assets/js/commun/points.js';
 /** Le dernier nombre de cartes choisi, proposé de nouveau à la partie suivante. */
 const CLE_NOMBRE = 'memoire-vive:cartes';
 
-/** Aide « (Espace) » d'un bouton : inutile sur téléphone, où elle est masquée (base.css). */
-const aideClavier = (touche) => el('span', { class: 'aide-clavier' }, ` (${touche})`);
-
 /** Durée approximative d'une partie, en minutes. */
 const dureeEstimee = (nombre) => Math.max(2, Math.round(nombre / 3));
 
 function demarrer(ctx) {
   const paires = ctx.elements;
-  // Raccourcis du moment : Entrée (action principale) et Espace (cacher les cartes)
+  // Touche du moment : Espace ou → (commencer, cacher les cartes, voir le classement). Entrée et
+  // Espace sur une carte qui a le focus la retournent (le navigateur s'en charge)
   let touches = {};
-  const retirerClavier = ecouterClavier({
-    Entrée: () => touches.entree?.(),
-    Espace: () => touches.espace?.(),
-  });
+  const retirerClavier = ecouterClavier({ suivant: () => touches.suivant?.() });
   let joueur = null;
   let rafraichirTour = null;
   // Ordre de passage : les joueurs, ou les équipes chacune leur tour (leurs membres tournent)
@@ -73,7 +69,7 @@ function demarrer(ctx) {
     const possibles = nombresPossibles(paires.length);
     const parDefaut = nombreParDefaut(paires.length, lire(CLE_NOMBRE));
     const titre = el('h3', { class: 'panneau__texte' }, 'Combien de cartes ?');
-    touches = { entree: () => commencer(parDefaut) };
+    touches = { suivant: () => commencer(parDefaut) };
     remplir(
       ctx.zone,
       el(
@@ -107,7 +103,7 @@ function demarrer(ctx) {
             ),
           ),
         ),
-        el('p', { class: 'raccourci' }, el('kbd', {}, 'Entrée'), ` : ${parDefaut} cartes`),
+        aideTouches([['suivant', `${parDefaut} cartes`]]),
       ),
     );
     focaliser(titre);
@@ -185,9 +181,9 @@ function demarrer(ctx) {
       ];
       if (Number.isNaN(i) || deplacement === undefined) return;
       const cible = boutons[i + deplacement];
-      if (!cible) return;
+      // La flèche est prise, même au bord de la grille : elle ne sert pas de « suivant »
       e.preventDefault();
-      cible.focus();
+      cible?.focus();
     });
 
     rafraichirTour = () => {
@@ -238,21 +234,20 @@ function demarrer(ctx) {
       if (etape === etapeDessinee) return;
       etapeDessinee = etape;
       if (partie.phase === 'finie') {
-        touches = { entree: terminer };
+        touches = { suivant: terminer };
         remplir(
           actions,
           el(
             'button',
             { type: 'button', class: 'bouton bouton--sombre', onclick: terminer },
             'Voir le classement',
-            aideClavier('Entrée'),
           ),
         );
-        remplir(raccourci, el('kbd', {}, 'Entrée'), ' : voir le classement');
+        aideTouches([['suivant', 'voir le classement']], raccourci);
         return;
       }
       if (partie.phase === 'ratee') {
-        touches = { espace: cacher };
+        touches = { suivant: cacher };
         remplir(
           actions,
           el(
@@ -267,13 +262,11 @@ function demarrer(ctx) {
             },
             icone('eye-slash'),
             'Cacher les cartes',
-            aideClavier('Espace'),
           ),
         );
-        remplir(
+        aideTouches(
+          [['suivant', 'cacher les cartes · ou retournez directement la carte suivante']],
           raccourci,
-          el('kbd', {}, 'Espace'),
-          ' : cacher les cartes · ou retournez directement la carte suivante',
         );
         return;
       }
@@ -318,7 +311,7 @@ function demarrer(ctx) {
         );
       }
       dessiner();
-      // Dernière paire : le focus quitte la carte pour qu'Entrée ouvre le classement
+      // Dernière paire : le focus quitte la carte pour qu'Espace ouvre le classement
       if (partie.phase === 'finie') plateau.focus();
       // Les animations et les sons une fois la page à jour
       if (resultat !== 'premiere') animer(message, 'apparition');

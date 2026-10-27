@@ -6,6 +6,7 @@ import {
   animer,
   focaliser,
   ecouterClavier,
+  aideTouches,
 } from '../../assets/js/commun/ui.js';
 import { ouvrirDialogue } from '../../assets/js/commun/dialogues.js';
 import { decrireGagnants } from '../../assets/js/commun/points.js';
@@ -13,8 +14,6 @@ import { schema, exemple } from './exemple.js';
 import { POINTS, cotesPossibles, trierMots, annoncePossible, creerPartie } from './logique.js';
 import { creerIllustrationBingo } from './illustration.js';
 
-/** Aide « (Entrée) » d'un bouton : inutile sur téléphone, où elle est masquée (base.css). */
-const aideClavier = (touche) => el('span', { class: 'aide-clavier' }, ` (${touche})`);
 const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? 's' : ''}`;
 
 /** Ce que l'on crie, ce que l'on vérifie, ce que l'on gagne. */
@@ -33,12 +32,9 @@ const ANNONCES = {
 
 function demarrer(ctx) {
   const mots = ctx.elements;
-  // Raccourcis du moment : Entrée (tirer, continuer) et Espace (dévoiler le mot)
+  // Touche du moment : Espace ou → (commencer, tirer, dévoiler le mot, voir le classement)
   let touches = {};
-  const retirerClavier = ecouterClavier({
-    Entrée: () => touches.entree?.(),
-    Espace: () => touches.espace?.(),
-  });
+  const retirerClavier = ecouterClavier({ suivant: () => touches.suivant?.() });
 
   // ---------- Chacun prépare sa grille sur papier ----------
   function afficherPreparation() {
@@ -91,7 +87,7 @@ function demarrer(ctx) {
     }
 
     const commencer = () => afficherTirage(cote);
-    touches = { entree: commencer };
+    touches = { suivant: commencer };
     remplir(
       ctx.zone,
       el(
@@ -112,8 +108,9 @@ function demarrer(ctx) {
             'button',
             { type: 'button', class: 'bouton bouton--principal bouton--grand', onclick: commencer },
             'Tout le monde est prêt : on tire !',
-            aideClavier('Entrée'),
           ),
+          // À côté du bouton : la liste des mots remplit déjà tout l'écran de 1280 × 720
+          aideTouches([['suivant', 'commencer le tirage']]),
         ),
       ),
     );
@@ -178,7 +175,7 @@ function demarrer(ctx) {
           class: `bouton bouton--grand ${classe}`,
           onclick: () => {
             action();
-            // Le focus quitte le bouton : Entrée et Espace gardent toujours le même sens
+            // Le focus quitte le bouton : Espace garde toujours le même sens
             if (scene.isConnected) scene.focus();
           },
         },
@@ -217,29 +214,23 @@ function demarrer(ctx) {
       const dernierTirage = partie.restants === 0;
       const boutons = [];
       if (courant && !revele) {
-        touches = { espace: devoiler, entree: devoiler };
-        boutons.push(
-          bouton(
-            [icone('eye'), 'Dévoiler le mot', aideClavier('Espace')],
-            'bouton--principal',
-            devoiler,
-          ),
-        );
-        remplir(raccourci, el('kbd', {}, 'Espace'), ' : dévoiler le mot');
+        touches = { suivant: devoiler };
+        boutons.push(bouton([icone('eye'), 'Dévoiler le mot'], 'bouton--principal', devoiler));
+        aideTouches([['suivant', 'dévoiler le mot']], raccourci);
       } else if (!dernierTirage) {
-        touches = { entree: tirer };
+        touches = { suivant: tirer };
         boutons.push(
           bouton(
-            [icone('shuffle'), n ? 'Mot suivant' : 'Tirer le premier mot', aideClavier('Entrée')],
+            [icone('shuffle'), n ? 'Mot suivant' : 'Tirer le premier mot'],
             'bouton--principal',
             tirer,
           ),
         );
-        remplir(raccourci, el('kbd', {}, 'Entrée'), ' : tirer un mot');
+        aideTouches([['suivant', n ? 'mot suivant' : 'tirer le premier mot']], raccourci);
       } else {
-        touches = { entree: finir };
+        touches = { suivant: finir };
         boutons.push(bouton('Voir le classement', 'bouton--sombre', finir));
-        remplir(raccourci, el('kbd', {}, 'Entrée'), ' : voir le classement');
+        aideTouches([['suivant', 'voir le classement']], raccourci);
       }
       // Le cri du moment : la ligne, puis la grille pleine
       const annonce = partie.objectif;
@@ -252,7 +243,7 @@ function demarrer(ctx) {
             disabled: !revele || !annoncePossible(annonce, n, cote),
             onclick: async () => {
               await verifierAnnonce(annonce);
-              // Entrée tire de nouveau un mot, au lieu de rouvrir la vérification
+              // Espace tire de nouveau un mot, au lieu de rouvrir la vérification
               if (scene.isConnected) scene.focus();
             },
           },

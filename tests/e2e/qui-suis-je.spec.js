@@ -86,7 +86,8 @@ test('Voir la réponse : on juge la proposition, les points vont à plusieurs pe
   await expect(titre).toBeHidden();
   // Réponse affichée : on ne reprend plus, on juge… ou on la cache aussitôt
   await expect(page.getByRole('button', { name: /on reprend/ })).toHaveCount(0);
-  await expect(page.getByRole('button', { name: 'Cacher la réponse' })).toBeFocused();
+  // Le focus n'est sur aucun bouton : Entrée valide « Bonne réponse » au lieu d'en activer un
+  await expect(page.locator('.actions-jeu button:focus')).toHaveCount(0);
   await verifierAccessibilite(page);
   expect(await page.evaluate(() => document.documentElement.scrollHeight)).toBeLessThanOrEqual(720);
   // Un second clic au même endroit la cache : on peut reprendre

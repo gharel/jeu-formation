@@ -1,12 +1,17 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, icone, animer, ecouterClavier } from '../../assets/js/commun/ui.js';
+import {
+  el,
+  remplir,
+  icone,
+  animer,
+  ecouterClavier,
+  aideTouches,
+} from '../../assets/js/commun/ui.js';
 import { decrireGagnants } from '../../assets/js/commun/points.js';
 import { schema, exemple } from './exemple.js';
 import { POINTS_PAR_QUESTION, pointsDuRang, reponseAffichee, creerManche } from './logique.js';
 import { creerIllustrationTop5 } from './illustration.js';
 
-/** Aide « (Entrée) » d'un bouton : inutile sur téléphone, où elle est masquée (base.css). */
-const aideClavier = (touche) => el('span', { class: 'aide-clavier' }, ` (${touche})`);
 const points = (n) => `${n} point${n > 1 ? 's' : ''}`;
 
 function demarrer(ctx) {
@@ -16,7 +21,9 @@ function demarrer(ctx) {
   let index = 0;
   let total = 0;
   let touches = {};
-  const retirerClavier = ecouterClavier({ Entrée: () => touches.entree?.() });
+  // Espace ou → : question suivante, classement (pendant la question, la proposition se valide
+  // par Entrée dans le champ)
+  const retirerClavier = ecouterClavier({ suivant: () => touches.suivant?.() });
   // Le trophée : il saute à chaque réponse trouvée, ses étoiles brillent au top 5 complet
   const illustration = creerIllustrationTop5();
   // Temps par question (choisi au lancement) : à zéro, une alerte ; l'animateur peut tout dévoiler
@@ -59,6 +66,7 @@ function demarrer(ctx) {
     );
     const message = el('p', { class: 'top5__message', 'aria-live': 'polite' });
     const actions = el('div', { class: 'groupe-boutons top5__actions' });
+    const aide = el('p', { class: 'raccourci', hidden: true });
     const panneau = el(
       'div',
       { class: 'panneau top5', tabindex: '-1' },
@@ -78,7 +86,7 @@ function demarrer(ctx) {
         'div',
         { class: 'top5__plateau' },
         el('div', { class: 'top5__colonne' }, tableau, croix),
-        el('div', { class: 'top5__commandes' }, erreurs, formulaire, message, actions),
+        el('div', { class: 'top5__commandes' }, erreurs, formulaire, message, actions, aide),
       ),
     );
 
@@ -189,15 +197,17 @@ function demarrer(ctx) {
           index += 1;
           afficherQuestion();
         };
-        touches = { entree: suite };
-        const bouton = el(
-          'button',
-          { type: 'button', class: 'bouton bouton--sombre bouton--grand', onclick: suite },
-          derniere ? 'Voir le classement' : 'Question suivante',
-          aideClavier('Entrée'),
+        touches = { suivant: suite };
+        remplir(
+          actions,
+          el(
+            'button',
+            { type: 'button', class: 'bouton bouton--sombre bouton--grand', onclick: suite },
+            derniere ? 'Voir le classement' : 'Question suivante',
+          ),
         );
-        remplir(actions, bouton);
-        return bouton;
+        aideTouches([['suivant', derniere ? 'voir le classement' : 'question suivante']], aide);
+        return;
       }
       remplir(
         actions,
@@ -214,13 +224,12 @@ function demarrer(ctx) {
           'Tout dévoiler',
         ),
       );
-      return null;
     }
 
     function dessiner(apparue = -1) {
       dessinerTableau(apparue);
       dessinerEtat();
-      return dessinerActions();
+      dessinerActions();
     }
 
     function trouver(rang) {
@@ -333,8 +342,9 @@ function demarrer(ctx) {
         el('strong', {}, bilans[manche.issue]),
         ` Le groupe marque ${points(manche.points)} sur ${POINTS_PAR_QUESTION}.`,
       );
-      const bouton = dessiner(apparue);
-      bouton?.focus();
+      dessiner(apparue);
+      // Le focus sur le panneau, pas sur un bouton : Entrée ne passerait pas à la suite
+      panneau.focus({ preventScroll: true });
       // L'illustration et les sons une fois le bilan affiché
       if (manche.issue === 'complet') {
         illustration.etat('complet');

@@ -154,7 +154,7 @@ export function monterJeu(config) {
       type: 'button',
       class: 'bouton-bandeau',
       title: 'Revoir les prénoms, les infos et le plan de salle',
-      // À la fermeture, le focus revient au jeu (pas au bouton) : Entrée et Espace gardent leur
+      // À la fermeture, le focus revient au jeu (pas au bouton) : Espace et Entrée gardent leur
       // sens en partie
       onclick: () => pendantDialogue(() => ouvrirGroupe(groupe, { focusApres: cadre })),
     },

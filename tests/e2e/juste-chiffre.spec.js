@@ -31,7 +31,7 @@ test('Le Juste Chiffre : plus, moins, juste, une personne par question', async (
   await choisirNombre(page, 'Nombre de questions', 5);
   await lancerPartie(page);
 
-  // Écran d'attente : la question et le chrono attendent le signal (Entrée ou bouton)
+  // Écran d'attente : la question et le chrono attendent le signal (Espace ou bouton)
   await expect(page.locator('#cadre').getByText('Question 1 sur 5')).toBeVisible();
   await expect(
     page.locator('#cadre').getByText('30 secondes pour trouver le nombre'),
@@ -39,7 +39,7 @@ test('Le Juste Chiffre : plus, moins, juste, une personne par question', async (
   await expect(page.locator('#cadre').getByText('Au tour de Ana')).toBeVisible();
   await expect(minuteur(page)).toHaveClass(/minuteur-manche--arrete/);
   await verifierAccessibilite(page);
-  await page.keyboard.press('Enter');
+  await page.keyboard.press('Space');
   await expect(page.locator('.minuteur-manche__temps')).toHaveText(/0:(30|29)/);
   await expect(minuteur(page)).not.toHaveClass(/minuteur-manche--arrete/);
   await expect(page.getByLabel('Proposition de Ana')).toBeFocused();

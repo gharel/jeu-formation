@@ -6,6 +6,7 @@ import {
   animer,
   focaliser,
   ecouterClavier,
+  aideTouches,
 } from '../../assets/js/commun/ui.js';
 import { creerMinuteur, formaterDuree } from '../../assets/js/commun/chrono.js';
 import { lire, ecrire } from '../../assets/js/commun/stockage.js';
@@ -14,8 +15,6 @@ import { schema, exemple } from './exemple.js';
 import { ouvre, creerCoffre, cleRecord, estNouveauRecord } from './logique.js';
 import { creerIllustrationCoffre } from './illustration.js';
 
-/** Aide « (Entrée) » d'un bouton : inutile sur téléphone, où elle est masquée (base.css). */
-const aideClavier = (touche) => el('span', { class: 'aide-clavier' }, ` (${touche})`);
 const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? 's' : ''}`;
 const serruresOuvertes = (n) => `${n} serrure${n > 1 ? 's' : ''} ouverte${n > 1 ? 's' : ''}`;
 
@@ -44,9 +43,11 @@ function demarrer(ctx) {
   let touches = {};
   // Le coffre dessiné : sa molette tourne à chaque erreur, sa porte s'ouvre à la fin
   const illustration = creerIllustrationCoffre();
+  // Espace ou → : lancer le compte à rebours, voir le classement ; P : pause. Pendant les
+  // énigmes, la réponse se valide par Entrée dans le champ.
   const retirerClavier = ecouterClavier({
-    Entrée: () => touches.entree?.(),
-    p: () => touches.pause?.(),
+    suivant: () => touches.suivant?.(),
+    pause: () => touches.pause?.(),
   });
 
   // ---------- Avant le compte à rebours ----------
@@ -57,7 +58,7 @@ function demarrer(ctx) {
       { class: 'panneau__texte' },
       `${pluriel(enigmes.length, 'serrure')}, ${pluriel(dureeMinutes, 'minute')} pour ouvrir le coffre`,
     );
-    touches = { entree: commencer };
+    touches = { suivant: commencer };
     remplir(
       ctx.zone,
       el(
@@ -107,9 +108,9 @@ function demarrer(ctx) {
             { type: 'button', class: 'bouton bouton--principal bouton--grand', onclick: commencer },
             icone('play'),
             'Lancer le compte à rebours',
-            aideClavier('Entrée'),
           ),
         ),
+        aideTouches([['suivant', 'lancer le compte à rebours']]),
       ),
     );
     focaliser(titre);
@@ -162,6 +163,7 @@ function demarrer(ctx) {
     const message = el('div', { class: 'coffre__message', 'aria-live': 'polite' });
     const indice = el('p', { class: 'coffre__indice', hidden: true });
     const outils = el('div', { class: 'groupe-boutons coffre__outils' });
+    const aide = el('p', { class: 'raccourci' });
     const zoneEnigme = el(
       'div',
       { class: 'coffre__zone-enigme' },
@@ -171,6 +173,7 @@ function demarrer(ctx) {
       message,
       indice,
       outils,
+      aide,
     );
     const panneau = el(
       'div',
@@ -225,9 +228,9 @@ function demarrer(ctx) {
           { type: 'button', class: 'bouton bouton--discret', onclick: basculerPause },
           icone(enPause ? 'play' : 'pause'),
           enPause ? 'Reprendre' : 'Pause',
-          aideClavier('P'),
         ),
       );
+      aideTouches([['pause', enPause ? 'reprendre' : 'pause']], aide);
     }
 
     function afficherEnigme() {
@@ -332,7 +335,7 @@ function demarrer(ctx) {
         minuteur.ajuster(-prix);
         montrerEcart(-prix);
       }
-      // L'indice a vidé le chrono : le bilan est affiché, et Entrée doit mener au classement
+      // L'indice a vidé le chrono : le bilan est affiché, et Espace doit mener au classement
       if (fini) return;
       remplir(indice, icone('lightbulb'), `Indice : ${enigmes[coffre.ouvertes].indice}`);
       indice.hidden = false;
@@ -457,17 +460,17 @@ function demarrer(ctx) {
             .filter(Boolean)
             .join(' '),
         });
-      touches = { entree: suite };
+      touches = { suivant: suite };
       const bouton = el(
         'button',
         { type: 'button', class: 'bouton bouton--sombre bouton--grand', onclick: suite },
         'Voir le classement',
-        aideClavier('Entrée'),
       );
       remplir(
         zoneEnigme,
         el('div', { class: 'coffre__bilan' }, ...contenu),
         el('div', { class: 'actions-jeu' }, bouton),
+        aideTouches([['suivant', 'voir le classement']]),
       );
       animer(zoneEnigme, 'apparition');
       focaliser(zoneEnigme.querySelector('.coffre__titre-bilan'));

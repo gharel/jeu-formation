@@ -372,7 +372,7 @@ test('duel buzzer par équipes : deux équipes s’affrontent, leurs membres ré
   await expect(page.locator('.duel__joueur--gauche')).toContainText('Répond : Ana');
   await expect(page.locator('.duel__joueur--droite')).toContainText('Répond : Chloé');
 
-  await page.keyboard.press('Enter');
+  await page.keyboard.press('Space');
   await page.keyboard.press('a');
   await expect(page.locator('#cadre').getByText('Ana (Les Bleus) répond !')).toBeVisible();
   await page.getByRole('button', { name: /Bonne/ }).click();

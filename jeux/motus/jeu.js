@@ -1,5 +1,14 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, icone, animer, focaliser, typographier } from '../../assets/js/commun/ui.js';
+import {
+  el,
+  remplir,
+  icone,
+  animer,
+  focaliser,
+  typographier,
+  ecouterClavier,
+  aideTouches,
+} from '../../assets/js/commun/ui.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { schema, exemple } from './exemple.js';
 import { creerIllustrationMotus } from './illustration.js';
@@ -25,6 +34,9 @@ function demarrer(ctx) {
   let essais = [];
   let fini = false;
   let auTourDe = null;
+  // Le mot est fini : Espace ou → passe au mot suivant (hors champ, comme le bouton)
+  let motSuivant = null;
+  const retirerClavier = ecouterClavier({ suivant: () => motSuivant?.() });
 
   const surtitre = el('p', { class: 'panneau__surtitre' });
   const tour = el('p', { class: 'au-tour-de', hidden: true });
@@ -233,6 +245,7 @@ function demarrer(ctx) {
   function preparerMot() {
     essais = [];
     fini = false;
+    motSuivant = null;
     const { secret } = motCourant();
     remplir(surtitre, `Mot ${indexMot + 1} sur ${mots.length} · ${secret.length} lettres`);
     saisie.maxLength = secret.length;
@@ -260,23 +273,21 @@ function demarrer(ctx) {
     clavier.hidden = true;
     marquerLigneActive();
     const dernier = indexMot === mots.length - 1;
+    const avancer = () => {
+      if (dernier) {
+        ctx.terminer({
+          message:
+            mots.length > 1 ? `Les ${mots.length} mots ont été joués.` : 'Le mot a été joué.',
+        });
+        return;
+      }
+      indexMot += 1;
+      preparerMot();
+    };
+    motSuivant = avancer;
     const suivant = el(
       'button',
-      {
-        type: 'button',
-        class: 'bouton bouton--sombre bouton--grand',
-        onclick: () => {
-          if (dernier) {
-            ctx.terminer({
-              message:
-                mots.length > 1 ? `Les ${mots.length} mots ont été joués.` : 'Le mot a été joué.',
-            });
-            return;
-          }
-          indexMot += 1;
-          preparerMot();
-        },
-      },
+      { type: 'button', class: 'bouton bouton--sombre bouton--grand', onclick: avancer },
       dernier ? 'Voir le classement' : ['Mot suivant', icone('arrow-right')],
     );
     const titre = el(
@@ -299,6 +310,7 @@ function demarrer(ctx) {
         trouve ? creerBoutonPoints(ctx, { titre: 'Qui a trouvé le mot ?' }) : null,
         suivant,
       ),
+      aideTouches([['suivant', dernier ? 'voir le classement' : 'mot suivant']]),
     );
     resultat.hidden = false;
     if (trouve) {
@@ -355,6 +367,7 @@ function demarrer(ctx) {
   });
 
   preparerMot();
+  return () => retirerClavier();
 }
 
 monterJeu({

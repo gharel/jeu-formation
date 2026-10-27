@@ -90,7 +90,7 @@ test('Mémoire vive : le dernier nombre de cartes est proposé de nouveau', asyn
   await expect(page.locator('#cadre').getByRole('button', { name: /^12 cartes/ })).toHaveClass(
     /bouton--principal/,
   );
-  // Entrée : le nombre proposé
-  await page.keyboard.press('Enter');
+  // Espace : le nombre proposé
+  await page.keyboard.press('Space');
   await expect(page.locator('.carte-memoire')).toHaveCount(12);
 });

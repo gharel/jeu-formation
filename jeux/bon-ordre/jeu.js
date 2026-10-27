@@ -1,5 +1,13 @@
 import { monterJeu } from '../../assets/js/commun/cadre-jeu.js';
-import { el, remplir, icone, animer, focaliser } from '../../assets/js/commun/ui.js';
+import {
+  el,
+  remplir,
+  icone,
+  animer,
+  focaliser,
+  ecouterClavier,
+  aideTouches,
+} from '../../assets/js/commun/ui.js';
 import { creerBoutonPoints } from '../../assets/js/commun/points.js';
 import { elementsDeListe } from '../../assets/js/commun/contenu.js';
 import { schema, exemple } from './exemple.js';
@@ -23,7 +31,12 @@ function demarrer(ctx) {
     passer: { libelle: 'Voir la solution', faire: () => montrerSolution?.() },
   });
 
+  // La procédure est finie : Espace ou → passe à la suivante (hors champ, comme le bouton)
+  let procedureSuivante = null;
+  const retirerClavier = ecouterClavier({ suivant: () => procedureSuivante?.() });
+
   function afficherProcedure() {
+    procedureSuivante = null;
     const { titre, etapes } = procedures[index];
     const cartes = creerCartes(etapes.length, ctx.hasard).map((c) => ({
       ...c,
@@ -90,6 +103,7 @@ function demarrer(ctx) {
       'Tout retirer',
     );
     const message = el('p', { class: 'ordre__message', 'aria-live': 'polite' });
+    const aide = el('p', { class: 'raccourci', hidden: true });
     const actions = el('div', { class: 'actions-jeu' }, boutonVider, boutonVerifier);
 
     // Les cartes de la pioche sont créées une fois : une carte posée se grise au lieu d'être
@@ -216,23 +230,22 @@ function demarrer(ctx) {
       dessiner();
       const dernier = index === procedures.length - 1;
       const titreFin = el('p', { class: 'ordre__fin' }, icone(nomIcone), texte);
+      const avancer = () => {
+        if (dernier) {
+          ctx.terminer({ message: 'Toutes les procédures ont été remises en ordre.' });
+          return;
+        }
+        index += 1;
+        afficherProcedure();
+      };
+      procedureSuivante = avancer;
+      aideTouches([['suivant', dernier ? 'voir le classement' : 'procédure suivante']], aide);
       remplir(
         actions,
         boutons,
         el(
           'button',
-          {
-            type: 'button',
-            class: 'bouton bouton--sombre bouton--grand',
-            onclick: () => {
-              if (dernier) {
-                ctx.terminer({ message: 'Toutes les procédures ont été remises en ordre.' });
-                return;
-              }
-              index += 1;
-              afficherProcedure();
-            },
-          },
+          { type: 'button', class: 'bouton bouton--sombre bouton--grand', onclick: avancer },
           dernier ? 'Voir le classement' : ['Procédure suivante', icone('arrow-right')],
         ),
       );
@@ -298,6 +311,7 @@ function demarrer(ctx) {
         ),
         el('div', { class: 'ordre__bas' }, formulaire, actions),
         message,
+        aide,
       ),
     );
     dessiner();
@@ -309,6 +323,7 @@ function demarrer(ctx) {
   }
 
   afficherProcedure();
+  return () => retirerClavier();
 }
 
 monterJeu({

@@ -6,6 +6,7 @@ import {
   animer,
   focaliser,
   ecouterClavier,
+  aideTouches,
 } from '../../assets/js/commun/ui.js';
 import { creerChrono } from '../../assets/js/commun/chrono.js';
 import { nommerAvecEquipe } from '../../assets/js/commun/mode-jeu.js';
@@ -20,8 +21,6 @@ import {
   creerManche,
 } from './logique.js';
 
-/** Aide « (Espace) » d'un bouton : inutile sur téléphone, où elle est masquée (base.css). */
-const aideClavier = (touche) => el('span', { class: 'aide-clavier' }, ` (${touche})`);
 /** Ce qu'on lit sous la patate, selon sa chaleur (niveaux 1 à 4). */
 const ETATS = [
   '',
@@ -41,12 +40,13 @@ function demarrer(ctx) {
   let index = 0;
   let dernierBrule = null;
   let chrono = null;
-  // Raccourcis du moment : Entrée (action principale), Espace (on passe), P (pause)
+  // Touches du moment : Espace ou → (lancer, qui tenait la patate, manche suivante), Entrée
+  // (réponse valable : on passe), P (pause)
   let touches = {};
   const retirerClavier = ecouterClavier({
-    Entrée: () => touches.entree?.(),
-    Espace: () => touches.espace?.(),
-    p: () => touches.pause?.(),
+    suivant: () => touches.suivant?.(),
+    valider: () => touches.valider?.(),
+    pause: () => touches.pause?.(),
   });
 
   function afficherManche() {
@@ -145,56 +145,38 @@ function demarrer(ctx) {
     function dessiner() {
       dessinerCompteur();
       if (manche.phase === 'prete') {
-        touches = { entree: lancer };
+        touches = { suivant: lancer };
         remplir(
           etat,
           lanceur
             ? [icone('hand'), `${lanceur} prend la patate et répond en premier`]
             : [icone('hand'), 'Qui commence ? Prenez la patate en main !'],
         );
-        remplir(
-          actions,
-          bouton(
-            [icone('fire'), 'Lancer la patate', aideClavier('Entrée')],
-            'bouton--principal',
-            lancer,
-          ),
-        );
-        remplir(raccourci, el('kbd', {}, 'Entrée'), ' : lancer la patate');
+        remplir(actions, bouton([icone('fire'), 'Lancer la patate'], 'bouton--principal', lancer));
+        aideTouches([['suivant', 'lancer la patate']], raccourci);
         return;
       }
       if (manche.phase === 'en-cours') {
-        touches = { espace: passer, pause: basculerPause };
+        touches = { valider: passer, pause: basculerPause };
         remplir(
           actions,
-          bouton(
-            [icone('check'), 'Réponse valable : on passe !', aideClavier('Espace')],
-            'bouton--principal',
-            passer,
-          ),
-          bouton([icone('pause'), 'Pause', aideClavier('P')], 'bouton--discret', basculerPause),
+          bouton([icone('check'), 'Réponse valable : on passe !'], 'bouton--principal', passer),
+          bouton([icone('pause'), 'Pause'], 'bouton--discret', basculerPause),
         );
-        remplir(
+        aideTouches(
+          [
+            ['valider', 'réponse valable, on passe'],
+            ['pause', 'pause'],
+          ],
           raccourci,
-          el('kbd', {}, 'Espace'),
-          ' : réponse valable, on passe · ',
-          el('kbd', {}, 'P'),
-          ' : pause',
         );
         return;
       }
       if (manche.phase === 'pause') {
-        touches = { pause: basculerPause, entree: basculerPause };
+        touches = { pause: basculerPause };
         remplir(etat, [icone('pause'), 'Pause : la patate attend.']);
-        remplir(
-          actions,
-          bouton(
-            [icone('play'), 'Reprendre', aideClavier('P')],
-            'bouton--principal',
-            basculerPause,
-          ),
-        );
-        remplir(raccourci, el('kbd', {}, 'P'), ' : reprendre');
+        remplir(actions, bouton([icone('play'), 'Reprendre'], 'bouton--principal', basculerPause));
+        aideTouches([['pause', 'reprendre']], raccourci);
         return;
       }
       dessinerFin();
@@ -297,21 +279,17 @@ function demarrer(ctx) {
       remplir(etat);
       const libelleSuite = derniere ? 'Voir le classement' : 'Manche suivante';
       if (avecPrenoms && !brule) {
-        touches = { entree: choisirBrule };
+        touches = { suivant: choisirBrule };
         remplir(
           actions,
-          bouton(
-            [icone('user'), 'Qui tenait la patate ?', aideClavier('Entrée')],
-            'bouton--principal',
-            choisirBrule,
-          ),
+          bouton([icone('user'), 'Qui tenait la patate ?'], 'bouton--principal', choisirBrule),
           bouton(libelleSuite, 'bouton--discret', suite),
         );
-        remplir(raccourci, el('kbd', {}, 'Entrée'), ' : dire qui tenait la patate');
+        aideTouches([['suivant', 'qui tenait la patate ?']], raccourci);
       } else {
-        touches = { entree: suite };
-        remplir(actions, bouton([libelleSuite, aideClavier('Entrée')], 'bouton--sombre', suite));
-        remplir(raccourci, el('kbd', {}, 'Entrée'), ' : continuer');
+        touches = { suivant: suite };
+        remplir(actions, bouton(libelleSuite, 'bouton--sombre', suite));
+        aideTouches([['suivant', derniere ? 'voir le classement' : 'manche suivante']], raccourci);
       }
       focaliser(verdict);
     }
@@ -335,7 +313,7 @@ monterJeu({
   regles: [
     'Avant la séance, préparez des consignes qui ont beaucoup de réponses : « Citez une fonction d’Excel ».',
     'Lancez la patate : elle chauffe pendant un temps caché, que personne ne connaît. Le tic-tac s’accélère…',
-    'La personne qui tient la patate donne une réponse valable, pas encore dite, puis la passe à son voisin. Vous validez d’une touche (Espace).',
+    'La personne qui tient la patate donne une réponse valable, pas encore dite, puis la passe à son voisin. Vous validez d’une touche (Entrée).',
     'Quand la patate brûle, la personne qui la tient ne marque pas : tous les autres gagnent 1 point (en équipes : les autres équipes).',
   ],
   demarrer,

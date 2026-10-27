@@ -85,8 +85,18 @@ function demarrer(ctx) {
       if (visible) ctx.annoncer(`La réponse est : ${reponse}`);
     }
 
+    function mystereSuivant() {
+      if (index === mysteres.length - 1) {
+        ctx.terminer({ message: 'Tous les mystères ont été joués.' });
+        return;
+      }
+      index += 1;
+      afficherMystere();
+    }
+
     manche = creerMancheAPaliers({
       ctx,
+      surSuivant: mystereSuivant,
       dureePalier: ctx.reglages.dureePalier,
       surValeur: (valeur) => montrerIndices(indicesVisibles(valeur, indices.length)),
       surReponse: montrerReponse,
@@ -122,14 +132,7 @@ function demarrer(ctx) {
               {
                 type: 'button',
                 class: 'bouton bouton--sombre bouton--grand',
-                onclick: () => {
-                  if (dernier) {
-                    ctx.terminer({ message: 'Tous les mystères ont été joués.' });
-                    return;
-                  }
-                  index += 1;
-                  afficherMystere();
-                },
+                onclick: mystereSuivant,
               },
               dernier ? 'Voir le classement' : ['Mystère suivant', icone('arrow-right')],
             ),
@@ -152,10 +155,10 @@ function demarrer(ctx) {
         el('div', { class: 'qsj__haut' }, illustration.element, manche.paliers, caseQuestion),
         el('div', { class: 'qsj__corps' }, attente, liste, resultat),
         manche.actions,
-        el('p', { class: 'raccourci' }, el('kbd', {}, 'Espace'), ' : démarrer, stop, reprendre'),
+        manche.aide,
       ),
     );
-    manche.actions.querySelector('button')?.focus();
+    manche.focaliser();
   }
 
   afficherMystere();

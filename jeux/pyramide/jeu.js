@@ -6,6 +6,7 @@ import {
   animer,
   focaliser,
   ecouterClavier,
+  aideTouches,
 } from '../../assets/js/commun/ui.js';
 import { tirerDansLePlan } from '../../assets/js/commun/passages.js';
 import { schema, exemple } from './exemple.js';
@@ -50,13 +51,13 @@ function demarrer(ctx) {
   }
   // Une pyramide de quatre étages : l'étage en jeu s'allume, un drapeau quand c'est trouvé
   const illustration = creerIllustrationPyramide();
-  // Raccourcis du moment : Entrée (trouvé), Retour arrière (raté), Espace (afficher ou cacher le
-  // mot, continuer)
+  // Touches du moment : Espace ou → (afficher ou cacher le mot, continuer), Entrée (trouvé),
+  // Retour arrière (raté)
   let touches = {};
   const retirerClavier = ecouterClavier({
-    Espace: () => touches.espace?.(),
-    Entrée: () => touches.entree?.(),
-    Retour: () => touches.retour?.(),
+    suivant: () => touches.suivant?.(),
+    valider: () => touches.valider?.(),
+    erreur: () => touches.erreur?.(),
   });
 
   // ---------- Choix du binôme ----------
@@ -329,10 +330,10 @@ function demarrer(ctx) {
 
     function dessinerActions() {
       if (partie.phase === 'cache') {
-        touches = { espace: afficher };
+        touches = { suivant: afficher };
         remplir(consigne);
         remplir(actions, bouton([icone('eye'), 'Afficher le mot'], 'bouton--principal', afficher));
-        remplir(raccourci, el('kbd', {}, 'Espace'), ' : afficher le mot');
+        aideTouches([['suivant', 'afficher le mot']], raccourci);
         return;
       }
       if (partie.phase === 'jeu') {
@@ -340,15 +341,15 @@ function demarrer(ctx) {
         remplir(consigne, `${ordinal(indice)} mot d’indice : ${pluriel(points, 'point')} en jeu`);
         if (partie.masque) {
           // Mot recaché : les mêmes indices et les mêmes points, en attendant de le réafficher
-          touches = { espace: reafficher };
+          touches = { suivant: reafficher };
           remplir(
             actions,
             bouton([icone('eye'), 'Afficher le mot'], 'bouton--principal', reafficher),
           );
-          remplir(raccourci, el('kbd', {}, 'Espace'), ' : afficher le mot');
+          aideTouches([['suivant', 'afficher le mot']], raccourci);
           return;
         }
-        touches = { entree: trouver, retour: rater, espace: cacher };
+        touches = { valider: trouver, erreur: rater, suivant: cacher };
         remplir(
           actions,
           bouton(
@@ -364,25 +365,32 @@ function demarrer(ctx) {
           bouton([icone('ban'), 'Faute'], 'bouton--discret', faute),
           bouton([icone('eye-slash'), 'Cacher le mot'], 'bouton--discret', cacher),
         );
-        remplir(
+        aideTouches(
+          [
+            ['valider', 'trouvé'],
+            ['erreur', 'raté'],
+            ['suivant', 'cacher le mot'],
+          ],
           raccourci,
-          el('kbd', {}, 'Entrée'),
-          ' : trouvé · ',
-          el('kbd', {}, 'Retour arrière'),
-          ' : raté · ',
-          el('kbd', {}, 'Espace'),
-          ' : cacher le mot',
         );
         return;
       }
-      touches = { espace: continuer, entree: continuer };
+      touches = { suivant: continuer };
       remplir(consigne);
       let libelle = ['Mot suivant', icone('arrow-right', { classe: 'icone--apres' })];
       if (dernier) libelle = 'Voir le classement';
       else if (dernierDuBinome)
         libelle = ['Binôme suivant', icone('arrow-right', { classe: 'icone--apres' })];
       remplir(actions, bouton(libelle, 'bouton--sombre', continuer));
-      remplir(raccourci, el('kbd', {}, 'Espace'), ' : continuer');
+      aideTouches(
+        [
+          [
+            'suivant',
+            dernier ? 'voir le classement' : dernierDuBinome ? 'binôme suivant' : 'mot suivant',
+          ],
+        ],
+        raccourci,
+      );
     }
 
     function dessiner() {

@@ -7,10 +7,10 @@ import {
   verifierAccessibilite,
 } from './outils.js';
 
-/** Tire n mots au clavier : Entrée tire, Espace dévoile le mot après sa définition. */
+/** Tire n mots au clavier : Espace tire, puis dévoile le mot après sa définition. */
 async function tirer(page, n) {
   for (let i = 0; i < n; i++) {
-    await page.keyboard.press('Enter');
+    await page.keyboard.press('Space');
     await page.keyboard.press('Space');
   }
 }
@@ -109,8 +109,8 @@ test('Bingo sans définition : le mot est annoncé tout de suite, comme au loto'
   await lancerPartie(page);
   // 12 mots : seulement des grilles de 3 × 3
   await expect(page.getByRole('button', { name: 'Grille de 4 × 4' })).toHaveCount(0);
-  await page.keyboard.press('Enter');
-  await page.keyboard.press('Enter');
+  await page.keyboard.press('Space');
+  await page.keyboard.press('ArrowRight');
   const cadre = page.locator('#cadre');
   await expect(cadre.getByText('Mot 1 sur 12')).toBeVisible();
   await expect(cadre.getByText('Quel est ce mot ?')).toHaveCount(0);
