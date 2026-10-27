@@ -111,12 +111,3 @@ export function tirerEquipesDuel(equipes, dejaJoues = [], hasard = Math.random) 
 export function repondant(membres, numero) {
   return membres.length ? membres[numero % membres.length] : null;
 }
-
-/** Deux participants différents tirés au hasard. */
-export function tirerDuellistes(participants, hasard = Math.random) {
-  if (participants.length < 2) return null;
-  const i = Math.floor(hasard() * participants.length);
-  let j = Math.floor(hasard() * (participants.length - 1));
-  if (j >= i) j += 1;
-  return [participants[i], participants[j]];
-}

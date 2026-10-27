@@ -18,8 +18,23 @@ export function creerHasard(graine) {
 /** Hasard de la page : graine lue dans ?graine= si elle existe. */
 export function hasardDePage(recherche = globalThis.location?.search ?? '') {
   const graine = new URLSearchParams(recherche).get('graine');
-  if (graine !== null && /^\d+$/.test(graine)) return creerHasard(Number(graine));
+  if (graine !== null && /^\d+$/.test(graine)) {
+    const hasard = creerHasard(Number(graine));
+    hasard.graine = Number(graine);
+    return hasard;
+  }
   return Math.random;
+}
+
+/**
+ * Un second flux de hasard, indépendant de celui de la page : tirer les éléments d'une partie ne
+ * change pas la suite des autres tirages (avec ?graine=N, chaque `cle` rend toujours la même suite).
+ * Sans graine, c'est le hasard de la page.
+ */
+export function hasardAnnexe(hasard, cle = 0) {
+  return typeof hasard.graine === 'number'
+    ? creerHasard(hasard.graine * 7919 + Math.floor(cle) * 104729 + 1)
+    : hasard;
 }
 
 /** Entier dans [min, max] (bornes incluses). */

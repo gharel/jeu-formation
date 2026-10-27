@@ -3,6 +3,7 @@ import { creerMinuteurManche, formaterTemps } from '../../assets/js/commun/minut
 import {
   libelleDuree,
   pasDuree,
+  pasNombre,
   nettoyerContenu,
   validerContenu,
   validerReglages,
@@ -11,6 +12,8 @@ import {
   valeursDeLancement,
   lireLancement,
   ecrireLancement,
+  lireNombreJoue,
+  ecrireNombreJoue,
 } from '../../assets/js/commun/lancement.js';
 import { effacer } from '../../assets/js/commun/stockage.js';
 
@@ -226,5 +229,54 @@ describe('réglages de lancement', () => {
     expect(validerReglages(schema.reglages.slice(0, 2), { palier: 99 })).toEqual([
       'Réglage « Durée » doit être au plus 30.',
     ]);
+  });
+});
+
+describe('nombre d’éléments joués (compteur)', () => {
+  beforeEach(() => effacer('motus:lancement'));
+
+  it('avance par pas de 1, ou du nombre d’éléments par tour, entre min et max', () => {
+    const bornes = { min: 2, max: 10, pas: 1 };
+    expect(pasNombre(bornes, 5, 1)).toBe(6);
+    expect(pasNombre(bornes, 5, -1)).toBe(4);
+    expect(pasNombre(bornes, 10, 1)).toBe(10);
+    expect(pasNombre(bornes, 2, -1)).toBe(2);
+    // Par pas de 3, calé sur un multiple de 3 ; le maximum reste atteignable
+    const parTrois = { min: 3, max: 10, pas: 3 };
+    expect(pasNombre(parTrois, 3, 1)).toBe(6);
+    expect(pasNombre(parTrois, 9, 1)).toBe(10);
+    expect(pasNombre(parTrois, 10, -1)).toBe(9);
+    expect(pasNombre(parTrois, 3, -1)).toBe(3);
+    expect(pasNombre(parTrois, 7, 1)).toBe(9);
+    expect(pasNombre(parTrois, 7, -1)).toBe(6);
+    // Une valeur absente repart du minimum
+    expect(pasNombre(bornes, null, 1)).toBe(2);
+    expect(pasNombre(bornes, undefined, -1)).toBe(2);
+  });
+
+  it('garde le nombre choisi à part des réglages, sous la clé « nombre »', () => {
+    expect(lireNombreJoue('motus')).toBeNull();
+    ecrireNombreJoue('motus', 4);
+    expect(lireNombreJoue('motus')).toBe(4);
+    // Changer le minuteur ne fait pas perdre le nombre choisi
+    ecrireLancement('motus', { tempsManche: 45 });
+    expect(lireNombreJoue('motus')).toBe(4);
+    expect(lireLancement('motus', schema, {})).toEqual({ tempsManche: 45, palier: 6 });
+    // Changer le nombre ne fait pas perdre le minuteur
+    ecrireNombreJoue('motus', 2);
+    expect(lireLancement('motus', schema, {}).tempsManche).toBe(45);
+    // null : on revient à la valeur proposée
+    ecrireNombreJoue('motus', null);
+    expect(lireNombreJoue('motus')).toBeNull();
+    expect(lireLancement('motus', schema, {}).tempsManche).toBe(45);
+  });
+
+  it('ignore un nombre qui n’en est pas un', () => {
+    ecrireNombreJoue('motus', 0);
+    expect(lireNombreJoue('motus')).toBeNull();
+    ecrireNombreJoue('motus', 2.5);
+    expect(lireNombreJoue('motus')).toBeNull();
+    ecrireNombreJoue('motus', '3');
+    expect(lireNombreJoue('motus')).toBeNull();
   });
 });

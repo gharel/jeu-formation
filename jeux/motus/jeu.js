@@ -267,7 +267,10 @@ function demarrer(ctx) {
         class: 'bouton bouton--sombre bouton--grand',
         onclick: () => {
           if (dernier) {
-            ctx.terminer({ message: 'Les 5 mots ont été joués.' });
+            ctx.terminer({
+              message:
+                mots.length > 1 ? `Les ${mots.length} mots ont été joués.` : 'Le mot a été joué.',
+            });
             return;
           }
           indexMot += 1;

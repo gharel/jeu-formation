@@ -2,7 +2,6 @@ import { describe, it, expect } from 'vitest';
 import {
   creerDuel,
   autre,
-  tirerDuellistes,
   tirerEquipesDuel,
   cleAffrontement,
   repondant,
@@ -65,14 +64,9 @@ describe('Duel buzzer', () => {
     expect(duel.buzzer('gauche')).toBe(false);
   });
 
-  it('tire deux duellistes différents', () => {
+  it('donne l’autre côté', () => {
     expect(autre('gauche')).toBe('droite');
-    expect(tirerDuellistes(['Ana'])).toBeNull();
-    const hasard = creerHasard(8);
-    for (let k = 0; k < 30; k++) {
-      const [a, b] = tirerDuellistes(['Ana', 'Bob', 'Chloé'], hasard);
-      expect(a).not.toBe(b);
-    }
+    expect(autre('droite')).toBe('gauche');
   });
 
   it('a un exemple valide, 3 points pour gagner par défaut', () => {

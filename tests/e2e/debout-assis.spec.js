@@ -5,11 +5,12 @@ import {
   lancerPartie,
   pointsDe,
   verifierAccessibilite,
+  choisirNombre,
 } from './outils.js';
 
 async function regler(page, { survie = false, consigne } = {}) {
   // Le temps se règle sur l'accueil du jeu, au lancement ; le reste dans « Préparer »
-  await page.getByLabel('Temps pour se décider').fill('3');
+  await choisirNombre(page, 'Temps pour se décider', 3);
   await page.getByRole('button', { name: /Préparer le contenu/ }).click();
   if (consigne) await page.getByLabel('Comment répondre').selectOption(consigne);
   if (survie) await page.getByLabel(/Mode survie/).check();

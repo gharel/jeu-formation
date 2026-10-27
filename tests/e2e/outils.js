@@ -244,3 +244,18 @@ export async function verifierMiseEnPage(page) {
   });
   expect(fautes, fautes.join('\n')).toEqual([]);
 }
+
+/**
+ * Règle un compteur (le nombre d'éléments joués, un réglage de lancement en nombre) sur l'accueil
+ * du jeu : les flèches du clavier sur la valeur, depuis le minimum.
+ */
+export async function choisirNombre(page, libelle, valeur) {
+  const compteur = page.getByRole('spinbutton', { name: libelle });
+  await compteur.focus();
+  await compteur.press('Home');
+  for (let i = 0; i < 200; i += 1) {
+    if (Number(await compteur.getAttribute('aria-valuenow')) >= valeur) break;
+    await compteur.press('ArrowUp');
+  }
+  await expect(compteur).toHaveAttribute('aria-valuenow', String(valeur));
+}

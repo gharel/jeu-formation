@@ -8,6 +8,8 @@ export const schema = {
       min: 1,
       max: 10,
       aide: 'Les rôles s’inversent à chaque mot : avec 2 mots, chacun fait deviner une fois.',
+      // Réglé sur l'accueil, à côté du nombre de mots joués (qui avance par pas de ce nombre)
+      lancement: true,
     },
     {
       cle: 'tempsManche',

@@ -3,7 +3,14 @@
  * Les réponses (champs « secret ») sont masquées par défaut : l'écran est peut-être projeté.
  */
 import { el, remplir, icone, typographier } from './ui.js';
-import { elementVide, exempleDuChamp, pasDuree, libelleDuree, PAS_DUREE } from './contenu.js';
+import {
+  elementVide,
+  exempleDuChamp,
+  pasDuree,
+  pasNombre,
+  libelleDuree,
+  PAS_DUREE,
+} from './contenu.js';
 import { lireNombre, formaterNombre } from './nombres.js';
 import { enregistrerImage, lireFichierImage, imageDuCollage, adresseImage } from './images.js';
 
@@ -189,47 +196,56 @@ function repeterAppui(bouton, action) {
 }
 
 /**
- * Durée (minuteur de manche) : − et + par pas de 5 s autour de la valeur (« 1 min 30 »), et X pour
- * « Sans limite » (un second clic revient à la valeur conseillée). Au clavier, la valeur est un
- * curseur (spinbutton) : flèches, Page précédente / suivante (30 s), Début / Fin.
+ * Contrôle − / valeur / + commun aux durées et aux compteurs : appui long qui répète, valeur au
+ * clavier en curseur (spinbutton : flèches, Page précédente / suivante, Début / Fin). `suivant(v,
+ * sens)` donne la valeur d'après (ou d'avant) ; `texte(v)` ce qu'on lit ; `sansLimite` (facultatif,
+ * { defaut }) ajoute la croix ronde « Sans limite », où la valeur est 0.
  */
-function construireDuree(champ, lire, ecrire, id, avecAide) {
-  const idLibelle = `${id}-libelle`;
-  const min = champ.min ?? PAS_DUREE;
-  const max = champ.max ?? 3600;
+function construireCurseur({
+  id,
+  idLibelle,
+  idAide,
+  bornes,
+  lire,
+  ecrire,
+  suivant,
+  texte,
+  moins,
+  plus,
+  sansLimite = null,
+  grandPas = 6,
+}) {
   const valeur = el('span', {
     id,
     class: 'duree__valeur',
     role: 'spinbutton',
     tabindex: '0',
     'aria-labelledby': idLibelle,
-    'aria-describedby': avecAide.idAide,
-    'aria-valuemin': champ.sansLimite ? 0 : min,
-    'aria-valuemax': max,
+    'aria-describedby': idAide,
   });
-  const moins = el(
+  const boutonMoins = el(
     'button',
     {
       type: 'button',
       class: 'duree__bouton',
-      'aria-label': `Retirer ${PAS_DUREE} secondes`,
-      title: `− ${PAS_DUREE} s`,
+      'aria-label': moins.nom,
+      title: moins.titre,
       'aria-controls': id,
     },
     icone('minus'),
   );
-  const plus = el(
+  const boutonPlus = el(
     'button',
     {
       type: 'button',
       class: 'duree__bouton',
-      'aria-label': `Ajouter ${PAS_DUREE} secondes`,
-      title: `+ ${PAS_DUREE} s`,
+      'aria-label': plus.nom,
+      title: plus.titre,
       'aria-controls': id,
     },
     icone('plus'),
   );
-  const sansLimite = champ.sansLimite
+  const boutonSansLimite = sansLimite
     ? el(
         'button',
         {
@@ -245,15 +261,17 @@ function construireDuree(champ, lire, ecrire, id, avecAide) {
 
   function afficher() {
     const v = lire();
-    const texte = typographier(libelleDuree(v));
-    valeur.textContent = texte;
+    const lu = typographier(texte(v));
+    valeur.textContent = lu;
+    valeur.setAttribute('aria-valuemin', String(sansLimite ? 0 : bornes.min));
+    valeur.setAttribute('aria-valuemax', String(bornes.max));
     valeur.setAttribute('aria-valuenow', String(v));
-    valeur.setAttribute('aria-valuetext', texte);
-    valeur.classList.toggle('duree__valeur--sans-limite', !v);
+    valeur.setAttribute('aria-valuetext', lu);
+    valeur.classList.toggle('duree__valeur--sans-limite', Boolean(sansLimite) && !v);
     // aria-disabled plutôt que disabled : le bouton garde le focus quand on atteint une borne
-    moins.setAttribute('aria-disabled', String(!v || v <= min));
-    plus.setAttribute('aria-disabled', String(Boolean(v) && v >= max));
-    sansLimite?.setAttribute('aria-pressed', String(!v));
+    boutonMoins.setAttribute('aria-disabled', String(!v || v <= bornes.min));
+    boutonPlus.setAttribute('aria-disabled', String(Boolean(v) && v >= bornes.max));
+    boutonSansLimite?.setAttribute('aria-pressed', String(!v));
   }
 
   function changer(nouvelle) {
@@ -264,17 +282,19 @@ function construireDuree(champ, lire, ecrire, id, avecAide) {
 
   const pas = (sens, fois = 1) => {
     let v = lire();
-    for (let i = 0; i < fois; i += 1) v = pasDuree(champ, v, sens);
+    for (let i = 0; i < fois; i += 1) v = suivant(v, sens);
     changer(v);
   };
 
-  repeterAppui(moins, () => {
-    if (moins.getAttribute('aria-disabled') !== 'true') pas(-1);
+  repeterAppui(boutonMoins, () => {
+    if (boutonMoins.getAttribute('aria-disabled') !== 'true') pas(-1);
   });
-  repeterAppui(plus, () => {
-    if (plus.getAttribute('aria-disabled') !== 'true') pas(1);
+  repeterAppui(boutonPlus, () => {
+    if (boutonPlus.getAttribute('aria-disabled') !== 'true') pas(1);
   });
-  sansLimite?.addEventListener('click', () => changer(lire() ? 0 : champ.defaut || min));
+  boutonSansLimite?.addEventListener('click', () =>
+    changer(lire() ? 0 : sansLimite.defaut || bornes.min),
+  );
 
   valeur.addEventListener('keydown', (e) => {
     const actions = {
@@ -282,10 +302,10 @@ function construireDuree(champ, lire, ecrire, id, avecAide) {
       ArrowRight: () => pas(1),
       ArrowDown: () => lire() && pas(-1),
       ArrowLeft: () => lire() && pas(-1),
-      PageUp: () => pas(1, 6),
-      PageDown: () => lire() && pas(-1, 6),
-      Home: () => changer(min),
-      End: () => changer(max),
+      PageUp: () => pas(1, grandPas),
+      PageDown: () => lire() && pas(-1, grandPas),
+      Home: () => changer(bornes.min),
+      End: () => changer(bornes.max),
     };
     if (!actions[e.key]) return;
     e.preventDefault();
@@ -293,13 +313,94 @@ function construireDuree(champ, lire, ecrire, id, avecAide) {
   });
 
   afficher();
+  return {
+    element: el('div', { class: 'duree' }, boutonMoins, valeur, boutonPlus, boutonSansLimite),
+    afficher,
+  };
+}
+
+/**
+ * Durée (minuteur de manche) : − et + par pas de 5 s autour de la valeur (« 1 min 30 »), et X pour
+ * « Sans limite » (un second clic revient à la valeur conseillée). Au clavier, la valeur est un
+ * curseur (spinbutton) : flèches, Page précédente / suivante (30 s), Début / Fin.
+ */
+function construireDuree(champ, lire, ecrire, id, avecAide) {
+  const idLibelle = `${id}-libelle`;
+  const min = champ.min ?? PAS_DUREE;
+  const max = champ.max ?? 3600;
+  const curseur = construireCurseur({
+    id,
+    idLibelle,
+    idAide: avecAide.idAide,
+    bornes: { min, max },
+    lire,
+    ecrire,
+    suivant: (v, sens) => pasDuree(champ, v, sens),
+    texte: libelleDuree,
+    moins: { nom: `Retirer ${PAS_DUREE} secondes`, titre: `− ${PAS_DUREE} s` },
+    plus: { nom: `Ajouter ${PAS_DUREE} secondes`, titre: `+ ${PAS_DUREE} s` },
+    sansLimite: champ.sansLimite ? { defaut: champ.defaut } : null,
+  });
   return el(
     'div',
     { class: 'champ champ--duree' },
     el('span', { id: idLibelle, class: 'champ__libelle' }, champ.libelle),
-    el('div', { class: 'duree' }, moins, valeur, plus, sansLimite),
+    curseur.element,
     aide(avecAide),
   );
+}
+
+/**
+ * Compteur : un nombre entier réglé par − et + (pas de 1 par défaut, appui long pour aller vite),
+ * sans « Sans limite ». Pour les réglages de lancement de type nombre et pour le nombre
+ * d'éléments joués. `lire()` et `ecrire(v)` accèdent à la valeur ; `unite` (« mot », « mots »)
+ * s'accorde avec elle ; `rafraichir()` redessine après un changement venu d'ailleurs (bornes,
+ * valeur proposée).
+ */
+export function construireCompteur({
+  libelle,
+  aide: texteAide = null,
+  min = 1,
+  max = 99,
+  pas = 1,
+  lire,
+  ecrire,
+  unite = null,
+  classe = '',
+}) {
+  const id = identifiant('compteur');
+  const idLibelle = `${id}-libelle`;
+  const idAide = texteAide ? `${id}-aide` : null;
+  const bornes = { min, max, pas };
+  const valeurLue = () => lire() ?? bornes.min;
+  const curseur = construireCurseur({
+    id,
+    idLibelle,
+    idAide,
+    bornes,
+    lire: valeurLue,
+    ecrire,
+    suivant: (v, sens) => pasNombre(bornes, v, sens),
+    texte: (v) => (unite ? `${formaterNombre(v)} ${unite(v)}` : formaterNombre(v)),
+    moins: { nom: `Diminuer : ${libelle}`, titre: 'Diminuer' },
+    plus: { nom: `Augmenter : ${libelle}`, titre: 'Augmenter' },
+    grandPas: 5,
+  });
+  const element = el(
+    'div',
+    { class: `champ champ--compteur${classe ? ` ${classe}` : ''}` },
+    el('span', { id: idLibelle, class: 'champ__libelle' }, libelle),
+    curseur.element,
+    texteAide ? el('p', { class: 'champ__aide', id: idAide }, texteAide) : null,
+  );
+  return {
+    element,
+    /** Nouvelles bornes (le contenu ou le pas a changé), puis le nombre est redessiné. */
+    rafraichir(nouvelles = {}) {
+      Object.assign(bornes, nouvelles);
+      curseur.afficher();
+    },
+  };
 }
 
 function construireListe(champ, lire, ecrire, avecAide) {

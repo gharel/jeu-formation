@@ -9,6 +9,8 @@
  *   // lancement : réglé sur l'accueil du jeu, au lancement (minuteur), pas dans « Préparer »
  *   elements: {
  *     libelle: 'Mot', pluriel: 'mots', feminin: false, min: 5, max: 5,
+ *     // jouesMin : plus petit nombre d'éléments qu'on peut jouer (compteur de l'accueil du jeu) ;
+ *     // sans lui, `min`. Le contenu garde son `min` : Motus exige 5 mots, et en joue de 1 à 5.
  *     champs: [{ cle, libelle, type, requis, secret, min, max, longueurMax, options, suggestions, aide,
  *                exemple }],   // exemple = placeholder (tableau possible pour une liste : une par ligne)
  *     valider(element) => message | null,
@@ -128,6 +130,18 @@ export function pasDuree(champ, valeur, sens) {
     sens > 0
       ? (Math.floor(valeur / PAS_DUREE) + 1) * PAS_DUREE
       : (Math.ceil(valeur / PAS_DUREE) - 1) * PAS_DUREE;
+  return Math.min(max, Math.max(min, suivante));
+}
+
+/**
+ * Valeur suivante (sens +1) ou précédente (sens −1) d'un compteur `{ min, max, pas }` : par pas de
+ * `pas`, calée sur un multiple de `pas` (une valeur de 7 avec un pas de 2 passe à 8 ou 6), entre min
+ * et max. Une valeur absente repart du minimum.
+ */
+export function pasNombre({ min = 1, max = 99, pas = 1 }, valeur, sens) {
+  if (typeof valeur !== 'number' || !Number.isFinite(valeur)) return Math.min(max, min);
+  const suivante =
+    sens > 0 ? (Math.floor(valeur / pas) + 1) * pas : (Math.ceil(valeur / pas) - 1) * pas;
   return Math.min(max, Math.max(min, suivante));
 }
 

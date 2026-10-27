@@ -1,5 +1,11 @@
 import { describe, it, expect } from 'vitest';
-import { creerHasard, hasardDePage, entierEntre, melanger } from '../../assets/js/commun/hasard.js';
+import {
+  creerHasard,
+  hasardDePage,
+  hasardAnnexe,
+  entierEntre,
+  melanger,
+} from '../../assets/js/commun/hasard.js';
 
 describe('hasard', () => {
   it('donne la même suite pour la même graine', () => {
@@ -33,5 +39,23 @@ describe('hasard', () => {
     const melange = melanger(original, creerHasard(3));
     expect(original).toEqual([1, 2, 3, 4, 5, 6]);
     expect([...melange].sort()).toEqual(original);
+  });
+
+  it('donne un flux annexe qui ne touche pas à celui de la page', () => {
+    const page = hasardDePage('?graine=7');
+    const annexe = hasardAnnexe(page, 3);
+    const suite = Array.from({ length: 4 }, () => annexe());
+    // La suite de la page n'a pas bougé
+    const intacte = creerHasard(7);
+    expect(Array.from({ length: 4 }, () => page())).toEqual(
+      Array.from({ length: 4 }, () => intacte()),
+    );
+    // Même clé, même suite ; autre clé, autre suite
+    const encore = hasardAnnexe(hasardDePage('?graine=7'), 3);
+    expect(Array.from({ length: 4 }, () => encore())).toEqual(suite);
+    const autre = hasardAnnexe(hasardDePage('?graine=7'), 4);
+    expect(Array.from({ length: 4 }, () => autre())).not.toEqual(suite);
+    // Sans graine, c'est le hasard de la page
+    expect(hasardAnnexe(Math.random, 3)).toBe(Math.random);
   });
 });

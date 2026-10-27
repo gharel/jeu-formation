@@ -5,6 +5,7 @@ import {
   lancerPartie,
   pointsDe,
   verifierAccessibilite,
+  choisirNombre,
 } from './outils.js';
 
 // Petite image PNG (4 × 4 pixels) pour simuler une capture d'écran
@@ -23,7 +24,7 @@ test('Zoom mystère : l’image se dézoome, Stop fige, la bonne réponse marque
   const erreurs = surveillerErreurs(page);
   await ouvrirJeu(page, 'zoom-mystere', { prenoms: ['Ana', 'Bob'] });
   // La durée des paliers se règle sur l'accueil du jeu, au lancement
-  await page.getByLabel('Durée de chaque palier').fill('2');
+  await choisirNombre(page, 'Durée de chaque palier', 2);
   await lancerPartie(page);
 
   await expect(page.locator('#cadre').getByText('Image 1 sur 4')).toBeVisible();

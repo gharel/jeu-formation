@@ -5,11 +5,12 @@ import {
   lancerPartie,
   pointsDe,
   verifierAccessibilite,
+  choisirNombre,
 } from './outils.js';
 
 async function paliersCourts(page) {
   // La durée des paliers se règle sur l'accueil du jeu, au lancement
-  await page.getByLabel('Durée de chaque palier').fill('2');
+  await choisirNombre(page, 'Durée de chaque palier', 2);
 }
 
 test('Qui suis-je : les points fondent, Stop fige, la bonne réponse marque', async ({ page }) => {

@@ -3,6 +3,7 @@ import {
   surveillerErreurs,
   ouvrirJeu,
   lancerPartie,
+  choisirNombre,
   pointsDe,
   verifierAccessibilite,
 } from './outils.js';
@@ -93,4 +94,64 @@ test('sans prénoms, on joue Gauche contre Droite', async ({ page }) => {
   await page.keyboard.press('Enter');
   await page.keyboard.press('l');
   await expect(page.locator('#cadre').getByText('Droite répond !')).toBeVisible();
+});
+
+test('le nombre de duels : duellistes prévus, et la partie finit après le dernier duel', async ({
+  page,
+}) => {
+  const erreurs = surveillerErreurs(page);
+  await ouvrirJeu(page, 'duel-buzzer', { prenoms: ['Ana', 'Bob', 'Chloé'] });
+  const cadre = page.locator('#cadre');
+  const duels = page.getByRole('spinbutton', { name: 'Nombre de duels' });
+  // À trois : 3 duels, chacun passe 2 fois (10 questions, 3 points pour gagner : 3 duels au plus)
+  await expect(duels).toHaveAttribute('aria-valuenow', '3');
+  await expect(duels).toHaveAttribute('aria-valuemax', '3');
+  await expect(cadre.getByText(/3\sduels\s:\schacun passe 2\sfois/)).toBeVisible();
+  // Un seul duel : un joueur ne passe pas, « Équilibrer » ramène à 3
+  await choisirNombre(page, 'Nombre de duels', 1);
+  await expect(cadre.getByText(/1\sduel\s:\s1\sjoueur ne passera pas/)).toBeVisible();
+  await expect(cadre.getByRole('button', { name: 'Équilibrer' })).toBeVisible();
+  await verifierAccessibilite(page);
+  await lancerPartie(page);
+
+  // Les duellistes prévus sont proposés, deux personnes différentes
+  await expect(cadre.getByText(/Duel\s1\ssur\s1\s·\s10\squestions/)).toBeVisible();
+  const gauche = page.getByLabel('À gauche, touche A');
+  const droite = page.getByLabel('À droite, touche L');
+  expect(await gauche.inputValue()).not.toBe(await droite.inputValue());
+  await page.getByRole('button', { name: 'Commencer le duel' }).click();
+
+  // Gauche gagne 3 points : c'était le dernier duel prévu, pas de nouveau duel
+  for (let point = 1; point <= 3; point++) {
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('a');
+    await page.keyboard.press('Enter');
+    if (point < 3) await page.keyboard.press('Enter');
+  }
+  await expect(cadre.getByText(/gagne le duel/)).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Nouveau duel' })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Voir le classement' }).click();
+  await expect(page.getByRole('heading', { name: 'Partie terminée !' })).toBeVisible();
+  expect(erreurs).toEqual([]);
+});
+
+test('deux duels : le second reprend les duellistes prévus, sans rejouer le même duel', async ({
+  page,
+}) => {
+  await ouvrirJeu(page, 'duel-buzzer', { prenoms: ['Ana', 'Bob', 'Chloé'] });
+  await lancerPartie(page);
+  const gauche = page.getByLabel('À gauche, touche A');
+  const droite = page.getByLabel('À droite, touche L');
+  const duel = async () => [await gauche.inputValue(), await droite.inputValue()].sort().join('|');
+  const premier = await duel();
+  await page.getByRole('button', { name: 'Commencer le duel' }).click();
+  for (let point = 1; point <= 3; point++) {
+    await page.keyboard.press('Enter');
+    await page.keyboard.press('a');
+    await page.keyboard.press('Enter');
+    if (point < 3) await page.keyboard.press('Enter');
+  }
+  await page.getByRole('button', { name: 'Nouveau duel' }).click();
+  await expect(page.locator('#cadre').getByText(/Duel\s2\ssur\s3\s·/)).toBeVisible();
+  expect(await duel()).not.toBe(premier);
 });

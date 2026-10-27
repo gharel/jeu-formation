@@ -3,6 +3,15 @@
  * a sa page dans jeux/<slug>/index.html. `icone` : nom d'une icône Font Awesome (style solid).
  * `joueursMin` (facultatif) : un jeu à deux (duel, binôme) ne se lance pas avec un seul joueur.
  * `cooperatif` (facultatif) : tout le groupe joue ensemble ; le mode de jeu dit qui reçoit les points.
+ * `tour` : comment les joueurs passent, pour jouer moins d'éléments que préparés en laissant chacun
+ * passer autant de fois (passages.js) : 'individuel' (un joueur par élément), 'binome' (deux
+ * joueurs par tour) ou 'collectif' (tout le groupe, aucune contrainte). Sans `tour`, ni
+ * `nombre: false`, le jeu a son propre nombre d'éléments : pas de compteur sur l'accueil (Bingo,
+ * Mémoire vive).
+ * `parTour` (binôme) : clé du réglage de lancement qui donne le nombre d'éléments par tour.
+ * `nombre` (facultatif) : { libelle, unite, elements: false, elementsParUnite } quand l'unité comptée n'est
+ * pas un élément (Duel buzzer : « Nombre de duels », un duel consomme au moins
+ * `elementsParUnite` questions, clé d'un réglage du contenu) ; le contenu n'est alors pas réduit.
  */
 export const JEUX = [
   {
@@ -11,9 +20,10 @@ export const JEUX = [
     icone: 'spell-check',
     couleur: 'vert',
     accroche:
-      'Devinez 5 mots du numérique en 6 essais. Les lettres se colorent à chaque proposition.',
+      'Devinez des mots du numérique en 6 essais. Les lettres se colorent à chaque proposition.',
     duree: '10 min',
     preparation: '5 mots à deviner',
+    tour: 'individuel',
   },
   {
     slug: 'instant-defi',
@@ -23,6 +33,7 @@ export const JEUX = [
     accroche: 'La roue tire un défi éclair : « 30 secondes pour trouver… ». Top chrono !',
     duree: '5 à 15 min',
     preparation: 'Les fins de vos défis',
+    tour: 'individuel',
   },
   {
     slug: 'juste-chiffre',
@@ -32,6 +43,7 @@ export const JEUX = [
     accroche: 'Estimez un chiffre du numérique. Le jeu répond « c’est plus » ou « c’est moins ».',
     duree: '5 à 10 min',
     preparation: 'Des questions à réponse chiffrée',
+    tour: 'individuel',
   },
   {
     slug: 'debout-assis',
@@ -41,6 +53,7 @@ export const JEUX = [
     accroche: 'Vrai ? Tout le monde debout. Faux ? On s’assoit. Le jeu qui fait bouger !',
     duree: '5 min',
     preparation: 'Des affirmations vraies ou fausses',
+    tour: 'collectif',
   },
   {
     slug: 'bon-ordre',
@@ -50,6 +63,7 @@ export const JEUX = [
     accroche: 'Les étapes d’une procédure sont mélangées. Le groupe dicte le bon ordre.',
     duree: '5 à 10 min',
     preparation: 'Des procédures étape par étape',
+    tour: 'collectif',
   },
   {
     slug: 'qui-suis-je',
@@ -59,6 +73,7 @@ export const JEUX = [
     accroche: 'Des indices de plus en plus faciles, des points qui fondent : 5, 4, 3, 2, 1…',
     duree: '5 à 10 min',
     preparation: 'Des mystères et leurs indices',
+    tour: 'collectif',
   },
   {
     slug: 'zoom-mystere',
@@ -68,6 +83,7 @@ export const JEUX = [
     accroche: 'Une capture d’écran très zoomée se dévoile peu à peu. Qui la reconnaît ?',
     duree: '5 à 10 min',
     preparation: 'Vos captures d’écran',
+    tour: 'collectif',
   },
   {
     slug: 'duel-buzzer',
@@ -78,6 +94,13 @@ export const JEUX = [
     duree: '5 à 10 min',
     preparation: 'Des questions et leurs réponses',
     joueursMin: 2,
+    tour: 'binome',
+    nombre: {
+      libelle: 'Nombre de duels',
+      unite: 'duel',
+      elements: false,
+      elementsParUnite: 'pointsVictoire',
+    },
   },
   {
     slug: 'pyramide',
@@ -89,6 +112,8 @@ export const JEUX = [
     duree: '5 à 15 min',
     preparation: 'Une liste de mots à faire deviner',
     joueursMin: 2,
+    tour: 'binome',
+    parTour: 'motsParBinome',
   },
   {
     slug: 'batterie-faible',
@@ -98,6 +123,7 @@ export const JEUX = [
     accroche: 'Chaque mauvaise lettre vide la batterie. Trouvez le mot avant qu’elle lâche !',
     duree: '5 à 10 min',
     preparation: 'Des mots ou courtes expressions',
+    tour: 'individuel',
   },
   {
     slug: 'patate-chaude',
@@ -108,6 +134,7 @@ export const JEUX = [
       'Une consigne, une patate qui chauffe : on répond, puis on la passe. Quand elle brûle, tous les autres marquent !',
     duree: '5 à 10 min',
     preparation: 'Des consignes « Citez… »',
+    tour: 'collectif',
   },
   {
     slug: 'memoire-vive',
@@ -139,6 +166,7 @@ export const JEUX = [
     duree: '10 à 15 min',
     preparation: 'Des énigmes et leur réponse',
     cooperatif: true,
+    tour: 'collectif',
   },
   {
     slug: 'top-5',
@@ -149,6 +177,7 @@ export const JEUX = [
       '« Citez un réseau social » : trouvez les 5 réponses cachées, de la plus attendue à la moins attendue. Trois erreurs, et c’est fini !',
     duree: '10 à 15 min',
     preparation: 'Des questions et leurs 5 réponses',
+    tour: 'collectif',
   },
 ];
 

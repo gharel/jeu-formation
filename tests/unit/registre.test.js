@@ -64,6 +64,31 @@ describe('liste des jeux', () => {
       expect(html).toContain(`<title>${titre} · Mini-jeux · Skazy Formation</title>`);
     });
 
+    it('dit comment on y passe (`tour`), pour le nombre d’éléments joués', async () => {
+      // Bingo et Mémoire vive ont leur propre nombre d'éléments : pas de compteur
+      const sansCompteur = ['bingo', 'memoire-vive'];
+      if (sansCompteur.includes(jeu.slug)) {
+        expect(jeu.tour).toBeUndefined();
+        return;
+      }
+      expect(['individuel', 'binome', 'collectif']).toContain(jeu.tour);
+      if (jeu.cooperatif) expect(jeu.tour).toBe('collectif');
+      if (jeu.tour === 'binome') expect(jeu.joueursMin).toBe(2);
+      // Le réglage qui donne le nombre d'éléments par tour est un nombre réglé au lancement, et
+      // `nombre` décrit une autre unité (le duel) qui ne réduit pas le contenu
+      const { schema } = await import(`../../jeux/${jeu.slug}/exemple.js`);
+      if (jeu.parTour) {
+        const reglage = schema.reglages.find((r) => r.cle === jeu.parTour);
+        expect(reglage?.type).toBe('nombre');
+        expect(reglage.lancement).toBe(true);
+      }
+      if (jeu.nombre) {
+        expect(jeu.nombre.elements).toBe(false);
+        expect(jeu.nombre.libelle).toMatch(/^Nombre d/);
+        expect(schema.reglages.some((r) => r.cle === jeu.nombre.elementsParUnite)).toBe(true);
+      }
+    });
+
     it('monte le jeu avec le bon slug', () => {
       const script = readFileSync(`${dossier}jeu.js`, 'utf8');
       expect(script).toContain(`slug: '${jeu.slug}'`);

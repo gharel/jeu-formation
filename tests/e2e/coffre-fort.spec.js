@@ -1,5 +1,11 @@
 import { test, expect } from '@playwright/test';
-import { surveillerErreurs, ouvrirJeu, lancerPartie, verifierAccessibilite } from './outils.js';
+import {
+  surveillerErreurs,
+  ouvrirJeu,
+  lancerPartie,
+  verifierAccessibilite,
+  choisirNombre,
+} from './outils.js';
 
 /** Horloge simulée et figée : le temps ne passe que quand le test le décide (runFor). */
 async function figerHorloge(page) {
@@ -102,7 +108,7 @@ test('Le Coffre-fort : temps écoulé, les réponses manquantes s’affichent', 
   await ouvrirJeu(page, 'coffre-fort');
   await arreterHorloge(page);
   // Le temps se règle sur l'accueil du jeu, au lancement
-  await page.getByLabel('Temps pour ouvrir le coffre').fill('2');
+  await choisirNombre(page, 'Temps pour ouvrir le coffre', 2);
   await lancerPartie(page);
   const cadre = page.locator('#cadre');
   await page.getByRole('button', { name: /Lancer le compte à rebours/ }).click();
@@ -131,7 +137,7 @@ test('Le Coffre-fort : un indice qui vide le chrono mène au bilan, Entrée au c
   await figerHorloge(page);
   await ouvrirJeu(page, 'coffre-fort');
   await arreterHorloge(page);
-  await page.getByLabel('Temps pour ouvrir le coffre').fill('2');
+  await choisirNombre(page, 'Temps pour ouvrir le coffre', 2);
   await page.getByRole('button', { name: /Préparer le contenu/ }).click();
   await page.getByLabel('Prix d’un indice').fill('300');
   await page.getByRole('button', { name: 'Enregistrer' }).click();

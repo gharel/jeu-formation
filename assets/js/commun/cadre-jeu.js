@@ -11,13 +11,15 @@
  *   aideMinuteur: 'Le temps vient de chaque défi.' (facultatif : jeu sans réglage de lancement),
  * })
  *
- * L'accueil propose aussi le mode de jeu (chacun pour soi, par équipes, équipes et joueurs) et les
- * réglages de lancement du schéma (`lancement: true`, le minuteur), gardés à part du contenu.
+ * L'accueil propose aussi le mode de jeu (chacun pour soi, par équipes, équipes et joueurs), les
+ * réglages de lancement du schéma (`lancement: true`, le minuteur), gardés à part du contenu, et le
+ * nombre d'éléments joués (`tour` du jeu dans jeux.js, voir passages.js) : le jeu en joue moins que
+ * préparés, en laissant chacun passer autant de fois. `ctx.nombre` le donne au jeu.
  */
 import { trouverJeu, titresDesJeux } from '../jeux.js';
 import * as listeParticipants from './participants.js';
 import { lire, ecrire } from './stockage.js';
-import { hasardDePage } from './hasard.js';
+import { hasardDePage, hasardAnnexe } from './hasard.js';
 import { creerTirage } from './roue.js';
 import { creerScores } from './scores.js';
 import { sons, sonActif, basculerSon, preparerSon } from './sons.js';
@@ -44,7 +46,20 @@ import {
   equipeDuJoueur,
   ordreDePassage,
 } from './mode-jeu.js';
-import { reglagesDeLancement, lireLancement, ecrireLancement } from './lancement.js';
+import {
+  reglagesDeLancement,
+  lireLancement,
+  ecrireLancement,
+  lireNombreJoue,
+  ecrireNombreJoue,
+} from './lancement.js';
+import {
+  choisirElements,
+  valeursEquitables,
+  valeurProposee,
+  valeurLaPlusProche,
+  bilanPassages,
+} from './passages.js';
 import { creerMinuteurManche } from './minuteur-manche.js';
 import { selectionParDefaut, joueursDeLaPartie } from './joueurs.js';
 import { ouvrirGroupe } from './plan-salle.js';
@@ -61,7 +76,7 @@ import {
 } from './contenu.js';
 import { sourceDe, oublierSource } from './jeux-de-donnees.js';
 import { telechargerJson, nomDeFichier } from './fichiers.js';
-import { creerEditeur, construireChamp } from './editeur-contenu.js';
+import { creerEditeur, construireChamp, construireCompteur } from './editeur-contenu.js';
 import { exigerAcces } from './acces.js';
 import { creerHautDePage } from './haut-de-page.js';
 
@@ -83,6 +98,7 @@ export function monterJeu(config) {
   const joueurs = () => joueursDeLaPartie(groupe.presents, selection);
   let mettreAJourLancer = () => {};
   let actualiserMode = () => {};
+  let actualiserNombre = () => {};
   let joueursEnJeu = [];
   let equipesEnJeu = [];
   let modePartie = 'individuel';
@@ -107,6 +123,8 @@ export function monterJeu(config) {
   // Réglages choisis au lancement (minuteur) : voir lancement.js
   const reglagesLancement = reglagesDeLancement(schema);
   let lancement = lireLancement(slug, schema, contenu.reglages);
+  // Nombre d'éléments joués choisi par l'animateur ; null : la valeur proposée (équitable)
+  let nombreChoisi = lireNombreJoue(slug);
   let nettoyerPartie = null;
   let ecouteDesignation = null;
   let editeur = null;
@@ -188,6 +206,7 @@ export function monterJeu(config) {
     mettreAJourDesigner();
     mettreAJourLancer();
     actualiserMode();
+    actualiserNombre();
   }
   groupe.surChangement(actualiserJoueurs);
 
@@ -349,7 +368,7 @@ export function monterJeu(config) {
 
   /**
    * Le minuteur, à côté de « Lancer la partie » : les réglages de lancement du jeu (temps par
-   * mot, par question…), gardés dès qu'ils changent.
+   * mot, par question…), gardés dès qu'ils changent. Un nombre se règle par − / + (compteur).
    */
   function blocMinuteur() {
     if (!reglagesLancement.length) {
@@ -357,21 +376,200 @@ export function monterJeu(config) {
         ? el('p', { class: 'intro__minuteur champ__aide' }, icone('stopwatch'), aideMinuteur)
         : null;
     }
+    const surChangement = (r, valeur) => {
+      lancement = { ...lancement, [r.cle]: valeur };
+      ecrireLancement(slug, lancement);
+      mettreAJourLancer();
+      // Un réglage peut changer le nombre d'éléments par tour (mots par binôme)
+      actualiserNombre();
+    };
     return el(
       'fieldset',
       { class: 'intro__minuteur' },
       el('legend', { class: 'visuellement-cache' }, 'Minuteur'),
       ...reglagesLancement.map((r) =>
-        construireChamp(
-          r,
-          () => lancement[r.cle],
-          (valeur) => {
-            lancement = { ...lancement, [r.cle]: valeur };
-            ecrireLancement(slug, lancement);
-            mettreAJourLancer();
-          },
-        ),
+        r.type === 'nombre'
+          ? construireCompteur({
+              libelle: r.libelle,
+              aide: r.aide,
+              min: r.min ?? 1,
+              max: r.max ?? 99,
+              lire: () => lancement[r.cle] ?? r.defaut ?? r.min ?? 1,
+              ecrire: (valeur) => surChangement(r, valeur),
+              unite: r.unite ? (n) => (n > 1 ? r.unite : r.unite.replace(/s$/, '')) : null,
+            }).element
+          : construireChamp(
+              r,
+              () => lancement[r.cle],
+              (valeur) => surChangement(r, valeur),
+            ),
       ),
+    );
+  }
+
+  // ---------- Nombre d'éléments joués (voir passages.js) ----------
+  const accord = (n, singulier, pluriel) => (n > 1 ? pluriel : singulier);
+  const fois = (n) => (n === 1 ? 'une fois' : `${n} fois`);
+  const majuscule = (texte) => texte.charAt(0).toUpperCase() + texte.slice(1);
+
+  /**
+   * Le compteur du nombre d'éléments joués, pour les joueurs, le mode et les équipes du moment :
+   * bornes, valeurs où chacun passe autant, valeur retenue, bilan des passages. Null si le jeu n'en
+   * a pas (Bingo, Mémoire vive). Quand l'unité n'est pas un élément (les duels de Duel buzzer), les
+   * éléments ne sont pas réduits : le jeu lit `ctx.nombre`.
+   */
+  function parametresNombre() {
+    if (!jeu.tour || jeu.nombre === false) return null;
+    const enElements = jeu.nombre?.elements !== false;
+    const total = contenu.elements.length;
+    const reglage = (cle) => lancement[cle] ?? contenu.reglages[cle];
+    const presents = joueurs();
+    const equipesDuGroupe = equipesParmi(presents);
+    const mode = modeDeLaPartie(modeChoisi, equipesDuGroupe);
+    const equipes = avecEquipes(mode) ? equipesDuGroupe : [];
+    const parTour =
+      jeu.tour === 'binome' && jeu.parTour ? Math.max(1, Number(reglage(jeu.parTour)) || 1) : 1;
+    const { libelle, pluriel } = schema.elements;
+    const parametres = { enElements, equipes, mode, parTour };
+
+    let min = 1;
+    let max;
+    let pas = 1;
+    if (enElements) {
+      const debut = schema.elements.jouesMin ?? schema.elements.min ?? 1;
+      pas = jeu.tour === 'binome' ? parTour : 1;
+      max = Math.max(1, total);
+      min = Math.min(max, Math.max(debut, pas));
+      const elision = /^[aeiouyéèêàâîôû]/i.test(pluriel) ? 'd’' : 'de ';
+      parametres.libelle = `Nombre ${elision}${pluriel}`;
+      parametres.unite = (n) => (n > 1 ? pluriel : libelle.toLowerCase());
+    } else {
+      // Un duel consomme au moins `elementsParUnite` questions (les points pour gagner)
+      const parUnite = Math.max(1, Number(reglage(jeu.nombre.elementsParUnite)) || 1);
+      max = Math.max(1, Math.floor(total / parUnite));
+      parametres.libelle = jeu.nombre.libelle;
+      parametres.unite = (n) => accord(n, jeu.nombre.unite, `${jeu.nombre.unite}s`);
+    }
+
+    // Chacun pour soi en équipes : les joueurs sans équipe forment chacun un groupe (comme
+    // ordreDePassage). Duel entre équipes : ce sont les équipes qui s'affrontent, et « passent ».
+    const seuls = presents.filter((p) => !equipes.some((e) => e.membres.includes(p)));
+    const groupes = [...equipes, ...seuls.map((p) => ({ membres: [p] }))];
+    const duelsEntreEquipes = !enElements && equipes.length >= 2;
+    const nombreDeJoueurs = presents.length;
+    const equipesPourEquite =
+      jeu.tour === 'individuel' ? (equipes.length >= 2 ? groupes : []) : equipes;
+    // Les duels entre équipes se tirent au hasard (tirerEquipesDuel) : rien à promettre
+    const valeurs = duelsEntreEquipes
+      ? []
+      : valeursEquitables({
+          tour: jeu.tour,
+          joueurs: nombreDeJoueurs,
+          equipes: equipesPourEquite,
+          parTour,
+          min,
+          max,
+        });
+    const nombre = Math.min(max, Math.max(min, nombreChoisi ?? valeurProposee(valeurs, max)));
+    let bilan = null;
+    if (jeu.tour === 'individuel' && presents.length >= 2) {
+      bilan = bilanPassages({
+        tour: 'individuel',
+        nombre,
+        ordre: ordreDePassage(presents, equipes, mode),
+        equipes: equipes.length >= 2 ? equipes : [],
+      });
+    } else if (jeu.tour === 'binome' && nombreDeJoueurs >= 2 && !duelsEntreEquipes) {
+      bilan = bilanPassages({ tour: 'binome', nombre, parTour, joueurs: nombreDeJoueurs, equipes });
+    }
+    return { ...parametres, min, max, pas, valeurs, nombre, bilan, duelsEntreEquipes };
+  }
+
+  /** La ligne d'aide sous le compteur : combien de fois chacun passe, ou qui passe de moins. */
+  function phraseBilan(p) {
+    const { bilan } = p;
+    if (!bilan) return '';
+    const binome = jeu.tour === 'binome';
+    const uniteTour = jeu.nombre?.unite ?? 'binôme';
+    const tete = binome
+      ? `${bilan.unites} ${accord(bilan.unites, uniteTour, `${uniteTour}s`)}`
+      : '';
+    let phrase;
+    if (bilan.equitable) {
+      phrase =
+        bilan.passages === null
+          ? 'chacun passe autant de fois dans son équipe'
+          : `chacun passe ${fois(bilan.passages)}`;
+    } else if (bilan.parEquipe && p.equipes.length >= 2) {
+      phrase = 'chaque équipe passe autant de fois';
+    } else {
+      const absents = bilan.passages === 1;
+      const moins = bilan.moins;
+      if (Array.isArray(moins) && moins.length <= 3) {
+        const pluriel = moins.length > 1;
+        const noms = pluriel ? `${moins.slice(0, -1).join(', ')} et ${moins.at(-1)}` : moins[0];
+        const verbe = pluriel ? 'passeront' : 'passera';
+        phrase = absents ? `${noms} ne ${verbe} pas` : `${noms} ${verbe} une fois de moins`;
+      } else {
+        const n = Array.isArray(moins) ? moins.length : moins;
+        const groupe = `${n} ${accord(n, 'joueur', 'joueurs')}`;
+        const verbe = n > 1 ? 'passeront' : 'passera';
+        phrase = absents ? `${groupe} ne ${verbe} pas` : `${groupe} ${verbe} une fois de moins`;
+      }
+    }
+    return tete ? `${tete} : ${phrase}` : majuscule(phrase);
+  }
+
+  function blocNombre() {
+    let courant = parametresNombre();
+    if (!courant) return null;
+    const aide = el('p', { class: 'champ__aide nombre-joues__aide' });
+    const equilibrer = el('button', {
+      type: 'button',
+      class: 'bouton bouton--discret nombre-joues__equilibrer',
+      onclick: () => {
+        const cible = valeurLaPlusProche(courant.valeurs, courant.nombre);
+        if (cible === null) return;
+        nombreChoisi = cible;
+        ecrireNombreJoue(slug, cible);
+        actualiserNombre();
+        annoncer(`${courant.libelle} : ${cible}. ${phraseBilan(courant)}`);
+      },
+    });
+    remplir(equilibrer, icone('scale-balanced'), 'Équilibrer');
+    const compteur = construireCompteur({
+      libelle: courant.libelle,
+      min: courant.min,
+      max: courant.max,
+      pas: courant.pas,
+      lire: () => courant.nombre,
+      ecrire: (valeur) => {
+        nombreChoisi = valeur;
+        ecrireNombreJoue(slug, valeur);
+        actualiserNombre();
+      },
+      unite: (n) => courant.unite(n),
+    });
+    actualiserNombre = () => {
+      courant = parametresNombre();
+      compteur.rafraichir({ min: courant.min, max: courant.max, pas: courant.pas });
+      const phrase = phraseBilan(courant);
+      remplir(aide, phrase);
+      aide.hidden = !phrase;
+      // « Équilibrer » : seulement quand un autre nombre ferait passer chacun autant de fois
+      const cible = valeurLaPlusProche(courant.valeurs, courant.nombre);
+      const juste = courant.bilan?.equitable || courant.valeurs.includes(courant.nombre);
+      equilibrer.hidden = !courant.bilan || juste || cible === null || cible === courant.nombre;
+      if (!equilibrer.hidden) equilibrer.title = `Passer à ${cible}`;
+    };
+    actualiserNombre();
+    return el(
+      'fieldset',
+      { class: 'nombre-joues' },
+      el('legend', { class: 'visuellement-cache' }, 'Nombre joué'),
+      compteur.element,
+      aide,
+      equilibrer,
     );
   }
 
@@ -396,6 +594,7 @@ export function monterJeu(config) {
       surMode: (nouveau) => {
         modeChoisi = nouveau;
         ecrireMode(nouveau);
+        actualiserNombre();
       },
       joueurs,
       equipesEnJeu: () => equipesParmi(joueurs()),
@@ -443,7 +642,7 @@ export function monterJeu(config) {
             `Durée : ${jeu.duree}`,
           ),
         ),
-        el('div', { class: 'intro__lancer' }, blocMinuteur(), lancer, aideLancer),
+        el('div', { class: 'intro__lancer' }, blocMinuteur(), blocNombre(), lancer, aideLancer),
       ),
       el(
         'div',
@@ -694,6 +893,7 @@ export function monterJeu(config) {
   async function lancerPartie() {
     if (!(await placerLesJoueursSansEquipe())) return;
     arreterPartie();
+    actualiserNombre = () => {};
     // Chaque lancement a son numéro : un jeu qui se prépare lentement (images de Zoom mystère)
     // et qu'on a quitté entre-temps se nettoie aussitôt prêt, au lieu de rester actif
     numeroPartie += 1;
@@ -708,6 +908,12 @@ export function monterJeu(config) {
     const equipesDuGroupe = equipesParmi(joueursEnJeu);
     modePartie = modeDeLaPartie(modeChoisi, equipesDuGroupe);
     equipesEnJeu = avecEquipes(modePartie) ? equipesDuGroupe : [];
+    // Le nombre d'éléments joués (ou de duels…), calculé avec les joueurs et les équipes de la partie
+    const jouees = parametresNombre();
+    const elementsJoues =
+      jouees && jouees.enElements
+        ? choisirElements(contenu.elements, jouees.nombre, hasardAnnexe(hasard, numero))
+        : contenu.elements;
     const tableau = el('ul', { class: 'tableau-points', 'aria-label': 'Points' });
     const tableauEquipes = el('ul', {
       class: 'tableau-points tableau-points--equipes',
@@ -799,7 +1005,9 @@ export function monterJeu(config) {
       zone,
       // Réglages du contenu, et ceux choisis au lancement (minuteur)
       reglages: { ...structuredClone(contenu.reglages), ...structuredClone(lancement) },
-      elements: structuredClone(contenu.elements),
+      elements: structuredClone(elementsJoues),
+      // Nombre choisi sur l'accueil (éléments joués, duels…) ; null si le jeu n'a pas de compteur
+      nombre: jouees ? jouees.nombre : null,
       participants: [...joueursEnJeu],
       // Mode de jeu : 'individuel', 'equipes' ou 'mixte' (voir mode-jeu.js)
       mode: modePartie,

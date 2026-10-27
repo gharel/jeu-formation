@@ -508,6 +508,27 @@
   justify-content: center;
 }
 
+/* Nombre d'éléments joués : le compteur, la ligne d'aide (qui passe combien de fois), et
+   « Équilibrer » quand un autre nombre ferait passer chacun autant de fois */
+.nombre-joues {
+  margin: 0 0 1rem;
+  padding: 0;
+  border: 0;
+  min-width: 0;
+}
+
+.nombre-joues .champ {
+  margin: 0 0 0.4rem;
+}
+
+.nombre-joues__aide {
+  margin: 0 auto 0.5rem;
+}
+
+.nombre-joues__equilibrer {
+  margin-bottom: 0.2rem;
+}
+
 .ecran__entete {
   display: flex;
   flex-wrap: wrap;

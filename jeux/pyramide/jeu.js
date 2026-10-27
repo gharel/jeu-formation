@@ -7,15 +7,9 @@ import {
   focaliser,
   ecouterClavier,
 } from '../../assets/js/commun/ui.js';
+import { tirerDansLePlan } from '../../assets/js/commun/passages.js';
 import { schema, exemple } from './exemple.js';
-import {
-  INDICES_MAX,
-  pointsPourIndices,
-  creerMot,
-  roles,
-  tirerBinome,
-  equipeDuTour,
-} from './logique.js';
+import { INDICES_MAX, pointsPourIndices, creerMot, roles, planDeLaPartie } from './logique.js';
 import { creerIllustrationPyramide } from './illustration.js';
 
 const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? 's' : ''}`;
@@ -25,12 +19,20 @@ function demarrer(ctx) {
   const mots = ctx.elements.map((e) => e.mot.trim());
   const { motsParBinome } = ctx.reglages;
   const avecPrenoms = ctx.participants.length >= 2;
-  const dejaJoue = new Set();
+  // Les binômes prévus pour que chacun passe autant de fois : [{ equipe, binome }], dans l'ordre
+  const plan = planDeLaPartie({
+    participants: ctx.participants,
+    equipes: ctx.equipes,
+    mots: mots.length,
+    motsParBinome,
+    hasard: ctx.hasard,
+  });
   let index = 0;
   // Binôme en cours ([prénom, prénom], null sans prénoms) et rang de son mot (0, 1…)
   let binome = null;
   let rang = 0;
-  // En équipes : le binôme se forme dans une équipe, et les équipes jouent chacune leur tour
+  // Numéro du binôme en cours dans le plan (en équipes : le binôme se forme dans l'équipe prévue,
+  // et les équipes jouent chacune leur tour)
   let tourBinome = 0;
   // Temps par mot (choisi au lancement) : à zéro, une alerte ; l'animateur peut passer le mot
   let passerMot = null;
@@ -48,18 +50,21 @@ function demarrer(ctx) {
   }
   // Une pyramide de quatre étages : l'étage en jeu s'allume, un drapeau quand c'est trouvé
   const illustration = creerIllustrationPyramide();
-  // Raccourcis du moment : Entrée (trouvé) et Espace (raté, afficher, continuer)
+  // Raccourcis du moment : Entrée (trouvé), Retour arrière (raté), Espace (afficher ou cacher le
+  // mot, continuer)
   let touches = {};
   const retirerClavier = ecouterClavier({
     Espace: () => touches.espace?.(),
     Entrée: () => touches.entree?.(),
+    Retour: () => touches.retour?.(),
   });
 
   // ---------- Choix du binôme ----------
   function afficherChoix() {
     touches = {};
     minuteur?.arreter();
-    const equipe = equipeDuTour(ctx.equipes, tourBinome);
+    const prevu = plan[tourBinome] ?? null;
+    const equipe = prevu?.equipe ?? null;
     const titre = el(
       'h3',
       { class: 'panneau__texte' },
@@ -76,11 +81,18 @@ function demarrer(ctx) {
       );
     const maitre = selecteur('pyramide-maitre');
     const devineur = selecteur('pyramide-devineur');
-    const tirer = () => {
-      [maitre.value, devineur.value] = tirerBinome(candidats, dejaJoue, ctx.hasard);
+    // Le binôme prévu est proposé ; l'animateur peut en choisir un autre, ou tirer au sort parmi
+    // ceux qui restent à jouer
+    const proposer = () => {
+      const [a, b] = plan[tourBinome]?.binome ?? candidats;
+      [maitre.value, devineur.value] = [a, b];
       remplir(erreur);
     };
-    tirer();
+    const tirer = () => {
+      tirerDansLePlan(plan, tourBinome, ctx.hasard);
+      proposer();
+    };
+    proposer();
 
     const commencer = () => {
       if (maitre.value === devineur.value) {
@@ -88,7 +100,8 @@ function demarrer(ctx) {
         return;
       }
       binome = [maitre.value, devineur.value];
-      for (const prenom of binome) dejaJoue.add(prenom);
+      // Ce binôme prend la place du binôme prévu (un autre choix de l'animateur)
+      if (plan[tourBinome]) plan[tourBinome].binome = [...binome];
       rang = 0;
       tourBinome += 1;
       afficherMot();
@@ -144,8 +157,8 @@ function demarrer(ctx) {
           'p',
           { class: 'champ__aide' },
           equipe
-            ? `Un binôme des ${equipe.nom} : les rôles s’inversent à chaque mot.`
-            : 'Les rôles s’inversent à chaque mot.',
+            ? `Un binôme des ${equipe.nom}, prévu pour que chacun passe autant de fois. Les rôles s’inversent à chaque mot.`
+            : 'Binôme prévu pour que chacun passe autant de fois. Les rôles s’inversent à chaque mot.',
         ),
         el(
           'div',
@@ -260,10 +273,11 @@ function demarrer(ctx) {
       );
     }
 
-    // Le carton n'a que deux états : caché (dos à l'écran), puis le mot
+    // Le carton n'a que deux états : caché (dos à l'écran), puis le mot ; on peut le recacher en
+    // cours de jeu
     let cartonCache = null;
     function dessinerCarton() {
-      const cache = partie.phase === 'cache';
+      const cache = partie.phase === 'cache' || partie.masque;
       if (cache === cartonCache) return;
       cartonCache = cache;
       carton.classList.toggle('pyramide__carton--cache', cache);
@@ -323,8 +337,18 @@ function demarrer(ctx) {
       }
       if (partie.phase === 'jeu') {
         const { indice, points } = partie;
-        touches = { entree: trouver, espace: rater };
         remplir(consigne, `${ordinal(indice)} mot d’indice : ${pluriel(points, 'point')} en jeu`);
+        if (partie.masque) {
+          // Mot recaché : les mêmes indices et les mêmes points, en attendant de le réafficher
+          touches = { espace: reafficher };
+          remplir(
+            actions,
+            bouton([icone('eye'), 'Afficher le mot'], 'bouton--principal', reafficher),
+          );
+          remplir(raccourci, el('kbd', {}, 'Espace'), ' : afficher le mot');
+          return;
+        }
+        touches = { entree: trouver, retour: rater, espace: cacher };
         remplir(
           actions,
           bouton(
@@ -338,13 +362,16 @@ function demarrer(ctx) {
             rater,
           ),
           bouton([icone('ban'), 'Faute'], 'bouton--discret', faute),
+          bouton([icone('eye-slash'), 'Cacher le mot'], 'bouton--discret', cacher),
         );
         remplir(
           raccourci,
           el('kbd', {}, 'Entrée'),
           ' : trouvé · ',
+          el('kbd', {}, 'Retour arrière'),
+          ' : raté · ',
           el('kbd', {}, 'Espace'),
-          ' : raté',
+          ' : cacher le mot',
         );
         return;
       }
@@ -373,6 +400,20 @@ function demarrer(ctx) {
       animer(carton, 'apparition');
       ctx.sons.pyramide.etage(1);
       ctx.annoncer(`Mot à faire deviner : ${mot}. 1er mot d’indice : 4 points en jeu.`);
+    }
+
+    /** Recache le mot (on se retourne, ou le public ne doit plus le voir) sans toucher aux points. */
+    function cacher() {
+      if (!partie.cacher()) return;
+      dessiner();
+      ctx.annoncer('Mot caché.');
+    }
+
+    /** Réaffiche le mot : même mot d'indice, le temps continue et rien n'est ré-annoncé. */
+    function reafficher() {
+      if (!partie.reafficher()) return;
+      dessiner();
+      animer(carton, 'apparition');
     }
 
     function trouver() {

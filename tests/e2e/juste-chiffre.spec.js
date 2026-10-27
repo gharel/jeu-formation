@@ -6,6 +6,7 @@ import {
   pointsDe,
   verifierAccessibilite,
   choisirDuree,
+  choisirNombre,
 } from './outils.js';
 
 const minuteur = (page) => page.locator('.minuteur-manche');
@@ -26,6 +27,8 @@ async function proposer(page, nombre) {
 test('Le Juste Chiffre : plus, moins, juste, une personne par question', async ({ page }) => {
   const erreurs = surveillerErreurs(page);
   await ouvrirJeu(page, 'juste-chiffre', { prenoms: ['Ana', 'Bob'] });
+  // À deux, la partie propose 4 questions (chacun passe autant de fois) : on joue les 5
+  await choisirNombre(page, 'Nombre de questions', 5);
   await lancerPartie(page);
 
   // Écran d'attente : la question et le chrono attendent le signal (Entrée ou bouton)

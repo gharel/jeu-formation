@@ -7,11 +7,11 @@ import {
   focaliser,
   ecouterClavier,
 } from '../../assets/js/commun/ui.js';
+import { planBinomes, tirerDansLePlan } from '../../assets/js/commun/passages.js';
 import { schema, exemple } from './exemple.js';
 import {
   creerDuel,
   autre,
-  tirerDuellistes,
   tirerEquipesDuel,
   cleAffrontement,
   repondant,
@@ -31,6 +31,14 @@ function demarrer(ctx) {
   // En équipes : deux équipes s'affrontent, leurs membres répondent à tour de rôle
   const enEquipes = ctx.equipes.length >= 2;
   const dejaJoues = [];
+  // Nombre de duels choisi au lancement : la partie finit après le dernier (ou quand les questions
+  // manquent). Chacun contre chacun, les duellistes sont prévus pour que chacun passe autant de fois.
+  const nombreDuels = ctx.nombre ?? Infinity;
+  let duelsJoues = 0;
+  const plan =
+    avecPrenoms && !enEquipes && Number.isFinite(nombreDuels)
+      ? planBinomes(ctx.participants, nombreDuels, ctx.hasard).map((binome) => ({ binome }))
+      : [];
   let indexQuestion = 0;
   let retirerClavier = null;
   // Le buzzer du plateau : il s'enfonce quand quelqu'un buzze
@@ -73,15 +81,22 @@ function demarrer(ctx) {
             : ctx.participants.map((p) => el('option', { value: p }, p)),
         );
       }
-      const tirer = () => {
-        const [g, d] = enEquipes
-          ? tirerEquipesDuel(ctx.equipes, dejaJoues, ctx.hasard)
-          : tirerDuellistes(ctx.participants, ctx.hasard);
-        selecteurs.gauche.value = g;
-        selecteurs.droite.value = d;
+      // Les duellistes prévus sont proposés ; on peut en choisir d'autres, ou tirer au sort parmi
+      // ceux qui restent à jouer (entre équipes : deux équipes au hasard)
+      const proposer = (duellistes) => {
+        [selecteurs.gauche.value, selecteurs.droite.value] = duellistes;
         erreur.textContent = '';
       };
-      tirer();
+      const prevus = () => plan[duelsJoues]?.binome ?? ctx.participants;
+      const tirer = () => {
+        if (enEquipes) proposer(tirerEquipesDuel(ctx.equipes, dejaJoues, ctx.hasard));
+        else {
+          tirerDansLePlan(plan, duelsJoues, ctx.hasard);
+          proposer(prevus());
+        }
+      };
+      if (enEquipes) tirer();
+      else proposer(prevus());
       choix = el(
         'div',
         { class: 'duel__choix' },
@@ -136,6 +151,9 @@ function demarrer(ctx) {
           }
           if (enEquipes) {
             dejaJoues.push(cleAffrontement(selecteurs.gauche.value, selecteurs.droite.value));
+          } else if (avecPrenoms && plan[duelsJoues]) {
+            // Ce duel prend la place du duel prévu (un autre choix de l'animateur)
+            plan[duelsJoues].binome = [selecteurs.gauche.value, selecteurs.droite.value];
           }
           afficherDuel(camps);
         },
@@ -152,7 +170,7 @@ function demarrer(ctx) {
         el(
           'p',
           { class: 'panneau__surtitre' },
-          `${pluriel(restantes(), 'question')} · ${pluriel(pointsVictoire, 'point')} pour gagner`,
+          `${Number.isFinite(nombreDuels) ? `Duel ${duelsJoues + 1} sur ${nombreDuels} · ` : ''}${pluriel(restantes(), 'question')} · ${pluriel(pointsVictoire, 'point')} pour gagner`,
         ),
         titre,
         choix,
@@ -362,6 +380,8 @@ function demarrer(ctx) {
       minuteur?.arreter();
       montrerReponse();
       const derniere = indexQuestion >= questions.length - 1;
+      // Dernier duel prévu : pas de nouveau duel
+      const dernierDuel = duelsJoues + 1 >= nombreDuels;
       if (duel.vainqueur) {
         const gagnant = noms[duel.vainqueur];
         remplir(statut, icone('trophy'), `${gagnant} gagne le duel !`);
@@ -369,9 +389,10 @@ function demarrer(ctx) {
         actionEntree = null;
         remplir(
           actions,
-          derniere
+          derniere || dernierDuel
             ? null
             : bouton('Nouveau duel', 'bouton--principal', () => {
+                duelsJoues += 1;
                 indexQuestion += 1;
                 afficherChoix();
               }),

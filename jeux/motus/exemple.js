@@ -18,6 +18,8 @@ export const schema = {
     pluriel: 'mots',
     min: NOMBRE_MOTS,
     max: NOMBRE_MOTS,
+    // Le contenu compte 5 mots ; on peut en jouer moins (compteur de l'accueil du jeu)
+    jouesMin: 1,
     champs: [
       {
         cle: 'mot',

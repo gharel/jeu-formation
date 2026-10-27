@@ -4,6 +4,7 @@ import {
   ouvrirJeu,
   lancerPartie,
   attribuerPoints,
+  choisirNombre,
   pointsDe,
   verifierAccessibilite,
 } from './outils.js';
@@ -16,6 +17,8 @@ async function proposer(page, mot) {
 test('une partie complète de Motus avec le contenu d’exemple', async ({ page }) => {
   const erreurs = surveillerErreurs(page);
   await ouvrirJeu(page, 'motus', { prenoms: ['Ana', 'Bob'] });
+  // À deux, la partie propose 4 mots (chacun passe autant de fois) : on joue les 5
+  await choisirNombre(page, 'Nombre de mots', 5);
   await lancerPartie(page);
   await expect(page.locator('#cadre').getByText('Mot 1 sur 5 · 7 lettres')).toBeVisible();
 

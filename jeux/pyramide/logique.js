@@ -5,8 +5,11 @@
  * trouvé avec 1 mot d'indice = 4 points, 2 mots = 3 points, 3 mots = 2 points, 4 mots = 1 point.
  * Un indice interdit (même famille que le mot, plusieurs mots, un geste) est une faute :
  * le mot est perdu.
+ * Le mot peut se recacher en cours de jeu (la personne qui devine se retourne, ou le public ne doit
+ * plus le voir) : les indices et les points ne bougent pas, et on ne peut ni valider ni rater un
+ * mot caché.
  */
-import { melanger } from '../../assets/js/commun/hasard.js';
+import { planBinomes, planBinomesParEquipe } from '../../assets/js/commun/passages.js';
 
 export const INDICES_MAX = 4;
 
@@ -23,6 +26,8 @@ export function creerMot() {
   let phase = 'cache';
   let indice = 0;
   let issue = null;
+  // Mot recaché en cours de jeu (la phase reste 'jeu' : l'indice et les étages ne changent pas)
+  let masque = false;
 
   return {
     get phase() {
@@ -31,6 +36,10 @@ export function creerMot() {
     /** Numéro du mot d'indice en cours (0 tant que le mot est caché). */
     get indice() {
       return indice;
+    },
+    /** Le mot est-il recaché en cours de jeu ? */
+    get masque() {
+      return masque;
     },
     /** 'trouve', 'rate', 'faute' ou 'temps' une fois le mot fini. */
     get issue() {
@@ -50,9 +59,23 @@ export function creerMot() {
       return true;
     },
 
+    /** Recache le mot en cours de jeu, sans rien changer d'autre. */
+    cacher() {
+      if (phase !== 'jeu' || masque) return false;
+      masque = true;
+      return true;
+    },
+
+    /** Réaffiche un mot recaché : même mot d'indice, mêmes points. */
+    reafficher() {
+      if (phase !== 'jeu' || !masque) return false;
+      masque = false;
+      return true;
+    },
+
     /** Le partenaire a trouvé : renvoie les points gagnés (null si le mot n'est pas en jeu). */
     trouver() {
-      if (phase !== 'jeu') return null;
+      if (phase !== 'jeu' || masque) return null;
       phase = 'fini';
       issue = 'trouve';
       return pointsPourIndices(indice);
@@ -63,7 +86,7 @@ export function creerMot() {
      * (null si le mot n'est pas en jeu).
      */
     rater() {
-      if (phase !== 'jeu') return null;
+      if (phase !== 'jeu' || masque) return null;
       if (indice < INDICES_MAX) {
         indice += 1;
         return 'indice-suivant';
@@ -75,15 +98,16 @@ export function creerMot() {
 
     /** Indice interdit : le mot est perdu. */
     faute() {
-      if (phase !== 'jeu') return false;
+      if (phase !== 'jeu' || masque) return false;
       phase = 'fini';
       issue = 'faute';
       return true;
     },
 
-    /** Temps écoulé, l'animateur passe : le mot est perdu. */
+    /** Temps écoulé, l'animateur passe : le mot est perdu (même recaché). */
     abandonner() {
       if (phase !== 'jeu') return false;
+      masque = false;
       phase = 'fini';
       issue = 'temps';
       return true;
@@ -97,32 +121,22 @@ export function roles(binome, n) {
   return n % 2 === 0 ? { maitre: a, devineur: b } : { maitre: b, devineur: a };
 }
 
-/**
- * En équipes : les équipes d'au moins deux joueurs (un binôme se forme dans une même équipe),
- * chacune son tour. `tour` : le numéro du binôme (0, 1, 2…). Une seule telle équipe : elle
- * joue tous les binômes (jamais un binôme à cheval sur deux équipes, qui ferait marquer les deux).
- * Null sans aucune équipe d'au moins deux joueurs.
- */
-export function equipeDuTour(equipes, tour) {
-  const jouables = equipes.filter((e) => e.membres.length >= 2);
-  return jouables.length ? jouables[tour % jouables.length] : null;
+/** Nombre de binômes pour `mots` mots, `parBinome` mots chacun (le dernier peut en avoir moins). */
+export function nombreDeBinomes(mots, parBinome) {
+  return Math.ceil(mots / Math.max(1, parBinome));
 }
 
 /**
- * Tire un binôme au sort, en commençant par ceux qui n'ont pas encore joué (`dejaJoue` :
- * Set de prénoms), pour que chacun passe à son tour. Null s'il y a moins de 2 participants.
+ * Plan des binômes de la partie : [{ equipe, binome }] (`equipe` null chacun pour soi), pour que
+ * chacun passe autant de fois (voir passages.js). Par équipes, les équipes d'au moins deux joueurs
+ * jouent chacune leur tour, avec chacune son plan ; sans elles, tous les participants jouent.
+ * Vide avec moins de deux participants.
  */
-export function tirerBinome(participants, dejaJoue = new Set(), hasard = Math.random) {
-  if (participants.length < 2) return null;
-  const ordre = [
-    ...melanger(
-      participants.filter((p) => !dejaJoue.has(p)),
-      hasard,
-    ),
-    ...melanger(
-      participants.filter((p) => dejaJoue.has(p)),
-      hasard,
-    ),
-  ];
-  return [ordre[0], ordre[1]];
+export function planDeLaPartie({ participants, equipes = [], mots, motsParBinome, hasard }) {
+  const nombre = nombreDeBinomes(mots, motsParBinome);
+  if (participants.length < 2 || nombre < 1) return [];
+  if (equipes.some((e) => e.membres.length >= 2)) {
+    return planBinomesParEquipe(equipes, nombre, hasard);
+  }
+  return planBinomes(participants, nombre, hasard).map((binome) => ({ equipe: null, binome }));
 }
