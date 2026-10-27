@@ -111,5 +111,17 @@ export const exemple = {
       explication:
         'Certains logiciels le font, beaucoup demandent, d’autres non : enregistrez avant de fermer !',
     },
+    {
+      affirmation: 'Le Wi-Fi et Internet, c’est exactement la même chose.',
+      reponse: 'faux',
+      explication:
+        'Le Wi-Fi relie vos appareils à la box ; c’est la box qui donne accès à Internet. Sans abonnement, le Wi-Fi ne mène nulle part.',
+    },
+    {
+      affirmation: 'Les adresses mises en Cci d’un e-mail sont visibles de tous les destinataires.',
+      reponse: 'faux',
+      explication:
+        'Elles restent cachées aux autres destinataires : pratique pour écrire à un grand groupe sans montrer toutes les adresses.',
+    },
   ],
 };

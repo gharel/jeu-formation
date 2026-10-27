@@ -20,7 +20,9 @@ test('Le Bon Ordre : un essai raté puis réussi, points dégressifs', async ({ 
   const erreurs = surveillerErreurs(page);
   await ouvrirJeu(page, 'bon-ordre', { prenoms: ['Ana', 'Bob'] });
   await lancerPartie(page);
-  await expect(page.locator('#cadre').getByText('Procédure 1 sur 4 · Essai 1 sur 3')).toBeVisible();
+  await expect(
+    page.locator('#cadre').getByText('Procédure 1 sur 10 · Essai 1 sur 3'),
+  ).toBeVisible();
   await expect(page.getByRole('heading', { name: exemple.elements[0].titre })).toBeVisible();
 
   // Erreurs de saisie

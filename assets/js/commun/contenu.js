@@ -8,9 +8,9 @@
  *   // duree : en secondes, réglée par − / + (pas de 5 s, « 1 min 30 ») ; sansLimite : 0 = « Sans limite »
  *   // lancement : réglé sur l'accueil du jeu, au lancement (minuteur), pas dans « Préparer »
  *   elements: {
- *     libelle: 'Mot', pluriel: 'mots', feminin: false, min: 5, max: 5,
+ *     libelle: 'Mot', pluriel: 'mots', feminin: false, min: 1, max: 10,
  *     // jouesMin : plus petit nombre d'éléments qu'on peut jouer (compteur de l'accueil du jeu) ;
- *     // sans lui, `min`. Le contenu garde son `min` : Motus exige 5 mots, et en joue de 1 à 5.
+ *     // sans lui, `min`. Utile quand le contenu exige un minimum (min: 5) mais qu'on en joue moins.
  *     champs: [{ cle, libelle, type, requis, secret, min, max, longueurMax, options, suggestions, aide,
  *                exemple }],   // exemple = placeholder (tableau possible pour une liste : une par ligne)
  *     valider(element) => message | null,

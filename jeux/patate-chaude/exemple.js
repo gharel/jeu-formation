@@ -81,5 +81,15 @@ export const exemple = {
       idees:
         'Téléphone, montre, télévision, enceinte, box, voiture, thermostat, caméra, console de jeux, réfrigérateur…',
     },
+    {
+      consigne: 'Citez un logiciel de bureautique',
+      idees:
+        'Word, Excel, PowerPoint, Outlook, Writer, Calc, Impress, Google Docs, Google Sheets, LibreOffice…',
+    },
+    {
+      consigne: 'Citez un moyen de communiquer en ligne',
+      idees:
+        'E-mail, SMS, WhatsApp, Messenger, Teams, Zoom, Skype, visioconférence, forum, réseaux sociaux…',
+    },
   ],
 };

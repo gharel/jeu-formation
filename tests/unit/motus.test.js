@@ -7,6 +7,8 @@ import {
   estTrouve,
   etatClavier,
   lettresConnues,
+  MOTS_MIN,
+  MOTS_MAX,
 } from '../../jeux/motus/logique.js';
 import { schema, exemple } from '../../jeux/motus/exemple.js';
 import { nettoyerContenu, validerContenu } from '../../assets/js/commun/contenu.js';
@@ -26,15 +28,27 @@ describe('Motus : préparation', () => {
     expect(validerMotSecret('web2')).toMatch(/que des lettres/);
   });
 
-  it('a un exemple valide de 5 mots', () => {
+  it('a un exemple valide de 10 mots', () => {
     const contenu = nettoyerContenu(schema, exemple);
-    expect(contenu.elements).toHaveLength(5);
+    expect(contenu.elements).toHaveLength(10);
     expect(validerContenu(schema, contenu)).toEqual([]);
   });
 
-  it('exige exactement 5 mots', () => {
-    const contenu = nettoyerContenu(schema, { elements: exemple.elements.slice(0, 3) });
-    expect(validerContenu(schema, contenu)[0]).toMatch(/exactement 5 mots/);
+  it('accepte de 1 à 10 mots', () => {
+    expect([MOTS_MIN, MOTS_MAX]).toEqual([1, 10]);
+    const un = nettoyerContenu(schema, { elements: exemple.elements.slice(0, 1) });
+    expect(validerContenu(schema, un)).toEqual([]);
+    const dix = nettoyerContenu(schema, { elements: exemple.elements.slice(0, 10) });
+    expect(validerContenu(schema, dix)).toEqual([]);
+  });
+
+  it('refuse un contenu vide et rogne au-delà de 10 mots', () => {
+    expect(validerContenu(schema, { elements: [] })[0]).toMatch(/au moins 1 mot/);
+    const onze = {
+      elements: Array.from({ length: 11 }, () => ({ mot: 'CLAVIER', definition: '' })),
+    };
+    expect(validerContenu(schema, onze)[0]).toMatch(/au plus 10 mots/);
+    expect(nettoyerContenu(schema, onze).elements).toHaveLength(10);
   });
 });
 

@@ -1,4 +1,4 @@
-import { validerMotSecret, NOMBRE_MOTS } from './logique.js';
+import { validerMotSecret, MOTS_MIN, MOTS_MAX } from './logique.js';
 
 export const schema = {
   reglages: [
@@ -16,10 +16,8 @@ export const schema = {
   elements: {
     libelle: 'Mot',
     pluriel: 'mots',
-    min: NOMBRE_MOTS,
-    max: NOMBRE_MOTS,
-    // Le contenu compte 5 mots ; on peut en jouer moins (compteur de l'accueil du jeu)
-    jouesMin: 1,
+    min: MOTS_MIN,
+    max: MOTS_MAX,
     champs: [
       {
         cle: 'mot',
@@ -50,5 +48,10 @@ export const exemple = {
     { mot: 'FICHIER', definition: 'Un document enregistré sur un ordinateur ou dans le cloud.' },
     { mot: 'RÉSEAU', definition: 'Des appareils reliés entre eux pour échanger des données.' },
     { mot: 'NAVIGATEUR', definition: 'Le logiciel qui permet de consulter des sites web.' },
+    { mot: 'SOURIS', definition: 'L’appareil qu’on déplace pour bouger la flèche à l’écran.' },
+    { mot: 'ÉCRAN', definition: 'La surface qui affiche ce que fait l’ordinateur.' },
+    { mot: 'DOSSIER', definition: 'Un espace pour ranger plusieurs fichiers au même endroit.' },
+    { mot: 'IMPRIMANTE', definition: 'L’appareil qui met un document sur papier.' },
+    { mot: 'LOGICIEL', definition: 'Un programme qu’on installe pour réaliser une tâche.' },
   ],
 };

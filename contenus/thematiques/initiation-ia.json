@@ -25,6 +25,26 @@
         {
           "mot": "CLAUDE",
           "definition": "L’intelligence artificielle d’Anthropic."
+        },
+        {
+          "mot": "PROMPT",
+          "definition": "La demande que vous écrivez pour guider une IA."
+        },
+        {
+          "mot": "ALGORITHME",
+          "definition": "Une suite d’instructions précises qu’un programme suit pour résoudre un problème."
+        },
+        {
+          "mot": "VERIFIER",
+          "definition": "Contrôler qu’une réponse de l’IA est exacte avant de l’utiliser."
+        },
+        {
+          "mot": "TRADUCTION",
+          "definition": "Passer un texte d’une langue à une autre : une tâche courante pour une IA."
+        },
+        {
+          "mot": "ASSISTANT",
+          "definition": "Un programme d’IA avec lequel on dialogue pour se faire aider dans ses tâches."
         }
       ]
     },
@@ -59,6 +79,26 @@
           "amorce": "expliquer20",
           "amorcePerso": "",
           "fin": "… pourquoi il ne faut pas croire une IA sur parole"
+        },
+        {
+          "amorce": "montrer60",
+          "amorcePerso": "",
+          "fin": "… comment demander à un assistant d’IA de rédiger un e-mail poli"
+        },
+        {
+          "amorce": "trouver30",
+          "amorcePerso": "",
+          "fin": "… le nom de trois assistants d’IA"
+        },
+        {
+          "amorce": "retrouver45",
+          "amorcePerso": "",
+          "fin": "… la définition de « apprentissage profond », en vérifiant sur un site fiable"
+        },
+        {
+          "amorce": "surprise",
+          "amorcePerso": "",
+          "fin": "… un exemple de demande pour obtenir un résumé de réunion"
         }
       ]
     },
@@ -105,6 +145,34 @@
           "unite": "",
           "marge": 0,
           "anecdote": "Lancé le 30 novembre 2022, il fait connaître l’IA générative au grand public en quelques semaines."
+        },
+        {
+          "question": "En quelle année Alan Turing a-t-il publié l’article qui propose le « jeu de l’imitation », devenu le test de Turing ?",
+          "reponse": 1950,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "L’article s’ouvre sur une question : « Les machines peuvent-elles penser ? »"
+        },
+        {
+          "question": "En quelle année le service Google Traduction a-t-il été lancé ?",
+          "reponse": 2006,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "D’abord fondé sur des statistiques, il traduit depuis 2016 grâce à un réseau de neurones, avec des phrases bien plus naturelles."
+        },
+        {
+          "question": "En quelle année l’entreprise OpenAI, créatrice de ChatGPT, a-t-elle été fondée ?",
+          "reponse": 2015,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Elle est créée en décembre 2015 en Californie, sept ans avant le lancement de ChatGPT."
+        },
+        {
+          "question": "En quelle année Amazon a-t-il lancé son assistant vocal Alexa, avec l’enceinte Echo ?",
+          "reponse": 2014,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "On lui parle à voix haute pour lancer une musique, poser une question ou allumer une lampe connectée."
         }
       ]
     },
@@ -205,6 +273,66 @@
             "Télécharger l’image sur l’ordinateur",
             "Indiquer sous l’image qu’elle a été créée par une IA"
           ]
+        },
+        {
+          "titre": "Résumer un long texte avec un assistant d’IA",
+          "etapes": [
+            "Ouvrir l’assistant d’IA dans le navigateur",
+            "Écrire la consigne : « Résume ce texte en cinq lignes »",
+            "Coller le texte à résumer sous la consigne",
+            "Envoyer la demande",
+            "Relire le résumé en le comparant au texte d’origine"
+          ]
+        },
+        {
+          "titre": "Améliorer une réponse d’IA qui ne convient pas",
+          "etapes": [
+            "Lire la réponse en entier",
+            "Repérer ce qui ne convient pas : longueur, ton ou erreur",
+            "Écrire dans la même conversation ce qu’il faut changer",
+            "Envoyer la nouvelle demande",
+            "Comparer la nouvelle version avec la première"
+          ]
+        },
+        {
+          "titre": "Rédiger une bonne demande pour un assistant d’IA",
+          "etapes": [
+            "Définir ce que l’on veut obtenir",
+            "Donner un rôle à l’IA",
+            "Expliquer le contexte",
+            "Préciser le format attendu",
+            "Relire sa demande avant de l’envoyer"
+          ]
+        },
+        {
+          "titre": "Supprimer une conversation avec un assistant d’IA",
+          "etapes": [
+            "Ouvrir la liste des conversations",
+            "Repérer la conversation à supprimer",
+            "Ouvrir le menu à côté de son titre",
+            "Choisir « Supprimer »",
+            "Confirmer la suppression"
+          ]
+        },
+        {
+          "titre": "Réagir à un appel qui imite la voix d’un proche",
+          "etapes": [
+            "Écouter sans rien promettre ni envoyer",
+            "Raccrocher",
+            "Rappeler la personne sur son numéro habituel",
+            "Signaler la tentative d’arnaque"
+          ]
+        },
+        {
+          "titre": "Poser une question sur un document à un assistant d’IA",
+          "etapes": [
+            "Ouvrir l’assistant d’IA",
+            "Cliquer sur le bouton qui permet d’ajouter un fichier",
+            "Choisir le fichier sur l’ordinateur",
+            "Attendre que le fichier soit chargé",
+            "Écrire sa question sur le document",
+            "Envoyer la demande"
+          ]
         }
       ]
     },
@@ -259,6 +387,56 @@
             "On me tape dans la zone de saisie d’un chatbot.",
             "Je suis la demande que vous envoyez à une IA."
           ]
+        },
+        {
+          "reponse": "Chatbot",
+          "indices": [
+            "Je ne dors jamais et je réponds à toute heure, mais je n’ai pas de corps.",
+            "On me trouve souvent dans une petite bulle, en bas de l’écran d’un site.",
+            "Je réponds à vos questions par écrit, parfois à voix haute.",
+            "On me parle comme à une personne, mais je suis un programme.",
+            "Mon nom anglais associe « conversation » et « robot »."
+          ]
+        },
+        {
+          "reponse": "Hypertrucage",
+          "indices": [
+            "Je suis apparu dans les années 2010, grâce aux progrès de l’apprentissage profond.",
+            "Je peux faire parler un visage ou imiter une voix à partir de quelques enregistrements.",
+            "Je sers parfois à fabriquer de fausses vidéos de personnalités.",
+            "Pour me repérer, il faut se méfier d’une vidéo trop incroyable et chercher d’où elle vient.",
+            "Mon nom anglais mélange « profond » et « faux »."
+          ]
+        },
+        {
+          "reponse": "Biais",
+          "indices": [
+            "Je me glisse dans une IA sans que personne ne l’ait voulu.",
+            "Je viens des exemples qui ont servi à entraîner la machine.",
+            "Si ces exemples montrent surtout un seul type de personnes, mes réponses risquent de le favoriser.",
+            "Un outil de tri de candidatures peut me révéler en préférant toujours le même profil.",
+            "Je suis un préjugé que l’IA a appris sans le vouloir."
+          ]
+        },
+        {
+          "reponse": "ChatGPT",
+          "indices": [
+            "Je suis né aux États-Unis, dans une entreprise fondée en 2015.",
+            "Mon lancement, fin 2022, a fait découvrir l’IA générative à des millions de personnes.",
+            "On m’écrit pour obtenir un texte, un résumé ou une idée.",
+            "Mon nom commence comme « chat », qui veut dire « bavardage » en anglais.",
+            "Je suis le chatbot d’OpenAI."
+          ]
+        },
+        {
+          "reponse": "Reconnaissance vocale",
+          "indices": [
+            "Je suis utilisée depuis des décennies, mais l’apprentissage profond m’a fait faire un bond.",
+            "Je me trompe parfois quand il y a du bruit ou un fort accent.",
+            "Je transforme ce que vous dites en texte écrit.",
+            "On me trouve dans la dictée vocale d’un téléphone et dans les sous-titres automatiques.",
+            "Sans moi, Siri ou Alexa ne comprendraient pas ce que vous dites."
+          ]
         }
       ]
     },
@@ -289,10 +467,6 @@
           "reponse": "Generative (génératif)"
         },
         {
-          "question": "Dans la plupart des chatbots, quel raccourci permet d’aller à la ligne sans envoyer sa demande ?",
-          "reponse": "Maj + Entrée"
-        },
-        {
           "question": "Comment s’appelle l’assistant vocal d’Amazon ?",
           "reponse": "Alexa"
         },
@@ -307,25 +481,41 @@
         {
           "question": "Quel service de traduction en ligne, né en Allemagne, s’appuie sur l’IA ?",
           "reponse": "DeepL"
-        },
-        {
-          "question": "Comment appelle-t-on une IA qui peut effectuer des actions ?",
-          "reponse": "Un agent"
         }
       ]
     },
     "pyramide": {
       "elements": [
-        { "mot": "Chatbot" },
-        { "mot": "Token" },
-        { "mot": "Modèle" },
-        { "mot": "Projet" },
-        { "mot": "Gemini" },
-        { "mot": "Connecteur" },
-        { "mot": "Skill" },
-        { "mot": "Copilot" },
-        { "mot": "Prompt" },
-        { "mot": "ChatGPT" }
+        {
+          "mot": "Chatbot"
+        },
+        {
+          "mot": "Token"
+        },
+        {
+          "mot": "Modèle"
+        },
+        {
+          "mot": "Projet"
+        },
+        {
+          "mot": "Gemini"
+        },
+        {
+          "mot": "Connecteur"
+        },
+        {
+          "mot": "Skill"
+        },
+        {
+          "mot": "Copilot"
+        },
+        {
+          "mot": "Prompt"
+        },
+        {
+          "mot": "ChatGPT"
+        }
       ]
     },
     "batterie-faible": {
@@ -369,6 +559,16 @@
           "mot": "Vérification",
           "theme": "Les bons réflexes",
           "definition": "L’étape essentielle qui consiste à contrôler la justesse des réponses de l’IA avant de les utiliser."
+        },
+        {
+          "mot": "Hallucination",
+          "theme": "Les limites",
+          "definition": "Une réponse fausse, mais présentée avec aplomb par l’IA : d’où l’importance de vérifier."
+        },
+        {
+          "mot": "Reformulation",
+          "theme": "Les usages",
+          "definition": "Réécrire un texte avec d’autres mots, plus simples ou plus polis : une tâche très courante pour une IA."
         }
       ]
     },
@@ -397,6 +597,22 @@
         {
           "consigne": "Citez un mot du vocabulaire de l’intelligence artificielle",
           "idees": "Algorithme, prompt, chatbot, données, apprentissage automatique, apprentissage profond, réseau de neurones, IA générative, modèle de langage, entraînement, hallucination, biais, hypertrucage, robot, reconnaissance vocale, agent, assistant…"
+        },
+        {
+          "consigne": "Citez un assistant ou un outil d’IA",
+          "idees": "ChatGPT, Gemini, Copilot, Claude, Le Chat, Perplexity, DeepL, Midjourney, Siri, Alexa, Google Traduction, l’assistant vocal du téléphone, le correcteur automatique…"
+        },
+        {
+          "consigne": "Citez une information à ne jamais confier à un chatbot",
+          "idees": "Un mot de passe, un code de carte bancaire, un numéro de sécurité sociale, une adresse personnelle, un secret professionnel, un contrat client, des données de santé, la liste des salaires, la photo d’un tiers sans son accord…"
+        },
+        {
+          "consigne": "Citez un rôle à donner à une IA dans votre demande",
+          "idees": "Un formateur patient, un journaliste, un correcteur, un traducteur, un coach sportif, un chef cuisinier, un conseiller voyage, un professeur de maths, un guide touristique, un recruteur, un critique de cinéma…"
+        },
+        {
+          "consigne": "Citez une limite des IA actuelles",
+          "idees": "Elle peut se tromper, inventer des sources, ignorer l’actualité récente, reproduire des préjugés, ne rien ressentir, ne pas saisir l’humour, se contredire d’une réponse à l’autre, dépendre de la qualité de votre demande…"
         }
       ]
     },
@@ -641,7 +857,32 @@
           "indice": "Au XVIIIe siècle, Jacques de Vaucanson en a construit un qui jouait de la flûte."
         },
         {
-          "enigme": "Dernière serrure : un code à quatre chiffres, l’année de lancement de l’assistant d’IA Claude développé par la société Anthropic.",
+          "enigme": "Vous me tapez dans la zone de saisie d’un assistant d’IA. Plus je suis précis, meilleure est la réponse. Quel mot anglais, de six lettres, me désigne ?",
+          "reponse": "Prompt / Un prompt",
+          "indice": "On parle de « consigne » en français."
+        },
+        {
+          "enigme": "Le code de cette serrure : le nombre de lettres du mot « chatbot ».",
+          "reponse": "7 / sept",
+          "indice": "Comptez « chat », puis « bot »."
+        },
+        {
+          "enigme": "Dans un avion, je suis assis à côté du pilote. Je suis aussi le nom de l’assistant d’IA de Microsoft. Qui suis-je ?",
+          "reponse": "Copilot / Copilote",
+          "indice": "Je suis intégré aux logiciels de bureautique comme Word et Excel."
+        },
+        {
+          "enigme": "Avant de coller un document dans un chatbot, on retire les noms, adresses et numéros qui permettent d’identifier quelqu’un. Quel verbe décrit cette action ?",
+          "reponse": "Anonymiser / Anonymisation",
+          "indice": "Le mot grec dont il vient veut dire « sans nom »."
+        },
+        {
+          "enigme": "Dans « LLM », on lit « grand … de langage ». Quel mot manque ? C’est le moteur qui permet à un chatbot d’écrire.",
+          "reponse": "Modèle / Modèle de langage",
+          "indice": "C’est aussi le mot pour une maquette ou un mannequin."
+        },
+        {
+          "enigme": "Un code à quatre chiffres, l’année de lancement de l’assistant d’IA Claude développé par la société Anthropic.",
           "reponse": "2023 / deux mille vingt-trois",
           "indice": "C’est l’année qui a suivi immédiatement le lancement public de ChatGPT (fin 2022)."
         }
@@ -707,6 +948,46 @@
             "Les hypertrucages / Deepfakes / Fausses vidéos / Fausses images / Trucages",
             "Les données personnelles / Données / Vie privée / Confidentialité",
             "Les arnaques / Escroqueries / Fraude / Voix imitée / Usurpation d’identité"
+          ]
+        },
+        {
+          "question": "Citez un domaine où l’IA est déjà utilisée.",
+          "reponses": [
+            "La santé / Médecine / Hôpital / Radiologie",
+            "La banque / Finance / Assurance",
+            "Les transports / Voiture autonome / Logistique",
+            "Le commerce / Vente en ligne / Marketing / Publicité",
+            "L’éducation / École / Enseignement / Formation"
+          ]
+        },
+        {
+          "question": "Citez un type de contenu qu’une IA générative peut créer.",
+          "reponses": [
+            "Du texte / Texte / Rédaction",
+            "Des images / Image / Dessin / Illustration / Photo",
+            "De la musique / Musique / Chanson / Son / Audio / Voix",
+            "Des vidéos / Vidéo / Film",
+            "Du code / Code informatique / Programmation"
+          ]
+        },
+        {
+          "question": "Citez une information à ne pas confier à un chatbot.",
+          "reponses": [
+            "Un mot de passe / Mot de passe / Identifiants / Login / PIN",
+            "Un numéro de carte bancaire / Carte bancaire / RIB / IBAN",
+            "Un secret professionnel / Document confidentiel / Contrat / Secret",
+            "Des données personnelles / Données / Adresse / Téléphone / Identité / Vie privée",
+            "La santé / Dossier médical / Maladie / Ordonnance / Traitement"
+          ]
+        },
+        {
+          "question": "Citez un service du quotidien qui utilise l’IA.",
+          "reponses": [
+            "Un assistant vocal / Assistant vocal / Siri / Alexa / Assistant",
+            "Un traducteur / Traduction / DeepL / Traduire",
+            "Un GPS / GPS / Waze / Maps / Navigation / Itinéraire",
+            "Les recommandations / Netflix / YouTube / Spotify / Streaming / Suggestions",
+            "La reconnaissance faciale / Déverrouillage du téléphone / Photos / Face ID"
           ]
         }
       ]

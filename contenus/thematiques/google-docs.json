@@ -19,7 +19,24 @@
           "definition": "L’espace blanc laissé autour du texte, sur les bords de la page."
         },
         { "mot": "DRIVE", "definition": "Le service de Google où sont rangés tous vos documents." },
-        { "mot": "PARTAGER", "definition": "Donner accès au document à d’autres personnes." }
+        { "mot": "PARTAGER", "definition": "Donner accès au document à d’autres personnes." },
+        {
+          "mot": "TABLEAU",
+          "definition": "Une grille de lignes et de colonnes pour ranger des informations."
+        },
+        { "mot": "ITALIQUE", "definition": "Le style des lettres penchées vers la droite." },
+        {
+          "mot": "SURLIGNER",
+          "definition": "Colorer un passage du texte, comme avec un feutre fluo."
+        },
+        {
+          "mot": "TITRE",
+          "definition": "Le nom donné à un document ou à une partie, en plus gros que le texte."
+        },
+        {
+          "mot": "COPIER",
+          "definition": "Dupliquer le texte sélectionné pour pouvoir le coller ailleurs."
+        }
       ]
     },
     "instant-defi": {
@@ -53,6 +70,22 @@
           "amorce": "montrer60",
           "amorcePerso": "",
           "fin": "… comment mettre un titre en gras, en couleur, puis le centrer"
+        },
+        { "amorce": "retrouver45", "amorcePerso": "", "fin": "… le nombre de mots du document" },
+        {
+          "amorce": "montrer60",
+          "amorcePerso": "",
+          "fin": "… comment ajouter des numéros de page en bas de chaque page"
+        },
+        {
+          "amorce": "expliquer20",
+          "amorcePerso": "",
+          "fin": "… à quoi sert l’historique des versions"
+        },
+        {
+          "amorce": "surprise",
+          "amorcePerso": "",
+          "fin": "… comment insérer un lien sur un mot du texte"
         }
       ]
     },
@@ -99,6 +132,34 @@
           "unite": "points",
           "marge": 0,
           "anecdote": "Le style « Texte normal » utilise Arial en taille 11, mais vous pouvez changer ce réglage."
+        },
+        {
+          "question": "Combien d’alignements du texte propose Google Docs (gauche, centré, droite…) ?",
+          "reponse": 4,
+          "unite": "alignements",
+          "marge": 0,
+          "anecdote": "À gauche, centré, à droite ou justifié : le texte justifié forme deux bords bien droits."
+        },
+        {
+          "question": "En quelle année l’entreprise Google a-t-elle été fondée ?",
+          "reponse": 1998,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Larry Page et Sergey Brin ont fondé Google en septembre 1998, bien avant Google Docs."
+        },
+        {
+          "question": "Quelle est la largeur d’une feuille au format A4, en centimètres ?",
+          "reponse": 21,
+          "unite": "cm",
+          "marge": 0,
+          "anecdote": "Une feuille A4 mesure 21 cm sur 29,7 cm : c’est le format habituel des documents en France."
+        },
+        {
+          "question": "Pendant combien de jours un fichier supprimé reste-t-il dans la corbeille de Google Drive avant d’être effacé définitivement ?",
+          "reponse": 30,
+          "unite": "jours",
+          "marge": 0,
+          "anecdote": "Pendant ces 30 jours, on peut encore le restaurer depuis la corbeille."
         }
       ]
     },
@@ -197,6 +258,64 @@
             "Cliquer sur « Commenter »",
             "Une fois le point réglé, cliquer sur la coche pour le résoudre"
           ]
+        },
+        {
+          "titre": "Donner le style « Titre 1 » à une partie du document",
+          "etapes": [
+            "Taper le texte du titre sur sa propre ligne",
+            "Sélectionner la ligne",
+            "Ouvrir la liste des styles, à gauche de la police",
+            "Choisir « Titre 1 »"
+          ]
+        },
+        {
+          "titre": "Insérer un tableau dans un document",
+          "etapes": [
+            "Placer le curseur à l’endroit voulu",
+            "Ouvrir le menu Insertion",
+            "Choisir « Tableau »",
+            "Cliquer sur la taille voulue dans la grille"
+          ]
+        },
+        {
+          "titre": "Télécharger un document au format PDF",
+          "etapes": [
+            "Ouvrir le document",
+            "Cliquer sur le menu Fichier",
+            "Choisir « Télécharger »",
+            "Choisir « Document PDF »",
+            "Retrouver le fichier dans le dossier des téléchargements"
+          ]
+        },
+        {
+          "titre": "Faire une copie d’un document",
+          "etapes": [
+            "Ouvrir le document",
+            "Cliquer sur le menu Fichier",
+            "Choisir « Créer une copie »",
+            "Donner un nom à la copie",
+            "Cliquer sur « OK »"
+          ]
+        },
+        {
+          "titre": "Revenir à une ancienne version du document",
+          "etapes": [
+            "Ouvrir le document",
+            "Cliquer sur le menu Fichier",
+            "Choisir « Historique des versions »",
+            "Choisir « Afficher l’historique des versions »",
+            "Cliquer sur la version voulue dans la liste",
+            "Cliquer sur « Restaurer cette version »"
+          ]
+        },
+        {
+          "titre": "Remplacer un mot par un autre dans tout le document",
+          "etapes": [
+            "Appuyer sur Ctrl + H",
+            "Saisir le mot à chercher",
+            "Saisir le mot de remplacement",
+            "Cliquer sur « Tout remplacer »"
+          ]
         }
       ]
     },
@@ -251,6 +370,54 @@
             "Quand vous ajoutez une partie, il faut m’actualiser.",
             "Je liste tous les titres du document, comme au début d’un livre."
           ]
+        },
+        {
+          "reponse": "Le correcteur orthographique",
+          "indices": [
+            "Je travaille en silence, pendant que vous écrivez.",
+            "Je souligne d’un trait ondulé ce qui me paraît bizarre.",
+            "Un clic droit sur ce que je souligne, et je propose une correction.",
+            "Je suis très utile, mais pas infaillible : il faut quand même se relire.",
+            "Je veille sur l’orthographe et la grammaire."
+          ]
+        },
+        {
+          "reponse": "Le tableau",
+          "indices": [
+            "On m’ajoute depuis le menu Insertion.",
+            "Mes cases s’appellent des cellules.",
+            "On peut fusionner plusieurs de mes cellules.",
+            "Je suis fait de lignes et de colonnes."
+          ]
+        },
+        {
+          "reponse": "L’en-tête",
+          "indices": [
+            "Je me répète à l’identique sur chaque page, sans qu’on me retape.",
+            "Je ne fais pas partie du texte principal.",
+            "On y met souvent le titre du document ou le logo de l’entreprise.",
+            "Mon contraire se trouve tout en bas de la page.",
+            "Je suis dans la marge, tout en haut de la page."
+          ]
+        },
+        {
+          "reponse": "Le copier-coller",
+          "indices": [
+            "Je suis un duo de deux gestes.",
+            "J’évite de retaper ce qui existe déjà.",
+            "On me réalise avec Ctrl + C, puis Ctrl + V.",
+            "Je reproduis un texte d’un endroit à un autre."
+          ]
+        },
+        {
+          "reponse": "Le rôle Lecteur",
+          "indices": [
+            "Je fais partie d’une famille de trois rôles de partage.",
+            "Je suis le rôle le plus prudent.",
+            "Avec moi, on ne peut pas laisser de commentaire.",
+            "Avec moi, on ne peut pas modifier le texte.",
+            "Je permets seulement de lire le document."
+          ]
         }
       ]
     },
@@ -286,14 +453,6 @@
         {
           "question": "Quel rôle de partage permet de modifier le document ?",
           "reponse": "Éditeur"
-        },
-        {
-          "question": "Quelle courte adresse taper dans le navigateur pour créer un nouveau document ?",
-          "reponse": "docs.new"
-        },
-        {
-          "question": "Quel bouton, en haut à droite, sert à inviter d’autres personnes dans le document ?",
-          "reponse": "Partager"
         }
       ]
     },
@@ -352,6 +511,16 @@
           "mot": "Télécharger",
           "theme": "Le menu Fichier",
           "definition": "Récupérer une copie du document sur l’ordinateur, en PDF ou au format Word."
+        },
+        {
+          "mot": "Suggestion",
+          "theme": "Le travail à plusieurs",
+          "definition": "Une modification proposée que le propriétaire peut accepter ou refuser."
+        },
+        {
+          "mot": "Pied de page",
+          "theme": "La mise en page",
+          "definition": "La zone en bas de chaque page, où l’on place souvent le numéro de page."
         }
       ]
     },
@@ -384,6 +553,18 @@
         {
           "consigne": "Citez une chose à vérifier avant de partager un document",
           "idees": "L’orthographe, le titre du document, le rôle de chaque personne (lecteur, commentateur, éditeur), les noms et les dates, la mise en page, les liens, les images, les numéros de page, la table des matières à jour, les commentaires résolus, les suggestions acceptées ou refusées, les informations personnelles…"
+        },
+        {
+          "consigne": "Citez un mot du vocabulaire de la mise en page",
+          "idees": "Marge, interligne, alignement, orientation, portrait, paysage, colonne, en-tête, pied de page, saut de page, retrait, format A4…"
+        },
+        {
+          "consigne": "Citez une façon de partager un document avec quelqu’un",
+          "idees": "L’inviter par e-mail, lui envoyer le lien, partager depuis Google Drive, l’ajouter à un groupe, l’envoyer avec Gmail, lui donner le rôle de lecteur, de commentateur ou d’éditeur…"
+        },
+        {
+          "consigne": "Citez une chose qu’on peut faire avec un tableau dans un document",
+          "idees": "Ajouter une ligne, ajouter une colonne, supprimer une ligne, fusionner des cellules, colorer une cellule, changer la largeur d’une colonne, aligner le texte, mettre des bordures, y saisir du texte…"
         }
       ]
     },
@@ -625,9 +806,34 @@
           "indice": "On me déplace avec les flèches du clavier, ou d’un clic de souris."
         },
         {
-          "enigme": "Dernière serrure : un code à quatre chiffres, l’année où Google a lancé son traitement de texte en ligne, devenu Google Docs.",
+          "enigme": "Un code à quatre chiffres : l’année où Google a lancé son traitement de texte en ligne, devenu Google Docs.",
           "reponse": "2006 / deux mille six",
           "indice": "Deux ans après la naissance de Gmail, lancé en 2004."
+        },
+        {
+          "enigme": "Je mets le texte en valeur en rendant les lettres plus épaisses. Mon raccourci est Ctrl + B. Quelle mise en forme suis-je ?",
+          "reponse": "Gras / Le gras / Mettre en gras",
+          "indice": "Mon bouton porte la lettre G."
+        },
+        {
+          "enigme": "Le code de cette serrure : le nombre de rôles que l’on peut donner à une personne qui reçoit le document (lecteur, commentateur, éditeur).",
+          "reponse": "3 / trois",
+          "indice": "Ils vont du plus prudent au plus ouvert."
+        },
+        {
+          "enigme": "Je fais revenir en arrière d’un seul clic. Mon icône est une flèche courbée vers la gauche. Qui suis-je ?",
+          "reponse": "Annuler / Annuler la dernière action",
+          "indice": "Mon raccourci clavier est Ctrl + Z."
+        },
+        {
+          "enigme": "Je suis une ligne plus grosse que les autres, qui annonce une partie du document. C’est grâce à moi que se construit la table des matières. Qui suis-je ?",
+          "reponse": "Titre / Un titre",
+          "indice": "On me choisit dans la liste des styles, à côté de « Texte normal »."
+        },
+        {
+          "enigme": "Je suis un petit chiffre en exposant dans le texte. Je renvoie à une explication écrite plus bas, tout en bas de la feuille. Qui suis-je ?",
+          "reponse": "Note de bas de page / Note",
+          "indice": "On me trouve dans les livres, juste avant le pied de page."
         }
       ]
     },
@@ -692,6 +898,34 @@
             "Traduire le document / Traduction / Traduire",
             "Préférences / Paramètres"
           ]
+        },
+        {
+          "question": "Citez une mise en forme qu’on applique à un mot.",
+          "reponses": [
+            "Gras / Mettre en gras",
+            "Italique / Mettre en italique",
+            "Souligné / Souligner",
+            "Couleur / Couleur du texte",
+            "Surligné / Surligner / Surlignage"
+          ]
+        },
+        {
+          "question": "Citez une action possible sur un texte sélectionné.",
+          "reponses": [
+            "Copier / Copier-coller / Dupliquer",
+            "Mettre en gras / Gras / Mise en forme",
+            "Supprimer / Effacer",
+            "Couper / Déplacer",
+            "Commenter / Commentaire"
+          ]
+        },
+        {
+          "question": "Citez un mot qu’on lit dans la fenêtre de partage.",
+          "reponses": ["Lien / Copier le lien", "Éditeur", "Lecteur", "Commentateur", "Envoyer"]
+        },
+        {
+          "question": "Citez un élément qu’on peut insérer dans un document.",
+          "reponses": ["Image / Photo", "Tableau", "Lien", "Dessin", "Graphique"]
         }
       ]
     }

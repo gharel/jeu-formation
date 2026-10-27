@@ -61,7 +61,7 @@ test('sans réponse, la manche se termine à zéro', async ({ page }) => {
   });
   await expect(page.getByRole('list', { name: 'Points en jeu : 0' })).toBeVisible();
   await page.getByRole('button', { name: 'Mystère suivant' }).click();
-  await expect(page.locator('#cadre').getByText('Mystère 2 sur 5')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Mystère 2 sur 10')).toBeVisible();
 });
 
 test('Voir la réponse : on juge la proposition, les points vont à plusieurs personnes', async ({

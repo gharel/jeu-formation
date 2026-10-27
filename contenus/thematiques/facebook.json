@@ -25,6 +25,26 @@
         {
           "mot": "COMMENTER",
           "definition": "Réagir à une publication en écrivant un message juste en dessous."
+        },
+        {
+          "mot": "GROUPE",
+          "definition": "Un espace où des personnes qui partagent un même intérêt discutent et publient ensemble."
+        },
+        {
+          "mot": "PARTAGER",
+          "definition": "Faire apparaître la publication de quelqu’un d’autre sur votre profil ou dans une conversation."
+        },
+        {
+          "mot": "MESSAGE",
+          "definition": "Ce que l’on écrit à un ami pour lui parler en privé, dans une discussion."
+        },
+        {
+          "mot": "BLOQUER",
+          "definition": "Empêcher une personne de voir votre profil et de vous écrire."
+        },
+        {
+          "mot": "ALBUM",
+          "definition": "Une série de photos rangées ensemble sous un même titre, comme des vacances."
         }
       ]
     },
@@ -59,6 +79,26 @@
           "amorce": "trouver30",
           "amorcePerso": "",
           "fin": "… trois réactions que l’on peut laisser sous une publication, en plus de « J’aime »"
+        },
+        {
+          "amorce": "montrer60",
+          "amorcePerso": "",
+          "fin": "… comment changer l’audience d’une de vos publications"
+        },
+        {
+          "amorce": "trouver30",
+          "amorcePerso": "",
+          "fin": "… où changer votre mot de passe dans les paramètres de Facebook"
+        },
+        {
+          "amorce": "expliquer20",
+          "amorcePerso": "",
+          "fin": "… la différence entre un profil et une page"
+        },
+        {
+          "amorce": "retrouver45",
+          "amorcePerso": "",
+          "fin": "… une ancienne conversation avec un ami, grâce à la recherche de Messenger"
         }
       ]
     },
@@ -105,6 +145,34 @@
           "unite": "",
           "marge": 0,
           "anecdote": "En octobre 2021, l’entreprise Facebook devient Meta. Le réseau social, lui, garde son nom."
+        },
+        {
+          "question": "En quelle année Facebook a-t-il racheté WhatsApp ?",
+          "reponse": 2014,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Le rachat est annoncé en février 2014. WhatsApp fait aujourd’hui partie de la même société que Facebook : Meta."
+        },
+        {
+          "question": "En quelle année Messenger est-il devenu une application à part ?",
+          "reponse": 2011,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Au départ, la messagerie était une simple fonction du site. Messenger est ensuite devenu une application à part entière, à installer sur son téléphone."
+        },
+        {
+          "question": "En quelle année les stories sont-elles arrivées sur Facebook ?",
+          "reponse": 2017,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Facebook s’est inspiré de Snapchat et d’Instagram, qui proposaient déjà ce format de publications éphémères."
+        },
+        {
+          "question": "Combien de jours Facebook laisse-t-il pour annuler la suppression d’un compte ?",
+          "reponse": 30,
+          "unite": "jours",
+          "marge": 0,
+          "anecdote": "Pendant ce délai, il suffit de se reconnecter pour annuler la suppression. Passé ce délai, la suppression devient définitive."
         }
       ]
     },
@@ -205,6 +273,69 @@
             "Valider le signalement",
             "Bloquer l’auteur si besoin"
           ]
+        },
+        {
+          "titre": "Publier une photo",
+          "etapes": [
+            "Cliquer dans la zone de publication, en haut du fil d’actualité",
+            "Cliquer sur « Photo/vidéo »",
+            "Choisir l’image sur l’ordinateur",
+            "Écrire un texte pour l’accompagner, si besoin",
+            "Choisir l’audience, par exemple « Amis »",
+            "Cliquer sur « Publier »"
+          ]
+        },
+        {
+          "titre": "Envoyer une demande d’ami",
+          "etapes": [
+            "Taper le nom de la personne dans la barre de recherche",
+            "Ouvrir son profil dans les résultats",
+            "Vérifier que c’est la bonne personne grâce à sa photo",
+            "Cliquer sur « Ajouter en ami »",
+            "Attendre que la personne accepte la demande"
+          ]
+        },
+        {
+          "titre": "Bloquer quelqu’un",
+          "etapes": [
+            "Ouvrir le profil de la personne",
+            "Cliquer sur les trois points, sous sa photo de couverture",
+            "Choisir « Bloquer »",
+            "Lire ce que le blocage change",
+            "Confirmer en cliquant sur « Bloquer »"
+          ]
+        },
+        {
+          "titre": "Changer l’audience d’une publication",
+          "etapes": [
+            "Ouvrir votre profil",
+            "Repérer la publication à modifier",
+            "Cliquer sur l’icône d’audience, à côté de la date",
+            "Choisir la nouvelle audience, par exemple « Amis »",
+            "Cliquer sur « Terminé »"
+          ]
+        },
+        {
+          "titre": "Créer une discussion de groupe sur Messenger",
+          "etapes": [
+            "Ouvrir Messenger",
+            "Cliquer sur l’icône pour écrire un nouveau message",
+            "Choisir les personnes à ajouter",
+            "Donner un nom à la discussion",
+            "Écrire le premier message",
+            "Appuyer sur Entrée pour l’envoyer"
+          ]
+        },
+        {
+          "titre": "Créer un compte Facebook",
+          "etapes": [
+            "Ouvrir le site facebook.com",
+            "Cliquer sur « Créer nouveau compte »",
+            "Saisir son prénom, son nom et sa date de naissance",
+            "Indiquer une adresse e-mail ou un numéro de téléphone",
+            "Choisir un mot de passe long et unique",
+            "Saisir le code de confirmation reçu"
+          ]
         }
       ]
     },
@@ -259,6 +390,56 @@
             "Les commerces, les associations et les artistes me créent gratuitement.",
             "Je suis la vitrine officielle d’une entreprise sur Facebook."
           ]
+        },
+        {
+          "reponse": "Messenger",
+          "indices": [
+            "À l’origine, j’étais une simple fonction du site, avant de devenir une application à part.",
+            "Mon logo est une bulle de dialogue avec un éclair.",
+            "On m’utilise pour envoyer des messages vocaux, des photos et des autocollants.",
+            "Avec moi, on peut aussi se voir à distance, en appel vidéo, seul ou en groupe.",
+            "Je suis la messagerie de Facebook."
+          ]
+        },
+        {
+          "reponse": "Notification",
+          "indices": [
+            "On peut me régler, ou me couper complètement, dans les paramètres.",
+            "Je peux arriver par e-mail, par SMS ou directement sur l’écran du téléphone.",
+            "Je vous préviens quand quelqu’un réagit, commente ou vous invite à un événement.",
+            "Sur Facebook, je m’affiche sur une petite cloche.",
+            "Je suis le petit chiffre rouge qui vous dit qu’il y a du nouveau."
+          ]
+        },
+        {
+          "reponse": "Groupe privé",
+          "indices": [
+            "Je peux réunir trois personnes comme trois mille.",
+            "Mes administrateurs choisissent qui entre et qui reste.",
+            "Pour que ma porte s’ouvre, il faut parfois répondre à quelques questions.",
+            "Ce qu’on publie chez moi n’est visible que par mes membres.",
+            "Je suis le salon fermé de Facebook, où l’on se retrouve entre passionnés ou entre voisins."
+          ]
+        },
+        {
+          "reponse": "Hashtag",
+          "indices": [
+            "Je suis né sur un autre réseau, avant d’arriver sur Facebook.",
+            "On m’écrit sans espace, en un seul mot.",
+            "Cliquez sur moi : vous verrez toutes les publications qui me contiennent.",
+            "Je sers à ranger les publications par sujet, comme une étiquette.",
+            "Je commence toujours par le symbole dièse."
+          ]
+        },
+        {
+          "reponse": "Réaction",
+          "indices": [
+            "Je dis beaucoup de choses sans écrire un seul mot.",
+            "On me choisit en laissant le doigt ou la souris sur le pouce levé.",
+            "Je peux être un cœur, un rire, une surprise ou une larme.",
+            "Je m’affiche sous une publication, avec les autres, en petites icônes.",
+            "Je suis une façon de dire « j’adore » ou « je suis triste » en un clic."
+          ]
         }
       ]
     },
@@ -293,10 +474,6 @@
           "reponse": "Administrateur"
         },
         {
-          "question": "Dans quel menu, sous votre photo de profil en haut à droite, trouve-t-on les paramètres ?",
-          "reponse": "Paramètres et confidentialité"
-        },
-        {
           "question": "Comment s’appelle le bouton en forme de pouce levé, sous une publication ?",
           "reponse": "J’aime"
         },
@@ -307,25 +484,41 @@
         {
           "question": "Quel symbole place-t-on devant un mot-clé pour en faire un hashtag ?",
           "reponse": "Dièse (#)"
-        },
-        {
-          "question": "Que faut-il vérifier avant de partager une information étonnante ?",
-          "reponse": "Sa source"
         }
       ]
     },
     "pyramide": {
       "elements": [
-        { "mot": "J’aime" },
-        { "mot": "Ami" },
-        { "mot": "Notification" },
-        { "mot": "Anniversaire" },
-        { "mot": "Publicité" },
-        { "mot": "Selfie" },
-        { "mot": "Émoji" },
-        { "mot": "Photo" },
-        { "mot": "Piratage" },
-        { "mot": "Rumeur" }
+        {
+          "mot": "J’aime"
+        },
+        {
+          "mot": "Ami"
+        },
+        {
+          "mot": "Notification"
+        },
+        {
+          "mot": "Anniversaire"
+        },
+        {
+          "mot": "Publicité"
+        },
+        {
+          "mot": "Selfie"
+        },
+        {
+          "mot": "Émoji"
+        },
+        {
+          "mot": "Photo"
+        },
+        {
+          "mot": "Piratage"
+        },
+        {
+          "mot": "Rumeur"
+        }
       ]
     },
     "batterie-faible": {
@@ -369,6 +562,16 @@
           "mot": "Souvenirs",
           "theme": "Les fonctions",
           "definition": "Facebook vous montre ce que vous avez publié à la même date, les années précédentes."
+        },
+        {
+          "mot": "Identification",
+          "theme": "Les photos",
+          "definition": "Relier un ami à une photo ou à une publication : il est prévenu et peut retirer le lien."
+        },
+        {
+          "mot": "Autocollant",
+          "theme": "Messenger",
+          "definition": "Une petite image, parfois animée, à envoyer dans une conversation pour exprimer une émotion."
         }
       ]
     },
@@ -401,6 +604,18 @@
         {
           "consigne": "Citez une arnaque qu’on peut croiser sur Facebook",
           "idees": "Un faux concours, un faux gain à la loterie, un ami piraté qui demande de l’argent, un faux vendeur sur le Marketplace, un faux acheteur qui envoie un lien de paiement, un faux message de Facebook qui menace de fermer votre compte, un faux placement en cryptomonnaie, une arnaque aux sentiments, une fausse offre d’emploi, un profil cloné, une vidéo piégée…"
+        },
+        {
+          "consigne": "Citez un réglage de confidentialité qu’on peut modifier sur Facebook",
+          "idees": "Qui peut voir vos publications, qui peut voir votre liste d’amis, qui peut vous envoyer une invitation, qui peut vous retrouver avec votre e-mail ou votre numéro, qui peut voir votre date de naissance, qui peut voir vos photos, qui peut vous identifier, qui peut vous écrire, qui peut commenter vos publications, la liste des personnes bloquées…"
+        },
+        {
+          "consigne": "Citez un bon moyen de protéger son compte Facebook",
+          "idees": "Un mot de passe long, un mot de passe unique, l’authentification à deux facteurs, ne jamais donner un code reçu par SMS, ne pas cliquer sur les liens suspects, se déconnecter d’un ordinateur partagé, activer les alertes de connexion, vérifier les appareils connectés, faire la vérification de la confidentialité, ne pas accepter n’importe qui en ami…"
+        },
+        {
+          "consigne": "Citez quelque chose qu’on trouve sur un profil Facebook",
+          "idees": "La photo de profil, la photo de couverture, le nom, la présentation, la ville, le travail, les études, la liste d’amis, les publications, les photos, les albums, les vidéos, les stories, les centres d’intérêt, les groupes, les pages suivies, la date de naissance, la situation amoureuse…"
         }
       ]
     },
@@ -645,9 +860,34 @@
           "indice": "Je ressemble beaucoup aux vidéos de TikTok."
         },
         {
-          "enigme": "Dernière serrure : un code à quatre chiffres, l’année où Facebook a racheté Instagram.",
+          "enigme": "Un code à quatre chiffres, l’année où Facebook a racheté Instagram.",
           "reponse": "2012 / deux mille douze",
           "indice": "C’est l’année des Jeux olympiques de Londres."
+        },
+        {
+          "enigme": "Je suis un cadenas, un globe ou deux silhouettes, à côté de la date d’une publication. Je dis qui a le droit de voir ce que vous publiez. Qui suis-je ?",
+          "reponse": "Audience / Confidentialité",
+          "indice": "Public, Amis ou Moi uniquement sont mes choix."
+        },
+        {
+          "enigme": "Mon premier est une portion de gâteau. Mon second indique combien d’années vous avez. Mon tout est le bouton qui envoie la publication d’un autre sur votre profil ou à un ami. Qui suis-je ?",
+          "reponse": "Partage / Partager",
+          "indice": "Mon second s’écrit avec un accent circonflexe."
+        },
+        {
+          "enigme": "Un escroc reprend le nom et les photos d’un de vos amis pour vous piéger. Je suis la copie qu’il a fabriquée. Qui suis-je ?",
+          "reponse": "Profil cloné / Clone / Faux profil / Usurpation d’identité",
+          "indice": "On parle d’un jumeau, mais d’un jumeau malveillant."
+        },
+        {
+          "enigme": "Mon nom est un mot anglais qui veut dire « vivant ». Sur Facebook, on me lance depuis son téléphone pour diffuser une vidéo pendant que les choses se passent. Qui suis-je ?",
+          "reponse": "Live / Direct / Vidéo en direct",
+          "indice": "À la télévision, on dit « en … »."
+        },
+        {
+          "enigme": "Chaque jour, je vous rappelle ce que vous avez publié à la même date, il y a un an, deux ans, dix ans. Qui suis-je ?",
+          "reponse": "Souvenirs / Souvenir",
+          "indice": "Ce sont des images qu’on garde de son passé."
         }
       ]
     },
@@ -711,6 +951,46 @@
             "Signaler ou bloquer / Signaler / Bloquer",
             "Ne donner ni code ni argent / Ne pas donner ses codes / Ne pas envoyer d’argent",
             "Appeler la personne / Vérifier auprès de la personne / Téléphoner"
+          ]
+        },
+        {
+          "question": "Citez une activité très courante sur Facebook.",
+          "reponses": [
+            "Publier des photos / Partager des photos / Poster une photo / Photo",
+            "Écrire un message / Messenger / Discuter / Envoyer un message / Chatter",
+            "Commenter / Réagir / Liker / J’aime",
+            "Rejoindre un groupe / Groupe / Participer à un groupe",
+            "Acheter ou vendre / Marketplace / Vendre / Acheter / Petites annonces"
+          ]
+        },
+        {
+          "question": "Citez un type de contenu qu’on voit défiler dans son fil d’actualité.",
+          "reponses": [
+            "Une photo / Photos / Image",
+            "Une vidéo / Vidéos / Reel",
+            "Un texte / Statut / Message / Publication écrite",
+            "Une publicité / Sponsorisé / Pub / Promotion",
+            "Un article / Lien / Actualité / Information"
+          ]
+        },
+        {
+          "question": "Citez une raison de signaler une publication ou de bloquer quelqu’un.",
+          "reponses": [
+            "Du harcèlement / Insultes / Insulte / Harceler / Menaces",
+            "Une arnaque / Escroquerie / Arnaquer",
+            "Une usurpation d’identité / Profil cloné / Usurpation / Clone",
+            "Du spam / Publicité envahissante / Messages répétés",
+            "Un contenu choquant / Violence / Violent / Contenu violent"
+          ]
+        },
+        {
+          "question": "Citez une information qu’on peut afficher sur son profil.",
+          "reponses": [
+            "Une photo de profil / Photo / Portrait",
+            "La ville / Lieu de vie / Lieu d’habitation / Domicile",
+            "Le travail / Emploi / Profession / Métier",
+            "Les études / École / Formation / Université / Diplôme",
+            "Une photo de couverture / Couverture / Bannière"
           ]
         }
       ]

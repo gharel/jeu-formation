@@ -72,7 +72,7 @@ test('Patate chaude : la patate passe, chauffe, brûle, et les autres marquent',
 
   // Manche suivante : la personne brûlée relance la patate
   await page.getByRole('button', { name: 'Manche suivante' }).click();
-  await expect(cadre.getByText('Manche 2 sur 8')).toBeVisible();
+  await expect(cadre.getByText('Manche 2 sur 10')).toBeVisible();
   await expect(cadre.getByText('Bob prend la patate et répond en premier')).toBeVisible();
   expect(erreurs).toEqual([]);
 });

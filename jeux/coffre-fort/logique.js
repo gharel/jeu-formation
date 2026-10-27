@@ -8,7 +8,7 @@
 import { estBonneReponse } from '../../assets/js/commun/reponses.js';
 
 export const SERRURES_MIN = 3;
-export const SERRURES_MAX = 8;
+export const SERRURES_MAX = 10;
 
 /** La réponse tapée ouvre-t-elle la serrure ? Variantes séparées par « / », fautes pardonnées. */
 export function ouvre(saisie, reponse) {

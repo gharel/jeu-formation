@@ -28,7 +28,7 @@ test('le contenu s’exporte en JSON puis se réimporte', async ({ page }, testI
   ).toBeVisible();
   await expect(page.getByLabel('Mot à deviner').first()).toHaveValue('octet');
   await page.getByRole('button', { name: 'Enregistrer' }).click();
-  await expect(page.locator('#cadre').getByText('5 mots prêts')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('10 mots prêts')).toBeVisible();
   expect(erreurs).toEqual([]);
 });
 

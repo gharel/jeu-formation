@@ -106,5 +106,52 @@ export const exemple = {
         'Mes raccourcis sont Ctrl + C puis Ctrl + V.',
       ],
     },
+    {
+      reponse: 'La clé USB',
+      indices: [
+        'Je suis apparue au tournant des années 2000.',
+        'Je tiens dans une poche, et je finis souvent perdue au fond d’un sac.',
+        'Je garde des fichiers même quand l’ordinateur est éteint.',
+        'On me branche sur un port rectangulaire de l’ordinateur.',
+        'On me prête pour transporter des documents d’un poste à l’autre.',
+      ],
+    },
+    {
+      reponse: 'Le moteur de recherche',
+      indices: [
+        'Je réponds à des millions de questions chaque jour.',
+        'Je classe les pages du web pour mettre les plus utiles en premier.',
+        'Vous me posez une question en quelques mots, et je réponds par une liste de liens.',
+        'Google est le plus connu d’entre nous.',
+      ],
+    },
+    {
+      reponse: 'L’e-mail',
+      indices: [
+        'Je suis plus ancien que le web : mon premier message date de 1971.',
+        'Vous m’écrivez avec un objet, un message et parfois une pièce jointe.',
+        'Je remplace la lettre sur papier, mais j’arrive en quelques secondes.',
+        'Mon adresse contient toujours un @.',
+      ],
+    },
+    {
+      reponse: 'Le QR code',
+      indices: [
+        'Je suis né au Japon, dans les années 1990, pour suivre des pièces de voitures.',
+        'On me trouve sur des menus de restaurant, des billets et des affiches.',
+        'Je cache une adresse de site web ou un texte.',
+        'Je suis un carré rempli de petits carrés noirs et blancs.',
+        'Pour me lire, pointez l’appareil photo de votre téléphone vers moi.',
+      ],
+    },
+    {
+      reponse: 'Le Bluetooth',
+      indices: [
+        'Mon nom vient d’un roi danois du Xe siècle.',
+        'Je relie sans fil des appareils situés à quelques mètres l’un de l’autre.',
+        'Je connecte vos écouteurs ou votre enceinte à votre téléphone.',
+        'Mon nom anglais évoque une couleur et une dent.',
+      ],
+    },
   ],
 };

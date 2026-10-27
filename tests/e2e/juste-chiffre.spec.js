@@ -27,12 +27,12 @@ async function proposer(page, nombre) {
 test('Le Juste Chiffre : plus, moins, juste, une personne par question', async ({ page }) => {
   const erreurs = surveillerErreurs(page);
   await ouvrirJeu(page, 'juste-chiffre', { prenoms: ['Ana', 'Bob'] });
-  // À deux, la partie propose 4 questions (chacun passe autant de fois) : on joue les 5
-  await choisirNombre(page, 'Nombre de questions', 5);
+  // À deux, la partie propose les 10 questions (chacun passe 5 fois) : on les joue toutes
+  await choisirNombre(page, 'Nombre de questions', 10);
   await lancerPartie(page);
 
   // Écran d'attente : la question et le chrono attendent le signal (Espace ou bouton)
-  await expect(page.locator('#cadre').getByText('Question 1 sur 5')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Question 1 sur 10')).toBeVisible();
   await expect(
     page.locator('#cadre').getByText('30 secondes pour trouver le nombre'),
   ).toBeVisible();
@@ -65,7 +65,7 @@ test('Le Juste Chiffre : plus, moins, juste, une personne par question', async (
 
   // Question 2 : la main passe à Bob ; on révèle sans trouver
   await page.getByRole('button', { name: 'Question suivante' }).click();
-  await expect(page.locator('#cadre').getByText('Question 2 sur 5')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Question 2 sur 10')).toBeVisible();
   await expect(page.locator('#cadre').getByText('Au tour de Bob')).toBeVisible();
   await afficherQuestion(page);
   await proposer(page, '1900');
@@ -129,7 +129,7 @@ test('une marge de 10 % accepte une réponse proche', async ({ page }) => {
     await page.getByRole('button', { name: 'Question suivante' }).click();
   }
   await afficherQuestion(page);
-  await expect(page.locator('#cadre').getByText('Question 4 sur 5')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Question 4 sur 10')).toBeVisible();
   await proposer(page, '2 000 000');
   await expect(page.locator('#cadre').getByText(/Trouvé/)).toBeVisible();
   await expect(page.getByRole('button', { name: /Attribuer/ })).toHaveCount(0);

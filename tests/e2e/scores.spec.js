@@ -20,8 +20,8 @@ test('les points de chaque jeu s’additionnent dans les scores du groupe', asyn
 
   // Motus : Ana trouve le premier mot, puis on quitte la partie : le point reste
   await ouvrirJeu(page, 'motus', { prenoms: PRENOMS });
-  // À trois, la partie propose 3 mots sur 5 : on joue les 5, le premier est « clavier »
-  await choisirNombre(page, 'Nombre de mots', 5);
+  // À trois, la partie propose 9 mots sur 10 : on joue les 10, le premier est « clavier »
+  await choisirNombre(page, 'Nombre de mots', 10);
   await lancerPartie(page);
   await page.getByLabel('Proposition du participant').fill('CLAVIER');
   await page.getByLabel('Proposition du participant').press('Enter');

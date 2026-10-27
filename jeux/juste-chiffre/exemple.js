@@ -105,5 +105,41 @@ export const exemple = {
       marge: 0,
       anecdote: 'Le kibioctet (Kio), lui, vaut 1 024 octets.',
     },
+    {
+      question: 'En quelle année le premier iPhone a-t-il été présenté au public ?',
+      reponse: 2007,
+      unite: '',
+      marge: 0,
+      anecdote:
+        'Il a été présenté en janvier 2007 : un téléphone sans clavier, tout en écran tactile.',
+    },
+    {
+      question: 'En quelle année l’entreprise Google a-t-elle été fondée ?',
+      reponse: 1998,
+      unite: '',
+      marge: 0,
+      anecdote: 'Elle est née dans un garage de Californie, créée par deux étudiants.',
+    },
+    {
+      question: 'En quelle année l’encyclopédie Wikipédia a-t-elle été lancée ?',
+      reponse: 2001,
+      unite: '',
+      marge: 0,
+      anecdote: 'Elle est écrite et corrigée par des bénévoles du monde entier.',
+    },
+    {
+      question: 'Combien de touches de fonction (F1, F2, F3…) compte un clavier standard ?',
+      reponse: 12,
+      unite: 'touches',
+      marge: 0,
+      anecdote: 'Elles vont de F1 à F12 : F1 ouvre souvent l’aide, F5 actualise une page.',
+    },
+    {
+      question: 'Combien de chiffres compte le code secret d’une carte bancaire ?',
+      reponse: 4,
+      unite: 'chiffres',
+      marge: 0,
+      anecdote: 'Il existe 10 000 codes possibles, de 0000 à 9999.',
+    },
   ],
 };

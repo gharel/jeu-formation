@@ -98,9 +98,38 @@ export const exemple = {
     },
     {
       enigme:
-        'Dernière serrure : un code à quatre chiffres, l’année où Tim Berners-Lee a proposé le World Wide Web au CERN.',
+        'Un code à quatre chiffres, l’année où Tim Berners-Lee a proposé le World Wide Web au CERN.',
       reponse: '1989',
       indice: 'C’est aussi l’année de la chute du mur de Berlin.',
+    },
+    {
+      enigme:
+        'Je suis une copie de vos fichiers gardée ailleurs, au cas où l’original disparaîtrait. Qui suis-je ?',
+      reponse: 'Une sauvegarde / Sauvegarde / Backup',
+      indice: 'On me fait régulièrement, sur une clé USB ou dans le cloud.',
+    },
+    {
+      enigme:
+        'Je commence par « https » et je finis souvent par « .com » ou « .fr ». Qui suis-je ?',
+      reponse: 'Une adresse web / Adresse de site / URL',
+      indice: 'On me tape tout en haut du navigateur.',
+    },
+    {
+      enigme:
+        'Je suis un faux message qui se fait passer pour votre banque afin de vous voler vos codes. Quel est mon nom ?',
+      reponse: 'Hameçonnage / Phishing',
+      indice: 'En français, mon nom évoque la pêche.',
+    },
+    {
+      enigme: 'Je repère et j’arrête les virus avant qu’ils fassent du mal. Quel est mon nom ?',
+      reponse: 'Antivirus',
+      indice: 'Mon nom commence par un préfixe qui veut dire « contre ».',
+    },
+    {
+      enigme:
+        'Je suis une longue bande en bas de l’écran, avec le bouton Démarrer, l’heure et les icônes des logiciels ouverts. Qui suis-je ?',
+      reponse: 'La barre des tâches / Barre des tâches',
+      indice: 'Mon nom évoque une liste de choses à faire.',
     },
   ],
 };

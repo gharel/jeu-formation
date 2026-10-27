@@ -25,6 +25,26 @@
         {
           "mot": "TEAMS",
           "definition": "L’application pour discuter, s’appeler et se réunir en visio entre collègues."
+        },
+        {
+          "mot": "OUTLOOK",
+          "definition": "La messagerie de Microsoft 365, avec son calendrier et ses contacts."
+        },
+        {
+          "mot": "EXCEL",
+          "definition": "Le tableur où l’on range des chiffres et où l’on fait des calculs."
+        },
+        {
+          "mot": "CALENDRIER",
+          "definition": "Dans Outlook, l’endroit où l’on note ses rendez-vous et ses réunions."
+        },
+        {
+          "mot": "PARTAGE",
+          "definition": "Donner accès à un fichier à un collègue, avec un simple lien."
+        },
+        {
+          "mot": "MODELE",
+          "definition": "Un document déjà mis en page, que l’on remplit au lieu de partir d’une page blanche."
         }
       ]
     },
@@ -59,6 +79,26 @@
           "amorce": "trouver30",
           "amorcePerso": "",
           "fin": "… quatre applications de Microsoft 365 en plus de Word, Excel et PowerPoint"
+        },
+        {
+          "amorce": "montrer60",
+          "amorcePerso": "",
+          "fin": "… comment mettre un mot en gras et en rouge dans Word"
+        },
+        {
+          "amorce": "expliquer20",
+          "amorcePerso": "",
+          "fin": "… à quoi sert OneDrive à un collègue qui ne le connaît pas"
+        },
+        {
+          "amorce": "retrouver45",
+          "amorcePerso": "",
+          "fin": "… la date d’une réunion prévue dans le calendrier d’Outlook"
+        },
+        {
+          "amorce": "trouver30",
+          "amorcePerso": "",
+          "fin": "… le bouton « Partager » dans la fenêtre de Word"
         }
       ]
     },
@@ -105,6 +145,34 @@
           "unite": "",
           "marge": 0,
           "anecdote": "L’entreprise naît aux États-Unis. Son nom mêle « micro-ordinateur » et « software », logiciel en anglais."
+        },
+        {
+          "question": "En quelle année Excel est-il sorti pour la première fois ?",
+          "reponse": 1985,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Il est d’abord sorti sur Macintosh. La version pour Windows est arrivée deux ans plus tard."
+        },
+        {
+          "question": "En quelle année SkyDrive, le stockage en ligne de Microsoft, a-t-il pris le nom de OneDrive ?",
+          "reponse": 2014,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Le nom change en février 2014 : on y range ses fichiers en ligne, accessibles depuis n’importe quel appareil."
+        },
+        {
+          "question": "Combien de colonnes compte une feuille de calcul dans Excel ?",
+          "reponse": 16384,
+          "unite": "colonnes",
+          "marge": 10,
+          "anecdote": "C’est 2 puissance 14. La dernière colonne s’appelle XFD."
+        },
+        {
+          "question": "Combien de caractères une cellule Excel peut-elle contenir au maximum ?",
+          "reponse": 32767,
+          "unite": "caractères",
+          "marge": 10,
+          "anecdote": "C’est 2 puissance 15, moins 1. Une cellule n’en affiche pourtant qu’une petite partie à l’écran."
         }
       ]
     },
@@ -204,6 +272,65 @@
             "Présenter son document aux participants",
             "Arrêter le partage à la fin de la présentation"
           ]
+        },
+        {
+          "titre": "Additionner des cellules avec la fonction SOMME dans Excel",
+          "etapes": [
+            "Cliquer sur la cellule où doit s’afficher le résultat",
+            "Taper =SOMME( au clavier",
+            "Sélectionner les cellules à additionner",
+            "Fermer la parenthèse",
+            "Appuyer sur Entrée"
+          ]
+        },
+        {
+          "titre": "Envoyer un courriel avec une pièce jointe dans Outlook",
+          "etapes": [
+            "Cliquer sur « Nouveau courriel »",
+            "Saisir l’adresse du destinataire",
+            "Écrire l’objet et le message",
+            "Joindre le fichier avec le bouton en forme de trombone",
+            "Cliquer sur « Envoyer »"
+          ]
+        },
+        {
+          "titre": "Enregistrer un document Word au format PDF",
+          "etapes": [
+            "Terminer et relire le document",
+            "Cliquer sur le menu « Fichier »",
+            "Choisir « Enregistrer sous »",
+            "Choisir le format PDF dans la liste des types de fichier",
+            "Cliquer sur « Enregistrer »"
+          ]
+        },
+        {
+          "titre": "Ajouter une diapositive avec une image dans PowerPoint",
+          "etapes": [
+            "Cliquer sur la diapositive après laquelle insérer la nouvelle",
+            "Cliquer sur « Nouvelle diapositive »",
+            "Écrire le titre",
+            "Ouvrir l’onglet « Insertion »",
+            "Choisir « Images » puis sélectionner le fichier"
+          ]
+        },
+        {
+          "titre": "Lancer un diaporama PowerPoint depuis le début",
+          "etapes": [
+            "Ouvrir la présentation",
+            "Ouvrir l’onglet « Diaporama »",
+            "Cliquer sur « Depuis le début »",
+            "Passer d’une diapositive à l’autre avec les flèches du clavier",
+            "Appuyer sur Échap pour quitter"
+          ]
+        },
+        {
+          "titre": "Trier une liste de noms dans Excel",
+          "etapes": [
+            "Cliquer dans une cellule de la colonne à trier",
+            "Ouvrir l’onglet « Données »",
+            "Cliquer sur « Trier de A à Z »",
+            "Vérifier que les lignes ont suivi le tri"
+          ]
         }
       ]
     },
@@ -258,6 +385,56 @@
             "On me désigne souvent par les sigles 2FA ou MFA.",
             "Je réclame deux preuves au lieu d’une pour vous connecter."
           ]
+        },
+        {
+          "reponse": "Word",
+          "indices": [
+            "Je fais partie des tout premiers logiciels de la suite Office.",
+            "Les fichiers que je crée se terminent par .docx.",
+            "Je souligne en rouge les mots que je ne reconnais pas.",
+            "On m’utilise pour écrire des lettres, des CV ou des rapports.",
+            "Mon icône est bleue et porte la lettre W."
+          ]
+        },
+        {
+          "reponse": "PowerPoint",
+          "indices": [
+            "Les fichiers que je crée se terminent par .pptx.",
+            "J’ai été créé en 1987 par une petite société, rachetée par Microsoft la même année.",
+            "On m’utilise pour parler devant un public.",
+            "Chez moi, on enchaîne des diapositives, avec des transitions et des animations.",
+            "Mon icône est orange et porte la lettre P."
+          ]
+        },
+        {
+          "reponse": "OneDrive",
+          "indices": [
+            "Je garde une copie de vos fichiers même si votre ordinateur tombe en panne.",
+            "Ma corbeille conserve un certain temps ce que vous supprimez.",
+            "Grâce à moi, un document créé au bureau s’ouvre aussi sur votre téléphone.",
+            "On me trouve dans l’Explorateur de fichiers, avec une icône de nuage.",
+            "Mon nom évoque un disque, et je range vos fichiers dans le nuage de Microsoft."
+          ]
+        },
+        {
+          "reponse": "OneNote",
+          "indices": [
+            "Je fais partie de Microsoft 365, mais on me sort moins souvent que Word ou Excel.",
+            "Je suis organisé en blocs-notes, en sections et en pages.",
+            "On peut y mettre du texte, des images et même des enregistrements audio.",
+            "Mon principe : un cahier numérique avec des onglets de couleur.",
+            "Je suis le bloc-notes numérique de Microsoft 365."
+          ]
+        },
+        {
+          "reponse": "Ruban",
+          "indices": [
+            "Je suis apparu dans Office 2007, à la place des anciens menus déroulants.",
+            "Un clic sur une petite flèche me réduit pour laisser plus de place au document.",
+            "Mes boutons sont rangés par onglets : Accueil, Insertion, Mise en page…",
+            "Je suis la grande bande d’outils en haut de la fenêtre.",
+            "Mon nom est aussi celui d’un long morceau de tissu qui orne un cadeau."
+          ]
         }
       ]
     },
@@ -267,7 +444,10 @@
           "question": "Quel raccourci clavier enregistre le document en cours ?",
           "reponse": "Ctrl + S"
         },
-        { "question": "Quel raccourci clavier lance l’impression ?", "reponse": "Ctrl + P" },
+        {
+          "question": "Quel raccourci clavier lance l’impression ?",
+          "reponse": "Ctrl + P"
+        },
         {
           "question": "Dans PowerPoint, quelle touche lance le diaporama depuis la première diapositive ?",
           "reponse": "F5"
@@ -299,29 +479,41 @@
         {
           "question": "Comment s’appelle l’espace de stockage en ligne de Microsoft 365 ?",
           "reponse": "OneDrive"
-        },
-        {
-          "question": "Comment s’appelle l’assistant d’IA de Microsoft 365 ?",
-          "reponse": "Copilot"
-        },
-        {
-          "question": "Quel caractère tape-t-on avant un nom pour mentionner un collègue dans un commentaire ?",
-          "reponse": "Arobase (@)"
         }
       ]
     },
     "pyramide": {
       "elements": [
-        { "mot": "Word" },
-        { "mot": "Excel" },
-        { "mot": "PowerPoint" },
-        { "mot": "Teams" },
-        { "mot": "Outlook" },
-        { "mot": "Diapositive" },
-        { "mot": "Cellule" },
-        { "mot": "Calendrier" },
-        { "mot": "Webcam" },
-        { "mot": "Signature" }
+        {
+          "mot": "Word"
+        },
+        {
+          "mot": "Excel"
+        },
+        {
+          "mot": "PowerPoint"
+        },
+        {
+          "mot": "Teams"
+        },
+        {
+          "mot": "Outlook"
+        },
+        {
+          "mot": "Diapositive"
+        },
+        {
+          "mot": "Cellule"
+        },
+        {
+          "mot": "Calendrier"
+        },
+        {
+          "mot": "Webcam"
+        },
+        {
+          "mot": "Signature"
+        }
       ]
     },
     "batterie-faible": {
@@ -365,6 +557,16 @@
           "mot": "Corbeille",
           "theme": "OneDrive",
           "definition": "Un fichier supprimé y reste un certain temps : on peut encore le restaurer."
+        },
+        {
+          "mot": "Commentaire",
+          "theme": "Word",
+          "definition": "Une remarque laissée dans la marge d’un document pour un collègue, qui peut y répondre."
+        },
+        {
+          "mot": "Formule",
+          "theme": "Excel",
+          "definition": "Un calcul qui commence par le signe égal et dont le résultat s’affiche dans la cellule."
         }
       ]
     },
@@ -397,6 +599,18 @@
         {
           "consigne": "Citez une chose que l’on peut faire avec un fichier enregistré dans OneDrive",
           "idees": "L’ouvrir sur son téléphone, le modifier, le partager, le renommer, le déplacer, le copier, le télécharger, le supprimer, le restaurer depuis la corbeille, retrouver une ancienne version, le garder hors connexion, le modifier à plusieurs, voir qui y a accès…"
+        },
+        {
+          "consigne": "Citez un onglet du ruban de Word",
+          "idees": "Accueil, Insertion, Création, Mise en page, Références, Publipostage, Révision, Affichage, Aide, Dessin…"
+        },
+        {
+          "consigne": "Citez un moyen de partager un document avec un collègue",
+          "idees": "Un lien OneDrive, une invitation par courriel, une pièce jointe, un dossier partagé, SharePoint, un message dans Teams, un canal d’équipe, une clé USB, une impression, la coédition…"
+        },
+        {
+          "consigne": "Citez une chose que l’on peut faire dans le calendrier d’Outlook",
+          "idees": "Créer un rendez-vous, inviter des collègues, planifier une réunion Teams, ajouter un rappel, répéter un événement chaque semaine, partager son calendrier, voir les disponibilités des collègues, proposer un autre horaire, changer l’affichage jour, semaine ou mois, colorer par catégorie…"
         }
       ]
     },
@@ -641,9 +855,34 @@
           "indice": "Comme en mathématiques, Excel fait les multiplications avant les additions."
         },
         {
-          "enigme": "Dernière serrure : un code à quatre chiffres, l’année où Office 365 a pris le nom de Microsoft 365.",
+          "enigme": "Un code à quatre chiffres, l’année où Office 365 a pris le nom de Microsoft 365.",
           "reponse": "2020 / deux mille vingt",
           "indice": "Neuf ans après le lancement d’Office 365, en 2011."
+        },
+        {
+          "enigme": "Quand je suis activé en haut à gauche de Word, vous n’avez plus besoin d’appuyer sur Ctrl + S : je range vos modifications à chaque instant. Qui suis-je ?",
+          "reponse": "Enregistrement automatique / Enregistrement auto / Sauvegarde automatique / Sauvegarde auto",
+          "indice": "On m’active avec un interrupteur, pour les fichiers rangés dans OneDrive."
+        },
+        {
+          "enigme": "Je voyage avec un message sans en faire partie, et mon symbole est celui d’un petit objet de bureau en métal qui retient les feuilles. Qui suis-je ?",
+          "reponse": "Pièce jointe / Fichier joint",
+          "indice": "Avant d’envoyer un courriel qui dit « voir ci-joint », vérifiez que vous m’avez bien ajoutée."
+        },
+        {
+          "enigme": "Le code est le résultat que donne Excel pour la formule =MOYENNE(10;20;60).",
+          "reponse": "30 / trente",
+          "indice": "On additionne les trois nombres, puis on divise par trois."
+        },
+        {
+          "enigme": "Dans Excel, une cellule se trouve à l’intersection de la colonne B et de la ligne 3. Quelle est son adresse ?",
+          "reponse": "B3 / B 3",
+          "indice": "La lettre de la colonne d’abord, puis le numéro de la ligne."
+        },
+        {
+          "enigme": "En réunion Teams, je permets de demander la parole sans couper celui qui parle, comme un élève en classe. Qui suis-je ?",
+          "reponse": "Lever la main / Main levée",
+          "indice": "Dans la barre de la réunion, mon bouton représente une partie du corps."
         }
       ]
     },
@@ -707,6 +946,40 @@
             "Ctrl + Z / Annuler",
             "Ctrl + X / Couper",
             "Ctrl + S / Enregistrer"
+          ]
+        },
+        {
+          "question": "Citez un onglet du ruban de Word.",
+          "reponses": [
+            "Accueil",
+            "Insertion / Insérer",
+            "Affichage",
+            "Révision",
+            "Mise en page / Disposition"
+          ]
+        },
+        {
+          "question": "Citez un format de fichier utilisé dans Microsoft 365.",
+          "reponses": ["DOCX / .docx", "XLSX / .xlsx", "PDF / .pdf", "PPTX / .pptx", "TXT / .txt"]
+        },
+        {
+          "question": "Citez un type de graphique dans Excel.",
+          "reponses": [
+            "Histogramme / Colonnes",
+            "Secteurs / Camembert",
+            "Courbes / Courbe / Ligne",
+            "Barres / Barre",
+            "Nuage de points"
+          ]
+        },
+        {
+          "question": "Citez un élément d’un nouveau courriel dans Outlook.",
+          "reponses": [
+            "Destinataire / Destinataires",
+            "Objet",
+            "Message / Corps du message",
+            "Pièce jointe / Pièces jointes",
+            "Signature"
           ]
         }
       ]

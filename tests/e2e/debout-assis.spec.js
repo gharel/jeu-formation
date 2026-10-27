@@ -26,7 +26,7 @@ test('Debout ou assis : affirmation, compte à rebours, réponse et points', asy
 
   await expect(page.getByRole('heading', { name: 'Tout le monde debout !' })).toBeVisible();
   await page.getByRole('button', { name: 'C’est parti !' }).click();
-  await expect(page.locator('#cadre').getByText('Affirmation 1 sur 8')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Affirmation 1 sur 10')).toBeVisible();
   await verifierAccessibilite(page);
 
   // Le compte à rebours de 3 s révèle la réponse tout seul

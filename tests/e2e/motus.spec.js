@@ -17,10 +17,10 @@ async function proposer(page, mot) {
 test('une partie complète de Motus avec le contenu d’exemple', async ({ page }) => {
   const erreurs = surveillerErreurs(page);
   await ouvrirJeu(page, 'motus', { prenoms: ['Ana', 'Bob'] });
-  // À deux, la partie propose 4 mots (chacun passe autant de fois) : on joue les 5
-  await choisirNombre(page, 'Nombre de mots', 5);
+  // À deux, la partie propose les 10 mots (chacun passe 5 fois) : on les joue tous
+  await choisirNombre(page, 'Nombre de mots', 10);
   await lancerPartie(page);
-  await expect(page.locator('#cadre').getByText('Mot 1 sur 5 · 7 lettres')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Mot 1 sur 10 · 7 lettres')).toBeVisible();
 
   // Mauvaise longueur, mauvaise première lettre : refusées
   await proposer(page, 'CLAVI');
@@ -41,7 +41,7 @@ test('une partie complète de Motus avec le contenu d’exemple', async ({ page 
 
   // Mot 2 : 6 échecs, le mot est révélé
   await page.getByRole('button', { name: 'Mot suivant' }).click();
-  await expect(page.locator('#cadre').getByText('Mot 2 sur 5 · 5 lettres')).toBeVisible();
+  await expect(page.locator('#cadre').getByText('Mot 2 sur 10 · 5 lettres')).toBeVisible();
   for (let i = 0; i < 6; i++) await proposer(page, 'PAPAS');
   await expect(page.locator('#cadre').getByText('Pas trouvé cette fois…')).toBeVisible();
   await expect(page.locator('.reponse-revelee')).toContainText('PIXEL');
@@ -51,9 +51,14 @@ test('une partie complète de Motus avec le contenu d’exemple', async ({ page 
     [3, 'FICHIER'],
     [4, 'RESEAU'],
     [5, 'NAVIGATEUR'],
+    [6, 'SOURIS'],
+    [7, 'ECRAN'],
+    [8, 'DOSSIER'],
+    [9, 'IMPRIMANTE'],
+    [10, 'LOGICIEL'],
   ]) {
     await page.getByRole('button', { name: 'Mot suivant' }).click();
-    await expect(page.locator('#cadre').getByText(`Mot ${numero} sur 5`)).toBeVisible();
+    await expect(page.locator('#cadre').getByText(`Mot ${numero} sur 10`)).toBeVisible();
     await proposer(page, mot);
     await expect(page.locator('#cadre').getByText('Trouvé !')).toBeVisible();
   }
@@ -93,6 +98,10 @@ test('les mots préparés par l’animateur sont enregistrés et joués', async 
   await ouvrirJeu(page, 'motus');
   await page.getByRole('button', { name: /Préparer le contenu/ }).click();
   const champs = page.getByLabel('Mot à deviner');
+  await expect(champs).toHaveCount(10);
+  // Le contenu n'est pas figé à 10 mots : on en garde 5, les autres sont retirés
+  for (let i = 9; i >= 5; i--)
+    await page.getByRole('button', { name: `Supprimer mot ${i + 1}` }).click();
   await expect(champs).toHaveCount(5);
   const mots = ['écran', 'souris', 'onglet', 'dossier', 'cloud'];
   for (let i = 0; i < 5; i++) await champs.nth(i).fill(mots[i]);

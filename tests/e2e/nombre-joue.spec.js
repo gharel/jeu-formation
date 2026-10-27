@@ -14,39 +14,39 @@ test('le nombre d’éléments joués est proposé selon les joueurs, et chacun 
   page,
 }) => {
   const erreurs = surveillerErreurs(page);
-  // À trois, 5 mots : 3 mots, chacun passe une fois
+  // À trois, 10 mots : 9 mots, chacun passe 3 fois
   await ouvrirJeu(page, 'motus', { prenoms: ['Ana', 'Bob', 'Chloé'] });
   const cadre = page.locator('#cadre');
   const mots = compteur(page, 'Nombre de mots');
   const equilibrer = cadre.getByRole('button', { name: 'Équilibrer' });
-  await expect(mots).toHaveAttribute('aria-valuenow', '3');
+  await expect(mots).toHaveAttribute('aria-valuenow', '9');
   await expect(mots).toHaveAttribute('aria-valuemin', '1');
-  await expect(mots).toHaveAttribute('aria-valuemax', '5');
-  await expect(cadre.getByText('Chacun passe une fois')).toBeVisible();
+  await expect(mots).toHaveAttribute('aria-valuemax', '10');
+  await expect(cadre.getByText('Chacun passe 3 fois')).toBeVisible();
   await expect(equilibrer).toBeHidden();
   await verifierAccessibilite(page);
 
-  // Le nombre suit les joueurs tant qu'on n'y a pas touché : sans Chloé, 2 joueurs, 4 mots ; avec elle, 3 mots
+  // Le nombre suit les joueurs tant qu'on n'y a pas touché : sans Chloé, 2 joueurs, 10 mots ; avec elle, 9 mots
   await page
     .getByRole('region', { name: 'Qui joue ?' })
     .getByRole('button', { name: 'Chloé' })
     .click();
-  await expect(mots).toHaveAttribute('aria-valuenow', '4');
-  await expect(cadre.getByText('Chacun passe 2 fois')).toBeVisible();
+  await expect(mots).toHaveAttribute('aria-valuenow', '10');
+  await expect(cadre.getByText('Chacun passe 5 fois')).toBeVisible();
   await page
     .getByRole('region', { name: 'Qui joue ?' })
     .getByRole('button', { name: 'Chloé' })
     .click();
-  await expect(mots).toHaveAttribute('aria-valuenow', '3');
+  await expect(mots).toHaveAttribute('aria-valuenow', '9');
 
-  // 4 mots : Bob et Chloé passent une fois de moins ; « Équilibrer » revient à 3
+  // 10 mots : Bob et Chloé passent une fois de moins ; « Équilibrer » revient à 9
   await mots.focus();
   await mots.press('ArrowUp');
-  await expect(mots).toHaveAttribute('aria-valuenow', '4');
+  await expect(mots).toHaveAttribute('aria-valuenow', '10');
   await expect(cadre.getByText('Bob et Chloé passeront une fois de moins')).toBeVisible();
   await expect(equilibrer).toBeVisible();
   await equilibrer.click();
-  await expect(mots).toHaveAttribute('aria-valuenow', '3');
+  await expect(mots).toHaveAttribute('aria-valuenow', '9');
   await expect(equilibrer).toBeHidden();
 
   expect(erreurs).toEqual([]);
@@ -56,7 +56,8 @@ test('on joue moins de mots que préparés : la partie finit après le dernier',
   const erreurs = surveillerErreurs(page);
   await ouvrirJeu(page, 'motus', { prenoms: ['Ana', 'Bob', 'Chloé'] });
   const cadre = page.locator('#cadre');
-  // La valeur proposée (3) est jouée : 3 mots sur 5, tirés au hasard
+  // On joue 3 mots sur les 10 préparés, tirés au hasard
+  await choisirNombre(page, 'Nombre de mots', 3);
   await lancerPartie(page);
   const saisie = page.getByLabel('Proposition du participant');
   for (let numero = 1; numero <= 3; numero++) {
@@ -87,7 +88,7 @@ test('un jeu collectif joué avec moins de questions : Debout ou assis finit apr
   const cadre = page.locator('#cadre');
   const affirmations = compteur(page, 'Nombre d’affirmations');
   // Collectif : aucune contrainte, tout le contenu est proposé ; pas de ligne sur les passages
-  await expect(affirmations).toHaveAttribute('aria-valuenow', '8');
+  await expect(affirmations).toHaveAttribute('aria-valuenow', '10');
   await expect(cadre.getByText(/passe|passera|passeront/)).toHaveCount(0);
   await expect(cadre.getByRole('button', { name: 'Équilibrer' })).toBeHidden();
   await choisirNombre(page, 'Temps pour se décider', 3);

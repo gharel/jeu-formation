@@ -22,7 +22,7 @@ export const JEUX = [
     accroche:
       'Devinez des mots du numérique en 6 essais. Les lettres se colorent à chaque proposition.',
     duree: '10 min',
-    preparation: '5 mots à deviner',
+    preparation: '10 mots à deviner',
     tour: 'individuel',
   },
   {

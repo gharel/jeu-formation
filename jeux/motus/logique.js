@@ -2,7 +2,8 @@
  * Règles de Motus : aucune manipulation de la page ici, tout est testé unitairement.
  */
 
-export const NOMBRE_MOTS = 5;
+export const MOTS_MIN = 1;
+export const MOTS_MAX = 10;
 export const NOMBRE_ESSAIS = 6;
 const LONGUEUR_MIN = 4;
 const LONGUEUR_MAX = 10;

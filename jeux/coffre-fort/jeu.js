@@ -136,6 +136,11 @@ function demarrer(ctx) {
     ctx.figerPendantFenetres(minuteur);
 
     const serrures = el('ol', { class: 'coffre__serrures', 'aria-label': 'Serrures' });
+    // Au-delà de 8, deux rangées équilibrées (5 + 5) plutôt qu'une rangée pleine et deux serrures seules
+    serrures.style.setProperty(
+      '--colonnes',
+      String(enigmes.length > 8 ? Math.ceil(enigmes.length / 2) : enigmes.length),
+    );
     const ecart = el('p', { class: 'coffre__ecart', 'aria-hidden': 'true' });
     illustration.etat(null);
     const porte = el('div', { class: 'coffre__porte' }, illustration.element, serrures);
@@ -494,7 +499,7 @@ monterJeu({
   schema,
   exemple,
   regles: [
-    'Avant la séance, préparez de 3 à 8 énigmes : chacune ferme une serrure du coffre.',
+    'Avant la séance, préparez de 3 à 10 énigmes : chacune ferme une serrure du coffre.',
     'Lancez le compte à rebours : tout le groupe cherche ensemble et vous donne sa réponse, que vous tapez. Majuscules, accents et petites fautes de frappe sont pardonnés, et un seul mot de la réponse suffit.',
     'Bonne réponse : la serrure s’ouvre. Mauvaise réponse : le chrono perd du temps. Un indice aussi.',
     'Toutes les serrures ouvertes avant la fin : le coffre s’ouvre ! Le temps restant devient le record à battre. Chaque serrure ouverte rapporte 1 point à chacun.',

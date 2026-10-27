@@ -9,7 +9,7 @@ Chaque jeu dure de 5 à 15 minutes.
 
 | Jeu               | Principe                                                                                                                             | À préparer                             |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------- |
-| Motus numérique   | Deviner 5 mots en 6 essais, lettres colorées                                                                                         | 5 mots (+ définitions)                 |
+| Motus numérique   | Deviner des mots en 6 essais, lettres colorées                                                                                       | Mots (+ définitions)                   |
 | Instant défi      | La roue tire un défi éclair (« 30 secondes pour trouver… »), chrono                                                                  | Les fins des défis                     |
 | Le Juste Chiffre  | « C'est plus ! », « C'est moins ! », minuteur réglable (30 s)                                                                        | Questions à réponse chiffrée           |
 | Debout ou assis ? | Vrai = debout, faux = assis (ou main levée), mode survie                                                                             | Affirmations vrai/faux                 |

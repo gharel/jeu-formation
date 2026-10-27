@@ -25,6 +25,26 @@
         {
           "mot": "FAILLE",
           "definition": "Un point faible dans un logiciel, que les pirates utilisent pour entrer."
+        },
+        {
+          "mot": "ANTIVIRUS",
+          "definition": "Le logiciel qui repère et isole les programmes malveillants."
+        },
+        {
+          "mot": "SAUVEGARDE",
+          "definition": "Une copie de vos fichiers, rangée à part, pour les retrouver après une panne ou une attaque."
+        },
+        {
+          "mot": "COOKIE",
+          "definition": "Un petit fichier déposé par un site dans votre navigateur pour se souvenir de vous."
+        },
+        {
+          "mot": "ESPION",
+          "definition": "Un programme qui observe en cachette ce que vous faites sur l’ordinateur pour le raconter à un pirate."
+        },
+        {
+          "mot": "CADENAS",
+          "definition": "Le petit symbole fermé qui s’affiche à côté de l’adresse d’un site aux échanges chiffrés."
         }
       ]
     },
@@ -59,6 +79,26 @@
           "amorce": "expliquer20",
           "amorcePerso": "",
           "fin": "… la différence entre un identifiant et un mot de passe"
+        },
+        {
+          "amorce": "montrer60",
+          "amorcePerso": "",
+          "fin": "… comment lancer une analyse antivirus sur l’ordinateur"
+        },
+        {
+          "amorce": "expliquer20",
+          "amorcePerso": "",
+          "fin": "… ce qu’est un rançongiciel, avec vos propres mots"
+        },
+        {
+          "amorce": "retrouver45",
+          "amorcePerso": "",
+          "fin": "… dans le navigateur, l’endroit où l’on efface l’historique de navigation"
+        },
+        {
+          "amorce": "surprise",
+          "amorcePerso": "",
+          "fin": "… comment vérifier qu’une adresse de site commence bien par https"
         }
       ]
     },
@@ -105,6 +145,34 @@
           "unite": "",
           "marge": 0,
           "anecdote": "En mai 2017, il bloquait les fichiers et réclamait une rançon. Il visait des ordinateurs Windows qui n’avaient pas fait une mise à jour de sécurité."
+        },
+        {
+          "question": "Combien de chiffres compte le numéro inscrit sur une carte bancaire Visa ou Mastercard ?",
+          "reponse": 16,
+          "unite": "chiffres",
+          "marge": 0,
+          "anecdote": "Ils sont souvent présentés par groupes de quatre. Ce numéro ne se communique qu’à un site de paiement de confiance, jamais à un inconnu au téléphone."
+        },
+        {
+          "question": "En quelle année le RGPD, le règlement européen sur la protection des données personnelles, est-il entré en application ?",
+          "reponse": 2018,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Depuis le 25 mai 2018, une entreprise doit expliquer pourquoi elle collecte vos données, et vous pouvez demander à les consulter ou à les effacer."
+        },
+        {
+          "question": "Un code de validation reçu par SMS compte 6 chiffres. Combien de codes différents peut-on former ?",
+          "reponse": 1000000,
+          "unite": "codes",
+          "marge": 0,
+          "anecdote": "De 000000 à 999999. Avec un code qui change à chaque fois et très peu d’essais possibles, le pirate a peu de chances de le deviner."
+        },
+        {
+          "question": "Combien de chiffres compte le cryptogramme visuel, au dos d’une carte bancaire Visa ou Mastercard ?",
+          "reponse": 3,
+          "unite": "chiffres",
+          "marge": 0,
+          "anecdote": "Il sert à confirmer un paiement en ligne. Si vous le donnez avec le numéro de carte à un faux site, le pirate peut payer à votre place."
         }
       ]
     },
@@ -204,6 +272,68 @@
             "Comparer cette adresse avec celle du site officiel",
             "En cas de doute, taper soi-même l’adresse du site officiel"
           ]
+        },
+        {
+          "titre": "Installer les mises à jour de Windows",
+          "etapes": [
+            "Ouvrir les Paramètres",
+            "Aller dans « Windows Update »",
+            "Cliquer sur « Rechercher des mises à jour »",
+            "Installer les mises à jour proposées",
+            "Redémarrer l’ordinateur si on le demande"
+          ]
+        },
+        {
+          "titre": "Réagir face à un e-mail suspect",
+          "etapes": [
+            "Ne pas cliquer sur les liens ni ouvrir les pièces jointes",
+            "Vérifier l’adresse complète de l’expéditeur",
+            "Signaler le message comme hameçonnage ou courrier indésirable",
+            "Supprimer le message",
+            "Prévenir le service informatique si c’est un e-mail de travail"
+          ]
+        },
+        {
+          "titre": "Verrouiller son poste avant de s’absenter",
+          "etapes": [
+            "Enregistrer le document en cours",
+            "Appuyer sur les touches Windows + L",
+            "Vérifier que l’écran de connexion s’affiche",
+            "Reprendre sa session au retour, avec son mot de passe"
+          ]
+        },
+        {
+          "titre": "Changer le mot de passe d’un compte",
+          "etapes": [
+            "Se connecter au compte",
+            "Ouvrir les paramètres de sécurité",
+            "Choisir « Changer le mot de passe »",
+            "Saisir l’ancien mot de passe",
+            "Saisir un nouveau mot de passe, long et unique",
+            "Enregistrer le nouveau mot de passe dans le gestionnaire"
+          ]
+        },
+        {
+          "titre": "Retrouver ses fichiers depuis une sauvegarde",
+          "etapes": [
+            "Brancher le disque dur de sauvegarde",
+            "Ouvrir l’Explorateur de fichiers",
+            "Ouvrir le dossier de la sauvegarde la plus récente",
+            "Copier les fichiers à retrouver",
+            "Les coller dans le dossier Documents",
+            "Vérifier que les fichiers s’ouvrent correctement"
+          ]
+        },
+        {
+          "titre": "Mettre en place un gestionnaire de mots de passe",
+          "etapes": [
+            "Choisir un gestionnaire reconnu",
+            "Le télécharger depuis son site officiel",
+            "Créer son mot de passe principal, long et unique",
+            "Installer l’extension dans son navigateur",
+            "Y enregistrer ses mots de passe",
+            "Changer les mots de passe trop faibles"
+          ]
         }
       ]
     },
@@ -258,6 +388,56 @@
             "Sur Windows, je m’appelle Microsoft Defender.",
             "Mon nom dit que je combats les virus."
           ]
+        },
+        {
+          "reponse": "Pare-feu",
+          "indices": [
+            "Je suis un gardien, mais je ne porte pas d’uniforme.",
+            "Je surveille tout ce qui entre et sort de l’ordinateur par le réseau.",
+            "Je bloque les connexions que vous n’avez pas autorisées.",
+            "Windows m’active dès l’installation, et votre box aussi, souvent.",
+            "Mon nom évoque une barrière qui arrête les flammes."
+          ]
+        },
+        {
+          "reponse": "Double authentification",
+          "indices": [
+            "Je ne sers à rien si vous n’avez pas déjà un compte.",
+            "Je demande une preuve de plus que votre secret habituel.",
+            "Je vous envoie parfois un code par SMS.",
+            "Je peux aussi passer par une application ou une clé physique.",
+            "Même si un pirate vole votre mot de passe, je lui ferme la porte."
+          ]
+        },
+        {
+          "reponse": "Cheval de Troie",
+          "indices": [
+            "C’est vous qui m’installez, sans le savoir.",
+            "Je me présente comme un logiciel gratuit ou utile.",
+            "Une fois installé, j’ouvre la porte à d’autres programmes malveillants.",
+            "Mon nom vient d’une légende grecque, avec un énorme animal en bois.",
+            "On m’appelle aussi « troyen »."
+          ]
+        },
+        {
+          "reponse": "Sauvegarde",
+          "indices": [
+            "Je suis surtout utile le jour où tout va mal.",
+            "Je suis une copie, rangée à part de l’original.",
+            "On me range sur un disque dur externe ou dans le cloud.",
+            "Je vous rends vos fichiers après une panne, un vol ou une attaque.",
+            "On me fait régulièrement, avant que le malheur arrive."
+          ]
+        },
+        {
+          "reponse": "Spam",
+          "indices": [
+            "Je remplis votre boîte de réception sans y avoir été invité.",
+            "On m’envoie à des milliers de personnes en même temps.",
+            "Je cache souvent une publicité, une arnaque ou un lien piégé.",
+            "Votre messagerie me range dans le dossier des indésirables.",
+            "En français, on m’appelle aussi « pourriel »."
+          ]
         }
       ]
     },
@@ -274,10 +454,6 @@
         {
           "question": "Sous Windows, quel raccourci verrouille l’ordinateur d’un seul geste ?",
           "reponse": "Windows + L"
-        },
-        {
-          "question": "Quel est l’un des mots de passe les plus utilisés au monde, et donc à éviter ?",
-          "reponse": "123456"
         },
         {
           "question": "Comment appelle-t-on les messages publicitaires non désirés, envoyés en masse ?",
@@ -306,25 +482,41 @@
         {
           "question": "Comment appelle-t-on un programme caché dans un logiciel d’apparence normale, comme dans la légende grecque ?",
           "reponse": "Cheval de Troie"
-        },
-        {
-          "question": "Quel mois de l’année est, chaque année, le mois européen de la cybersécurité ?",
-          "reponse": "Octobre"
         }
       ]
     },
     "pyramide": {
       "elements": [
-        { "mot": "Virus" },
-        { "mot": "Pirate" },
-        { "mot": "Mot de passe" },
-        { "mot": "Antivirus" },
-        { "mot": "Arnaque" },
-        { "mot": "Spam" },
-        { "mot": "Sauvegarde" },
-        { "mot": "Cadenas" },
-        { "mot": "Wi-Fi" },
-        { "mot": "Code" }
+        {
+          "mot": "Virus"
+        },
+        {
+          "mot": "Pirate"
+        },
+        {
+          "mot": "Mot de passe"
+        },
+        {
+          "mot": "Antivirus"
+        },
+        {
+          "mot": "Arnaque"
+        },
+        {
+          "mot": "Spam"
+        },
+        {
+          "mot": "Sauvegarde"
+        },
+        {
+          "mot": "Cadenas"
+        },
+        {
+          "mot": "Wi-Fi"
+        },
+        {
+          "mot": "Code"
+        }
       ]
     },
     "batterie-faible": {
@@ -368,6 +560,16 @@
           "mot": "Sauvegarde",
           "theme": "Les bons réflexes",
           "definition": "Une copie de vos fichiers, rangée à part, pour les retrouver en cas de panne ou d’attaque."
+        },
+        {
+          "mot": "Double authentification",
+          "theme": "Les protections",
+          "definition": "Un code demandé en plus du mot de passe, souvent reçu sur le téléphone, pour prouver que c’est bien vous."
+        },
+        {
+          "mot": "Logiciel espion",
+          "theme": "Les menaces",
+          "definition": "Un programme qui observe en cachette ce que vous faites sur l’ordinateur, pour le raconter à un pirate."
         }
       ]
     },
@@ -396,6 +598,22 @@
         {
           "consigne": "Citez une arnaque qu’on peut recevoir par SMS ou par e-mail",
           "idees": "Un faux colis en attente, une fausse amende, un faux remboursement, un faux conseiller bancaire, un compte soi-disant bloqué, un faux gain, un faux support technique, un proche qui a « changé de numéro » et demande de l’argent, une fausse offre d’emploi, un faux abonnement à renouveler…"
+        },
+        {
+          "consigne": "Citez un conseil pour choisir un bon mot de passe",
+          "idees": "Qu’il soit long, au moins 12 caractères, mélanger majuscules et minuscules, ajouter des chiffres, ajouter des signes, utiliser une phrase facile à retenir, éviter son prénom, éviter sa date de naissance, éviter les mots du dictionnaire, en avoir un différent par compte…"
+        },
+        {
+          "consigne": "Citez un lieu où l’on trouve du Wi-Fi public, à utiliser avec prudence",
+          "idees": "La gare, l’aéroport, un café, un restaurant, un hôtel, une bibliothèque, une médiathèque, un centre commercial, la mairie, un train, une université, un coworking, une salle d’attente…"
+        },
+        {
+          "consigne": "Citez un geste à faire avant de quitter son poste de travail",
+          "idees": "Verrouiller son écran, éteindre l’ordinateur, se déconnecter de ses comptes, ranger les documents confidentiels, retirer sa clé USB, fermer le bureau à clé, ne pas laisser de mot de passe sur un post-it, emporter son badge…"
+        },
+        {
+          "consigne": "Citez un moyen de recevoir un virus",
+          "idees": "Une pièce jointe piégée, un lien piégé, une clé USB inconnue, un logiciel piraté, un téléchargement illégal, une publicité piégée, un faux site, une application douteuse, un faux message de mise à jour…"
         }
       ]
     },
@@ -640,7 +858,32 @@
           "indice": "Mon second se dit « fire » en anglais."
         },
         {
-          "enigme": "Dernière serrure : un code à quatre chiffres, l’année d’apparition de Brain, le premier virus des ordinateurs PC.",
+          "enigme": "Je suis un biscuit pour les Anglais, mais je n’ai aucun goût. Les sites me déposent dans votre navigateur pour se souvenir de vous. Qui suis-je ?",
+          "reponse": "Cookie / Cookies / Témoin de connexion",
+          "indice": "Dans l’assiette, je suis sucré. Dans le navigateur, je suis un tout petit fichier."
+        },
+        {
+          "enigme": "Je suis une conserve de viande en boîte, et aussi le nom des messages que personne n’a demandés. Qui suis-je ?",
+          "reponse": "Spam / Pourriel / Courrier indésirable",
+          "indice": "Les Monty Python ont chanté sur moi dans un célèbre sketch."
+        },
+        {
+          "enigme": "Mon premier signifie « contre », comme dans « anticorps ». Mon second est un microbe qui donne la grippe. Mon tout protège l’ordinateur. Qui suis-je ?",
+          "reponse": "Antivirus",
+          "indice": "Sous Windows, on m’appelle Microsoft Defender."
+        },
+        {
+          "enigme": "Un faux e-mail lance un appât, vous mordez, et vos codes partent chez un pirate. Comment s’appelle cette arnaque ?",
+          "reponse": "Hameçonnage / Phishing",
+          "indice": "Un petit crochet pointu, au bout d’une canne à pêche, me donne mon nom."
+        },
+        {
+          "enigme": "Mon premier est ce que fait un pompier à une personne en danger : il la « sauve ». Mon second est un soldat qui surveille le château. Mon tout est la copie de vos fichiers, rangée à l’abri. Qui suis-je ?",
+          "reponse": "Sauvegarde / Backup / Copie de sauvegarde",
+          "indice": "On me fait sur un disque dur externe ou dans le cloud, avant la panne."
+        },
+        {
+          "enigme": "Un code à quatre chiffres, l’année d’apparition de Brain, le premier virus des ordinateurs PC.",
           "reponse": "1986 / mille neuf cent quatre-vingt-six",
           "indice": "C’est l’année qui suit la sortie de la toute première version de Windows, en 1985."
         }
@@ -706,6 +949,46 @@
             "Le rançongiciel / Ransomware / Logiciel de rançon",
             "Le logiciel espion / Espion / Spyware / Mouchard",
             "Le ver / Ver informatique / Worm"
+          ]
+        },
+        {
+          "question": "Citez un moyen par lequel on peut recevoir une arnaque.",
+          "reponses": [
+            "L’e-mail / Mail / Courriel / Message électronique",
+            "Le SMS / Texto / Message",
+            "Le téléphone / Appel / Faux conseiller",
+            "Les réseaux sociaux / Facebook / Messenger / WhatsApp / Instagram",
+            "Un faux site / Site Internet / Publicité en ligne / Petite annonce"
+          ]
+        },
+        {
+          "question": "Citez un endroit où l’on peut ranger une sauvegarde.",
+          "reponses": [
+            "Un disque dur externe / Disque dur / Disque externe",
+            "Le cloud / Nuage / Drive / OneDrive / Google Drive / Dropbox",
+            "Une clé USB / Clé",
+            "Un autre ordinateur / Deuxième ordinateur",
+            "Un serveur / NAS / Serveur de l’entreprise / Réseau de l’entreprise"
+          ]
+        },
+        {
+          "question": "Citez un outil de sécurité installé sur un ordinateur.",
+          "reponses": [
+            "L’antivirus / Antivirus / Defender",
+            "Le pare-feu / Firewall",
+            "Le gestionnaire de mots de passe / Gestionnaire",
+            "Le VPN / Réseau privé virtuel",
+            "Le filtre anti-spam / Anti-spam / Filtre"
+          ]
+        },
+        {
+          "question": "Citez une conséquence d’un compte piraté.",
+          "reponses": [
+            "Le vol d’argent / Argent volé / Achats frauduleux / Achats",
+            "Le vol de données / Données volées / Informations volées",
+            "Des messages envoyés à vos contacts / Faux messages / Spam envoyé",
+            "L’usurpation d’identité / Identité volée / Se faire passer pour vous",
+            "La perte d’accès / Compte bloqué / Mot de passe changé / Accès perdu"
           ]
         }
       ]

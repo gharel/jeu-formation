@@ -42,14 +42,14 @@ test('Le Coffre-fort : pénalité, réponse acceptée à la main, indice, coffre
   const cadre = page.locator('#cadre');
 
   await expect(
-    cadre.getByRole('heading', { name: '5 serrures, 10 minutes pour ouvrir le coffre' }),
+    cadre.getByRole('heading', { name: '10 serrures, 10 minutes pour ouvrir le coffre' }),
   ).toBeVisible();
   await expect(cadre.getByText('Une mauvaise réponse coûte 30 secondes.')).toBeVisible();
   await verifierAccessibiliteHorloge(page);
   await page.getByRole('button', { name: /Lancer le compte à rebours/ }).click();
   const temps = page.getByRole('timer');
   await expect(temps).toHaveText('10:00');
-  await expect(cadre.getByText('Serrure 1 sur 5')).toBeVisible();
+  await expect(cadre.getByText('Serrure 1 sur 10')).toBeVisible();
   await expect(page.getByLabel('Réponse du groupe')).toBeFocused();
 
   // Mauvaise réponse : 30 secondes de moins
@@ -63,7 +63,7 @@ test('Le Coffre-fort : pénalité, réponse acceptée à la main, indice, coffre
   await page.getByRole('button', { name: /La réponse était bonne/ }).click();
   await expect(temps).toHaveText('9:30');
   await expect(cadre.getByText(/Serrure 1\souverte\s! La réponse\s:\sÉchap/)).toBeVisible();
-  await expect(cadre.getByText('Serrure 2 sur 5')).toBeVisible();
+  await expect(cadre.getByText('Serrure 2 sur 10')).toBeVisible();
 
   // Un indice coûte une minute, une seule fois par serrure
   await page.getByRole('button', { name: /Indice/ }).click();
@@ -80,6 +80,13 @@ test('Le Coffre-fort : pénalité, réponse acceptée à la main, indice, coffre
   await repondre(page, '1998');
   await expect(temps).toHaveText('8:00');
   await repondre(page, '1989');
+  // Les cinq dernières serrures, ajoutées au contenu d'exemple
+  await repondre(page, 'sauvgarde');
+  await repondre(page, 'adresse du site');
+  await repondre(page, 'phishing');
+  await repondre(page, 'antivirus');
+  await expect(cadre.getByText('Serrure 10 sur 10')).toBeVisible();
+  await repondre(page, 'barre des taches');
   await expect(cadre.getByText('Coffre ouvert !')).toBeVisible();
   await expect(cadre.getByText(/Avec 8:00\sd’avance, malgré 2\serreurs/)).toBeVisible();
   await expect(cadre.getByText('Nouveau record !')).toBeVisible();
@@ -113,7 +120,7 @@ test('Le Coffre-fort : temps écoulé, les réponses manquantes s’affichent', 
   const cadre = page.locator('#cadre');
   await page.getByRole('button', { name: /Lancer le compte à rebours/ }).click();
   await repondre(page, 'Esc');
-  await expect(cadre.getByText('Serrure 2 sur 5')).toBeVisible();
+  await expect(cadre.getByText('Serrure 2 sur 10')).toBeVisible();
 
   // En pause, le temps ne passe pas
   await page.getByRole('button', { name: /Pause/ }).click();
@@ -123,9 +130,19 @@ test('Le Coffre-fort : temps écoulé, les réponses manquantes s’affichent', 
 
   await page.clock.runFor(121000);
   await expect(cadre.getByText('Temps écoulé !')).toBeVisible();
-  await expect(cadre.getByText('Le coffre reste fermé : 1 serrure ouverte sur 5.')).toBeVisible();
+  await expect(cadre.getByText('Le coffre reste fermé : 1 serrure ouverte sur 10.')).toBeVisible();
   const manquantes = cadre.locator('.coffre__solutions li');
-  await expect(manquantes).toHaveText(['La corbeille', '8', 'Le mot de passe', '1989']);
+  await expect(manquantes).toHaveText([
+    'La corbeille',
+    '8',
+    'Le mot de passe',
+    '1989',
+    'Une sauvegarde',
+    'Une adresse web',
+    'Hameçonnage',
+    'Antivirus',
+    'La barre des tâches',
+  ]);
   expect(erreurs).toEqual([]);
 });
 
@@ -145,7 +162,7 @@ test('Le Coffre-fort : un indice qui vide le chrono mène au bilan, Entrée au c
   const cadre = page.locator('#cadre');
   await page.getByRole('button', { name: /Lancer le compte à rebours/ }).click();
   await repondre(page, 'Esc');
-  await expect(cadre.getByText('Serrure 2 sur 5')).toBeVisible();
+  await expect(cadre.getByText('Serrure 2 sur 10')).toBeVisible();
 
   await page.getByRole('button', { name: /Indice/ }).click();
   await expect(cadre.getByText('Temps écoulé !')).toBeVisible();

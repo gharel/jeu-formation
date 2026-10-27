@@ -375,7 +375,7 @@ monterJeu({
   schema,
   exemple,
   regles: [
-    'Avant la séance, préparez 5 mots du numérique (de 4 à 10 lettres).',
+    'Avant la séance, préparez jusqu’à 10 mots du numérique (de 4 à 10 lettres).',
     'La première lettre est donnée. Un participant propose un mot à l’oral, vous le tapez.',
     'Vert : lettre bien placée. Jaune (rond) : lettre présente mais mal placée. Bleu : absente.',
     '6 essais par mot, dans le temps choisi au lancement. Qui trouve gagne 1 point (ou son équipe).',

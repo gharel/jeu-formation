@@ -43,11 +43,11 @@ test('Qui suis-je : → démarre, Espace stoppe, Retour arrière reprend, Entré
   await expect(cadre.getByText(/\+\d\spoints? pour Bob/)).toBeVisible();
 
   // Manche finie : Entrée n'avance pas, Espace passe au mystère suivant
-  await expect(cadre.getByText('Mystère 1 sur 5')).toBeVisible();
+  await expect(cadre.getByText('Mystère 1 sur 10')).toBeVisible();
   await page.keyboard.press('Enter');
-  await expect(cadre.getByText('Mystère 1 sur 5')).toBeVisible();
+  await expect(cadre.getByText('Mystère 1 sur 10')).toBeVisible();
   await page.keyboard.press('Space');
-  await expect(cadre.getByText('Mystère 2 sur 5')).toBeVisible();
+  await expect(cadre.getByText('Mystère 2 sur 10')).toBeVisible();
   expect(erreurs).toEqual([]);
 });
 

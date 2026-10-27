@@ -43,5 +43,15 @@ export const exemple = {
     { amorce: 'expliquer20', fin: '… ce qu’est le cloud, sans dire le mot « Internet »' },
     { amorce: 'retrouver45', fin: '… l’année de création de Wikipédia, en cherchant sur le web' },
     { amorce: 'surprise', fin: '… où se trouvent les paramètres de votre navigateur' },
+    { amorce: 'trouver30', fin: '… le bouton pour imprimer le document ouvert' },
+    { amorce: 'montrer60', fin: '… comment faire une capture d’écran' },
+    {
+      amorce: 'expliquer20',
+      fin: '… à quoi sert la corbeille, sans utiliser le mot « supprimer »',
+    },
+    {
+      amorce: 'retrouver45',
+      fin: '… la définition du mot « algorithme », en cherchant sur le web',
+    },
   ],
 };

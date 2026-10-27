@@ -7,6 +7,12 @@ import { surveillerErreurs, ouvrirJeu, lancerPartie, verifierAccessibilite } fro
 // Les thématiques remplissent tous les jeux, sauf Zoom mystère (il lui faut des captures d'écran)
 const JEUX_SANS_IMAGE = JEUX.length - 1;
 
+/** Nombre d'éléments d'un jeu dans le fichier d'une thématique (suit ses retouches). */
+async function nombreDansThematique(slugThematique, slugJeu) {
+  const fichier = new URL(`../../contenus/thematiques/${slugThematique}.json`, import.meta.url);
+  return JSON.parse(await readFile(fichier, 'utf8')).jeux[slugJeu].elements.length;
+}
+
 /** Bloc d'un jeu dans la consultation (un <details>). */
 const apercuDe = (page, slug) => page.locator(`details[data-jeu="${slug}"]`);
 
@@ -44,7 +50,8 @@ test('depuis l’accueil, on charge une thématique dans tous les jeux', async (
 
   // Consultation : la source s'affiche, les réponses sont floutées jusqu'au clic
   const motus = apercuDe(page, 'motus');
-  await expect(motus.locator('summary')).toContainText('5 mots prêts');
+  const nbMots = await nombreDansThematique('google-sheets', 'motus');
+  await expect(motus.locator('summary')).toContainText(`${nbMots} mots prêts`);
   await expect(motus.locator('summary .etiquette')).toHaveText('Google Sheets');
   await expect(apercuDe(page, 'zoom-mystere').locator('summary .etiquette')).toHaveText(
     'contenu d’exemple',
@@ -63,7 +70,8 @@ test('depuis l’accueil, on charge une thématique dans tous les jeux', async (
 
   // Dans le jeu : le contenu de la thématique, prêt à jouer
   await ouvrirJeu(page, 'duel-buzzer', { prenoms: ['Ana', 'Bob'] });
-  await expect(page.locator('#cadre').getByText('12 questions prêtes')).toBeVisible();
+  const nbQuestions = await nombreDansThematique('google-sheets', 'duel-buzzer');
+  await expect(page.locator('#cadre').getByText(`${nbQuestions} questions prêtes`)).toBeVisible();
   await expect(page.locator('#cadre .etiquette')).toHaveText('Google Sheets');
   await lancerPartie(page);
 
@@ -72,7 +80,7 @@ test('depuis l’accueil, on charge une thématique dans tous les jeux', async (
   await page.getByRole('button', { name: /Préparer le contenu/ }).click();
   await page.getByLabel('Mot à deviner').first().fill('octet');
   await page.getByRole('button', { name: 'Enregistrer' }).click();
-  await expect(page.locator('#cadre').getByText('5 mots prêts')).toBeVisible();
+  await expect(page.locator('#cadre').getByText(`${nbMots} mots prêts`)).toBeVisible();
   await expect(page.locator('#cadre .etiquette')).toHaveCount(0);
   await page.getByRole('link', { name: 'Charger une thématique' }).click();
   await expect(page).toHaveURL(/\/contenus\/$/);

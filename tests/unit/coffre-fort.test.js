@@ -79,8 +79,8 @@ describe('Le Coffre-fort', () => {
     expect(estNouveauRecord(90000, 90000)).toBe(false);
   });
 
-  it('a un exemple valide, de 3 à 8 serrures', () => {
-    expect([SERRURES_MIN, SERRURES_MAX]).toEqual([3, 8]);
+  it('a un exemple valide, de 3 à 10 serrures', () => {
+    expect([SERRURES_MIN, SERRURES_MAX]).toEqual([3, 10]);
     expect(validerContenu(schema, nettoyerContenu(schema, exemple))).toEqual([]);
     expect(nettoyerContenu(schema, exemple)).toEqual(exemple);
   });

@@ -106,5 +106,21 @@ export const exemple = {
         'Se déconnecter / Déconnexion',
       ],
     },
+    {
+      question: 'Citez un logiciel de Microsoft 365.',
+      reponses: ['Word', 'Excel', 'PowerPoint', 'Outlook', 'Teams'],
+    },
+    {
+      question: 'Citez une application de messagerie instantanée.',
+      reponses: ['WhatsApp', 'Messenger / Facebook Messenger', 'Telegram', 'Signal', 'Snapchat'],
+    },
+    {
+      question: 'Citez une marque de smartphone.',
+      reponses: ['Apple / iPhone', 'Samsung', 'Xiaomi', 'Huawei', 'Google / Pixel'],
+    },
+    {
+      question: 'Citez un service pour stocker ses fichiers en ligne.',
+      reponses: ['Google Drive / Drive', 'OneDrive', 'Dropbox', 'iCloud', 'Mega'],
+    },
   ],
 };

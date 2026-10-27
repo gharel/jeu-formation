@@ -22,7 +22,30 @@
           "mot": "ONGLET",
           "definition": "En bas de l’écran, il permet de passer d’une feuille à l’autre du fichier."
         },
-        { "mot": "SOMME", "definition": "La fonction qui additionne toute une série de nombres." }
+        {
+          "mot": "SOMME",
+          "definition": "La fonction qui additionne toute une série de nombres."
+        },
+        {
+          "mot": "FILTRE",
+          "definition": "Il cache pour un temps les lignes qui ne correspondent pas à votre recherche."
+        },
+        {
+          "mot": "GRAPHIQUE",
+          "definition": "Un dessin en barres, en courbe ou en secteurs, qui illustre des chiffres."
+        },
+        {
+          "mot": "MOYENNE",
+          "definition": "Le total de plusieurs valeurs divisé par leur nombre."
+        },
+        {
+          "mot": "TABLEAU",
+          "definition": "Un ensemble de lignes et de colonnes qui range des données."
+        },
+        {
+          "mot": "PLAGE",
+          "definition": "Un groupe de cellules voisines, comme A1:A10."
+        }
       ]
     },
     "instant-defi": {
@@ -56,6 +79,26 @@
           "amorce": "expliquer20",
           "amorcePerso": "",
           "fin": "… la différence entre trier et filtrer un tableau"
+        },
+        {
+          "amorce": "trouver30",
+          "amorcePerso": "",
+          "fin": "… où changer la couleur de fond d’une cellule"
+        },
+        {
+          "amorce": "montrer60",
+          "amorcePerso": "",
+          "fin": "… comment trier une colonne du plus petit au plus grand"
+        },
+        {
+          "amorce": "expliquer20",
+          "amorcePerso": "",
+          "fin": "… à quoi sert le bouton « Partager », en haut à droite"
+        },
+        {
+          "amorce": "retrouver45",
+          "amorcePerso": "",
+          "fin": "… comment insérer une ligne entre deux lignes existantes"
         }
       ]
     },
@@ -102,6 +145,34 @@
           "unite": "cellules",
           "marge": 0,
           "anecdote": "4 colonnes (A, B, C et D) × 25 lignes = 100 cellules. Dans une formule, on relie les deux cellules par deux-points."
+        },
+        {
+          "question": "Quel résultat affiche la formule =SOMME(10;20;30) ?",
+          "reponse": 60,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Les points-virgules séparent les nombres à additionner : 10 + 20 + 30 = 60."
+        },
+        {
+          "question": "Quel résultat affiche la formule =MOYENNE(2;4;6) ?",
+          "reponse": 4,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "On additionne les trois valeurs (12), puis on divise par leur nombre : 12 ÷ 3 = 4."
+        },
+        {
+          "question": "En comptant A comme la première, quel est le numéro de la colonne E ?",
+          "reponse": 5,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "A, B, C, D, E : la colonne E est la cinquième. La colonne Z, elle, est la 26e."
+        },
+        {
+          "question": "Quel résultat affiche la formule =200*25% ?",
+          "reponse": 50,
+          "unite": "",
+          "marge": 0,
+          "anecdote": "Le signe % divise par 100 : 25 % vaut 0,25, et 200 × 0,25 = 50."
         }
       ]
     },
@@ -197,6 +268,61 @@
             "Pointer « Nombre »",
             "Choisir « Devise »"
           ]
+        },
+        {
+          "titre": "Trier un tableau du plus petit au plus grand",
+          "etapes": [
+            "Cliquer sur une cellule de la colonne à trier",
+            "Ouvrir le menu Données",
+            "Pointer « Trier la feuille »",
+            "Choisir le tri de A à Z (du plus petit au plus grand)"
+          ]
+        },
+        {
+          "titre": "Créer un filtre sur un tableau",
+          "etapes": [
+            "Cliquer dans une cellule du tableau",
+            "Ouvrir le menu Données",
+            "Choisir « Créer un filtre »",
+            "Cliquer sur l’icône de filtre en haut de la colonne",
+            "Cocher les valeurs à afficher"
+          ]
+        },
+        {
+          "titre": "Recopier une formule vers le bas avec la poignée de recopie",
+          "etapes": [
+            "Cliquer sur la cellule qui contient la formule",
+            "Repérer le petit carré en bas à droite de la cellule",
+            "Faire glisser ce carré vers le bas",
+            "Relâcher sur la dernière cellule à remplir"
+          ]
+        },
+        {
+          "titre": "Figer la première ligne d’un tableau",
+          "etapes": [
+            "Ouvrir la feuille qui contient le tableau",
+            "Ouvrir le menu Affichage",
+            "Pointer « Figer »",
+            "Choisir « 1 ligne »"
+          ]
+        },
+        {
+          "titre": "Renommer une feuille du fichier",
+          "etapes": [
+            "Faire un clic droit sur l’onglet, en bas de l’écran",
+            "Choisir « Renommer »",
+            "Taper le nouveau nom",
+            "Appuyer sur Entrée"
+          ]
+        },
+        {
+          "titre": "Télécharger la feuille au format Excel",
+          "etapes": [
+            "Ouvrir le menu Fichier",
+            "Pointer « Télécharger »",
+            "Choisir « Microsoft Excel (.xlsx) »",
+            "Ouvrir le fichier téléchargé"
+          ]
         }
       ]
     },
@@ -251,6 +377,56 @@
             "Une petite flèche signale ma présence dans la cellule.",
             "Je propose plusieurs choix : il suffit de cliquer sur le bon."
           ]
+        },
+        {
+          "reponse": "Cellule",
+          "indices": [
+            "Je suis l’unité de base de toute la feuille.",
+            "Mon nom est une lettre suivie d’un nombre, comme B7.",
+            "On me sélectionne d’un simple clic : un cadre bleu m’entoure.",
+            "Je peux contenir un nombre, un texte, une date ou une formule.",
+            "Je suis à la rencontre d’une ligne et d’une colonne."
+          ]
+        },
+        {
+          "reponse": "Onglet",
+          "indices": [
+            "Je suis petit et je porte un nom, comme « Janvier » ou « Budget ».",
+            "On me trouve tout en bas de l’écran, à côté d’un bouton +.",
+            "Un clic droit sur moi permet de me renommer, de me dupliquer ou de me colorer.",
+            "Grâce à moi, un même fichier peut contenir plusieurs tableaux.",
+            "Un clic sur moi, et on change de feuille."
+          ]
+        },
+        {
+          "reponse": "Formule",
+          "indices": [
+            "Je peux être très courte ou très longue, avec des parenthèses et des points-virgules.",
+            "Je suis écrite par vous, mais c’est le tableur qui fait le travail.",
+            "Quand les valeurs que j’utilise changent, mon résultat change aussi.",
+            "Je peux contenir des noms de cellules, comme A1+B1.",
+            "Je suis un calcul écrit dans une cellule."
+          ]
+        },
+        {
+          "reponse": "Plage",
+          "indices": [
+            "Je commence quelque part et je m’arrête ailleurs, sans trou entre les deux.",
+            "Mon nom relie deux cellules par deux-points, comme A1:A10.",
+            "On me sélectionne en faisant glisser la souris sur les cellules.",
+            "Des fonctions comme SOMME ou MOYENNE travaillent sur moi.",
+            "Je suis un groupe de cellules voisines."
+          ]
+        },
+        {
+          "reponse": "Poignée de recopie",
+          "indices": [
+            "Je suis minuscule : un tout petit carré.",
+            "On me trouve dans l’angle en bas à droite de la cellule sélectionnée.",
+            "Quand on me survole, le pointeur devient une petite croix.",
+            "Si on me tire vers le bas, je recopie une formule ou une série de dates.",
+            "Un double-clic sur moi remplit toute la colonne d’un coup."
+          ]
         }
       ]
     },
@@ -268,20 +444,22 @@
           "question": "Quel signe sépare la première et la dernière cellule d’une plage ?",
           "reponse": "Deux-points (:)"
         },
-        { "question": "Quelle fonction additionne des nombres ?", "reponse": "SOMME" },
+        {
+          "question": "Quelle fonction additionne des nombres ?",
+          "reponse": "SOMME"
+        },
         {
           "question": "Quelle fonction additionne des valeurs puis divise par leur nombre ?",
           "reponse": "MOYENNE"
         },
         {
-          "question": "Quelles fonctions renvoient la plus petite et la plus grande valeur ?",
-          "reponse": "MIN et MAX"
-        },
-        {
           "question": "Dans quel menu se trouve la commande « Créer un filtre » ?",
           "reponse": "Données"
         },
-        { "question": "Comment s’appelle la cellule située colonne C, ligne 5 ?", "reponse": "C5" },
+        {
+          "question": "Comment s’appelle la cellule située colonne C, ligne 5 ?",
+          "reponse": "C5"
+        },
         {
           "question": "Quelle extension porte un fichier téléchargé au format Microsoft Excel ?",
           "reponse": ".xlsx"
@@ -293,25 +471,41 @@
         {
           "question": "Quel rôle faut-il donner à une personne pour qu’elle puisse modifier la feuille ?",
           "reponse": "Éditeur"
-        },
-        {
-          "question": "Quelle courte adresse taper dans le navigateur pour créer une nouvelle feuille de calcul ?",
-          "reponse": "sheets.new"
         }
       ]
     },
     "pyramide": {
       "elements": [
-        { "mot": "Ligne" },
-        { "mot": "Tableur" },
-        { "mot": "Calcul" },
-        { "mot": "Total" },
-        { "mot": "Pourcentage" },
-        { "mot": "Camembert" },
-        { "mot": "Parenthèse" },
-        { "mot": "Date" },
-        { "mot": "Budget" },
-        { "mot": "Excel" }
+        {
+          "mot": "Ligne"
+        },
+        {
+          "mot": "Tableur"
+        },
+        {
+          "mot": "Calcul"
+        },
+        {
+          "mot": "Total"
+        },
+        {
+          "mot": "Pourcentage"
+        },
+        {
+          "mot": "Camembert"
+        },
+        {
+          "mot": "Parenthèse"
+        },
+        {
+          "mot": "Date"
+        },
+        {
+          "mot": "Budget"
+        },
+        {
+          "mot": "Excel"
+        }
       ]
     },
     "batterie-faible": {
@@ -355,6 +549,16 @@
           "mot": "Collaborateur",
           "theme": "Le partage",
           "definition": "Une personne avec qui vous partagez la feuille et qui travaille dessus avec vous."
+        },
+        {
+          "mot": "Graphique",
+          "theme": "Les graphiques",
+          "definition": "Un dessin qui transforme des chiffres en barres, en courbe ou en camembert."
+        },
+        {
+          "mot": "Figer",
+          "theme": "L’affichage",
+          "definition": "Garder une ligne ou une colonne toujours visible quand on fait défiler le tableau."
         }
       ]
     },
@@ -387,6 +591,18 @@
         {
           "consigne": "Citez un métier où l’on se sert souvent d’un tableur",
           "idees": "Comptable, secrétaire, assistant de direction, gestionnaire de paie, commercial, enseignant, chef de projet, chef de chantier, logisticien, magasinier, banquier, chercheur, ingénieur, responsable des ressources humaines, trésorier d’association, agent immobilier…"
+        },
+        {
+          "consigne": "Citez une chose qu’on peut faire avec un fichier Google Sheets",
+          "idees": "Le partager, le renommer, le télécharger, l’imprimer, le dupliquer, le déplacer dans un dossier, le commenter, le protéger, l’envoyer par e-mail, l’exporter en PDF, le convertir depuis Excel, consulter son historique des versions, le supprimer…"
+        },
+        {
+          "consigne": "Citez une façon de mettre en forme une cellule",
+          "idees": "La mettre en gras, en italique, la souligner, la barrer, changer la couleur du texte, changer la couleur de fond, ajouter une bordure, centrer le texte, changer la taille ou la police, choisir un format de nombre, fusionner des cellules, passer à la ligne automatiquement…"
+        },
+        {
+          "consigne": "Citez quelque chose qu’on peut calculer dans un tableur",
+          "idees": "Un total, une moyenne, un pourcentage, une différence, le plus petit ou le plus grand nombre, le nombre de lignes, une remise, la TVA, un âge, le nombre de jours avant une date, un budget restant, une note finale…"
         }
       ]
     },
@@ -631,9 +847,34 @@
           "indice": "Mon nom est un mot de tous les jours : le contraire de « plus tard »."
         },
         {
-          "enigme": "Dernière serrure : la fonction COLONNE donne le numéro d’une colonne. Par exemple, =COLONNE(C1) renvoie 3. Le code est le résultat de =COLONNE(AD1).",
+          "enigme": "La fonction COLONNE donne le numéro d’une colonne. Par exemple, =COLONNE(C1) renvoie 3. Le code est le résultat de =COLONNE(AD1).",
           "reponse": "30 / trente",
           "indice": "La colonne Z est la 26e. Juste après, on repart avec deux lettres : AA, AB, AC…"
+        },
+        {
+          "enigme": "Je suis la fonction qui additionne des valeurs, puis divise le total par leur nombre. On me demande souvent pour résumer des notes. Qui suis-je ?",
+          "reponse": "MOYENNE / Fonction MOYENNE / AVERAGE",
+          "indice": "Mon nom évoque le milieu, ni trop haut ni trop bas. J’ai sept lettres."
+        },
+        {
+          "enigme": "En B1 on a tapé 12, en B2 on a tapé 8 et en B3 on a tapé 5. Le code de cette serrure est le résultat de =SOMME(B1:B3)-MIN(B1:B3).",
+          "reponse": "20 / vingt",
+          "indice": "SOMME additionne les trois cellules, puis on retire la plus petite valeur."
+        },
+        {
+          "enigme": "La fonction LIGNE donne le numéro d’une ligne. Par exemple, =LIGNE(B7) renvoie 7. Le code est le résultat de =LIGNE(C12)+LIGNE(A3).",
+          "reponse": "15 / quinze",
+          "indice": "Seul le numéro de ligne compte : la lettre de la colonne est ignorée."
+        },
+        {
+          "enigme": "Je suis une fonction très courte. Je cherche, dans une série de nombres, celui qui est le plus haut. Mon contraire s’appelle MIN. Qui suis-je ?",
+          "reponse": "MAX / Fonction MAX / MAXIMUM",
+          "indice": "Mon nom tient en trois lettres."
+        },
+        {
+          "enigme": "Le signe ÷ n’existe pas sur le clavier : je le remplace dans les formules. Penché vers l’avant, je ressemble à un trait de séparation. Qui suis-je ?",
+          "reponse": "Barre oblique / Oblique / Slash / Barre de fraction",
+          "indice": "=A1/2 donne la moitié de A1."
         }
       ]
     },
@@ -697,6 +938,46 @@
             "Dupliquer / Copier / Faire une copie / Dupliquer la feuille",
             "Changer la couleur / Modifier la couleur / Couleur / Colorer",
             "Masquer / Cacher / Masquer la feuille"
+          ]
+        },
+        {
+          "question": "Citez une fonction de Google Sheets.",
+          "reponses": [
+            "SOMME / Somme / Addition",
+            "MOYENNE / Moyenne",
+            "SI / Fonction SI",
+            "MAX / Maximum",
+            "MIN / Minimum"
+          ]
+        },
+        {
+          "question": "Citez un format qu’on peut donner à une cellule.",
+          "reponses": [
+            "Date",
+            "Pourcentage / Pour cent",
+            "Monnaie / Devise / Euro / Prix",
+            "Nombre / Chiffre / Nombre décimal",
+            "Heure / Horaire / Durée"
+          ]
+        },
+        {
+          "question": "Citez une chose qu’on peut suivre dans un tableur, à la maison.",
+          "reponses": [
+            "Budget / Dépenses / Comptes",
+            "Liste de courses / Courses",
+            "Planning / Emploi du temps / Agenda",
+            "Recettes / Menus",
+            "Inventaire / Stock"
+          ]
+        },
+        {
+          "question": "Citez une opération qu’on peut faire dans une formule.",
+          "reponses": [
+            "Addition / Additionner / Somme / Plus",
+            "Multiplication / Multiplier / Fois / Produit",
+            "Soustraction / Soustraire / Différence / Moins",
+            "Division / Diviser / Quotient",
+            "Pourcentage / Pour cent / Remise"
           ]
         }
       ]

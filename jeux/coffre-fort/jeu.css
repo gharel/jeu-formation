@@ -90,8 +90,8 @@
 }
 
 .coffre__serrures {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(var(--colonnes, 8), auto);
   justify-content: center;
   gap: calc(var(--air-serre) * 0.6);
   margin: 0;

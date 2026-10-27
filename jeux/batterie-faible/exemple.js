@@ -90,5 +90,25 @@ export const exemple = {
       definition:
         'Pratique pour transporter des fichiers… et à ne jamais brancher si on l’a trouvée par terre !',
     },
+    {
+      mot: 'Écran tactile',
+      theme: 'Le matériel',
+      definition: 'Il réagit au toucher du doigt : plus besoin de souris sur un téléphone.',
+    },
+    {
+      mot: 'Moteur de recherche',
+      theme: 'Le web',
+      definition: 'Il classe les pages du web pour répondre à votre question.',
+    },
+    {
+      mot: 'Raccourci clavier',
+      theme: 'Les astuces',
+      definition: 'Une combinaison de touches qui évite de chercher dans les menus.',
+    },
+    {
+      mot: 'Traitement de texte',
+      theme: 'La bureautique',
+      definition: 'Le logiciel pour écrire des lettres, des rapports ou des CV.',
+    },
   ],
 };

@@ -74,7 +74,7 @@ test('Top 5 : réponses retournées, erreurs, points attribués, question suivan
   await expect(alerte).toContainText(/points seront perdus/);
   await alerte.getByRole('button', { name: 'Passer' }).click();
   // Cette fois, on trouve tout
-  await expect(cadre.getByText('Question 2 sur 6')).toBeVisible();
+  await expect(cadre.getByText('Question 2 sur 10')).toBeVisible();
   for (const reponse of ['usb', 'souris', 'clavier', 'imprimante', 'disque']) {
     await proposer(page, reponse);
   }

@@ -102,5 +102,64 @@ export const exemple = {
         'Glisser le fichier sur le dossier',
       ],
     },
+    {
+      titre: 'Se connecter à un réseau Wi-Fi',
+      etapes: [
+        'Ouvrir la liste des réseaux Wi-Fi',
+        'Choisir le nom du réseau',
+        'Saisir le mot de passe du Wi-Fi',
+        'Cliquer sur « Se connecter »',
+      ],
+    },
+    {
+      titre: 'Installer un logiciel téléchargé',
+      etapes: [
+        'Télécharger le fichier d’installation depuis le site officiel',
+        'Ouvrir le fichier téléchargé',
+        'Accepter les conditions d’utilisation',
+        'Cliquer sur « Installer »',
+        'Attendre la fin de l’installation',
+      ],
+    },
+    {
+      titre: 'Changer son mot de passe',
+      etapes: [
+        'Ouvrir les paramètres du compte',
+        'Aller dans la rubrique « Sécurité »',
+        'Saisir l’ancien mot de passe',
+        'Saisir deux fois le nouveau mot de passe',
+        'Cliquer sur « Enregistrer »',
+      ],
+    },
+    {
+      titre: 'Imprimer un document',
+      etapes: [
+        'Ouvrir le document',
+        'Ouvrir le menu Fichier',
+        'Choisir « Imprimer »',
+        'Choisir l’imprimante et le nombre de copies',
+        'Cliquer sur « Imprimer »',
+      ],
+    },
+    {
+      titre: 'Partager un document en ligne',
+      etapes: [
+        'Ouvrir le document',
+        'Cliquer sur « Partager »',
+        'Saisir l’adresse e-mail de la personne',
+        'Choisir son droit d’accès : lecture ou modification',
+        'Cliquer sur « Envoyer »',
+      ],
+    },
+    {
+      titre: 'Éteindre correctement un ordinateur',
+      etapes: [
+        'Enregistrer son travail',
+        'Fermer les logiciels ouverts',
+        'Ouvrir le menu Démarrer',
+        'Cliquer sur le bouton d’alimentation',
+        'Choisir « Arrêter »',
+      ],
+    },
   ],
 };
