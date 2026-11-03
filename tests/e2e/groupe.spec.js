@@ -429,6 +429,9 @@ test('groupes récents : un groupe vidé se recharge en partie, puis en entier',
   await recents.getByRole('button', { name: 'Recharger « Excel, mairie »' }).click();
   let dialogue = page.getByRole('dialog', { name: /Recharger/ });
   await expect(dialogue.getByLabel('Les prénoms')).toBeDisabled();
+  // Sans groupe actuel, pas de message sur lui (ni de « null » à sa place)
+  await expect(dialogue).not.toContainText('Le groupe actuel');
+  await expect(dialogue).not.toContainText('null');
   await dialogue.getByLabel('La disposition').uncheck();
   await dialogue.getByLabel('Les scores').uncheck();
   await verifierAccessibilite(page);

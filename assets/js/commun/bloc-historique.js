@@ -97,14 +97,17 @@ function demanderQuoiRecharger(resume, groupe) {
           lignes,
           avertissement,
         ),
-        actuels
-          ? el(
-              'p',
-              { class: 'champ__aide' },
-              `Le groupe actuel (${pluriel(actuels, 'participant')}) reste dans « Groupes récents ».`,
-            )
-          : null,
       );
+      // append() du DOM écrirait « null » : le message n'est ajouté que s'il y a un groupe actuel
+      if (actuels) {
+        corps.append(
+          el(
+            'p',
+            { class: 'champ__aide' },
+            `Le groupe actuel (${pluriel(actuels, 'participant')}) reste dans « Groupes récents ».`,
+          ),
+        );
+      }
       pied.append(
         el('button', { type: 'button', class: 'bouton', onclick: () => fermer(null) }, 'Annuler'),
         valider,
