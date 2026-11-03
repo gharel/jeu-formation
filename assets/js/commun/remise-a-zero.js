@@ -68,9 +68,13 @@ async function remettreLesExemples() {
   }
 }
 
-/** Vide les parties choisies ; renvoie celles vidées (voir partiesAVider). */
+/**
+ * Vide les parties choisies ; renvoie celles vidées (voir partiesAVider). Le groupe est d'abord
+ * mis de côté dans les « Groupes récents » : la suite est une nouvelle formation.
+ */
 export async function viderTout(groupe, choix) {
   const parties = partiesAVider(choix);
+  if (parties.some((p) => p !== 'contenus')) groupe.mettreDeCote({ nouveau: true });
   if (parties.includes('joueurs')) {
     groupe.remplacer({});
     enregistrerTires([]);
@@ -148,7 +152,7 @@ export function demanderQuoiVider() {
         el(
           'p',
           { class: 'champ__aide' },
-          'Vos thématiques, le mot de passe et le réglage du son sont gardés.',
+          'Le groupe actuel reste un mois dans « Groupes récents ». Vos thématiques, le mot de passe et le réglage du son sont gardés.',
         ),
       );
       pied.append(

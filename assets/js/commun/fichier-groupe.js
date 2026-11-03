@@ -176,7 +176,17 @@ export function lireImportGroupe(contenuFichier) {
   if (!source || typeof source !== 'object' || !Array.isArray(source.participants)) {
     throw new Error('Ce fichier n’est pas un groupe des mini-jeux Skazy Formation.');
   }
+  return lireGroupe(source);
+}
 
+/**
+ * Lit le contenu `groupe` d'un fichier (déjà décodé) : même résultat que lireImportGroupe().
+ * Sert aussi à relire un groupe mis de côté dans l'historique (historique-groupes.js).
+ */
+export function lireGroupe(source) {
+  if (!source || typeof source !== 'object' || !Array.isArray(source.participants)) {
+    throw new Error('Ce groupe est illisible.');
+  }
   const avertissements = [];
   let participants = [];
   let infos = {};

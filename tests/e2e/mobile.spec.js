@@ -342,6 +342,40 @@ test.describe('sur petit téléphone (360 px)', () => {
     expect(erreurs).toEqual([]);
   });
 
+  test('Le groupe : les groupes récents tiennent, nom long et douze prénoms compris', async ({
+    page,
+  }) => {
+    const erreurs = surveillerErreurs(page);
+    const hier = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+    await preparerStockage(page, {
+      'historique-groupes': [
+        {
+          id: 'g1',
+          creeLe: hier,
+          utiliseLe: hier,
+          groupe: {
+            nom: 'Google Sheets, mairie de Nouméa, octobre',
+            salle: { disposition: 'ilots', nombreDePlaces: 12, parIlot: 4 },
+            participants: DOUZE.map((prenom, i) => ({
+              prenom,
+              place: i + 1,
+              points: { motus: i },
+            })),
+            equipes: [{ nom: 'Les Bleus', membres: [DOUZE[0]] }],
+          },
+        },
+      ],
+    });
+    await page.goto('/groupe/');
+    const recents = page.getByRole('region', { name: 'Groupes récents' });
+    await expect(recents.getByRole('listitem')).toHaveCount(1);
+    await recents.scrollIntoViewIfNeeded();
+    await verifierMiseEnPage(page);
+    await recents.getByRole('button', { name: /^Recharger/ }).tap();
+    await verifierMiseEnPage(page);
+    expect(erreurs).toEqual([]);
+  });
+
   test('chaque jeu tient dans l’écran, de son accueil au début de la partie', async ({ page }) => {
     test.slow();
     const erreurs = surveillerErreurs(page);

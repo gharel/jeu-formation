@@ -8,6 +8,7 @@ import { creerGroupe } from './commun/groupe.js';
 import { creerBlocParticipants } from './commun/bloc-participants.js';
 import { creerBlocScores } from './commun/bloc-scores.js';
 import { creerBlocEquipes } from './commun/bloc-equipes.js';
+import { creerBlocHistorique } from './commun/bloc-historique.js';
 import { creerPlanSalle } from './commun/plan-salle.js';
 import { hasardDePage } from './commun/hasard.js';
 import { LONGUEUR_NOM } from './commun/participants.js';
@@ -110,12 +111,13 @@ function creerBlocFichier() {
       actuels &&
       !(await confirmer({
         titre: 'Remplacer le groupe ?',
-        message: `Les ${pluriel(actuels, 'participant')} actuels, leurs infos, le plan de salle, les équipes et les scores seront remplacés par le groupe du fichier (${pluriel(lu.participants.length, 'participant')}).`,
+        message: `Les ${pluriel(actuels, 'participant')} actuels, leurs infos, le plan de salle, les équipes et les scores seront remplacés par le groupe du fichier (${pluriel(lu.participants.length, 'participant')}). Le groupe actuel reste un mois dans « Groupes récents ».`,
         oui: 'Remplacer',
       }))
     ) {
       return;
     }
+    groupe.mettreDeCote();
     groupe.remplacer(lu);
     const places = Object.keys(groupe.plan.places).length;
     const texte = `Groupe importé${groupe.nom ? ` : ${groupe.nom}` : ''}. ${pluriel(groupe.participants.length, 'participant')}, ${pluriel(places, 'personne')} sur le plan.`;
@@ -245,6 +247,7 @@ remplir(
       ),
     ),
     creerBlocFichier(),
+    creerBlocHistorique(groupe),
     el(
       'div',
       { class: 'groupe-colonnes' },

@@ -3,7 +3,12 @@ import { partiesAVider, decrireParties, viderTout } from '../../assets/js/commun
 import { lire, ecrire } from '../../assets/js/commun/stockage.js';
 
 function groupeFactice() {
-  return { remplacer: vi.fn(), changerEquipes: vi.fn(), reinitialiserScores: vi.fn() };
+  return {
+    remplacer: vi.fn(),
+    changerEquipes: vi.fn(),
+    reinitialiserScores: vi.fn(),
+    mettreDeCote: vi.fn(),
+  };
 }
 
 describe('nouvelle formation : tout vider', () => {
@@ -25,6 +30,10 @@ describe('nouvelle formation : tout vider', () => {
     ecrire('mode-jeu', 'equipes');
     ecrire('joueurs-tires', ['ana']);
     expect(await viderTout(groupe, ['joueurs'])).toEqual(['joueurs', 'equipes', 'scores']);
+    expect(groupe.mettreDeCote).toHaveBeenCalledWith({ nouveau: true });
+    expect(groupe.mettreDeCote.mock.invocationCallOrder[0]).toBeLessThan(
+      groupe.remplacer.mock.invocationCallOrder[0],
+    );
     expect(groupe.remplacer).toHaveBeenCalledWith({});
     expect(lire('joueurs-tires')).toEqual([]);
     expect(lire('mode-jeu')).toBeNull();
@@ -55,5 +64,7 @@ describe('nouvelle formation : tout vider', () => {
     expect(lire('thematiques')).toEqual([{ slug: 'perso-1' }]);
     expect(lire('son')).toBe(false);
     expect(groupe.remplacer).not.toHaveBeenCalled();
+    // Le groupe ne change pas : rien à mettre de côté
+    expect(groupe.mettreDeCote).not.toHaveBeenCalled();
   });
 });

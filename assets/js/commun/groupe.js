@@ -9,6 +9,8 @@ import * as listeParticipants from './participants.js';
 import * as salle from './salle.js';
 import * as scoresGroupe from './scores-groupe.js';
 import * as listeEquipes from './equipes.js';
+import * as historique from './historique-groupes.js';
+import { preparerExportGroupe, lireGroupe } from './fichier-groupe.js';
 import { el, icone } from './ui.js';
 
 export function creerGroupe() {
@@ -31,6 +33,64 @@ export function creerGroupe() {
   const prevenirScores = () => {
     for (const ecouteur of ecouteursScores) ecouteur();
   };
+  // L'entrée des « Groupes récents » du groupe en cours : { id, creeLe }, ou null sans prénom
+  let courant = historique.chargerCourant();
+  const suivreCourant = () => {
+    if (!participants.length) {
+      if (courant) historique.enregistrerCourant(null);
+      courant = null;
+    } else if (!courant) {
+      const maintenant = new Date();
+      courant = { id: historique.nouvelId(maintenant), creeLe: maintenant.toISOString() };
+      historique.enregistrerCourant(courant);
+    }
+  };
+  const etat = () => ({ nom, participants, infos, absents, plan, scores, equipes, scoresEquipes });
+
+  /**
+   * Met le groupe de côté dans les « Groupes récents » (s'il a des prénoms), avant qu'il soit
+   * perdu. `nouveau` : la suite est un autre groupe (nouvelle formation), avec sa propre entrée.
+   */
+  function mettreDeCote({ nouveau = false } = {}) {
+    if (participants.length) {
+      suivreCourant();
+      const groupe = preparerExportGroupe(etat()).groupe;
+      historique.enregistrer(historique.mettreDeCote(historique.charger(), { ...courant, groupe }));
+    }
+    if (nouveau) {
+      historique.enregistrerCourant(null);
+      courant = null;
+      suivreCourant();
+    }
+  }
+
+  /**
+   * Remplace tout le groupe d'un coup (fichier importé, groupe rechargé) : nom, prénoms, infos,
+   * absences et plan, gardés cohérents avec la nouvelle liste. Les écouteurs ne sont prévenus
+   * qu'une fois. `suite` : l'entrée des « Groupes récents » qu'il reprend (sinon, une nouvelle).
+   */
+  function remplacer(nouveau, { suite = null } = {}) {
+    nom = listeParticipants.normaliserNom(nouveau.nom);
+    participants = listeParticipants.ajouter([], (nouveau.participants ?? []).join('\n'));
+    infos = listeParticipants.garderInfos(nouveau.infos ?? {}, participants);
+    absents = listeParticipants.garderAbsents(nouveau.absents ?? [], participants);
+    plan = salle.nettoyerPlan(nouveau.plan, participants);
+    scores = scoresGroupe.normaliserScores(nouveau.scores ?? {}, participants);
+    equipes = listeEquipes.normaliserEquipes(nouveau.equipes ?? [], participants);
+    scoresEquipes = listeEquipes.normaliserScoresEquipes(nouveau.scoresEquipes ?? {}, equipes);
+    listeParticipants.enregistrerNom(nom);
+    listeParticipants.enregistrer(participants);
+    listeParticipants.enregistrerInfos(infos);
+    listeParticipants.enregistrerAbsents(absents);
+    salle.enregistrer(plan);
+    scoresGroupe.enregistrer(scores);
+    listeEquipes.enregistrer(equipes);
+    listeEquipes.enregistrerScores(scoresEquipes);
+    courant = suite;
+    historique.enregistrerCourant(courant);
+    suivreCourant();
+    prevenir();
+  }
 
   return {
     /** Nom du groupe (facultatif), '' sans nom. */
@@ -73,31 +133,29 @@ export function creerGroupe() {
       prevenir();
     },
 
+    remplacer,
+    mettreDeCote,
+
+    /** Identifiant de l'entrée des « Groupes récents » du groupe en cours, ou null. */
+    get idHistorique() {
+      return courant?.id ?? null;
+    },
+
     /**
-     * Remplace tout le groupe d'un coup (fichier importé) : nom, prénoms, infos, absences et
-     * plan, gardés cohérents avec la nouvelle liste. Les écouteurs ne sont prévenus qu'une fois.
+     * Recharge un groupe récent, en entier ou en partie (`choix` : clés de PARTIES_RECHARGE,
+     * historique-groupes.js). Le groupe en cours est d'abord mis de côté, sauf s'il est ce
+     * groupe-là : on revient alors à son état enregistré.
      */
-    remplacer(nouveau) {
-      nom = listeParticipants.normaliserNom(nouveau.nom);
-      participants = listeParticipants.ajouter([], (nouveau.participants ?? []).join('\n'));
-      infos = listeParticipants.garderInfos(nouveau.infos ?? {}, participants);
-      absents = listeParticipants.garderAbsents(nouveau.absents ?? [], participants);
-      plan = salle.nettoyerPlan(nouveau.plan, participants);
-      scores = scoresGroupe.normaliserScores(nouveau.scores ?? {}, participants);
-      equipes = listeEquipes.normaliserEquipes(nouveau.equipes ?? [], participants);
-      scoresEquipes = listeEquipes.normaliserScoresEquipes(nouveau.scoresEquipes ?? {}, equipes);
-      listeParticipants.enregistrerNom(nom);
-      listeParticipants.enregistrer(participants);
-      listeParticipants.enregistrerInfos(infos);
-      listeParticipants.enregistrerAbsents(absents);
-      salle.enregistrer(plan);
-      scoresGroupe.enregistrer(scores);
-      listeEquipes.enregistrer(equipes);
-      listeEquipes.enregistrerScores(scoresEquipes);
-      prevenir();
+    recharger(entree, choix) {
+      const archive = lireGroupe(entree.groupe);
+      if (entree.id !== courant?.id) mettreDeCote();
+      const suite = choix.includes('prenoms') ? { id: entree.id, creeLe: entree.creeLe } : courant;
+      remplacer(historique.fusionner(etat(), archive, choix), { suite });
     },
 
     changerParticipants(nouveaux) {
+      // Liste effacée : le groupe reste un mois dans les « Groupes récents »
+      if (!nouveaux.length && participants.length) mettreDeCote({ nouveau: true });
       participants = nouveaux;
       listeParticipants.enregistrer(participants);
       infos = listeParticipants.garderInfos(infos, participants);
@@ -110,6 +168,7 @@ export function creerGroupe() {
       scoresGroupe.enregistrer(scores);
       equipes = listeEquipes.normaliserEquipes(equipes, participants);
       listeEquipes.enregistrer(equipes);
+      suivreCourant();
       prevenir();
     },
 

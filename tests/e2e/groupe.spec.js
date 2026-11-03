@@ -395,3 +395,134 @@ test('nouvelle formation : tout vider, ou seulement les équipes et les scores',
   );
   expect(erreurs).toEqual([]);
 });
+
+test('groupes récents : un groupe vidé se recharge en partie, puis en entier', async ({ page }) => {
+  const erreurs = surveillerErreurs(page);
+  await preparerGroupe(page);
+  await page.getByLabel('Nom du groupe').fill('Excel, mairie');
+  await page.getByLabel('Nom du groupe').press('Enter');
+  await page.getByRole('button', { name: 'Placer dans l’ordre' }).click();
+  await page.getByRole('button', { name: 'Un point de plus pour Ana' }).click();
+  await page.getByRole('button', { name: 'Un point de plus pour Ana' }).click();
+  const recents = page.getByRole('region', { name: 'Groupes récents' });
+  await expect(recents).toContainText('Aucun groupe récent');
+
+  // Nouvelle formation : le groupe est mis de côté
+  await page
+    .getByRole('region', { name: 'Nouvelle formation' })
+    .getByRole('button', { name: 'Tout vider…' })
+    .click();
+  const vider = page.getByRole('dialog', { name: /Tout vider/ });
+  await expect(vider).toContainText('reste un mois dans');
+  await vider.getByLabel('Les contenus des jeux').uncheck();
+  await vider.getByRole('button', { name: 'Tout vider' }).click();
+  await expect(page.locator('.puce__prenom')).toHaveCount(0);
+  const lignes = recents.getByRole('listitem');
+  await expect(lignes).toHaveCount(1);
+  await expect(lignes.first()).toContainText('Excel, mairie');
+  await expect(lignes.first()).toContainText('Ana, Bob, Chloé, David, Emma, Félix');
+  await expect(lignes.first()).toContainText(/6\sparticipants\s· En U, 6\splacés/);
+  await expect(lignes.first()).toContainText(/en tête\s:\sAna, 2\spoints/);
+  await verifierAccessibilite(page);
+
+  // Seulement les prénoms (le groupe actuel est vide : ils reviennent d'office)
+  await recents.getByRole('button', { name: 'Recharger « Excel, mairie »' }).click();
+  let dialogue = page.getByRole('dialog', { name: /Recharger/ });
+  await expect(dialogue.getByLabel('Les prénoms')).toBeDisabled();
+  await dialogue.getByLabel('La disposition').uncheck();
+  await dialogue.getByLabel('Les scores').uncheck();
+  await verifierAccessibilite(page);
+  await dialogue.getByRole('button', { name: 'Recharger', exact: true }).click();
+  await expect(recents.locator('.message')).toContainText(
+    /Groupe rechargé\s:\sExcel, mairie \(les prénoms et les équipes\)\. 6\sparticipants, 0\spersonne sur le plan\./,
+  );
+  await expect(page.locator('.puce__prenom')).toHaveCount(6);
+  const salle = page.getByRole('group', { name: /Plan de salle/ });
+  await expect(salle.getByRole('button', { name: 'Place 1, libre' })).toBeVisible();
+  await expect(page.getByLabel('Score de Ana')).toHaveValue('0');
+  await expect(lignes.first()).toContainText('en cours');
+
+  // Puis tout : places et points reviennent, sans doublon dans la liste
+  await recents.getByRole('button', { name: 'Recharger « Excel, mairie »' }).click();
+  dialogue = page.getByRole('dialog', { name: /Recharger/ });
+  await expect(dialogue).toContainText('Le groupe actuel (6 participants) reste dans');
+  await dialogue.getByRole('button', { name: 'Recharger', exact: true }).click();
+  await expect(
+    salle.getByRole('button', { name: 'Place 1 : Ana, dessert préféré : le tiramisu' }),
+  ).toBeVisible();
+  await expect(page.getByLabel('Score de Ana')).toHaveValue('2');
+  await expect(lignes).toHaveCount(1);
+
+  // Retirer le groupe de l'historique
+  await recents.getByRole('button', { name: 'Retirer « Excel, mairie »' }).click();
+  await page
+    .getByRole('dialog', { name: 'Retirer ce groupe ?' })
+    .getByRole('button', {
+      name: 'Retirer',
+    })
+    .click();
+  await expect(recents).toContainText('Aucun groupe récent');
+  expect(erreurs).toEqual([]);
+});
+
+test('groupes récents : importer un groupe garde l’ancien, oublié après un mois', async ({
+  page,
+}) => {
+  const erreurs = surveillerErreurs(page);
+  await page.goto('/groupe/');
+  await page.evaluate(() => {
+    const jour = 24 * 60 * 60 * 1000;
+    const date = (jours) => new Date(Date.now() - jours * jour).toISOString();
+    localStorage.setItem(
+      'skazy-jeux:historique-groupes',
+      JSON.stringify([
+        {
+          id: 'recent',
+          creeLe: date(3),
+          utiliseLe: date(2),
+          groupe: { nom: 'Word', participants: ['Léa'] },
+        },
+        {
+          id: 'vieux',
+          creeLe: date(40),
+          utiliseLe: date(31),
+          groupe: { nom: 'PowerPoint', participants: ['Max'] },
+        },
+      ]),
+    );
+  });
+  await page.reload();
+  const recents = page.getByRole('region', { name: 'Groupes récents' });
+  await expect(recents.getByRole('listitem')).toHaveCount(1);
+  await expect(recents).toContainText('Word');
+  await expect(recents).not.toContainText('PowerPoint');
+
+  await page.getByLabel('Ajouter un prénom').fill('Ana, Bob');
+  await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
+  await page.locator('#fichier-groupe').setInputFiles({
+    name: 'excel.json',
+    mimeType: 'application/json',
+    buffer: Buffer.from(JSON.stringify({ participants: ['Nina', 'Omar'] })),
+  });
+  await page
+    .getByRole('dialog', { name: 'Remplacer le groupe ?' })
+    .getByRole('button', {
+      name: 'Remplacer',
+    })
+    .click();
+  await expect(recents.getByRole('listitem')).toHaveCount(2);
+  await expect(recents.getByRole('listitem').first()).toContainText('Groupe sans nom');
+  await expect(recents.getByRole('listitem').first()).toContainText('Ana, Bob');
+
+  // « Effacer l'historique » ne touche pas au groupe en cours
+  await recents.getByRole('button', { name: 'Effacer l’historique' }).click();
+  await page
+    .getByRole('dialog', { name: 'Effacer les groupes récents ?' })
+    .getByRole('button', {
+      name: 'Effacer',
+    })
+    .click();
+  await expect(recents).toContainText('Aucun groupe récent');
+  await expect(page.locator('.puce__prenom')).toHaveText(['Nina', 'Omar']);
+  expect(erreurs).toEqual([]);
+});
