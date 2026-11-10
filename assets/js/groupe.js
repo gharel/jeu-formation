@@ -1,6 +1,7 @@
 /**
  * Page « Le groupe » : son nom, les prénoms et l'info de chacun, le plan de salle pour retenir
- * qui est assis où, les équipes et les scores de tous les jeux. Les données sont partagées avec tous les jeux (groupe.js), et tout
+ * qui est assis où, les équipes, les scores de tous les jeux et les notes de suivi (où le groupe
+ * s'est arrêté). Les données sont partagées avec tous les jeux (groupe.js), et tout
  * le groupe s'exporte ou s'importe en un fichier JSON (fichier-groupe.js).
  */
 import { exigerAcces } from './commun/acces.js';
@@ -9,6 +10,7 @@ import { creerBlocParticipants } from './commun/bloc-participants.js';
 import { creerBlocScores } from './commun/bloc-scores.js';
 import { creerBlocEquipes } from './commun/bloc-equipes.js';
 import { creerBlocHistorique } from './commun/bloc-historique.js';
+import { creerBlocSuivi } from './commun/bloc-suivi.js';
 import { creerPlanSalle } from './commun/plan-salle.js';
 import { hasardDePage } from './commun/hasard.js';
 import { LONGUEUR_NOM } from './commun/participants.js';
@@ -111,7 +113,7 @@ function creerBlocFichier() {
       actuels &&
       !(await confirmer({
         titre: 'Remplacer le groupe ?',
-        message: `Les ${pluriel(actuels, 'participant')} actuels, leurs infos, le plan de salle, les équipes et les scores seront remplacés par le groupe du fichier (${pluriel(lu.participants.length, 'participant')}). Le groupe actuel reste un mois dans « Groupes récents ».`,
+        message: `Les ${pluriel(actuels, 'participant')} actuels, leurs infos, le plan de salle, les équipes, les scores et les notes de suivi seront remplacés par le groupe du fichier (${pluriel(lu.participants.length, 'participant')}). Le groupe actuel reste un mois dans « Groupes récents ».`,
         oui: 'Remplacer',
       }))
     ) {
@@ -179,7 +181,7 @@ function creerBlocFichier() {
     el(
       'p',
       { class: 'champ__aide' },
-      'Le fichier JSON garde le nom, les prénoms, les infos, les absences, la disposition de la salle, les places, les équipes et les points. Exportez-le pour retrouver ce groupe à la prochaine séance, ou préparez-le à l’avance.',
+      'Le fichier JSON garde le nom, les prénoms, les infos, les absences, la disposition de la salle, les places, les équipes, les points et les notes de suivi. Exportez-le pour retrouver ce groupe à la prochaine séance, ou préparez-le à l’avance.',
     ),
     messages,
     erreurs,
@@ -248,6 +250,7 @@ remplir(
     ),
     creerBlocFichier(),
     creerBlocHistorique(groupe),
+    creerBlocSuivi(groupe),
     el(
       'div',
       { class: 'groupe-colonnes' },

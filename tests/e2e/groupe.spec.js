@@ -437,7 +437,7 @@ test('groupes récents : un groupe vidé se recharge en partie, puis en entier',
   await verifierAccessibilite(page);
   await dialogue.getByRole('button', { name: 'Recharger', exact: true }).click();
   await expect(recents.locator('.message')).toContainText(
-    /Groupe rechargé\s:\sExcel, mairie \(les prénoms et les équipes\)\. 6\sparticipants, 0\spersonne sur le plan\./,
+    /Groupe rechargé\s:\sExcel, mairie \(les prénoms, les équipes et les notes\)\. 6\sparticipants, 0\spersonne sur le plan\./,
   );
   await expect(page.locator('.puce__prenom')).toHaveCount(6);
   const salle = page.getByRole('group', { name: /Plan de salle/ });

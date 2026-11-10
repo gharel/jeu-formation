@@ -1,7 +1,7 @@
 /**
  * Le groupe : son nom, les participants, une info par personne, les absences du jour, le plan
- * de salle, les équipes et le score de chacun (et de chaque équipe), partagés par toutes les pages
- * (accueil, page « Le groupe », jeux). Les données passent par participants.js, salle.js,
+ * de salle, les équipes, le score de chacun (et de chaque équipe) et les notes de suivi (suivi.js),
+ * partagés par toutes les pages (accueil, page « Le groupe », jeux). Les données passent par participants.js, salle.js,
  * equipes.js et scores-groupe.js ; le plan, les absences, les équipes et les scores sont nettoyés
  * dès que la liste change (personne retirée : place libérée, équipe quittée, points oubliés).
  */
@@ -10,6 +10,7 @@ import * as salle from './salle.js';
 import * as scoresGroupe from './scores-groupe.js';
 import * as listeEquipes from './equipes.js';
 import * as historique from './historique-groupes.js';
+import * as notesSuivi from './suivi.js';
 import { preparerExportGroupe, lireGroupe } from './fichier-groupe.js';
 import { el, icone } from './ui.js';
 
@@ -22,6 +23,7 @@ export function creerGroupe() {
   let scores = scoresGroupe.charger(participants);
   let equipes = listeEquipes.charger(participants);
   let scoresEquipes = listeEquipes.chargerScores(equipes);
+  let suivi = notesSuivi.charger();
   /** Les équipes telles qu'enregistrées (peut-être changées dans un autre onglet). */
   const equipesEnregistrees = () => listeEquipes.charger(listeParticipants.charger());
   const ecouteurs = new Set();
@@ -45,7 +47,17 @@ export function creerGroupe() {
       historique.enregistrerCourant(courant);
     }
   };
-  const etat = () => ({ nom, participants, infos, absents, plan, scores, equipes, scoresEquipes });
+  const etat = () => ({
+    nom,
+    participants,
+    infos,
+    absents,
+    plan,
+    scores,
+    equipes,
+    scoresEquipes,
+    suivi,
+  });
 
   /**
    * Met le groupe de côté dans les « Groupes récents » (s'il a des prénoms), avant qu'il soit
@@ -66,7 +78,7 @@ export function creerGroupe() {
 
   /**
    * Remplace tout le groupe d'un coup (fichier importé, groupe rechargé) : nom, prénoms, infos,
-   * absences et plan, gardés cohérents avec la nouvelle liste. Les écouteurs ne sont prévenus
+   * absences, plan et notes de suivi, gardés cohérents avec la nouvelle liste. Les écouteurs ne sont prévenus
    * qu'une fois. `suite` : l'entrée des « Groupes récents » qu'il reprend (sinon, une nouvelle).
    */
   function remplacer(nouveau, { suite = null } = {}) {
@@ -78,6 +90,7 @@ export function creerGroupe() {
     scores = scoresGroupe.normaliserScores(nouveau.scores ?? {}, participants);
     equipes = listeEquipes.normaliserEquipes(nouveau.equipes ?? [], participants);
     scoresEquipes = listeEquipes.normaliserScoresEquipes(nouveau.scoresEquipes ?? {}, equipes);
+    suivi = notesSuivi.normaliserSuivi(nouveau.suivi);
     listeParticipants.enregistrerNom(nom);
     listeParticipants.enregistrer(participants);
     listeParticipants.enregistrerInfos(infos);
@@ -86,6 +99,7 @@ export function creerGroupe() {
     scoresGroupe.enregistrer(scores);
     listeEquipes.enregistrer(equipes);
     listeEquipes.enregistrerScores(scoresEquipes);
+    notesSuivi.enregistrer(suivi);
     courant = suite;
     historique.enregistrerCourant(courant);
     suivreCourant();
@@ -118,6 +132,10 @@ export function creerGroupe() {
     get scoresEquipes() {
       return scoresEquipes;
     },
+    /** Notes de suivi : { diapositive, logiciels } (voir suivi.js). */
+    get suivi() {
+      return suivi;
+    },
     /** Prénoms (en minuscules) des personnes absentes aujourd'hui. */
     get absents() {
       return absents;
@@ -131,6 +149,15 @@ export function creerGroupe() {
       nom = listeParticipants.normaliserNom(nouveau);
       listeParticipants.enregistrerNom(nom);
       prevenir();
+    },
+
+    /**
+     * Notes de suivi changées (diapositive, logiciels vus). Les écouteurs ne sont pas prévenus :
+     * seul le bloc « Où en est-on ? » les affiche, et il s'enregistre à chaque frappe.
+     */
+    changerSuivi(nouveau) {
+      suivi = notesSuivi.normaliserSuivi(nouveau);
+      notesSuivi.enregistrer(suivi);
     },
 
     remplacer,

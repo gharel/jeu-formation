@@ -1,7 +1,7 @@
 /**
  * Bloc « Groupes récents » de la page « Le groupe » : les groupes du dernier mois, mis de côté
  * quand ils allaient être perdus (historique-groupes.js), à recharger en entier ou en partie
- * (prénoms, disposition, équipes, scores) ou à supprimer.
+ * (prénoms, disposition, équipes, scores, notes de suivi) ou à supprimer.
  */
 import * as historique from './historique-groupes.js';
 import { ecouterStockage } from './stockage.js';
@@ -12,7 +12,7 @@ const pluriel = (n, mot) => `${n} ${mot}${n > 1 ? 's' : ''}`;
 /** Prénoms montrés pour reconnaître un groupe sans nom. */
 const PRENOMS_MONTRES = 8;
 
-/** « 6 participants · 2 équipes · Îlots, 4 placés · en tête : Ana, 12 points » */
+/** « 6 participants · 2 équipes · Îlots, 4 placés · en tête : Ana, 12 points · arrêté à : diapo 42 » */
 function details(resume) {
   const morceaux = [pluriel(resume.participants, 'participant')];
   if (resume.equipes) morceaux.push(pluriel(resume.equipes, 'équipe'));
@@ -24,6 +24,7 @@ function details(resume) {
     const { prenom, points } = resume.meilleur;
     morceaux.push(`en tête : ${prenom}, ${pluriel(points, 'point')}`);
   }
+  if (resume.suivi) morceaux.push(resume.suivi);
   return morceaux.join(' · ');
 }
 

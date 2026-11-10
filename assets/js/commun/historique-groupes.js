@@ -1,7 +1,7 @@
 /**
  * « Groupes récents » : les groupes du dernier mois, mis de côté au moment où ils seraient perdus
  * (tout vider, importer un autre groupe, recharger un groupe récent, effacer la liste), pour les
- * recharger en entier ou en partie (prénoms, disposition, équipes, scores).
+ * recharger en entier ou en partie (prénoms, disposition, équipes, scores, notes de suivi).
  *
  * Une entrée : { id, creeLe, utiliseLe, groupe } ; `groupe` est le contenu `groupe` du fichier
  * JSON (fichier-groupe.js), relu par lireGroupe(). Le groupe en cours porte l'identifiant de son
@@ -10,6 +10,7 @@
  */
 import { lire, ecrire, effacer } from './stockage.js';
 import { DISPOSITIONS } from './salle.js';
+import { decrireSuivi } from './suivi.js';
 
 export const CLE_HISTORIQUE = 'historique-groupes';
 export const CLE_COURANT = 'groupe-courant';
@@ -36,6 +37,11 @@ export const PARTIES_RECHARGE = [
     cle: 'scores',
     libelle: 'Les scores',
     aide: 'Les points de chacun (et des équipes, si elles reviennent aussi).',
+  },
+  {
+    cle: 'suivi',
+    libelle: 'Les notes',
+    aide: 'La diapositive où le groupe s’est arrêté et les logiciels vus ensemble.',
   },
 ];
 
@@ -107,7 +113,7 @@ function total(points) {
 
 /**
  * Ce qu'on affiche d'une entrée : { titre, prenoms, participants, equipes, places, disposition,
- * meilleur: { prenom, points } | null }.
+ * meilleur: { prenom, points } | null, suivi: « arrêté à : diapo 42 · 2 logiciels vus » ou '' }.
  */
 export function resumer(entree) {
   const { groupe } = entree;
@@ -130,6 +136,7 @@ export function resumer(entree) {
     places: personnes.filter((p) => p.place !== undefined && p.place !== null).length,
     disposition: disposition?.libelle ?? '',
     meilleur,
+    suivi: decrireSuivi(groupe.suivi),
   };
 }
 
@@ -163,6 +170,7 @@ export function fusionner(actuel, archive, choix) {
     equipes: avec.has('equipes') ? archive.equipes : actuel.equipes,
     scores: avec.has('scores') ? archive.scores : actuel.scores,
     scoresEquipes,
+    suivi: avec.has('suivi') ? archive.suivi : actuel.suivi,
   };
 }
 

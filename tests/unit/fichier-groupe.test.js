@@ -42,6 +42,47 @@ describe('fichier du groupe : export', () => {
     });
   });
 
+  it('écrit les notes de suivi, et les relit', () => {
+    const suivi = { diapositive: 'Diapo 42, les tableaux croisés', logiciels: ['Sheets', 'Excel'] };
+    const export_ = preparerExportGroupe({ ...groupeExemple(), suivi }, maintenant);
+    expect(export_.groupe.suivi).toEqual(suivi);
+    expect(lireImportGroupe(fichier(export_)).suivi).toEqual(suivi);
+    // Sans note, le fichier n'a pas de « suivi », et l'import n'en invente pas
+    const sansNote = preparerExportGroupe(groupeExemple(), maintenant);
+    expect('suivi' in sansNote.groupe).toBe(false);
+    expect(lireImportGroupe(fichier(sansNote)).suivi).toEqual({ diapositive: '', logiciels: [] });
+  });
+
+  it('lit des notes écrites à la main : un numéro de diapositive, des doublons', () => {
+    const lu = lireImportGroupe(
+      fichier({
+        participants: ['Ana'],
+        suivi: { diapositive: 42, logiciels: ['Word', 'word', '', 'Excel'], autre: 'ignoré' },
+      }),
+    );
+    expect(lu.suivi).toEqual({ diapositive: '42', logiciels: ['Word', 'Excel'] });
+    expect(lireImportGroupe(fichier({ participants: ['Ana'], suivi: 'texte' })).suivi).toEqual({
+      diapositive: '',
+      logiciels: [],
+    });
+  });
+
+  it('le groupe garde ses notes : changées, remplacées par un import, vidées', () => {
+    const groupe = creerGroupe();
+    groupe.changerParticipants(['Ana']);
+    groupe.changerSuivi({ diapositive: '  Diapo  7 ', logiciels: ['Word', 'word'] });
+    expect(groupe.suivi).toEqual({ diapositive: 'Diapo 7', logiciels: ['Word'] });
+    // Une autre page relit les mêmes notes
+    expect(creerGroupe().suivi).toEqual({ diapositive: 'Diapo 7', logiciels: ['Word'] });
+    expect(preparerExportGroupe(groupe, maintenant).groupe.suivi).toEqual(groupe.suivi);
+    groupe.remplacer(
+      lireImportGroupe(fichier({ participants: ['Bob'], suivi: { diapositive: 'Diapo 9' } })),
+    );
+    expect(creerGroupe().suivi).toEqual({ diapositive: 'Diapo 9', logiciels: [] });
+    groupe.remplacer({});
+    expect(creerGroupe().suivi).toEqual({ diapositive: '', logiciels: [] });
+  });
+
   it('écrit les points de chacun, par jeu, et les relit', () => {
     const groupe = { ...groupeExemple(), scores: { ana: { motus: 3, correction: -1 } } };
     const export_ = preparerExportGroupe(groupe, maintenant);

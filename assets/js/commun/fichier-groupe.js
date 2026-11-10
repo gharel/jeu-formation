@@ -1,6 +1,6 @@
 /**
  * Le groupe dans un fichier JSON, lisible et modifiable à la main : nom, prénoms, infos,
- * absences, disposition de la salle, places, équipes et points. Fonctions pures (export et lecture
+ * absences, disposition de la salle, places, équipes, points et notes de suivi. Fonctions pures (export et lecture
  * d'un import).
  *
  * {
@@ -17,6 +17,10 @@
  *     equipes: [                                   // facultatif
  *       { nom: 'Les Bleus', membres: ['Ana', 'Chloé'], points: { motus: 2 } },
  *     ],
+ *     suivi: {                                     // facultatif : où en est le groupe (suivi.js)
+ *       diapositive: 'Diapo 42, les tableaux croisés',
+ *       logiciels: ['Google Sheets', 'Excel'],
+ *     },
  *   },
  * }
  * `nombreDePlaces: null` : la salle suit la taille du groupe. `place` : numéro affiché sur le plan.
@@ -36,6 +40,7 @@ import {
 import { DISPOSITIONS, normaliserPlan, nombreDePlaces, placeDe } from './salle.js';
 import { CORRECTION, normaliserScores } from './scores-groupe.js';
 import { NOMBRE_EQUIPES_MAX, normaliserNomEquipe, normaliserScoresEquipes } from './equipes.js';
+import { normaliserSuivi, estVide } from './suivi.js';
 
 export const FORMAT_GROUPE = 'skazy-jeux-groupe';
 const VERSION_GROUPE = 1;
@@ -51,6 +56,7 @@ export function preparerExportGroupe(groupe, maintenant = new Date()) {
     scores = {},
     equipes = [],
     scoresEquipes = {},
+    suivi,
   } = groupe;
   const fichier = {
     format: FORMAT_GROUPE,
@@ -82,6 +88,8 @@ export function preparerExportGroupe(groupe, maintenant = new Date()) {
       return entree;
     });
   }
+  const notes = normaliserSuivi(suivi);
+  if (!estVide(notes)) fichier.groupe.suivi = notes;
   return fichier;
 }
 
@@ -151,7 +159,7 @@ function numeroDePlace(valeur) {
 
 /**
  * Lit un fichier de groupe. Renvoie { nom, participants, infos, absents, plan, scores, equipes,
- * scoresEquipes, avertissements } prêt pour groupe.remplacer(). Les avertissements disent ce qui a été changé ou
+ * scoresEquipes, suivi, avertissements } prêt pour groupe.remplacer(). Les avertissements disent ce qui a été changé ou
  * ignoré (homonyme numéroté, place inexistante ou déjà prise…). Lève une erreur au message
  * lisible si le fichier ne convient pas.
  */
@@ -266,6 +274,7 @@ export function lireGroupe(source) {
     scores: normaliserScores(points, participants),
     equipes,
     scoresEquipes,
+    suivi: normaliserSuivi(source.suivi),
     avertissements,
   };
 }

@@ -1,6 +1,7 @@
 /**
  * « Nouvelle formation » (page Le groupe) : tout vider d'un coup, au choix :
- * - les joueurs, et tout ce qui va avec (nom du groupe, infos, absences, places, équipes, scores) ;
+ * - les joueurs, et tout ce qui va avec (nom du groupe, infos, absences, places, équipes, scores,
+ *   notes de suivi) ;
  * - les équipes (et le mode de jeu choisi) ;
  * - les scores des joueurs et des équipes ;
  * - les contenus des jeux, qui reprennent leur contenu d'exemple, avec leurs réglages et leur
@@ -21,7 +22,7 @@ const PARTIES = [
   {
     cle: 'joueurs',
     libelle: 'Les joueurs',
-    aide: 'Prénoms, infos, absences, plan de salle et nom du groupe.',
+    aide: 'Prénoms, infos, absences, plan de salle, notes de suivi et nom du groupe.',
   },
   { cle: 'equipes', libelle: 'Les équipes', aide: 'Et le mode de jeu choisi.' },
   {

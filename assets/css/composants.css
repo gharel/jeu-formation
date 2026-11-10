@@ -3317,6 +3317,39 @@
   margin-top: 0.75rem;
 }
 
+/* ---------- Où en est-on ? (page Le groupe) : la diapositive, les logiciels vus ---------- */
+
+.bloc-suivi {
+  margin-top: 1.5rem;
+}
+
+.bloc-suivi__colonnes {
+  display: grid;
+  gap: 1rem 2rem;
+  margin-top: 1rem;
+}
+
+.bloc-suivi__diapositive {
+  margin: 0;
+}
+
+.bloc-suivi__compte {
+  margin: 0.75rem 0 0.5rem;
+  font-weight: 700;
+  color: var(--texte-doux);
+}
+
+.bloc-suivi__logiciels {
+  margin-bottom: 0;
+}
+
+/* Assez large : la diapositive à gauche, les logiciels à droite */
+@media (min-width: 900px) {
+  .bloc-suivi__colonnes {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+}
+
 /* ---------- Groupes récents (page Le groupe) ---------- */
 
 .bloc-historique {

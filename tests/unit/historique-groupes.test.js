@@ -94,9 +94,16 @@ describe('groupes récents : la liste', () => {
       places: 2,
       disposition: 'Îlots',
       meilleur: { prenom: 'Ana', points: 5 },
+      suivi: '',
     });
     const sansNom = resumer(entree('b', ilYA(1), { participants: ['Léa', { prenom: 'Marc' }] }));
     expect(sansNom).toMatchObject({ titre: 'Groupe sans nom', participants: 2, meilleur: null });
+    // Les notes de suivi : où le groupe s'est arrêté
+    const avecNotes = entree('c', ilYA(1), {
+      participants: ['Léa'],
+      suivi: { diapositive: 'diapo 42', logiciels: ['Word', 'Excel'] },
+    });
+    expect(resumer(avecNotes).suivi).toBe('arrêté à : diapo 42 · 2 logiciels vus');
   });
 
   it('dit quand le groupe a été créé et utilisé', () => {
@@ -154,11 +161,19 @@ describe('groupes récents : recharger tout ou partie', () => {
     expect(fusionner(actuel(), archive(), ['equipes']).scoresEquipes).toEqual({});
   });
 
+  it('les notes de suivi reviennent si on les demande, sinon celles du jour restent', () => {
+    const duJour = { ...actuel(), suivi: { diapositive: 'Diapo 3', logiciels: ['Canva'] } };
+    const gardees = { ...archive(), suivi: { diapositive: 'Diapo 42', logiciels: ['Excel'] } };
+    expect(fusionner(duJour, gardees, ['prenoms', 'suivi']).suivi).toEqual(gardees.suivi);
+    expect(fusionner(duJour, gardees, ['prenoms', 'scores']).suivi).toEqual(duJour.suivi);
+  });
+
   it('nomme ce qui est rechargé', () => {
     expect(decrireParties(['scores', 'prenoms', 'salle'])).toBe(
       'les prénoms, la disposition et les scores',
     );
     expect(decrireParties(['equipes'])).toBe('les équipes');
+    expect(decrireParties(['suivi', 'prenoms'])).toBe('les prénoms et les notes');
   });
 });
 
