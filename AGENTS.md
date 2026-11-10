@@ -100,6 +100,7 @@ jeux/<slug>/
 jeux/zoom-mystere/exemples/    Illustrations SVG du contenu d'exemple de Zoom mystère
 assets/vendor/fontawesome/     Font Awesome Free (CSS + polices woff2 + licence), copié par npm run vendor:fontawesome
 outils/dev.js                  Lance serve sur le port 4173 (refuse un port occupé) et ouvre le navigateur
+outils/serveur-e2e.js          Serveur des tests e2e (serve-handler) : referme le fichier d'une requête coupée, sinon le serveur tombe en fin de série (EMFILE)
 outils/empreinte-mot-de-passe.js  Saisie masquée d'un nouveau mot de passe → sel + empreinte pour acces.js
 tests/unit/                    Vitest (jsdom) : logique des jeux et modules communs
 tests/e2e/                     Playwright : parcours complets, accessibilité, aucune erreur console

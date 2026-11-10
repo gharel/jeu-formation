@@ -34,7 +34,8 @@ export default defineConfig({
     },
   ],
   webServer: {
-    command: `npx serve -l ${PORT} .`,
+    // Pas `npx serve` : il garde ouvert chaque fichier dont la requête est coupée (voir le lanceur)
+    command: `node outils/serveur-e2e.js ${PORT}`,
     url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
   },
