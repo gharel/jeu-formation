@@ -18,6 +18,23 @@ export function classer(entrees) {
   });
 }
 
+/**
+ * Marches du podium : les trois premiers rangs qui ont des points, [{ rang, points, entrees }].
+ * Jusqu'à trois personnes (ou équipes), chacune a sa marche, ex æquo compris. Au-delà, les
+ * ex æquo partagent la marche de leur rang : dix premiers ex æquo tiennent sur une seule marche,
+ * au lieu de dix marches plus larges que l'écran.
+ */
+export function marchesPodium(classement) {
+  const places = classement.filter((e) => e.rang <= 3 && e.points > 0);
+  const marches = [];
+  for (const e of places) {
+    const marche = marches.at(-1);
+    if (places.length > 3 && marche?.rang === e.rang) marche.entrees.push(e);
+    else marches.push({ rang: e.rang, points: e.points, entrees: [e] });
+  }
+  return marches;
+}
+
 const sansDoublon = (liste) => [...new Set(liste)];
 
 /**

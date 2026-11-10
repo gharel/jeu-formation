@@ -5,9 +5,11 @@ import {
   lancerPartie,
   pointsDe,
   verifierAccessibilite,
+  verifierMiseEnPage,
   choisirDuree,
   choisirNombre,
 } from './outils.js';
+import { exemple } from '../../jeux/juste-chiffre/exemple.js';
 
 const minuteur = (page) => page.locator('.minuteur-manche');
 
@@ -154,4 +156,51 @@ test('la liste revient sur la dernière proposition, même si on l’a fait déf
   await expect(liste.getByRole('listitem').first()).toContainText('13');
   await expect(liste.getByRole('listitem').first()).toBeInViewport({ ratio: 1 });
   expect(await liste.evaluate((l) => l.scrollTop)).toBe(0);
+});
+
+test('dix ex æquo partagent la première marche : l’écran de fin tient sans défiler', async ({
+  page,
+}) => {
+  const erreurs = surveillerErreurs(page);
+  const prenoms = ['Ana', 'Bob', 'Chloé', 'David', 'Emma', 'Farid', 'Gaëlle', 'Hugo', 'Inès'];
+  prenoms.push('Jean-Baptiste');
+  await ouvrirJeu(page, 'juste-chiffre', { prenoms });
+  await choisirDuree(page, 'Temps par question', 0);
+  await choisirNombre(page, 'Nombre de questions', 10);
+  await lancerPartie(page);
+  // Chacun trouve sa question : dix personnes à 1 point
+  for (const { reponse } of exemple.elements) {
+    await page.getByRole('button', { name: /Afficher la question/ }).click();
+    await proposer(page, String(reponse));
+    await page.getByRole('button', { name: /Question suivante|Voir le classement/ }).click();
+  }
+  await expect(page.getByRole('heading', { name: /Partie terminée/ })).toBeVisible();
+
+  // Une seule marche, la première, avec les dix prénoms ; le classement complet à côté
+  const podium = page.getByRole('list', { name: 'Podium' });
+  await expect(podium.locator('.podium__marche')).toHaveCount(1);
+  await expect(podium.locator('.podium__marche--1 .podium__prenom')).toHaveText(prenoms);
+  await expect(podium.locator('.podium__points')).toHaveText('1 pt');
+  await expect(
+    page.getByRole('list', { name: 'Classement complet' }).locator('.classement__ligne'),
+  ).toHaveCount(10);
+
+  // Ni en largeur ni en hauteur : pas d'ascenseur au vidéoprojecteur
+  for (const [width, height] of [
+    [1280, 720],
+    [1920, 1080],
+  ]) {
+    await page.setViewportSize({ width, height });
+    const taille = await page.evaluate(() => ({
+      largeur: document.documentElement.scrollWidth,
+      hauteur: document.documentElement.scrollHeight,
+    }));
+    expect(taille.largeur, `largeur en ${width} × ${height}`).toBeLessThanOrEqual(width);
+    expect(taille.hauteur, `hauteur en ${width} × ${height}`).toBeLessThanOrEqual(height);
+  }
+  await verifierAccessibilite(page);
+  // Sur téléphone, le podium ne dépasse pas non plus en largeur (la page défile en hauteur)
+  await page.setViewportSize({ width: 390, height: 800 });
+  await verifierMiseEnPage(page);
+  expect(erreurs).toEqual([]);
 });

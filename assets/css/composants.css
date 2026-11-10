@@ -1486,8 +1486,7 @@
 
 @media (min-width: 900px) {
   .fin__resultats--deux {
-    display: grid;
-    grid-template-columns: auto minmax(18rem, 34rem);
+    display: flex;
     gap: clamp(2rem, 5vw, 6rem);
     align-items: center;
     justify-content: center;
@@ -1497,6 +1496,17 @@
   .fin__resultats--deux .podium,
   .fin__resultats--deux .classement {
     margin: 0;
+  }
+
+  /* Le podium garde sa largeur tant qu'il y a la place : le classement prend ce qui reste (de 18
+     à 34 rem), et un podium très large (des ex æquo nombreux) se resserre plutôt que de déborder */
+  .fin__resultats--deux .podium {
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+
+  .fin__resultats--deux .classement {
+    flex: 1 0 18rem;
   }
 }
 
@@ -1527,10 +1537,42 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  width: min(30vw, clamp(200px, 25vh, 290px));
+  --largeur-marche: min(30vw, clamp(200px, 25vh, 290px));
+  width: var(--largeur-marche);
+  /* Une marche se resserre plutôt que de faire déborder le podium */
+  min-width: 0;
   padding: var(--case-h) 0.5rem;
   border-radius: var(--rayon) var(--rayon) 0 0;
   background: var(--accent-clair);
+}
+
+/* À plus de trois sur le podium, les ex æquo partagent la marche de leur rang : elle s'élargit
+   avec leur nombre, et leurs prénoms s'y rangent en pastilles, à la suite */
+.podium__marche--large {
+  width: calc(var(--largeur-marche) * 1.5);
+}
+
+.podium__marche--double {
+  width: calc(var(--largeur-marche) * 2);
+}
+
+.podium__noms {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  justify-content: center;
+  max-width: 100%;
+  margin: 0.4rem 0;
+  padding: 0;
+  list-style: none;
+}
+
+.podium__marche--partagee .podium__prenom {
+  margin: 0;
+  padding: 0.1em 0.65em;
+  font-size: clamp(1.05rem, 2.2vh, 1.6rem);
+  background: var(--blanc);
+  border-radius: var(--rayon-pilule);
 }
 
 .podium__marche--1 {
@@ -1590,6 +1632,11 @@
   gap: 0.5rem 1rem;
   padding: clamp(0.5rem, 1.4vh - 0.15rem, 0.9rem) 1rem;
   border-bottom: 1px solid var(--bord);
+}
+
+/* Plus de 7 lignes : elles se resserrent, 10 joueurs tiennent en 1280 × 720 sans défiler */
+.classement--long .classement__ligne {
+  padding-block: clamp(0.25rem, 1.4vh - 0.4rem, 0.9rem);
 }
 
 .classement__rang {

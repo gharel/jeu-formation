@@ -21,7 +21,7 @@ import * as listeParticipants from './participants.js';
 import { lire, ecrire } from './stockage.js';
 import { hasardDePage, hasardAnnexe } from './hasard.js';
 import { creerTirage } from './roue.js';
-import { creerScores } from './scores.js';
+import { creerScores, marchesPodium } from './scores.js';
 import { sons, sonActif, basculerSon, preparerSon } from './sons.js';
 import {
   el,
@@ -1143,31 +1143,61 @@ export function monterJeu(config) {
   }
 
   // ---------- Fin ----------
+  /**
+   * Le podium (null si personne n'a de point) : une marche par personne ou par équipe, avec son
+   * info. À plus de trois, les ex æquo partagent la marche de leur rang (marchesPodium), qui
+   * s'élargit avec leur nombre : le podium ne dépasse jamais de l'écran.
+   */
+  function construirePodium(classement, { libelle, nom, info }) {
+    const marches = marchesPodium(classement);
+    if (!marches.length) return null;
+    return el(
+      'ol',
+      { class: 'podium', 'aria-label': libelle },
+      marches.map(({ rang, points, entrees }) => {
+        const partagee = entrees.length > 1;
+        const largeur = entrees.length > 6 ? 'double' : entrees.length > 3 ? 'large' : '';
+        return el(
+          'li',
+          {
+            class: [
+              `podium__marche podium__marche--${rang}`,
+              partagee ? 'podium__marche--partagee' : '',
+              largeur ? `podium__marche--${largeur}` : '',
+            ]
+              .filter(Boolean)
+              .join(' '),
+          },
+          el('span', { class: 'podium__medaille' }, icone('medal')),
+          partagee
+            ? el(
+                'ul',
+                { class: 'podium__noms' },
+                entrees.map((e) => el('li', { class: 'podium__prenom' }, nom(e))),
+              )
+            : [el('span', { class: 'podium__prenom' }, nom(entrees[0])), info(entrees[0])],
+          el('span', { class: 'podium__points' }, `${points} pt${points > 1 ? 's' : ''}`),
+        );
+      }),
+    );
+  }
+
+  /** Un long classement (plus de 7 lignes) se resserre pour tenir à l'écran avec 10 joueurs. */
+  const classesClassement = (classement) =>
+    `classement${classement.length > 7 ? ' classement--long' : ''}`;
+
   /** Par équipes : le podium et le classement des équipes, avec leurs joueurs. */
   function resultatsEquipes(scores) {
     const classement = scores.classementEquipes();
     const membresDe = (id) => equipesEnJeu.find((e) => e.id === id)?.membres ?? [];
-    const podium = classement.some((e) => e.points > 0)
-      ? el(
-          'ol',
-          { class: 'podium', 'aria-label': 'Podium des équipes' },
-          classement
-            .filter((e) => e.rang <= 3 && e.points > 0)
-            .map((e) =>
-              el(
-                'li',
-                { class: `podium__marche podium__marche--${e.rang}` },
-                el('span', { class: 'podium__medaille' }, icone('medal')),
-                el('span', { class: 'podium__prenom' }, e.nom),
-                el('span', { class: 'podium__info' }, membresDe(e.id).join(', ')),
-                el('span', { class: 'podium__points' }, `${e.points} pt${e.points > 1 ? 's' : ''}`),
-              ),
-            ),
-        )
-      : null;
+    const podium = construirePodium(classement, {
+      libelle: 'Podium des équipes',
+      nom: (e) => e.nom,
+      info: (e) => el('span', { class: 'podium__info' }, membresDe(e.id).join(', ')),
+    });
     const liste = el(
       'ol',
-      { class: 'classement', 'aria-label': 'Classement des équipes' },
+      { class: classesClassement(classement), 'aria-label': 'Classement des équipes' },
       classement.map((e) =>
         el(
           'li',
@@ -1194,29 +1224,15 @@ export function monterJeu(config) {
     arreterPartie();
     const titre = el('h2', { class: 'fin__titre' }, icone('trophy'), 'Partie terminée !');
     const classement = scores.classement();
-    const aDesPoints = classement.some((e) => e.points > 0);
-    const podium = aDesPoints
-      ? el(
-          'ol',
-          { class: 'podium', 'aria-label': 'Podium' },
-          classement
-            .filter((e) => e.rang <= 3 && e.points > 0)
-            .map((e) =>
-              el(
-                'li',
-                { class: `podium__marche podium__marche--${e.rang}` },
-                el('span', { class: 'podium__medaille' }, icone('medal')),
-                el('span', { class: 'podium__prenom' }, e.prenom),
-                etiquetteInfo(groupe, e.prenom, 'podium__info'),
-                el('span', { class: 'podium__points' }, `${e.points} pt${e.points > 1 ? 's' : ''}`),
-              ),
-            ),
-        )
-      : null;
+    const podium = construirePodium(classement, {
+      libelle: 'Podium',
+      nom: (e) => e.prenom,
+      info: (e) => etiquetteInfo(groupe, e.prenom, 'podium__info'),
+    });
     const liste = joueursEnJeu.length
       ? el(
           'ol',
-          { class: 'classement', 'aria-label': 'Classement complet' },
+          { class: classesClassement(classement), 'aria-label': 'Classement complet' },
           classement.map((e) =>
             el(
               'li',

@@ -499,6 +499,11 @@ img {
   padding-block: clamp(0.75rem, 2vh, 1.75rem);
 }
 
+/* L'écran de fin garde sa largeur, avec les mêmes marges resserrées en haut et en bas */
+.cadre:has(> .ecran-fin) {
+  padding-block: clamp(0.75rem, 2vh, 1.75rem);
+}
+
 .pied {
   padding: 1.25rem;
   text-align: center;
@@ -521,8 +526,10 @@ img {
   font-size: 0.85rem;
 }
 
-/* En partie, l'écran tient en 1280 × 720 sans défiler : le pied de page s'efface */
-body:has(.ecran-jeu) .pied {
+/* En partie et sur l'écran de fin (podium, classement), projetés, l'écran tient en 1280 × 720
+   sans défiler : le pied de page s'efface */
+body:has(.ecran-jeu) .pied,
+body:has(.ecran-fin) .pied {
   display: none;
 }
 

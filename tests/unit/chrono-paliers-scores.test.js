@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { creerChrono, formaterDuree } from '../../assets/js/commun/chrono.js';
 import { valeurPalier, creerPaliers } from '../../assets/js/commun/paliers.js';
-import { creerScores, classer } from '../../assets/js/commun/scores.js';
+import { creerScores, classer, marchesPodium } from '../../assets/js/commun/scores.js';
 import { nommerGagnants } from '../../assets/js/commun/points.js';
 
 beforeEach(() => vi.useFakeTimers());
@@ -129,6 +129,48 @@ describe('scores', () => {
       { prenom: 'C', points: 2, rang: 2 },
       { prenom: 'D', points: 0, rang: 4 },
     ]);
+  });
+
+  it('podium : jusqu’à trois personnes, chacune sa marche, ex æquo compris', () => {
+    const classement = classer([
+      { prenom: 'A', points: 5 },
+      { prenom: 'B', points: 5 },
+      { prenom: 'C', points: 2 },
+      { prenom: 'D', points: 0 },
+    ]);
+    expect(marchesPodium(classement)).toEqual([
+      { rang: 1, points: 5, entrees: [{ prenom: 'A', points: 5, rang: 1 }] },
+      { rang: 1, points: 5, entrees: [{ prenom: 'B', points: 5, rang: 1 }] },
+      { rang: 3, points: 2, entrees: [{ prenom: 'C', points: 2, rang: 3 }] },
+    ]);
+  });
+
+  it('podium : à plus de trois, les ex æquo partagent la marche de leur rang', () => {
+    const noms = (marches) =>
+      marches.map((m) => [m.rang, m.points, m.entrees.map((e) => e.prenom)]);
+    const dix = classer(Array.from({ length: 10 }, (_, i) => ({ prenom: `J${i}`, points: 1 })));
+    expect(noms(marchesPodium(dix))).toEqual([
+      [1, 1, ['J0', 'J1', 'J2', 'J3', 'J4', 'J5', 'J6', 'J7', 'J8', 'J9']],
+    ]);
+    const melange = classer([
+      { prenom: 'A', points: 4 },
+      { prenom: 'B', points: 3 },
+      { prenom: 'C', points: 1 },
+      { prenom: 'D', points: 1 },
+      { prenom: 'E', points: 1 },
+      { prenom: 'F', points: 0 },
+    ]);
+    expect(noms(marchesPodium(melange))).toEqual([
+      [1, 4, ['A']],
+      [2, 3, ['B']],
+      [3, 1, ['C', 'D', 'E']],
+    ]);
+  });
+
+  it('podium : personne sans point, ni au-delà du troisième rang', () => {
+    expect(marchesPodium(classer([{ prenom: 'A', points: 0 }]))).toEqual([]);
+    const quatre = classer([4, 3, 2, 1].map((points) => ({ prenom: `J${points}`, points })));
+    expect(marchesPodium(quatre).map((m) => m.rang)).toEqual([1, 2, 3]);
   });
 
   it('ajoute des points et prévient des changements', () => {
