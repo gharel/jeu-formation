@@ -191,6 +191,8 @@ function demarrer(ctx) {
           el('span', { class: 'juste__sens' }, icone(FLECHES[h.resultat]), h.resultat),
         ),
       );
+      // La liste revient sur la dernière proposition, même si l'animateur l'avait fait défiler
+      liste.scrollTop = 0;
       // remplir() et non textContent : espaces insécables (« 1 000 », « 3 propositions »)
       remplir(borne, decrireFourchette(fourchette(historique), unite));
       remplir(

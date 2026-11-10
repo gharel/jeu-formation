@@ -134,3 +134,24 @@ test('une marge de 10 % accepte une réponse proche', async ({ page }) => {
   await expect(page.locator('#cadre').getByText(/Trouvé/)).toBeVisible();
   await expect(page.getByRole('button', { name: /Attribuer/ })).toHaveCount(0);
 });
+
+test('la liste revient sur la dernière proposition, même si on l’a fait défiler', async ({
+  page,
+}) => {
+  await ouvrirJeu(page, 'juste-chiffre', { prenoms: ['Ana', 'Bob'] });
+  await choisirDuree(page, 'Temps par question', 0);
+  await lancerPartie(page);
+  await page.getByRole('button', { name: /Afficher la question/ }).click();
+  for (let n = 1; n <= 12; n += 1) await proposer(page, String(n));
+  const liste = page.getByRole('list', { name: 'Propositions' });
+  await expect(liste.getByRole('listitem')).toHaveCount(12);
+  // L'animateur fait défiler la liste pour relire les premières propositions
+  await liste.evaluate((l) => {
+    l.scrollTop = l.scrollHeight;
+  });
+  expect(await liste.evaluate((l) => l.scrollTop)).toBeGreaterThan(0);
+  await proposer(page, '13');
+  await expect(liste.getByRole('listitem').first()).toContainText('13');
+  await expect(liste.getByRole('listitem').first()).toBeInViewport({ ratio: 1 });
+  expect(await liste.evaluate((l) => l.scrollTop)).toBe(0);
+});
