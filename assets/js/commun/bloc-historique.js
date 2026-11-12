@@ -1,7 +1,8 @@
 /**
- * Bloc « Groupes récents » de la page « Le groupe » : les groupes du dernier mois, mis de côté
- * quand ils allaient être perdus (historique-groupes.js), à recharger en entier ou en partie
- * (prénoms, disposition, équipes, scores, notes de suivi) ou à supprimer.
+ * Bloc « Groupes récents » de la page « Le groupe » : les groupes du dernier mois, enregistrés par
+ * l'animateur (« Enregistrer le groupe ») ou mis de côté quand ils allaient être perdus
+ * (historique-groupes.js), à recharger en entier ou en partie (prénoms, disposition, équipes,
+ * scores, notes de suivi) ou à supprimer.
  */
 import * as historique from './historique-groupes.js';
 import { ecouterStockage } from './stockage.js';
@@ -122,6 +123,24 @@ export function creerBlocHistorique(groupe) {
   const liste = el('ul', { class: 'historique-groupes', 'aria-label': 'Groupes récents' });
   const etat = el('p', { class: 'bloc-historique__etat' }, 'Aucun groupe récent pour l’instant.');
   const messages = el('div', { class: 'messages', role: 'status' });
+  // Le groupe en cours rangé dans la liste, sans rien vider : on le voit gardé avant de le vider
+  const boutonEnregistrer = el(
+    'button',
+    {
+      type: 'button',
+      class: 'bouton',
+      onclick: () => {
+        groupe.mettreDeCote();
+        dessiner();
+        const texte = `Groupe enregistré${groupe.nom ? ` : ${groupe.nom}` : ''} (${pluriel(groupe.participants.length, 'participant')}). Il reste ${historique.DUREE_JOURS} jours dans ce navigateur, même si vous le videz ou en importez un autre.`;
+        remplir(messages, el('div', { class: 'message message--info' }, el('p', {}, texte)));
+        annoncer(texte);
+        focaliser(titre);
+      },
+    },
+    icone('floppy-disk'),
+    'Enregistrer le groupe',
+  );
   const boutonEffacer = el(
     'button',
     {
@@ -236,6 +255,8 @@ export function creerBlocHistorique(groupe) {
     liste.hidden = !entrees.length;
     etat.hidden = entrees.length > 0;
     boutonEffacer.hidden = !entrees.length;
+    // Sans prénom, il n'y a pas de groupe à enregistrer
+    boutonEnregistrer.hidden = !groupe.participants.length;
   }
 
   // Un groupe est mis de côté juste avant d'être remplacé (liste effacée, tout vidé, import)
@@ -247,11 +268,16 @@ export function creerBlocHistorique(groupe) {
   return el(
     'section',
     { class: 'carte bloc-historique', 'aria-labelledby': 'titre-historique' },
-    el('div', { class: 'ecran__entete' }, titre, boutonEffacer),
+    el(
+      'div',
+      { class: 'ecran__entete' },
+      titre,
+      el('div', { class: 'groupe-boutons' }, boutonEnregistrer, boutonEffacer),
+    ),
     el(
       'p',
       { class: 'champ__aide' },
-      `Quand vous videz le groupe, effacez la liste ou en importez un autre, il reste ici ${historique.DUREE_JOURS} jours dans ce navigateur. Rechargez-le en entier, ou seulement ses prénoms, sa disposition, ses équipes ou ses scores.`,
+      `Enregistrez le groupe quand vous voulez : il reste ici ${historique.DUREE_JOURS} jours dans ce navigateur. Il est aussi enregistré tout seul juste avant d’être vidé, effacé ou remplacé par un import. Rechargez-le en entier, ou seulement ses prénoms, sa disposition, ses équipes ou ses scores.`,
     ),
     etat,
     liste,

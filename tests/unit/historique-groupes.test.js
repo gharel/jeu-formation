@@ -212,6 +212,29 @@ describe('groupes récents : le groupe en cours', () => {
     expect(charger().map((e) => e.id)).toEqual([autre, id]);
   });
 
+  it('enregistrer le groupe le range dans la liste sans le vider, sous une seule entrée', () => {
+    const groupe = creerGroupe();
+    groupe.remplacer(groupeExemple());
+    const id = groupe.idHistorique;
+    groupe.mettreDeCote();
+    expect(groupe.participants).toEqual(['Ana', 'Bob', 'Chloé']);
+    expect(groupe.idHistorique).toBe(id);
+    expect(charger().map((e) => e.id)).toEqual([id]);
+
+    // Enregistré de nouveau après un changement : la même entrée, à jour
+    groupe.changerParticipants(['Ana', 'Bob', 'Chloé', 'Dina']);
+    groupe.mettreDeCote();
+    expect(charger()).toHaveLength(1);
+    expect(charger()[0].groupe.participants).toHaveLength(4);
+
+    // Vidé ensuite : toujours cette entrée ; sans prénom, il n'y a rien à enregistrer
+    groupe.mettreDeCote({ nouveau: true });
+    groupe.remplacer({});
+    groupe.mettreDeCote();
+    expect(charger().map((e) => e.id)).toEqual([id]);
+    expect(charger()[0].groupe.participants).toHaveLength(4);
+  });
+
   it('effacer la liste met le groupe de côté', () => {
     const groupe = creerGroupe();
     groupe.changerParticipants(['Ana', 'Bob']);

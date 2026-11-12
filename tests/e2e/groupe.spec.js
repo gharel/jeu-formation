@@ -396,6 +396,57 @@ test('nouvelle formation : tout vider, ou seulement les équipes et les scores',
   expect(erreurs).toEqual([]);
 });
 
+test('groupes récents : « Enregistrer le groupe » le garde sans le vider', async ({ page }) => {
+  const erreurs = surveillerErreurs(page);
+  await page.goto('/groupe/');
+  const recents = page.getByRole('region', { name: 'Groupes récents' });
+  const enregistrer = recents.getByRole('button', { name: 'Enregistrer le groupe' });
+  const lignes = recents.getByRole('listitem');
+  // Sans prénom, il n'y a pas de groupe à enregistrer
+  await expect(recents).toContainText('Aucun groupe récent');
+  await expect(enregistrer).toBeHidden();
+
+  await page.getByLabel('Ajouter un prénom').fill('Ana, Bob');
+  await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
+  await page.getByLabel('Nom du groupe').fill('Excel, mairie');
+  await page.getByLabel('Nom du groupe').press('Enter');
+  await enregistrer.click();
+  await expect(recents.locator('.message')).toContainText(
+    /Groupe enregistré\s:\sExcel, mairie \(2\sparticipants\)\. Il reste 30\sjours dans ce navigateur/,
+  );
+  await expect(lignes).toHaveCount(1);
+  await expect(lignes.first()).toContainText('Excel, mairie');
+  await expect(lignes.first()).toContainText('en cours');
+  await expect(lignes.first()).toContainText(/2\sparticipants/);
+  // Le groupe n'a pas bougé
+  await expect(page.locator('.puce__prenom')).toHaveText(['Ana', 'Bob']);
+  await verifierAccessibilite(page);
+
+  // Enregistré de nouveau après un changement : la même ligne, à jour
+  await page.getByLabel('Ajouter un prénom').fill('Chloé');
+  await page.getByRole('button', { name: 'Ajouter', exact: true }).click();
+  await enregistrer.click();
+  await expect(lignes).toHaveCount(1);
+  await expect(lignes.first()).toContainText(/3\sparticipants/);
+
+  // Gardé au rechargement de la page ; vidé ensuite, le groupe reste dans la liste
+  await page.reload();
+  await expect(lignes).toHaveCount(1);
+  await page
+    .getByRole('region', { name: 'Nouvelle formation' })
+    .getByRole('button', { name: 'Tout vider…' })
+    .click();
+  const vider = page.getByRole('dialog', { name: /Tout vider/ });
+  await vider.getByLabel('Les contenus des jeux').uncheck();
+  await vider.getByRole('button', { name: 'Tout vider' }).click();
+  await expect(page.locator('.puce__prenom')).toHaveCount(0);
+  await expect(lignes).toHaveCount(1);
+  await expect(lignes.first()).toContainText('Ana, Bob, Chloé');
+  await expect(lignes.first()).not.toContainText('en cours');
+  await expect(enregistrer).toBeHidden();
+  expect(erreurs).toEqual([]);
+});
+
 test('groupes récents : un groupe vidé se recharge en partie, puis en entier', async ({ page }) => {
   const erreurs = surveillerErreurs(page);
   await preparerGroupe(page);
