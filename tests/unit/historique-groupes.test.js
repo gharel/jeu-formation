@@ -101,9 +101,17 @@ describe('groupes récents : la liste', () => {
     // Les notes de suivi : où le groupe s'est arrêté
     const avecNotes = entree('c', ilYA(1), {
       participants: ['Léa'],
+      suivi: { diapositive: 42, vu: 'Word, Excel\nÀ reprendre : RECHERCHEV' },
+    });
+    expect(resumer(avecNotes).suivi).toBe(
+      'arrêté à la diapo 42 · vu : Word, Excel ; À reprendre : RECHERCHEV',
+    );
+    // Un groupe mis de côté avant le numéro de diapositive (premier format des notes)
+    const anciennes = entree('d', ilYA(1), {
+      participants: ['Léa'],
       suivi: { diapositive: 'diapo 42', logiciels: ['Word', 'Excel'] },
     });
-    expect(resumer(avecNotes).suivi).toBe('arrêté à : diapo 42 · 2 logiciels vus');
+    expect(resumer(anciennes).suivi).toBe('arrêté à la diapo 42 · vu : Word, Excel');
   });
 
   it('dit quand le groupe a été créé et utilisé', () => {
@@ -162,8 +170,8 @@ describe('groupes récents : recharger tout ou partie', () => {
   });
 
   it('les notes de suivi reviennent si on les demande, sinon celles du jour restent', () => {
-    const duJour = { ...actuel(), suivi: { diapositive: 'Diapo 3', logiciels: ['Canva'] } };
-    const gardees = { ...archive(), suivi: { diapositive: 'Diapo 42', logiciels: ['Excel'] } };
+    const duJour = { ...actuel(), suivi: { diapositive: 3, vu: 'Canva' } };
+    const gardees = { ...archive(), suivi: { diapositive: 42, vu: 'Excel' } };
     expect(fusionner(duJour, gardees, ['prenoms', 'suivi']).suivi).toEqual(gardees.suivi);
     expect(fusionner(duJour, gardees, ['prenoms', 'scores']).suivi).toEqual(duJour.suivi);
   });

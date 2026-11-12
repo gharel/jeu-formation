@@ -41,7 +41,7 @@ export const PARTIES_RECHARGE = [
   {
     cle: 'suivi',
     libelle: 'Les notes',
-    aide: 'La diapositive où le groupe s’est arrêté et les logiciels vus ensemble.',
+    aide: 'La diapositive où le groupe s’est arrêté et ce qui a été vu ensemble.',
   },
 ];
 
@@ -113,7 +113,7 @@ function total(points) {
 
 /**
  * Ce qu'on affiche d'une entrée : { titre, prenoms, participants, equipes, places, disposition,
- * meilleur: { prenom, points } | null, suivi: « arrêté à : diapo 42 · 2 logiciels vus » ou '' }.
+ * meilleur: { prenom, points } | null, suivi: « arrêté à la diapo 42 · vu : Google Sheets… » ou '' }.
  */
 export function resumer(entree) {
   const { groupe } = entree;

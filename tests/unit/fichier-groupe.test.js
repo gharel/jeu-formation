@@ -43,44 +43,57 @@ describe('fichier du groupe : export', () => {
   });
 
   it('écrit les notes de suivi, et les relit', () => {
-    const suivi = { diapositive: 'Diapo 42, les tableaux croisés', logiciels: ['Sheets', 'Excel'] };
+    const suivi = { diapositive: 42, vu: 'Sheets, Excel\nÀ reprendre : RECHERCHEV' };
     const export_ = preparerExportGroupe({ ...groupeExemple(), suivi }, maintenant);
     expect(export_.groupe.suivi).toEqual(suivi);
     expect(lireImportGroupe(fichier(export_)).suivi).toEqual(suivi);
     // Sans note, le fichier n'a pas de « suivi », et l'import n'en invente pas
     const sansNote = preparerExportGroupe(groupeExemple(), maintenant);
     expect('suivi' in sansNote.groupe).toBe(false);
-    expect(lireImportGroupe(fichier(sansNote)).suivi).toEqual({ diapositive: '', logiciels: [] });
+    expect(lireImportGroupe(fichier(sansNote)).suivi).toEqual({ diapositive: null, vu: '' });
   });
 
-  it('lit des notes écrites à la main : un numéro de diapositive, des doublons', () => {
+  it('lit des notes écrites à la main : un numéro entre guillemets, une liste', () => {
     const lu = lireImportGroupe(
       fichier({
         participants: ['Ana'],
-        suivi: { diapositive: 42, logiciels: ['Word', 'word', '', 'Excel'], autre: 'ignoré' },
+        suivi: { diapositive: '42', vu: ['Word', 'Excel'], autre: 'ignoré' },
       }),
     );
-    expect(lu.suivi).toEqual({ diapositive: '42', logiciels: ['Word', 'Excel'] });
+    expect(lu.suivi).toEqual({ diapositive: 42, vu: 'Word\nExcel' });
     expect(lireImportGroupe(fichier({ participants: ['Ana'], suivi: 'texte' })).suivi).toEqual({
-      diapositive: '',
-      logiciels: [],
+      diapositive: null,
+      vu: '',
     });
+  });
+
+  it('lit un fichier exporté au premier format des notes, sans rien perdre', () => {
+    const lu = lireImportGroupe(
+      fichier({
+        participants: ['Ana'],
+        suivi: {
+          diapositive: 'Diapo 42, les tableaux croisés',
+          logiciels: ['Word', 'word', '', 'Excel'],
+        },
+      }),
+    );
+    expect(lu.suivi).toEqual({ diapositive: 42, vu: 'les tableaux croisés\nWord, Excel' });
   });
 
   it('le groupe garde ses notes : changées, remplacées par un import, vidées', () => {
     const groupe = creerGroupe();
     groupe.changerParticipants(['Ana']);
-    groupe.changerSuivi({ diapositive: '  Diapo  7 ', logiciels: ['Word', 'word'] });
-    expect(groupe.suivi).toEqual({ diapositive: 'Diapo 7', logiciels: ['Word'] });
+    groupe.changerSuivi({ diapositive: 7, vu: '  Word \n' });
+    expect(groupe.suivi).toEqual({ diapositive: 7, vu: 'Word' });
     // Une autre page relit les mêmes notes
-    expect(creerGroupe().suivi).toEqual({ diapositive: 'Diapo 7', logiciels: ['Word'] });
+    expect(creerGroupe().suivi).toEqual({ diapositive: 7, vu: 'Word' });
     expect(preparerExportGroupe(groupe, maintenant).groupe.suivi).toEqual(groupe.suivi);
     groupe.remplacer(
-      lireImportGroupe(fichier({ participants: ['Bob'], suivi: { diapositive: 'Diapo 9' } })),
+      lireImportGroupe(fichier({ participants: ['Bob'], suivi: { diapositive: 9 } })),
     );
-    expect(creerGroupe().suivi).toEqual({ diapositive: 'Diapo 9', logiciels: [] });
+    expect(creerGroupe().suivi).toEqual({ diapositive: 9, vu: '' });
     groupe.remplacer({});
-    expect(creerGroupe().suivi).toEqual({ diapositive: '', logiciels: [] });
+    expect(creerGroupe().suivi).toEqual({ diapositive: null, vu: '' });
   });
 
   it('écrit les points de chacun, par jeu, et les relit', () => {

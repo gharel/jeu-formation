@@ -132,7 +132,7 @@ export function creerGroupe() {
     get scoresEquipes() {
       return scoresEquipes;
     },
-    /** Notes de suivi : { diapositive, logiciels } (voir suivi.js). */
+    /** Notes de suivi : { diapositive, vu } (voir suivi.js). */
     get suivi() {
       return suivi;
     },
@@ -152,7 +152,7 @@ export function creerGroupe() {
     },
 
     /**
-     * Notes de suivi changées (diapositive, logiciels vus). Les écouteurs ne sont pas prévenus :
+     * Notes de suivi changées (numéro de la diapositive, ce qui a été vu). Les écouteurs ne sont pas prévenus :
      * seul le bloc « Où en est-on ? » les affiche, et il s'enregistre à chaque frappe.
      */
     changerSuivi(nouveau) {

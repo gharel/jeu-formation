@@ -18,8 +18,8 @@
  *       { nom: 'Les Bleus', membres: ['Ana', 'Chloé'], points: { motus: 2 } },
  *     ],
  *     suivi: {                                     // facultatif : où en est le groupe (suivi.js)
- *       diapositive: 'Diapo 42, les tableaux croisés',
- *       logiciels: ['Google Sheets', 'Excel'],
+ *       diapositive: 42,                           // son numéro
+ *       vu: 'Google Sheets, Excel\nÀ reprendre : RECHERCHEV',
  *     },
  *   },
  * }

@@ -1,120 +1,55 @@
 /**
  * Bloc « Où en est-on ? » de la page « Le groupe » : des notes pour reprendre à la prochaine
- * séance. La diapositive où le groupe s'est arrêté, et les logiciels vus ensemble (ajout de
- * plusieurs à la fois, retrait). Les notes suivent le groupe (suivi.js, groupe.js).
+ * séance. Le numéro de la diapositive où le groupe s'est arrêté, et ce qui a été vu ensemble
+ * (logiciels, notions, ce qu'il reste à reprendre) en texte libre. Les deux sont enregistrés à
+ * chaque frappe et suivent le groupe (suivi.js, groupe.js).
  */
-import * as notesSuivi from './suivi.js';
-import { el, remplir, icone } from './ui.js';
+import { DIAPOSITIVE_MAX, LONGUEUR_VU } from './suivi.js';
+import { el } from './ui.js';
 
 export function creerBlocSuivi(groupe) {
+  // Le groupe reçoit un numéro ou rien, jamais le texte tapé : un texte serait lu comme une
+  // note au premier format, et son reste rejoindrait « Vu ensemble » à chaque frappe
+  const numeroTape = (valeur) => (valeur.trim() === '' ? null : Math.round(Number(valeur)));
+
   const diapositive = el('input', {
     id: 'suivi-diapositive',
-    type: 'text',
-    class: 'champ__controle',
+    type: 'number',
+    class: 'champ__controle champ__controle--court',
+    inputmode: 'numeric',
+    min: 1,
+    max: DIAPOSITIVE_MAX,
+    step: 1,
     autocomplete: 'off',
-    maxlength: notesSuivi.LONGUEUR_DIAPOSITIVE,
-    placeholder: 'Ex. : diapo 42, les tableaux croisés',
-    // Enregistrée à chaque frappe : rien n'est perdu si l'onglet est fermé sans quitter le champ
-    oninput: (e) => groupe.changerSuivi({ ...groupe.suivi, diapositive: e.target.value }),
+    placeholder: 'Ex. : 42',
+    'aria-describedby': 'aide-suivi-diapositive',
+    // Enregistré à chaque frappe : rien n'est perdu si l'onglet est fermé sans quitter le champ
+    oninput: (e) =>
+      groupe.changerSuivi({ ...groupe.suivi, diapositive: numeroTape(e.target.value) }),
+    // Champ quitté : il montre le numéro gardé (vide si le numéro tapé n'en est pas un)
+    onchange: () => afficher(diapositive),
+  });
+  const vu = el('textarea', {
+    id: 'suivi-vu',
+    class: 'champ__controle',
+    rows: 3,
+    maxlength: LONGUEUR_VU,
+    placeholder: 'Ex. : Google Sheets, les tableaux croisés. À reprendre : RECHERCHEV',
+    'aria-describedby': 'aide-suivi-vu',
+    oninput: (e) => groupe.changerSuivi({ ...groupe.suivi, vu: e.target.value }),
     // Champ quitté : il montre le texte gardé (espaces en trop retirées)
-    onchange: (e) => {
-      e.target.value = groupe.suivi.diapositive;
-    },
+    onchange: () => afficher(vu),
   });
-  const champ = el('input', {
-    id: 'suivi-logiciel',
-    type: 'text',
-    class: 'champ__controle',
-    autocomplete: 'off',
-    maxlength: 200,
-    placeholder: 'Ex. : Google Sheets, Canva',
-    'aria-describedby': 'aide-logiciels',
-  });
-  const liste = el('ul', { class: 'puces bloc-suivi__logiciels', 'aria-label': 'Logiciels vus' });
-  const compteur = el('p', { class: 'bloc-suivi__compte' });
-  const message = el('p', { class: 'ajout-prenom__homonymes', role: 'status' });
 
-  function changerLogiciels(logiciels) {
-    groupe.changerSuivi({ ...groupe.suivi, logiciels });
-    dessiner();
-    champ.focus();
+  function afficher(champ) {
+    const { suivi } = groupe;
+    champ.value = champ === diapositive ? (suivi.diapositive ?? '') : suivi.vu;
   }
 
+  /** Pendant la saisie, un champ garde ce qui est tapé (le groupe en garde la version nettoyée). */
   function dessiner() {
-    // Pendant la saisie, le champ garde ce qui est tapé (le groupe en garde la version nettoyée)
-    if (document.activeElement !== diapositive) diapositive.value = groupe.suivi.diapositive;
-    const { logiciels } = groupe.suivi;
-    remplir(
-      liste,
-      logiciels.map((nom) =>
-        el(
-          'li',
-          { class: 'puce' },
-          el('span', { class: 'puce__prenom' }, nom),
-          el(
-            'button',
-            {
-              type: 'button',
-              class: 'puce__retirer',
-              'aria-label': `Retirer ${nom} des logiciels vus`,
-              onclick: () => {
-                remplir(message);
-                changerLogiciels(notesSuivi.retirerLogiciel(groupe.suivi.logiciels, nom));
-              },
-            },
-            icone('xmark'),
-          ),
-        ),
-      ),
-    );
-    const n = logiciels.length;
-    remplir(
-      compteur,
-      n ? `${n} logiciel${n > 1 ? 's' : ''} vu${n > 1 ? 's' : ''}` : 'Aucun logiciel noté.',
-    );
+    for (const champ of [diapositive, vu]) if (document.activeElement !== champ) afficher(champ);
   }
-
-  const formulaire = el(
-    'form',
-    {
-      class: 'bloc-suivi__ajout',
-      onsubmit: (e) => {
-        e.preventDefault();
-        if (!champ.value.trim()) return;
-        const { liste: nouvelle, ajouts } = notesSuivi.ajouterLogiciels(
-          groupe.suivi.logiciels,
-          champ.value,
-        );
-        remplir(
-          message,
-          ajouts.length
-            ? ''
-            : nouvelle.length >= notesSuivi.NOMBRE_LOGICIELS_MAX
-              ? `La liste est pleine : ${notesSuivi.NOMBRE_LOGICIELS_MAX} logiciels au plus.`
-              : 'Déjà noté dans la liste.',
-        );
-        champ.value = '';
-        changerLogiciels(nouvelle);
-      },
-    },
-    el('label', { for: 'suivi-logiciel', class: 'champ__libelle' }, 'Logiciels vus ensemble'),
-    el(
-      'div',
-      { class: 'champ__ligne' },
-      champ,
-      el(
-        'button',
-        { type: 'submit', class: 'bouton', 'aria-label': 'Ajouter aux logiciels vus' },
-        'Ajouter',
-      ),
-    ),
-    el(
-      'p',
-      { id: 'aide-logiciels', class: 'champ__aide' },
-      'Plusieurs à la fois ? Séparez-les par des virgules.',
-    ),
-    message,
-  );
 
   dessiner();
   // Groupe remplacé (fichier importé, groupe récent rechargé, tout vidé) : les notes suivent
@@ -127,22 +62,37 @@ export function creerBlocSuivi(groupe) {
     el(
       'p',
       { class: 'champ__aide' },
-      'Notez où le groupe s’est arrêté pour reprendre au bon endroit à la prochaine séance. Ces notes suivent le groupe : elles sont dans son fichier JSON et dans les groupes récents.',
+      'Notez où le groupe s’est arrêté pour reprendre au bon endroit à la prochaine séance.',
     ),
     el(
       'div',
       { class: 'bloc-suivi__colonnes' },
       el(
         'div',
-        { class: 'champ bloc-suivi__diapositive' },
+        { class: 'champ bloc-suivi__champ' },
         el(
           'label',
           { for: 'suivi-diapositive', class: 'champ__libelle' },
-          'Diapositive où le groupe s’est arrêté',
+          'Arrêté à la diapositive',
         ),
         diapositive,
+        el(
+          'p',
+          { id: 'aide-suivi-diapositive', class: 'champ__aide' },
+          'Le numéro de la dernière diapositive vue.',
+        ),
       ),
-      el('div', { class: 'bloc-suivi__vus' }, formulaire, compteur, liste),
+      el(
+        'div',
+        { class: 'champ bloc-suivi__champ' },
+        el('label', { for: 'suivi-vu', class: 'champ__libelle' }, 'Vu ensemble'),
+        vu,
+        el(
+          'p',
+          { id: 'aide-suivi-vu', class: 'champ__aide' },
+          'Logiciels, notions, ce qu’il reste à reprendre.',
+        ),
+      ),
     ),
   );
 }
