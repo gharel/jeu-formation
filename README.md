@@ -115,7 +115,7 @@ Les pages qui défilent (accueil, Le groupe, Les contenus, accueil et préparati
 
 ## Utiliser les jeux
 
-En ligne : **https://gharel.github.io/jeu-formation/**
+En ligne : **https://gharel.github.io/jeux/**
 
 Le site est 100 % statique : il suffit de copier `index.html`, `assets/`, `jeux/`, `groupe/` et `contenus/` sur n'importe quel hébergement web (sous-dossier accepté).
 Il fonctionne hors ligne une fois chargé : aucune ressource externe.
